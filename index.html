@@ -1,0 +1,114 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <input style="width: 100%;height: 100%;" type="number" id="uRingsN" value="7" min="1" max="30"></input>
+    <script src="https://unpkg.com/three@0.144.0/build/three.min.js"></script>
+    <script id="vertex" type="x-shader/x-vertex">
+      varying vec2 vuv;
+      void main() {
+        vuv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        gl_Position.z = gl_Position.w;
+      }
+    </script>
+    <script id="fragment" type="x-shader/x-vertex">
+      // from https://www.shadertoy.com/view/4dVXDt, modified
+      #define COLOR_MODE 1 // 1-3
+      
+      varying vec2 vuv;
+      
+      uniform int uRingsN;
+      uniform float uTime;
+      uniform float uWidth;
+      uniform float uSize;
+      uniform sampler2D uNoise;
+    
+      float waves(vec2 coord, vec2 coordMul1, vec2 coordMul2, vec2 phases, vec2 timeMuls) {
+          return 0.5 * (sin(dot(coord, coordMul1) + timeMuls.x * uTime + phases.x) + cos(dot(coord, coordMul2) + timeMuls.y * uTime + phases.y));
+      }
+      
+      const vec2 noiseDir1 = vec2(1.0, 0.0019);
+      const vec2 noiseDir2 = vec2(1.0, 0.8000);
+      
+      float ringMultiplier(vec2 uv, float amp, float phase, float off, float power) {
+        vec3 noise1 = texture(uNoise, noiseDir1 * phase            ).rgb;
+        vec3 noise2 = texture(uNoise, noiseDir2 - noiseDir1 * phase).rgb;
+        vec2 d = vec2(off, 0.5);
+        d.x += 0.6 * waves(
+          uv,
+          vec2( 1.9 + 0.4 * noise1.r, 1.9 + 0.4 * noise1.g ) * 3.3,
+          vec2( 5.7 + 1.4 * noise1.b, 5.7 + 1.4 * noise2.r ) * 2.8,
+          vec2( noise1.r - noise2.r,  noise1.g + noise2.b  ) * 5.0,
+          vec2( 1.1 )
+        );
+        d.y += 0.7 * waves(
+          uv,
+          vec2( -1.7 - 0.9 * noise2.g,  1.7 + 0.9 * noise2.b ) * 3.1,
+          vec2(  5.9 + 0.8 * noise1.g, -5.9 - 0.8 * noise1.b ) * 3.7,
+          vec2( noise1.g + noise2.g,    noise1.b - noise2.r  ) * 5.0,
+          vec2( -0.9 )
+        );
+        float a = 0.2 + 0.3 * (abs(d.x) + abs(d.y));
+        vec2 duv = uv + normalize(d) * a * amp * 0.2;
+        return smoothstep( -power, power, pow(abs(length(duv) - uSize), uWidth));
+      }
+      
+      
+      vec3 getColor(vec2 uv, float s){
+        return vec3(
+          dot(uv, vec2(cos(uTime + s), sin(uTime -s))),
+          dot(uv, vec2(cos(uTime + 1.75* s),sin(uTime +s))),
+          dot(uv, vec2(sin(uTime + s)))
+        );
+      }
+      
+      const vec4 kHue = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+      #define hue2rgb(h) clamp(abs(fract(vec3(h) + kHue.xyz) * 6.0 - kHue.www) - kHue.xxx, 0.0, 1.0)
+      #define _hls2rgb(x,y,z) z + y * (clamp(abs(mod(x * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0) - 0.5) * (1.0 - abs(2.0 * z - 1.0))
+      #define hsv2rgb(x,y,z) z * mix(kHue.xxx, clamp(abs(fract(vec3(x) + kHue.xyz) * 6.0 - kHue.www) - kHue.xxx, 0.0, 1.0), y)
+      #define hsl2rgb(x,y,z) z * mix(kHue.xxx, clamp(abs(fract(vec3(x) + kHue.xyz) * 6.0 - kHue.www) - kHue.xxx, 0.0, 1.0), (1.0 - abs(2.0 * y - 1.0)))
+      
+      vec3 hue(vec2 uv, float h, float speed){
+        return vec3(0.5) + hue2rgb(h + (dot(uv,vec2(0.5)) + uTime) * speed);  
+      }
+      
+      void main(){
+        vec2 uv = vec2( 0.5 ) - vuv;
+        vec3 color = vec3( 1.0 );
+        float power = pow( uWidth * 0.1, uWidth );
+        float size = uSize * 0.38;
+        
+     #if (COLOR_MODE == 1)
+        vec3 t1 = getColor(uv, 2.), t2 = 1. - getColor(uv, -2.1);
+     #elif (COLOR_MODE == 2)
+        vec3 t1 = .65 - hue(uv, 0.6, 0.005), t2 = .72 - hue(uv.yx, 0.8, 0.05);
+     #elif (COLOR_MODE == 3)
+        vec3 t1 = 1. - vec3(0.1, 0.5, 0.7), t2 = 1. - vec3(0.8, 0.1, 0.8);
+     #else
+        vec3 t1 = 1. - vec3(0.9, 0.5, 0.3), t2 = 1. - vec3(0.8, 0.1, 0.2);
+     #endif
+     
+        float xoff = 0.5 * (0.9 * cos(uTime * 0.6 + 1.1) + 0.4 * cos(uTime * 2.4));
+        for (int i = 0; i < uRingsN; i++) {
+          float frac = float(i) / float(uRingsN);
+          float amp = ringMultiplier(uv,
+                                     0.1 + pow(frac, 3.0) * 0.7,
+                                     pow(1.0 - frac, uWidth) * 0.09 + uTime * 0.0001,
+                                     xoff,
+                                     power);
+          color *= mix(mix(t1, t2, pow(frac, 3.0)), vec3(1.0), pow(amp, 2.5));
+        }
+        color = 1. - color;
+        gl_FragColor = vec4(color, length(color));
+      }
+    </script>
+    <script type="text/javascript" src="main.js"></script>
+  </body>
+</html>
