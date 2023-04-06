@@ -18,7 +18,17 @@ input {
   text-align: center;
   font-size: 72px;
   background-color: transparent;
-  opacity: 0.4;
-  color: #4AF;
+  color: #FFF;
+  -webkit-animation: glow 1s ease-in-out infinite alternate;
+  -moz-animation: glow 1s ease-in-out infinite alternate;
+  animation: glow 1s ease-in-out infinite alternate;
 }
 
+@-webkit-keyframes glow {
+  from {
+    text-shadow: 0 0 2px #fff, 0 0 4px #fff, 0 0 6px #7300e6, 0 0 8px #7300e6, 0 0 10px #7300e6, 0 0 12px #7300e6, 0 0 14px #7300e6;
+  }
+  to {
+    text-shadow: 0 0 4px #fff, 0 0 6px #a64dff, 0 0 8px #a64dff, 0 0 10px #a64dff, 0 0 12px #a64dff, 0 0 14px #a64dff, 0 0 80px #a64dff;
+  }
+}

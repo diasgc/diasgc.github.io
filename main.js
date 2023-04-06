@@ -56,6 +56,7 @@ class NoiseTexture extends THREE.DataTexture {
   renderer.setClearColor(0x000a14);
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 45000 );
+  camera.position.z = 0.25;
   
   const mesh = new TestMesh();
   mesh.position.z = -0.5;
