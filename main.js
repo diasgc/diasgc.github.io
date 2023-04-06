@@ -65,11 +65,15 @@ class NoiseTexture extends THREE.DataTexture {
     let i = document.getElementById(id);
     i.onchange = () => {
       let v = func(i.value);
-      mesh.material.uniforms[id].value = v;
-      renderer.render(scene, camera);
+      if (v === 7527){
+        window.location.href = 'https://diasgc.gitub.io/kanban/';
+      } else {
+        mesh.material.uniforms[id].value = v;
+        renderer.render(scene, camera);
+      }
       console.log("change "+id+" to "+v);
+      }
     }
-  }
   
   varEnv(mesh, "uRingsN", (x) => x );
   
