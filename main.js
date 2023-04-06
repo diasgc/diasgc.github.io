@@ -1,3 +1,5 @@
+const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
 class NoiseTexture extends THREE.DataTexture {
     constructor(sz) {
       let size = 4 * sz * sz;
@@ -65,17 +67,13 @@ class NoiseTexture extends THREE.DataTexture {
     let i = document.getElementById(id);
     i.onchange = () => {
       let v = func(i.value);
-      if (v === 7527){
-        window.location.href = 'https://diasgc.gitub.io/kanban/';
-      } else {
-        mesh.material.uniforms[id].value = v;
-        renderer.render(scene, camera);
-      }
+      mesh.material.uniforms[id].value = v;
+      renderer.render(scene, camera);
       console.log("change "+id+" to "+v);
       }
     }
   
-  varEnv(mesh, "uRingsN", (x) => x );
+  varEnv(mesh, "uRingsN", (x) => clamp(x, 1, 32));
   
   window.addEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
