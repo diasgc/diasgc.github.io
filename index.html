@@ -5,10 +5,13 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abel&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <input style="width: 100%;height: 100%;" type="number" id="uRingsN" value="7" min="1" max="30"></input>
+    <input  type="number" id="uRingsN" value="7" min="1" max="30"></input>
     <script src="https://unpkg.com/three@0.144.0/build/three.min.js"></script>
     <script id="vertex" type="x-shader/x-vertex">
       varying vec2 vuv;
@@ -20,7 +23,7 @@
     </script>
     <script id="fragment" type="x-shader/x-vertex">
       // from https://www.shadertoy.com/view/4dVXDt, modified
-      #define COLOR_MODE 1 // 1-3
+      #define COLOR_MODE 2 // 1-3
       
       varying vec2 vuv;
       
