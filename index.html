@@ -1,0 +1,31 @@
+<html>
+  <header>
+    
+  </header>
+  <body>
+    <div id="frame">
+      <div id="hdr">
+        <p id="title" style="font-size:18px">KANBAN</p>
+        <p id="tname"></p>
+      </div>
+      <div id="qrcode"></div>
+    </div>
+
+    <select onchange="changeColor(event);">
+      <option id="option-1" value="#ff4080">UFA</option>
+      <option id="option-2" value="#0080ff">UFO</option>
+      <option id="option-3" value="#008000">APF</option>
+      <option id="option-4" value="#ffff00">DID</option>
+    </select>
+    
+    <br>
+    
+    <input id="cod" type="text" value="110004155"></input><br>
+    <input id="des" type="text" value="SomeInjectable inj. 199mg"></input><br>
+    <input id="quant" type="text" value="80"></input><br>
+    <input id="notes" type="text" value="MUITO URGENTE">NOTAS</input><br>
+    <button id="button">apply</button>
+    <button id="save">save</button>
+    <button id="print">print</button>
+  </body>
+</html>
