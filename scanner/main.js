@@ -9,7 +9,7 @@ function onScanSuccess(decodedText, decodedResult) {
       let row = table.insertRow(0);
       let c1 = row.insertCell(0);
       let c2 = row.insertCell(1);
-      let c2 = row.insertCell(2);
+      let c3 = row.insertCell(2);
       c1.innerHTML = countResults;
       c2.innerHTML = decodedText.length;
       c3.innerHTML = decodedText;
