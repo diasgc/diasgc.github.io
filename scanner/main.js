@@ -4,9 +4,24 @@ const resultContainer = document.getElementById('qr-reader-results');
 var lastResult, countResults = 0;
 const gs = String.fromCharCode(29);
 
-function tryGTIN(s){
-  var out = s.split(gs);
-  return out.join('\n');
+function tryINF(s){
+  let f = s.split(gs);
+  var out = "";
+  for (ff in f){
+    let s = ff.substring(0,1);
+    if (s == "01"){
+      // 0105600312112634
+      out +="PC: " + ff.substring(2,15) + "\n";
+      out +="VAL: 20" + ff.substring(18,19)+"/"+ff.substring(20,21) + "\n";
+      out +="(f1): " + ff.substring(22) + "\n";
+    } else if (s == "21") {
+      out += "SN: " + ff.substring(2) + "\n";
+    } else if (s == "71") {
+      out += "COD: " + ff.substring(3) + "\n";
+    } else {
+      out += "UNKNOWN " + ff + "\n";
+    }
+  return out;
 }
 
 function onScanSuccess(decodedText, decodedResult) {
