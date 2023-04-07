@@ -1,6 +1,12 @@
 body {
   font-family: sans-serif;
   font-size: 13px;
+  width: auto;
+}
+
+#qr-reader-results {
+  font-size: 18px;
+  margin: 10px;
 }
 
 input,button,select,option {

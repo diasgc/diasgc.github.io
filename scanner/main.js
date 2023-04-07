@@ -1,14 +1,20 @@
-var resultContainer = document.getElementById('qr-reader-results');
+const beep = document.getElementById('beep');
+const resultContainer = document.getElementById('qr-reader-results');
 var lastResult, countResults = 0;
 
 function onScanSuccess(decodedText, decodedResult) {
     if (decodedText !== lastResult) {
-        ++countResults;
-        lastResult = decodedText;
-        // Handle on success condition with the decoded message.
-        console.log(`Scan result ${decodedText}`, decodedResult);
-        resultContainer.innerText = decodedText;
-        html5QrcodeScanner.stop();
+      beep.play();
+      ++countResults;
+      lastResult = decodedText;
+      // Handle on success condition with the decoded message.
+      console.log(`Scan result ${decodedText}`, decodedResult);
+      resultContainer.innerText = decodedText;
+      html5QrcodeScanner.stop().then((ignore) => {
+        // QR Code scanning is stopped.
+      }).catch((err) => {
+        // Stop failed, handle it.
+      });
     }
 }
 
