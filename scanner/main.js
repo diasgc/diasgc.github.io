@@ -23,6 +23,7 @@ function tryINF(s){
     } else {
       out += "UNKNOWN " + ff + "\n";
     }
+  }
   return out;
 }
 
