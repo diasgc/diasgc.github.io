@@ -10,16 +10,16 @@ function tryINF(s){
     return f[0];
   var out = "";
   for (ff in f){
-    let s = ff.substring(0,1);
-    if (s == "01"){
+    let s = ff.substring(1,2);
+    if (s === "01"){
       // 0105600312112634
-      out +="PC: " + ff.substring(2,15) + "\n";
-      out +="VAL: 20" + ff.substring(18,19)+"/"+ff.substring(20,21) + "\n";
-      out +="(f1): " + ff.substring(22) + "\n";
-    } else if (s == "21") {
-      out += "SN: " + ff.substring(2) + "\n";
-    } else if (s == "71") {
-      out += "COD: " + ff.substring(3) + "\n";
+      out +="PC: " + ff.substring(3,16) + "\n";
+      out +="VAL: 20" + ff.substring(19,20)+"/"+ff.substring(21,22) + "\n";
+      out +="(f1): " + ff.substring(23) + "\n";
+    } else if (s === "21") {
+      out += "SN: " + ff.substring(3) + "\n";
+    } else if (s === "71") {
+      out += "COD: " + ff.substring(4) + "\n";
     } else {
       out += "UNKNOWN " + ff + "\n";
     }
