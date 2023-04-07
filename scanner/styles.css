@@ -10,7 +10,7 @@ table, tr {
   font-size: 12px;
   table-layout: fixed;
   max-width: 100%;
-  word-wrap: break;
+  word-wrap: break-word;
   overflow-wrap: break-word;
 }
 #qr-reader-results {
