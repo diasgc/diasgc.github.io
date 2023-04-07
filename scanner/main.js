@@ -41,6 +41,15 @@ function tryINF(str){
 function onScanSuccess(decodedText, decodedResult) {
     if (decodedText !== lastResult) {
       beep.play();
+      /*
+      if (table.rows.length == 0){
+        var thead = document.createElement('thead');
+        table.appendChild(thead);
+        thead.appendChild(document.createElement('th').innerText)
+
+        table.appendChild(thead);
+      }
+      */
       let row = table.insertRow(countResults + 1);
       let fc = decodedText.charCodeAt(0);
       row.insertCell(0).innerText = countResults;
