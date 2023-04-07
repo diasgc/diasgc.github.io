@@ -3,7 +3,6 @@ body {
   font-size: 13px;
 }
 
-
 input,button,select,option {
   padding: 10px;
   margin-left: 20px;
@@ -15,5 +14,3 @@ input,button,select,option {
   border-width: 0.5px;
   border-style: dashed;
 }
-
-
