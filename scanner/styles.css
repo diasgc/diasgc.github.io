@@ -4,10 +4,14 @@ body {
   width: auto;
 }
 
-tr {
+table, tr {
   font-family: monospace;
   font-weight: bold;
   font-size: 12px;
+  table-layout: fixed;
+  max-width: 100%;
+  word-wrap: break;
+  overflow-wrap: break-word;
 }
 #qr-reader-results {
   font-size: 18px;
