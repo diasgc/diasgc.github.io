@@ -10,6 +10,8 @@ function tryINF(s){
     return f[0];
   var out = "";
   for (ff in f){
+    if (ff.length < 2)
+      continue;
     let s = ff.substring(1,2);
     if (s === "01"){
       // 0105600312112634
