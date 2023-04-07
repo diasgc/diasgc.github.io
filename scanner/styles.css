@@ -4,6 +4,11 @@ body {
   width: auto;
 }
 
+tr {
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 12px;
+}
 #qr-reader-results {
   font-size: 18px;
   margin: 10px;
