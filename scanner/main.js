@@ -5,11 +5,11 @@ var lastResult, countResults = 0;
 const gs = String.fromCharCode(29);
 
 function tryINF(s){
-  let f = s.split(gs);
+  var ff, f = s.split(gs);
   if (f.length === 1)
     return f[0];
   var out = "";
-  for (ff in f){
+  for (ff of f){
     if (ff.length < 2)
       continue;
     let s = ff.substring(1,2);
