@@ -33,8 +33,8 @@ function onScanSuccess(decodedText, decodedResult) {
       let fc = decodedText.charCodeAt(0);
       row.insertCell(0).innerHTML = countResults;
       row.insertCell(1).innerHTML = decodedText.length;
-      row.insertCell(2).innerHTML = "0x" + fc.toString(16);
-      row.insertCell(3).innerHTML = tryINF(decodedText);
+      //row.insertCell(2).innerHTML = "0x" + fc.toString(16);
+      row.insertCell(2).innerHTML = tryINF(decodedText);
       ++countResults;
       lastResult = decodedText;
       // Handle on success condition with the decoded message.
