@@ -6,6 +6,8 @@ const gs = String.fromCharCode(29);
 
 function tryINF(s){
   let f = s.split(gs);
+  if (f.length === 1)
+    return f[0];
   var out = "";
   for (ff in f){
     let s = ff.substring(0,1);
@@ -32,7 +34,7 @@ function onScanSuccess(decodedText, decodedResult) {
       row.insertCell(0).innerHTML = countResults;
       row.insertCell(1).innerHTML = decodedText.length;
       row.insertCell(2).innerHTML = "0x" + fc.toString(16);
-      row.insertCell(3).innerHTML = decodedText.replaceAll(gs,'\n');
+      row.insertCell(3).innerHTML = tryINF(decodedText);
       ++countResults;
       lastResult = decodedText;
       // Handle on success condition with the decoded message.
