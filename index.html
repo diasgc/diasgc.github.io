@@ -5,14 +5,19 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
+    <!--google fonts-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Abel&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap" rel="stylesheet">
+    <!--google fonts-->
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
+    
     <input  type="number" id="uRingsN" value="7" min="1" max="30"></input>
+
     <script src="https://unpkg.com/three@0.144.0/build/three.min.js"></script>
+    
     <script id="vertex" type="x-shader/x-vertex">
       varying vec2 vuv;
       void main() {
@@ -21,8 +26,8 @@
         gl_Position.z = gl_Position.w;
       }
     </script>
-    <script id="fragment" type="x-shader/x-vertex">
-      // from https://www.shadertoy.com/view/4dVXDt, modified
+    
+    <script id="fragment" type="x-shader/x-fragment">
       #define COLOR_MODE 3 // 1-3
       
       varying vec2 vuv;

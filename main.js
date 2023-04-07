@@ -28,7 +28,7 @@ class NoiseTexture extends THREE.DataTexture {
           uTime:   { value: 0.0 },
           uRingsN: { value: 7 },
           uWidth:  { value: 0.26 },
-          uSize:   { value: 0.38 }
+          uSize:   { value: 0.28 }
           // Add more
         },
         side: THREE.DoubleSide,
@@ -63,14 +63,17 @@ class NoiseTexture extends THREE.DataTexture {
   scene.add(mesh);
   
   // usage: varEnv(mesh, "id2", (x) => x/100 )
-  
+  function applyUniform(v,id){
+    mesh.material.uniforms[id].value = v;
+    renderer.render(scene, camera);
+    console.log("change "+id+" to "+v);
+  }
+
   function varEnv(mesh, id, func){
     let i = document.getElementById(id);
     i.onchange = () => {
       let v = func(i.value);
-      mesh.material.uniforms[id].value = v;
-      renderer.render(scene, camera);
-      console.log("change "+id+" to "+v);
+      applyUniform(v,id);
       }
     }
   
@@ -87,5 +90,13 @@ class NoiseTexture extends THREE.DataTexture {
     requestAnimationFrame(render);
     mesh.render();
   }
+
+  setInterval(function(){
+    let e = document.getElementById('uRingsN');
+    e.value = e.value * 1 + 1;
+    if (e.value > 32)
+      e.value = 1;
+    applyUniform(e.value,"uRingsN");
+  },10000);
   
   render();

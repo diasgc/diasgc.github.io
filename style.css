@@ -4,19 +4,21 @@ body {
   width: 100%;
   margin: 0;
   overflow: hidden;
-  font-family: 'Abel', sans-serif;
+  font-family: 'Manrope', sans-serif;
   font-size: 13px;
   background-color: transparent;
   z-index: 99;
 }
 input {
   position: absolute;
+  padding: 20px;
   border: none;
   margin: auto;
   width: 100%;
   height: 100%;
   text-align: center;
   font-size: 72px;
+  caret-color: transparent;
   background-color: transparent;
   color: #FFF;
   -webkit-animation: glow 1s ease-in-out infinite alternate;
@@ -24,11 +26,35 @@ input {
   animation: glow 1s ease-in-out infinite alternate;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 @-webkit-keyframes glow {
   from {
-    text-shadow: 0 0 2px #fff, 0 0 4px #fff, 0 0 6px #7300e6, 0 0 8px #7300e6, 0 0 10px #7300e6, 0 0 12px #7300e6, 0 0 14px #7300e6;
+    text-shadow:
+      0 0 2px  #fff,
+      0 0 4px  #fff,
+      0 0 6px  #0073e6,
+      0 0 8px  #0073e6,
+      0 0 10px #0073e6,
+      0 0 12px #0073e6,
+      0 0 14px #0073e6;
   }
   to {
-    text-shadow: 0 0 4px #fff, 0 0 6px #a64dff, 0 0 8px #a64dff, 0 0 10px #a64dff, 0 0 12px #a64dff, 0 0 14px #a64dff, 0 0 80px #a64dff;
+    text-shadow:
+      0 0 4px  #fff,
+      0 0 6px  #4da6ff,
+      0 0 8px  #4da6ff,
+      0 0 10px #4da6ff,
+      0 0 15px #4da6ff,
+      0 0 26px #4da6ff,
+      0 0 32px #a4d6ff;
   }
 }
