@@ -18,8 +18,8 @@ function onScanSuccess(decodedText, decodedResult) {
       // Handle on success condition with the decoded message.
       console.log(`Scan result ${decodedText}`, decodedResult);
       //resultContainer.innerText = decodedText;
-      html5QrcodeScanner.clear();
-      html5QrcodeScanner.pause();
+      //html5QrcodeScanner.clear();
+      //html5QrcodeScanner.pause();
     }
 }
 
