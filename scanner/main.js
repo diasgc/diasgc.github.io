@@ -4,27 +4,24 @@ const resultContainer = document.getElementById('qr-reader-results');
 var lastResult, countResults = 0;
 const gs = String.fromCharCode(29);
 
-function tryINF(s){
-  var ff, f = s.split(gs);
-  if (f.length === 1)
-    return f[0];
-  var out = "";
-  for (ff of f){
-    if (ff.length < 2)
-      continue;
-    let s = ff.substring(1,2);
-    if (s === "01"){
-      // 0105600312112634
-      out +="PC: " + ff.substring(3,16) + "\n";
-      out +="VAL: 20" + ff.substring(19,20)+"/"+ff.substring(21,22) + "\n";
-      out +="(f1): " + ff.substring(23) + "\n";
-    } else if (s === "21") {
-      out += "SN: " + ff.substring(3) + "\n";
-    } else if (s === "71") {
-      out += "COD: " + ff.substring(4) + "\n";
-    } else {
-      out += "UNKNOWN " + ff + "\n";
-    }
+// test with var str = "010560031211263417250731102423821100923530526127145665971";
+function tryINF(str){
+  var a, tag, arr = str.split(gs), out="";
+  for (a of arr){
+      if (a.length < 2)
+          continue;
+      tag = a.slice(0,2);
+      if (tag === "01"){
+        out +="PC: " + a.slice(2,16) + "\n";
+        out +="VAL: 20" + a.substring(18,20)+"/"+a.substring(20,22) + "/" + a.substring(22,24) + "\n";
+        out +="LOT: " + a.substring(26) + "\n";
+      } else if (tag === "21") {
+        out += "SN: " + a.substring(2) + "\n";
+      } else if (tag === "71") {
+        out += "COD: " + a.substring(3) + "\n";
+      } else {
+        out += "UNKNOWN " + a + "\n";
+      }
   }
   return out;
 }
