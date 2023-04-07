@@ -4,15 +4,22 @@ body {
   width: auto;
 }
 
-table, tr {
+table,tr {
   font-family: monospace;
   font-weight: bold;
   font-size: 12px;
+  text-align: start;
   table-layout: fixed;
-  max-width: 100%;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
 }
+
+th {
+  border-bottom: 1px;
+}
+
+tr {
+  border-bottom: 0.5px;
+}
+
 #qr-reader-results {
   font-size: 18px;
   margin: 10px;
