@@ -25,8 +25,13 @@ function exportData(){
     let data = e.split(';');
     entry(doc, root, data[1], data[2], data.length > 3 ? data[3] : null);
   }
-  let str = new XMLSerializer().serializeToString(doc);
-  document.getElementById('xml-export').innerText = str;
+  var str;
+try {
+  var str = new XMLSerializer().serializeToString(doc);
+catch(err){
+  var = err;
+}
+document.getElementById('xml-export').innerText = str;
 }
 
 function XmlPrettify(domRoot, indent){
