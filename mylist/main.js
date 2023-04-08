@@ -1,7 +1,8 @@
 const doc = document.implementation.createDocument("", "", null);
 const root = doc.createElement("NewDataSet");
-
 root.innerHTML = document.getElementById('xs-dom').innerHTML;
+const pi = doc.createProcessingInstruction('xml', 'version="1.0" encoding="UTF-8"');
+doc.insertBefore(pi, doc.firstChild);
 
 function appendChild(doc, parent, name, content){
     let child = doc.createElement(name);
