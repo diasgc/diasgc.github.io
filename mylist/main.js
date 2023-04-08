@@ -27,8 +27,24 @@ function exportData(){
     entry(doc, root, data[1], data[2], data.length > 3 ? data[3] : null);
   }
   doc.appendChild(root);
-  var str = new XMLSerializer().serializeToString(doc);
-  document.getElementById('xml-export').innerHTML = str;
+  let str = new XMLSerializer().serializeToString(doc);
+  let file = new Blob([str],{type: 'text/xml'});
+  let filename = "LC_" + new Date().toISOString().substr(0, 16).replace('T','_') +".est";
+  if (window.navigator.msSaveOrOpenBlob) // IE10+
+    window.navigator.msSaveOrOpenBlob(file, filename);
+  else { // Others
+    let a = document.createElement('a');
+    let url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);  
+    }, 0); 
+  }
+  //document.getElementById('xml-export').innerHTML = str;
 }
 
 function XmlPrettify(domRoot, indent){
@@ -79,11 +95,7 @@ const beep = document.getElementById('beep');
 const table = document.getElementById("table-results");
 const resultContainer = document.getElementById('qr-reader-results');
 var lastResult, countResults = 0;
-var resultList = [
-  "KANBAN;110001234;20;MUITO URGENTE",
-  "KANBAN;110001235;200;AE12345678 PAP123 PROC.12345678",
-  "KANBAN;110001236;100;AE12348 PAP12"
-];
+var resultList = [];
 
 function onScanSuccess(decodedText, decodedResult) {
   if (decodedText.startsWith('KANBAN') && ! resultList.includes(decodedText)){
