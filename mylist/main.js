@@ -29,7 +29,7 @@ function exportData(){
 try {
   var str = new XMLSerializer().serializeToString(doc);
 catch(err){
-  var = err;
+  str = err;
 }
 document.getElementById('xml-export').innerText = str;
 }
