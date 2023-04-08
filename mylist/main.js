@@ -27,7 +27,7 @@ function exportData(){
   }
   var str;
 try {
-  var str = new XMLSerializer().serializeToString(doc);
+  str = new XMLSerializer().serializeToString(doc);
 catch(err){
   str = err;
 }
