@@ -1,8 +1,8 @@
-const doc = document.implementation.createDocument("", "", null);
-const root = doc.createElement("NewDataSet");
-root.innerHTML = document.getElementById('xs-dom').innerHTML;
+const doc = document.implementation.createDocument(null, "NewDataSet", null);
+const root = doc.documentElement;
 const pi = doc.createProcessingInstruction('xml', 'version="1.0" encoding="UTF-8"');
 doc.insertBefore(pi, doc.firstChild);
+root.innerHTML = document.getElementById('xs-dom').innerHTML;
 
 function appendChild(doc, parent, name, content){
     let child = doc.createElement(name);
@@ -28,7 +28,7 @@ function exportData(){
   }
   doc.appendChild(root);
   var str = new XMLSerializer().serializeToString(doc);
-  document.getElementById('xml-export').innerText = str;
+  document.getElementById('xml-export').innerHTML = str;
 }
 
 function XmlPrettify(domRoot, indent){
