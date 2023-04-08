@@ -45,7 +45,7 @@ function exportData(){
     let data = e.split(';');
     entry(doc, root, data[1], data[2], data.length > 2 ? data[3] : null);
   }
-  document.getElementById('xml-export').innerHTML = doc;
+  document.getElementById('xml-export').innerHTML = root.outerHTML;
 }
 
 const beep = document.getElementById('beep');
@@ -62,7 +62,7 @@ function onScanSuccess(decodedText, decodedResult) {
     let row = table.insertRow(countResults + 1);;
     row.insertCell(0).innerText = data[1];
     row.insertCell(1).innerText = data[2];
-    if (data.length > 2)
+    if (data.length > 3)
       row.insertCell(2).innerText = data[3];
     ++countResults;
     console.log(`Scan result ${decodedText}`, decodedResult);
