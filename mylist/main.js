@@ -24,6 +24,7 @@ function exportData(){
   for(var e of resultList){
     let data = e.split(';');
     entry(doc, root, data[1], data[2], data.length > 3 ? data[3] : null);
+  }
   let str = new XMLSerializer().serializeToString(doc);
   document.getElementById('xml-export').innerText = str;
 }
