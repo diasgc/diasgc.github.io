@@ -1,6 +1,6 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "MyList Builder",
+    "short_name": "MyList",
     "icons": [
         {
             "src": "android-chrome-192x192.png",
