@@ -43,9 +43,9 @@ function entry(doc, root, estArtCod, estQtd, note){
 function exportData(){
   for(var e of resultList){
     let data = e.split(';');
-    entry(doc, root, data[1], data[2], data.length > 2 ? data[3] : null);
+    entry(doc, root, data[1], data[2], data.length > 3 ? data[3] : null);
   }
-  document.getElementById('xml-export').innerHTML = root.outerHTML;
+  document.getElementById('xml-export').innerText = root.outerText;
 }
 
 const beep = document.getElementById('beep');
