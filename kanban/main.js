@@ -17,12 +17,20 @@ let qrc = new QRCode(document.getElementById("qrcode"), opts);
 const tab ='\t';   // ????
 const enter='\n';  // ????
 
-function apply(){
+function depecr_apply(){
   document.getElementById("tname").innerText = document.getElementById("des").value;
   var str = cod.value + enter + quant.value;
   if (notes.value)
     str += tab + tab + tab + notes.value;
   str += enter;
+  qrc.clear();
+  qrc.makeCode(str); 
+}
+
+function apply(){
+  var str = "KANBAN;"+cod.value + ";" + quant.value;
+  if (notes.value)
+    str += ";" + notes.value;
   qrc.clear();
   qrc.makeCode(str); 
 }
@@ -49,7 +57,7 @@ document.getElementById("print").onclick = () => {
 
 function changeColor(event){
   var opt = event.target;
-  console.log("selColor:"+opt.value);
+  console.log("selColor:" + opt.value);
   document.getElementById("frame").style.borderColor = opt.value;
   //var sty = window.getComputedStyle(opt);
   //document.getElementById("tname").innerText = opt.value;
