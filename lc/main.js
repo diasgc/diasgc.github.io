@@ -1,10 +1,7 @@
 // https://www.npmjs.com/package/html5-qrcode#pro-mode---if-you-want-to-implement-your-own-user-interface
-let config = {
-  fps: 7,
-  qrbox : {
-    width: 200, height: 200
-  }
-}
+var lastResult;
+
+const beep = document.getElementById('beep');
 
 // This method will trigger user permissions
 Html5Qrcode.getCameras().then(devices => {
@@ -20,11 +17,15 @@ Html5Qrcode.getCameras().then(devices => {
   // handle errv
 });
 
+function onScanSuccess(decodedText, decodedResult) {
+  if (decodedText !== lastResult) {
+    beep.play();
+  }
+}
+
 let html5QrcodeScanner = new Html5QrcodeScanner(
-  "reader",
-  { fps: 10, qrbox: {width: 200, height: 200} },
-  /* verbose= */ false);
-html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+  "qr-reader", { fps: 10, qrbox: 250 });
+html5QrcodeScanner.render(onScanSuccess);
 
 //const html5QrCode = new Html5Qrcode(
 //  "reader", { formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ] });
