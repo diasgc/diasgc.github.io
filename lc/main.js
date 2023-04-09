@@ -1,12 +1,12 @@
 async function playVideoFromCamera() {
     try {
         const constraints = {
-            'video': {
-                'facingMode': 'environment',
-                'width': {'min': 720},
-                'height': {'min': 1280}
+            video: {
+                facingMode: 'environment',
+                width: {min: 720},
+                height: {min: 1280}
                 },
-            'audio': false
+            audio: false
         };
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         var track = stream.getVideoTracks()[0];
