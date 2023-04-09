@@ -16,12 +16,13 @@
     <audio id="beep">
       <source type="audio/mpeg" src="data:audio/mpeg;base64,//tAZAAAAUUV0O0EwAAUQBtPoAgABOibbBgqAACPE23DATAAAsbkYAAQ1oHwAwA4xv/Ge733d3sGECAWmxAghwfBD/kNfh//8u/5QMAAB/5mWgHAAAHh+XD5cH90nlDnIHjx//6avNCkRBKT2cJ8MiDYNwKJBHKCQTXAiLmzHk37//QT9NLyy1D5cH9RkU8zDE4DECmbggGFUKWI4BcOt//+pA39M28lTT//1FQAKKACKAgADOL/+0JEBQABMDZb7xaABCRmy6zjtACEaNlvqQD+EI+bLzQQRkLf+g360v/OF4coJpBAM1ZL////S7EQX/////5ae2GmGAAmAGnc2YnN7WX60f6kh3AOMDOJY2/////zf/////1lsGAD1wAGAYAJ7qV/vW/NdBf9zUDWQ5Yupf///1K+T///xMCN//+24BAIgAAYwEgFayHNtwHRaimCXHYav/////of////+dNqf/HnnAY4EACFLdb/+0JEBYABKjZdakA/hCRGy81AAsKEcNl1qQC+EIsbLjEwCwrdDbV301f0CmAtYqiqfZ//+p/6l+Yf//EA6mf//fcAgAQAFxkmpJtdarpOpK1d1K/0gs4OEvIv/1/////8GIg//vvAI4DABI+qtPS0VUOhf/zIB2EBJ5FL//1P/q8x//+MB5ttXqAYBAC2s7qtXZ9mTZWl/6kyGACyDgiug7f5v/////UaW+/etAA4DABUmi1GrtP/+0JkBwEBOjZb6kAXhCOGy61IAvCEpNlxpo5lEJIbLjUgH8J017oIoXrVv/c1A3kMZE6l//9f/X5t//9B5/x7vwCMAQAb092fZelrWyBf0H/rKAIeGmbN//+/+vzb//8eb/6+0BDkVrtYQyD1eoqF36H60CHgGbDwFV2//+//8q//////Pwf/v7gAcBgBLqetTK7V3ac1L/zEAWxOxql//9b/1t5a//+Kw1V7Aa6UADAIADzs/2X/+0JEBgABHTZbakAvhCKmy4xQAsKEyNlzqYC+EJ4bLbRhyHpUYq+2tX9ArgFwFmSeRf//7//yJ///CzPbYPbAQDANaKDpUF/ZC1a1a/6lkYE0QuMnjV/+T/////wR7+P37gEOAwARFS3W/VXumyXT3/0yMAjQUcnjV2//66//y5//8LBJsNtrQAMAgAPpPavs1Pgekeesm/7OeA9cLeidS///6v/T/////9RbgHGn/AA4CAB/61//+0JEBYABKDZcamAvhCLGy2xQBcKEjNl3poC+EIqbLfEwCwpehTSQUZlip0P8xAFiJ2NUv//2/Uv5T///DENtpZQIJAFvrrtT6Tpm3ep2/TMB1gCKwzBq7f8K/////9Q2gD/+4CDgMAH/73pmRKt9HdD+gZgCSKJJHVL//9v7P5l//8YGPba2zAATAHujVWu7vmjKfs2v+spAAeFAk8i//Af/////BilAQRBQACAEAP9vff97qX//+0JEB4ABNjZY6oAvhCZmy61AAvCEvNmb44xD0JcSMfxglSqozEqAwngMXjiLqSKX///7dQnVP//woqZ/9t9QEOQwANK6CmZN1O9R1Z9Dp3r/plwG1hJjVL///v/5t//8G1Bgbt5cgHhBwAH+p4w75A0PYzpcQP/3MM/6EVyMf//+b/////0Hmru6mZgAqKKAAJ8k+ZRRtpMVMZxZH/wiPHP+pmOdP//6irv//F14mZiZlgFIgAP/+0BEBIABByRgcKAWjCUGy68gAoIEoNlxtIKAEJmbLraaIAIyaKzszRMqHEqX5f+KipXaX9S/8K///yMb3d3bwABRBwAFNIvem6VJl87t/iih2d/2Qxi///0Df////+cVNx//wAgKMAApRFQ/6PMoe2x2X//CRQU5Cm////8pTf////6jy38f7cAICCAAIU0JA0Un1Jrs6mSMV//6juogyJ////6B3/////4NlQSglHrbzvzfW//7QkQEgAEVFtQGKaAAIAK6wMPEAAPoVRo8VIAIhAamK4IwAVfqUbAGcBJFJQTETMgmgxSSNkb0f8j//29QdFtf/r+rXQdbmIIKMydSEjFkJGpqiEhFLu2/Z//yXKEAJAEAQGFlK2Z//HP5S//kiRaVAKAE0QiklZo64K6EAAfgLlAAH//IQi2Y9QpvgrgpgKf/hR2IroL4UdCf0V0UTEFNRTMuMTAwqqqqqqqqqqqqqqqqqqqqqg=="></source>
     </audio>
-    
+
   </head>
   <body>
-    <div id="qr-reader" style="width: 250px; height: 250px"></div>
+    <video id="localVideo" autoplay playsinline controls="false"/>
+    <div id="qr-reader" style="width: 250px; height: 250px" hidden></div>
     <!-- Rounded switch -->
-    <table style="width: auto;">
+    <table style="width: auto;" hidden>
       <tr>
         <td class="toggle-button-cover">
           <div class="button-cover" style="content: 'Camera Facing';">
