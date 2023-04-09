@@ -4,9 +4,7 @@ async function playVideoFromCamera() {
     try {
         const constraints = {
             video: {
-                facingMode: front ? "user" : "environment",
-                width: {min: 720},
-                height: {min: 1280}
+                facingMode: front ? "user" : "environment"
                 },
             audio: false
         };
