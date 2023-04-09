@@ -17,9 +17,14 @@ Html5Qrcode.getCameras().then(devices => {
     // .. use this to start scanning.
   }
 }).catch(err => {
-  // handle err
+  // handle errv
 });
 
+let html5QrcodeScanner = new Html5QrcodeScanner(
+  "reader",
+  { fps: 10, qrbox: {width: 200, height: 200} },
+  /* verbose= */ false);
+html5QrcodeScanner.render(onScanSuccess, onScanFailure);
 
 //const html5QrCode = new Html5Qrcode(
 //  "reader", { formatsToSupport: [ Html5QrcodeSupportedFormats.QR_CODE ] });
