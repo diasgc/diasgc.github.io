@@ -52,11 +52,14 @@ const beep = document.getElementById('beep');
 const table = document.getElementById("table-results");
 const resultContainer = document.getElementById('qr-reader-results');
 var lastResult, countResults = 0;
+var resultList = [];
+/*
 var resultList = [
   "KANBAN;110001234;20;MUITO URGENTE",
   "KANBAN;110001235;200;AE12345678 PAP123 PROC.12345678",
   "KANBAN;110001236;100;AE12348 PAP12"
 ];
+*/
 
 function onScanSuccess(decodedText, decodedResult) {
   if (decodedText.startsWith('KANBAN') && ! resultList.includes(decodedText)){
