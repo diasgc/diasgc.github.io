@@ -3,8 +3,8 @@ async function playVideoFromCamera() {
         const constraints = {
             'video': {
                 'deviceId': 0,
-                'width': {'min': 1280},
-                'height': {'min': 720}
+                'width': {'min': 720},
+                'height': {'min': 1280}
                 }
             }
         };
