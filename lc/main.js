@@ -2,7 +2,7 @@ async function playVideoFromCamera() {
     try {
         const constraints = {
             'video': {
-                'deviceId': 0,
+                'facingMode': 'environment',
                 'width': {'min': 720},
                 'height': {'min': 1280}
                 },
