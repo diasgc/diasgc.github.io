@@ -19,34 +19,21 @@
 
   </head>
   <body>
-    <video id="localVideo" muted autoplay style="width: 250px; height: 250px;"/>
-    <!--<div id="qr-reader" style="width: 250px; height: 250px" hidden></div>-->
-    <!-- Rounded switch -->
-    <input id="cam-zoom" type="range" min="1" max="10" value="2" onchange="applyZoom();">zoom</input>
-    <table style="width: auto;" hidden>
-      <tr>
-        <td class="toggle-button-cover">
-          <div class="button-cover" style="content: 'Camera Facing';">
-            <div class="button r" id="button-1">
-              <input type="checkbox" class="checkbox" />
-              <div class="knobs"></div>
-              <div class="layer"></div>
-            </div>
-          </div>
-        <td>Camera facing settings</td>
-      </tr>
-      <tr>
-        <td class="toggle-button-cover">
-          <div class="button-cover" style="content: 'fps speed';">
-            <div class="button r" id="button-1">
-              <input type="checkbox" class="checkbox" />
-              <div class="knobs"></div>
-              <div class="layer"></div>
-            </div>
-          </div>
-        <td>Camera settings</td>
-      </tr>
+
+    <table>
+      <tr><td>
+        <video id="localVideo" muted autoplay style="width: 250px; height: 250px;"></video>
+      </td></tr>
+      <tr><td>
+        <input id="front" type="range" min="0" max="1" value="0">facing</input>
+      </td></tr>
+      <tr><td>
+        <input id="cam-zoom" type="range" min="1" max="10" value="2" onchange="applyZoom();">zoom</input>
+      </td></tr>
     </table>
+    
+    
+    
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script type="text/javascript" src="main.js"></script>
   </body>
