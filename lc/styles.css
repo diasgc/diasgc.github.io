@@ -20,10 +20,11 @@ input[type=range]{
 
 input[type=range]::-webkit-slider-runnable-track {
   width: 300px;
-  height: 22px;
+  height: 28px;
   background: #555;
   border: none;
-  border-radius: 10px;
+  border-radius: 14px;
+  padding-right: 14px;
 }
 
 input[type=range]::-webkit-slider-thumb {
@@ -33,7 +34,8 @@ input[type=range]::-webkit-slider-thumb {
   width: 20px;
   border-radius: 50%;
   background: goldenrod;
-  margin-top: 1px;
+  margin-top: 4px;
+  margin-left: 8px;
 }
 
 input[type=range]:focus {
@@ -41,5 +43,5 @@ input[type=range]:focus {
 }
 
 input[type=range]:focus::-webkit-slider-runnable-track {
-  background: #776;
+  background: #665;
 }
