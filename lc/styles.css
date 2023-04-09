@@ -14,6 +14,12 @@ body {
   -webkit-backface-visibility: hidden;
 }
 
+#qr-reader {
+  font-size: 14px;
+  color: #dddddd;
+  background-color: transparent;
+}
+
 td {
   padding: 10px;
   font-size: 18px;
@@ -23,12 +29,12 @@ td {
   display: table-cell;
   position: relative;
   width: 200px;
-  height: 140px;
+  height: 80px;
   box-sizing: border-box;
 }
 
 .button-cover {
-  height: 100px;
+  height: 49px;
   margin: 20px;
 }
 
