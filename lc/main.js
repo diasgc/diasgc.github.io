@@ -1,4 +1,7 @@
 const front = false;
+const eZoom = document.getElementById('cam-zoom');
+var track;
+var caps;
 
 async function playVideoFromCamera() {
     try {
@@ -9,22 +12,18 @@ async function playVideoFromCamera() {
             audio: false
         };
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        var track = stream.getVideoTracks()[0];
-        var caps = track.getCapabilities();
-        if (caps.zoom)
-            track.applyConstraints({
-                advanced: [
-                    {
-                        zoom: 8
-                    }
-                ]
-            });
-
+        track = stream.getVideoTracks()[0];
+        caps = track.getCapabilities();
         const videoElement = document.querySelector('video#localVideo');
         videoElement.srcObject = stream;
     } catch(error) {
         console.error('Error opening video camera.', error);
     }
+}
+
+function applyZoom(){
+    if (caps.zoom)
+        track.applyConstraints({ advanced: [{ zoom: eZoom.value * 1 }] });
 }
 
 playVideoFromCamera();
