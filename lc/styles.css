@@ -5,7 +5,7 @@ body {
   margin: 2rem;
   font-size: 26px;
   width: auto;
-  background-color: #4a4a4a;
+  background-color: #445;
 }
 
 table, tr, td {
@@ -21,7 +21,7 @@ input[type=range]{
 input[type=range]::-webkit-slider-runnable-track {
   width: 300px;
   height: 28px;
-  background: #555;
+  background: #556;
   border: none;
   border-radius: 14px;
   padding-right: 14px;
@@ -33,7 +33,7 @@ input[type=range]::-webkit-slider-thumb {
   height: 20px;
   width: 20px;
   border-radius: 50%;
-  background: goldenrod;
+  background: rgb(32, 216, 150);
   margin-top: 4px;
   margin-left: 8px;
 }
@@ -43,5 +43,5 @@ input[type=range]:focus {
 }
 
 input[type=range]:focus::-webkit-slider-runnable-track {
-  background: #665;
+  background: #667;
 }
