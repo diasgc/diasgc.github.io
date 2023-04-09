@@ -15,7 +15,7 @@ async function playVideoFromCamera() {
             track.applyConstraints({
                 advanced: [
                     {
-                        zoom: 4
+                        zoom: 8
                     }
                 ]
             });
