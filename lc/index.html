@@ -10,36 +10,22 @@
 
   </head>
   <body>
-    <div style="width: 100%" id="reader"></div>
-    <div id="app-cover">
-      <div class="row">
-        <div class="toggle-button-cover">
-          <div class="button-cover">
-            <div class="button r" id="button-1">
-              <input type="checkbox" class="checkbox" />
-              <div class="knobs"></div>
-              <div class="layer"></div>
-            </div>
-          </div>
-          <div class="toggle-button-cover">
-            <div class="button-cover">
-              <div class="button r" id="button-2">
-                <input type="checkbox" class="checkbox" />
-                <div class="knobs"></div>
-                <div class="layer"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div id="reader" style="width: 250px; height: 250px">
+      <div id="reader-opts">
+        <label class="switch">
+          <input type="checkbox">
+          <span class="slider"></span>
+        </label>
+        
+        <!-- Rounded switch -->
+        <label class="switch">
+          <input type="checkbox">
+          <span class="slider round"></span>
+        </label>
       </div>
     </div>
-    <!-- * This code uses the Microsoft Office Excel Javascript object model to programmatically insert the
-	 * Excel Web App into a div with id=myExcelDiv. The full API is documented at
-	 * https://msdn.microsoft.com/pt-BR/library/hh315812.aspx. There you can find out how to programmatically get
-	 * values from your Excel file and how to use the rest of the object model. -->
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script type="text/javascript" src="main.js"></script>
-
   </body>
 </html>
 
