@@ -12,6 +12,11 @@ table, tr, td {
   width: 100%;
 }
 
+.opt-desc {
+  font-size: 14px;
+  font-weight: 800;
+}
+
 input[type=range]{
   -webkit-appearance: none;
   background-color: transparent;
