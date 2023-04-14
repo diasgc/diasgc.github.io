@@ -57,7 +57,6 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   aspect-ratio: 1/ 1;
   display: flex;
   align-items: center;
-  padding: 5%;
   width: 100%;
   padding-bottom: 100%;
   object-fit: contain;
@@ -68,6 +67,6 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   top: 0;
   left: 0;
   z-index: 100;
-  background-color: rgba(255,255,255,0.5);
+  background-color: rgba(0,0,255,0.5);
   -webkit-mask-image: radial-gradient(100px at 50% 50% , transparent 95%, black 100%)
 }
