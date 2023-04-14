@@ -8,14 +8,9 @@ body {
   background-color: #445;
 }
 
-table, tr {
+table, tr, td {
   width: 100%;
   border-bottom: 1px rgba(255,255,255,0.25);
-}
-
-.opt-desc {
-  font-size: 14px;
-  font-weight: 800;
 }
 
 input[type=range]{
@@ -50,6 +45,11 @@ input[type=range]:focus {
 
 input[type=range]:focus::-webkit-slider-runnable-track {
   background: #667;
+}
+
+.opt-desc {
+  font-size: 14px;
+  font-weight: 800;
 }
 
 .vid-content {
