@@ -66,6 +66,7 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 .vid-overlay {
   top: 0;
   left: 0;
+  position: absolute;
   width: 250px;
   height: 250px;
   z-index: 100;
