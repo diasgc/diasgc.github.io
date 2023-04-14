@@ -39,6 +39,7 @@ function configScreen(caps){
                 let i = document.createElement('input');
                 let ds1 = document.createElement('div');
                 ds1.className = 'opt-desc';
+                ds1.innerHTML = cc.toFixed(2);
                 i.id = "cam-" + cap;
                 i.type = 'range';
                 i.min = cc.min;
@@ -49,7 +50,7 @@ function configScreen(caps){
                 i.onchange = () => {
                     var constraint = {};
                     constraint[i.cap] = i.value;
-                    ds1.innerText = i.value;
+                    ds1.innerText = (i.value*1).toFixed(2);
                     track.applyConstraints({ advanced: [constraint] });
                 };
                 c.appendChild(i);
