@@ -56,14 +56,25 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   padding-bottom: 100%;
 }
 
+.vid-content1 {
+  height: 0;
+
+  &:after, &:before {
+      content: '';
+
+      display: block;
+      padding-bottom: calc(50% - 0.5em);
+  }
+}
 .vid-content {
   aspect-ratio: 1/ 1;
   display: flex;
   align-items: center;
-  width: 300px;
-  padding-bottom: 300px;
+  width: 250px;
+  padding-bottom: 250px;
   object-fit: contain;
   object-position: center;
+  background: #a97;
 }
 
 .vid-overlay {
