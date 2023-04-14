@@ -54,34 +54,19 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 #cam-table {
   width: 100%;
   padding-bottom: 100%;
-}
-
-#localVideo {
-  width: 250px;
-  height: 250px;
+  background: #311;
 }
 
 .vid-content {
-  height: 0;
-}
-
-.vid-content ::after {
-  content: '';
-  display: block;
-  padding-bottom: calc(50% - 0.5em);
-}
-
-.vid-content ::before {
-  content: '';
-  display: block;
-  padding-bottom: calc(50% - 0.5em);
+  background: #400;
+  width: 250px;
+  height: 250px;
 }
 
 .vid-overlay {
   top: 0;
   left: 0;
   z-index: 100;
-  position: absolute;
-  background-color: rgba(0,0,255,0.5);
-  -webkit-mask-image: radial-gradient(100px at 50% 50% , transparent 95%, black 100%)
+  background-color: rgba(0,255,255,0.5);
+  -webkit-mask-image: radial-gradient(100px at 50% 50% , transparent 95%, white 100%)
 }
