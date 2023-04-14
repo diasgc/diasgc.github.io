@@ -74,7 +74,7 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   width: 250px;
   height: 250px;
   z-index: 100;
+  -o-filter: blur(15px);
   filter: blur(15px);
-  object-fit: cover;
   -webkit-mask-image: radial-gradient(100px at 50% 50% , transparent 95%, white 100%)
 }
