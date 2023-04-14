@@ -60,6 +60,7 @@ function configScreen(caps){
                 let ds2 = document.createElement('div');
                 ds2.className = 'opt-desc';
                 ds2.innerHTML = cap;
+                d2.appendChild(ds2);
                 r.appendChild(d1);
                 r.appendChild(d2);
                 table.appendChild(r);
