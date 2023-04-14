@@ -34,12 +34,18 @@ function configScreen(caps){
         if (caps.hasOwnProperty(cap)){
             let cc = caps[cap];
             if (Object.hasOwn(cc,'min') && Object.hasOwn(cc,'max') && Object.hasOwn(cc,'step')){
+                let rh = document.createElement('tr');
+                let h = rh.insertCell();
+                h.className = 'opt-desc'; 
+                h.innerHTML = cap;
+                rh.appendChild(h);
+                table.appendChild(rh);
                 let r = document.createElement('tr');
                 let c = r.insertCell();
-                let i = document.createElement('input');
                 let ds1 = document.createElement('div');
                 ds1.className = 'opt-desc';
                 ds1.innerHTML = "......";
+                let i = document.createElement('input');
                 i.id = "cam-" + cap;
                 i.type = 'range';
                 i.min = cc.min;
@@ -57,13 +63,7 @@ function configScreen(caps){
                 r.appendChild(c);
                 let d1 = r.insertCell();
                 d1.appendChild(ds1);
-                let d2 = r.insertCell();
-                let ds2 = document.createElement('div');
-                ds2.className = 'opt-desc';
-                ds2.innerHTML = cap;
-                d2.appendChild(ds2);
                 r.appendChild(d1);
-                r.appendChild(d2);
                 table.appendChild(r);
             }
         }
