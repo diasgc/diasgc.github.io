@@ -3,13 +3,6 @@ body {
   color: #dddddd;
   font-weight: 300;
   font-size: 26px;
-  background-color: #445;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-justify-content: center;
-  justify-content: center;
 }
 
 tr {
