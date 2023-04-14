@@ -3,12 +3,17 @@ body {
   color: #dddddd;
   font-weight: 300;
   font-size: 26px;
+  background-color: #445;
+}
+
+table { 
+    border-collapse: collapse; 
 }
 
 tr {
   object-fit: contain;
   object-position: center;
-  border-bottom: 1px rgba(255,255,255,0.25);
+  border-bottom: 1pt solid rgba(255,255,255,0.25);
 }
 
 input[type=range]{
