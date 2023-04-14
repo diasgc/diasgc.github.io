@@ -70,6 +70,7 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   top: 0;
   left: 0;
   z-index: 100;
+  position: absolute;
   background-color: rgba(0,0,255,0.5);
   -webkit-mask-image: radial-gradient(100px at 50% 50% , transparent 95%, black 100%)
 }
