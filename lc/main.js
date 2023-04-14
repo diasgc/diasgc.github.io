@@ -29,7 +29,7 @@ function configScreen(caps){
     for (var cap in caps){
         if (caps.hasOwnProperty(cap)){
             let cc = caps[cap];
-            if (Object.hasOwn(cc,'min') && Object.hasOwn(cc,'max') && Object.hasOwn(cc,'step')){
+            if (Object.hasOwn(cc,'min') && Object.hasOwn(cc,'max')){
                 let rh = document.createElement('tr');
                 let h = rh.insertCell();
                 h.className = 'opt-desc'; 
@@ -45,7 +45,8 @@ function configScreen(caps){
                 i.type = 'range';
                 i.min = cc.min;
                 i.max = cc.max;
-                i.step = cc.step;
+                if (Object.hasOwn(cc,'step'))
+                    i.step = cc.step;
                 i.cap = cap;
                 i.onchange = () => {
                     var constraint = {};
