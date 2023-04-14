@@ -39,7 +39,7 @@ function configScreen(caps){
                 let i = document.createElement('input');
                 let ds1 = document.createElement('div');
                 ds1.className = 'opt-desc';
-                ds1.innerHTML = cc.toFixed(2);
+                ds1.innerHTML = "......";
                 i.id = "cam-" + cap;
                 i.type = 'range';
                 i.min = cc.min;
