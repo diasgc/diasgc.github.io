@@ -64,12 +64,13 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 }
 
 .vid-overlay {
-  top: 0;
-  left: 0;
+  top: 8px;
+  left: 8px;
   position: absolute;
   width: 250px;
   height: 250px;
   z-index: 100;
-  background-color: rgba(0,255,255,0.5);
+  background-color: rgba(255, 255, 255, 0.5);
+  filter: blur(3px);
   -webkit-mask-image: radial-gradient(100px at 50% 50% , transparent 95%, white 100%)
 }
