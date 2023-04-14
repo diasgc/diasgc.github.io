@@ -91,7 +91,7 @@ table {
 tr {
   object-fit: contain;
   object-position: center;
-  border-bottom: 1pt solid rgba(255,255,255,0.25);
+  border-bottom: 1pt solid rgba(255,255,255,0.125);
 }
 
 input[type=range]{
@@ -136,11 +136,9 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 #cam-table {
   width: 100%;
   padding-bottom: 100%;
-  background: #311;
 }
 
 .vid-content {
-  background: #400;
   width: 250px;
   height: 250px;
 }
@@ -152,7 +150,6 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   width: 250px;
   height: 250px;
   z-index: 100;
-  -o-filter: blur(15px);
   filter: blur(15px);
   object-fit: cover;
   -webkit-mask-image: radial-gradient(100px at 50% 50% , transparent 95%, white 100%)
