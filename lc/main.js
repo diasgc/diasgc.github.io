@@ -24,7 +24,44 @@ async function playVideoFromCamera() {
     }
 }
 
+function createInput(key, caps){
+    let cc = caps[key];
+    let d1 = document.createElement('div');
+    d1.className = "opt-desc";
+    d1.innerHTML = key;
+    let d2 = document.createElement('div');
+    d2.className = "opt-desc";
+    d2.innerHTML = "(default)";
+    let i = document.createElement('input');
+    i.type = "range";
+    if (cc.hasOwn('min')) i.min = cc.min;
+    if (cc.hasOwn('max')) i.max = cc.max;
+    if (cc.hasOwn('step')) i.step = cc.step;
+    i.cap = key;
+    i.onchange = () => {
+        var constraint = {};
+        constraint[i.cap] = i.value;
+        d2.innerText = (i.value * 1).toFixed(2);
+        track.applyConstraints({ advanced: [constraint] });
+    }
+    d1.appendChild(i);
+    d1.appendChild(d2);
+    return d1;
+}
+
+
 function configScreen(caps){
+    let table = document.getElementById('cam-table');
+    for (var cap in caps){
+        let rh = document.createElement('tr');
+        let td = rh.insertCell();
+        td.appendChild(createInput(cap,caps));
+        rh.appendChild(rh);
+        table.appendChild(rh);
+    }
+}
+
+function configScreen2(caps){
     let table = document.getElementById('cam-table');
     for (var cap in caps){
         if (caps.hasOwnProperty(cap)){
