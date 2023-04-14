@@ -141,6 +141,7 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 .vid-content {
   width: 250px;
   height: 250px;
+  border: 1pt solid rgba(0,0,0,0.1)
 }
 
 .vid-overlay {
