@@ -9,7 +9,8 @@ body {
 }
 
 tr {
-  width: 100%;
+  object-fit: contain;
+  object-position: center;
   border-bottom: 1px rgba(255,255,255,0.25);
 }
 
