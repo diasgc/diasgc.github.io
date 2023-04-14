@@ -36,7 +36,6 @@ function configScreen(caps){
                 rh.appendChild(h);
                 table.appendChild(rh);
                 let r = document.createElement('tr');
-                let c = r.insertCell();
                 let ds1 = document.createElement('div');
                 ds1.className = 'opt-desc';
                 ds1.innerHTML = "......";
@@ -47,13 +46,13 @@ function configScreen(caps){
                 i.max = cc.max;
                 i.step = cc.step;
                 i.cap = cap;
-                i.innerText = JSON.stringify(cap);
                 i.onchange = () => {
                     var constraint = {};
                     constraint[i.cap] = i.value;
-                    ds1.innerText = (i.value*1).toFixed(2);
+                    ds1.innerText = (i.value * 1).toFixed(2);
                     track.applyConstraints({ advanced: [constraint] });
                 };
+                let c = r.insertCell();
                 c.appendChild(i);
                 r.appendChild(c);
                 let d1 = r.insertCell();
