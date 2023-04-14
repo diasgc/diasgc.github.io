@@ -65,6 +65,84 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   background: #400;
   width: 250px;
   height: 250px;
+  overflow: none;
+}
+
+.vid-overlay {
+  top: 8px;
+  left: 8px;
+  position: absolute;
+  width: inherit;
+  height: inherit;
+  z-index: 100;
+  -o-filter: blur(15px);
+  body {
+  font-family: 'Open Sans', sans-serif;
+  color: #dddddd;
+  font-weight: 300;
+  font-size: 26px;
+  background-color: #445;
+}
+
+table { 
+    border-collapse: collapse; 
+}
+
+tr {
+  object-fit: contain;
+  object-position: center;
+  border-bottom: 1pt solid rgba(255,255,255,0.25);
+}
+
+input[type=range]{
+  -webkit-appearance: none;
+  background-color: transparent;
+  margin: 20px;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  width: 300px;
+  height: 28px;
+  background: #556;
+  border: none;
+  border-radius: 14px;
+  padding-right: 14px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: rgb(32, 216, 150);
+  margin-top: 4px;
+  margin-left: 8px;
+}
+
+input[type=range]:focus {
+  outline: none;
+}
+
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #667;
+}
+
+.opt-desc {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+#cam-table {
+  width: 100%;
+  padding-bottom: 100%;
+  background: #311;
+}
+
+.vid-content {
+  background: #400;
+  width: 250px;
+  height: 250px;
 }
 
 .vid-overlay {
@@ -74,7 +152,8 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   width: 250px;
   height: 250px;
   z-index: 100;
-  background-color: rgba(255, 255, 255, 0.5);
-  filter: blur(3px);
+  -o-filter: blur(15px);
+  filter: blur(15px);
+  object-fit: cover;
   -webkit-mask-image: radial-gradient(100px at 50% 50% , transparent 95%, white 100%)
 }
