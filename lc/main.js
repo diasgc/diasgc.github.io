@@ -37,6 +37,8 @@ function configScreen(caps){
                 let r = document.createElement('tr');
                 let c = r.insertCell();
                 let i = document.createElement('input');
+                let ds1 = document.createElement('div');
+                ds1.className = 'opt-desc';
                 i.id = "cam-" + cap;
                 i.type = 'range';
                 i.min = cc.min;
@@ -47,15 +49,19 @@ function configScreen(caps){
                 i.onchange = () => {
                     var constraint = {};
                     constraint[i.cap] = i.value;
+                    ds1.innerText = i.value;
                     track.applyConstraints({ advanced: [constraint] });
                 };
                 c.appendChild(i);
                 r.appendChild(c);
-                let dsc = r.insertCell();
-                let ds = document.createElement('div');
-                ds.className = 'opt-desc';
-                ds.innerHTML = cap;
-                r.appendChild(ds);
+                let d1 = r.insertCell();
+                d1.appendChild(ds1);
+                let d2 = r.insertCell();
+                let ds2 = document.createElement('div');
+                ds2.className = 'opt-desc';
+                ds2.innerHTML = cap;
+                r.appendChild(d1);
+                r.appendChild(d2);
                 table.appendChild(r);
             }
         }
