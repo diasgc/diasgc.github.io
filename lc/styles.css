@@ -11,10 +11,13 @@ table {
     border-collapse: collapse; 
 }
 
+th {
+  border-top: 1pt solid rgba(255,255,255,0.125);
+}
+
 tr {
   object-fit: contain;
-  object-position: center;
-  border-bottom: 1pt solid rgba(255,255,255,0.125);
+  object-position: center;  
 }
 
 input[type=range]{

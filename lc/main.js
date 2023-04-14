@@ -50,7 +50,7 @@ function createInput(key, caps){
 }
 
 
-function configScreen(caps){
+function configScreen2(caps){
     let table = document.getElementById('cam-table');
     for (var cap in caps){
         let rh = document.createElement('tr');
@@ -61,7 +61,7 @@ function configScreen(caps){
     }
 }
 
-function configScreen2(caps){
+function configScreen(caps){
     let table = document.getElementById('cam-table');
     for (var cap in caps){
         if (caps.hasOwnProperty(cap)){
