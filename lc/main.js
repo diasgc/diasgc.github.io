@@ -23,11 +23,6 @@ async function playVideoFromCamera() {
     }
 }
 
-function applyZoom(){
-    if (caps.zoom)
-        track.applyConstraints({ advanced: [{ zoom: eZoom.value * 1 }] });
-}
-
 function appendCap(table, cap, cc, onChange){
     let rh = document.createElement('tr');
     let h = rh.insertCell();

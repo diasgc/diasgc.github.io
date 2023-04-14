@@ -56,25 +56,21 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   padding-bottom: 100%;
 }
 
-.vid-content1 {
-  height: 0;
-
-  &:after, &:before {
-      content: '';
-
-      display: block;
-      padding-bottom: calc(50% - 0.5em);
-  }
-}
 .vid-content {
-  aspect-ratio: 1/ 1;
-  display: flex;
-  align-items: center;
+  height: 0;
   width: 250px;
-  padding-bottom: 250px;
-  object-fit: contain;
-  object-position: center;
-  background: #a97;
+}
+
+.vid-content ::after {
+  content: '';
+  display: block;
+  padding-bottom: calc(50% - 0.5em);
+}
+
+.vid-content ::before {
+  content: '';
+  display: block;
+  padding-bottom: calc(50% - 0.5em);
 }
 
 .vid-overlay {
