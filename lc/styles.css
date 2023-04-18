@@ -54,6 +54,7 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   background: #667;
 }
 
+<<<<<<< HEAD
 .opt-desc {
   font-size: 14px;
   font-weight: 800;
@@ -80,3 +81,8 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   filter: blur(15px);
   -webkit-mask-image: radial-gradient(100px at 50% 50% , transparent 95%, white 100%)
 }
+=======
+.localVideo {
+  box-decoration-break: slice 20px;
+}
+>>>>>>> aa75c98 (capec)

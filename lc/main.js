@@ -85,6 +85,15 @@ function configScreen(caps){
                 if (Object.hasOwn(cc,'step'))
                     i.step = cc.step;
                 i.cap = cap;
+<<<<<<< HEAD
+=======
+                i.innerText = JSON.stringify(cap);
+                if (cap.includes('ontrast')){
+                    i.value = cc.max;
+                } else if (cap.includes('xposure')){
+                    i.value = cc.max;
+                }
+>>>>>>> aa75c98 (capec)
                 i.onchange = () => {
                     var constraint = {};
                     constraint[i.cap] = i.value;
