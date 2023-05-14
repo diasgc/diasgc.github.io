@@ -47,6 +47,12 @@ function handler(e) {
 
 let pointDegree;
 
+// Har Habait
+const point = {
+    lat: 31.777493,
+    lng: 35.235799
+};
+
 function locationHandler(position) {
     const { latitude, longitude } = position.coords;
     pointDegree = calcDegreeToPoint(latitude, longitude);
@@ -57,11 +63,6 @@ function locationHandler(position) {
 }
 
 function calcDegreeToPoint(latitude, longitude) {
-    // Qibla geolocation
-    const point = {
-    lat: 21.422487,
-    lng: 39.826206
-    };
 
     const phiK = (point.lat * Math.PI) / 180.0;
     const lambdaK = (point.lng * Math.PI) / 180.0;
@@ -75,6 +76,19 @@ function calcDegreeToPoint(latitude, longitude) {
         Math.sin(phi) * Math.cos(lambdaK - lambda)
     );
     return Math.round(psi);
+    /*
+    const d2r = Math.PI / 180.0;
+    const dlng = (point.lng - longitude) * d2r;
+    const lat1 = latitude * d2r;
+    const lat2 = point.lat * d2r;
+    var y = Math.sin(dlng) * Math.cos(lat2);
+    var x = Math.cos(lat1) * Math.sin(lat2) -
+            Math.sin(lat1) * Math.cos(lat2) * Math.cos(dlng);
+    var brng = Math.atan2(y, x).toDeg();
+    return brng;
+    */
 }
 
+
 init();
+
