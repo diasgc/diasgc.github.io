@@ -1,10 +1,9 @@
 body {
-  font-family: 'Open Sans', sans-serif;
-  color: #dddddd;
-  font-weight: 300;
-  font-size: 26px;
-  background-color: #445;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
+
 .compass {
   position: relative;
   width: 320px;
@@ -30,14 +29,14 @@ body {
 .compass > .compass-circle,
 .compass > .my-point {
   position: absolute;
-  width: 80%;
-  height: 80%;
+  width: 90%;
+  height: 90%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   transition: transform 0.1s ease-out;
-  background: url(https://cdn.onlinewebfonts.com/svg/img_467023.png) center
-    no-repeat;
+  background: url(https://purepng.com/public/uploads/large/purepng.com-compasscompassinstrumentnavigationcardinal-directionspointsdiagram-1701527842316onq7x.png)
+    center no-repeat;
   background-size: contain;
 }
 
@@ -48,4 +47,8 @@ body {
   background: rgb(8, 223, 69);
   border-radius: 50%;
   transition: opacity 0.5s ease-out;
+}
+
+.start-btn {
+  margin-bottom: auto;
 }
