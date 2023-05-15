@@ -1,7 +1,7 @@
 const compassCircle = document.querySelector(".compass-circle");
 const myPoint = document.querySelector(".my-point");
 const startBtn = document.querySelector(".start-btn");
-const caption = document.querySelector(".start-btn");
+const caption = document.querySelector(".place-name");
 const delta = 15;
 const isIOS =
     navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
