@@ -77,6 +77,7 @@ function locHandler(position) {
     const { latitude, longitude } = position.coords;
     places.forEach(function(place){
         place.brg = ( bearing(latitude, longitude, place.lat, place.lng) + 360 % 360 );
+        // console.log(JSON.stringify(places,null,2));
     });
 }
 
@@ -88,7 +89,7 @@ function bearing(currLat, currLong, targLat, targLong) {
     var y = Math.sin(dlng) * Math.cos(lat2);
     var x = Math.cos(lat1) * Math.sin(lat2) -
             Math.sin(lat1) * Math.cos(lat2) * Math.cos(dlng);
-    var brng = Math.atan2(y, x).toDeg();
+    var brng = Math.atan2(y, x) / d2r;
     return Math.round(brng);
 }
 
