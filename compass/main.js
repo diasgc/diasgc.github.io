@@ -58,26 +58,27 @@ function handler(e) {
     compassCircle.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
 
     var deg = compass.toFixed(2) + "º ";
-    var place = "-"
+    var p = "-"
     
     places.forEach( function(place) {
-        if ( (place.brg < Math.abs(compass) && place.brg + delta > Math.abs(compass)) ||
-            place.brg > Math.abs(compass + delta) || place.brg < Math.abs(compass)) {
+        let c = Math.abs(compass);
+        if ( (place.brg < c && place.brg + delta > c) ||
+            place.brg > Math.abs(compass + delta) || place.brg < c) {
                 myPoint.style.opacity = 0;
-            } else if (place.brg) {
-                place = place + " " + place.name;
+            } else {
+                p = p + " " + place.name;
                 myPoint.style.opacity = 1;
             }
     });
     capDeg.innerHTML = deg;
-    capPlace.innerHTML = place;
+    capPlace.innerHTML = p;
 }
 
 function locHandler(position) {
     const { latitude, longitude } = position.coords;
     places.forEach(function(place){
         place.brg = ( bearing(latitude, longitude, place.lat, place.lng) + 360 % 360 );
-        // console.log(JSON.stringify(places,null,2));
+        console.log(JSON.stringify(places,null,2));
     });
 }
 
