@@ -60,8 +60,8 @@ function handler(e) {
     compassCircle.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
 
     var deg = compass.toFixed(1) + "º";
-    var p = "";
-    const delta = 2;
+    var plist = [];
+    const delta = 5;
     var matches = 0;
     
     places.forEach( function(place) {
@@ -69,16 +69,15 @@ function handler(e) {
         if ( ! ((place.brg < c && place.brg + delta > c) ||
                 place.brg > Math.abs(compass + delta) || 
                 place.brg < c)) {
-            p = p + " * " + place.name;
+            plist.push(place.name);
             matches += 1;
-            
         }
     });
     let opac = matches > 0 ? 1 : 0;
     capPlace.style.opacity = opac;
     myPoint.style.opacity = opac;    
     capDeg.innerHTML = deg;
-    capPlace.innerHTML = " " + p + " ";
+    capPlace.innerHTML = plist.join(" * ");
 }
 
 function locHandler(position) {

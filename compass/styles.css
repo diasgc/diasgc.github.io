@@ -65,6 +65,7 @@ body {
 
 .caption > .place-name {
   opacity: 1;
+  height: 32px;
   font-weight: 800;
   font-size: 16px;
   transition: opacity 1.0s ease-out;
