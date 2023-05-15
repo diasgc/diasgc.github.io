@@ -1,4 +1,4 @@
-"use strict";
+//"use strict";
 
 const compassCircle = document.querySelector(".compass-circle");
 const myPoint = document.querySelector(".my-point");
