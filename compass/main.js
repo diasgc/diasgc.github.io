@@ -1,3 +1,5 @@
+"use strict";
+
 const compassCircle = document.querySelector(".compass-circle");
 const myPoint = document.querySelector(".my-point");
 const startBtn = document.querySelector(".start-btn");
@@ -8,7 +10,7 @@ const isIOS =
     navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
     navigator.userAgent.match(/AppleWebKit/);
 
-const useVib = navigator.vibrate(50);
+const useVib = window.navigator.vibrate;
 
 function init() {
     
@@ -69,7 +71,7 @@ function handler(e) {
     compassCircle.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
 
     if ( useVib && compass % 10 === 0)
-        navigator.vibrate(2);
+        window.navigator.vibrate(2);
 
     var deg = compass.toFixed(1) + "º";
     var plist = [];
@@ -85,11 +87,21 @@ function handler(e) {
             matches += 1;
         }
     });
-    let opac = matches > 0 ? 1 : 0;
-    capPlace.style.opacity = opac;
-    myPoint.style.opacity = opac;    
+
     capDeg.innerHTML = deg;
-    capPlace.innerHTML = plist.join(" * ");
+    
+    if (matches > 0){
+        capPlace.style.opacity = 1;
+        myPoint.style.opacity = 1;
+        capPlace.innerHTML = plist.join(" * ");
+        if (useVib)
+            window.navigator.vibrate(10);
+    } else {
+        capPlace.style.opacity = 0;
+        myPoint.style.opacity = 0;
+        capPlace.innerHTML = "";
+    }
+    
 }
 
 function locHandler(position) {
