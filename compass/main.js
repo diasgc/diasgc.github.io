@@ -8,7 +8,10 @@ const isIOS =
     navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
     navigator.userAgent.match(/AppleWebKit/);
 
+const useVib = navigator.vibrate(50);
+
 function init() {
+    
     navigator.permissions.query({ name: 'geolocation' })
         .then((props) => {
             startBtn.hidden = props.state === "granted";
@@ -65,9 +68,9 @@ function handler(e) {
     compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
     compassCircle.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
 
-    if ( compass % 10 === 0)
+    if ( useVib && compass % 10 === 0)
         navigator.vibrate(2);
-    
+
     var deg = compass.toFixed(1) + "º";
     var plist = [];
     const delta = 5;
