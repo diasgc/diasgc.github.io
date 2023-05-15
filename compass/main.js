@@ -50,7 +50,10 @@ const places = [
     { name: "London", lat:  51.509865, lng: -0.118092, brg: 0 },
     { name: "New York", lat: 40.730610, lng: -73.935242, brg: 0 },
     { name: "Berlin", lat: 52.5200066, lng: 13.404954, brg: 0 },
-    { name: "Moscow", lat: 55.751244, lng: 37.618423, brg: 0 }
+    { name: "Moscow", lat: 55.751244, lng: 37.618423, brg: 0 },
+    { name: "Berlin", lat: 52.5200066, lng: 13.404954, brg: 0 },
+    { name: "Buenos Aires", lat: -34.603722, lng: -58.381592, brg: 0 },
+    { name: "Cape Town", lat: -33.918861, lng: 18.423300, brg: 0 }
 ]
 
 function handler(e) {
