@@ -59,7 +59,7 @@ function handler(e) {
 
     var deg = compass.toFixed(1) + "º ";
     var p = "";
-    const delta = 15;
+    const delta = 5;
     
     places.forEach( function(place) {
         let c = Math.abs(compass);
@@ -71,6 +71,7 @@ function handler(e) {
                 myPoint.style.opacity = 1;
             }
     });
+    capPlace.style.opacity = p.length > 0 ? 1 : 0;
     capDeg.innerHTML = deg;
     capPlace.innerHTML = p;
 }
