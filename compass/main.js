@@ -60,10 +60,14 @@ const places = [
     { name: "Cape Town",    lat:-33.918861, lng: 18.423300,  brg: 0 }
 ]
 
+
 function handler(e) {
     compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
     compassCircle.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
 
+    if ( compass % 10 === 0)
+        navigator.vibrate(2);
+    
     var deg = compass.toFixed(1) + "º";
     var plist = [];
     const delta = 5;
