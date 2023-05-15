@@ -57,7 +57,7 @@ function handler(e) {
     compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
     compassCircle.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
 
-    var deg = compass.toFixed(1) + "º ";
+    var deg = compass.toFixed(1) + "º";
     var p = "";
     const delta = 5;
     
@@ -73,7 +73,7 @@ function handler(e) {
     });
     capPlace.style.opacity = p.length > 0 ? 1 : 0;
     capDeg.innerHTML = deg;
-    capPlace.innerHTML = p;
+    capPlace.innerHTML = " " + p + " ";
 }
 
 function locHandler(position) {

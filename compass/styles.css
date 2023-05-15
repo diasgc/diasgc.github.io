@@ -52,8 +52,10 @@ body {
 .degrees {
   opacity: 1;
   width: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 100;
   text-align: center;
-  font-size: 28px;
+  font-size: 32px;
 }
 
 .place-name {
@@ -61,7 +63,7 @@ body {
   width: 100%;
   margin-bottom: 20px;
   font-family: Arial, Helvetica, sans-serif;
-  font-weight: 100;
+  font-weight: 800;
   text-align: center;
   font-size: 18px;
   transition: opacity 1.0s ease-out;
