@@ -58,7 +58,7 @@ function handler(e) {
     compassCircle.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
 
     var deg = compass.toFixed(2) + "º ";
-    var place = ""
+    var place = "-"
     
     places.forEach( function(place) {
         if ( (place.brg < Math.abs(compass) && place.brg + delta > Math.abs(compass)) ||

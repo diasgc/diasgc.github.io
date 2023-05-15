@@ -52,7 +52,6 @@ body {
 .degrees {
   opacity: 1;
   width: 100%;
-  margin-bottom: 20px;
   text-align: center;
   font-size: 28px;
 }
@@ -60,7 +59,7 @@ body {
 .place-name {
   opacity: 1;
   width: 100%;
-  margin-bottom: 5px;
+  margin-bottom: 20px;
   text-align: center;
   font-size: 16px;
 }
