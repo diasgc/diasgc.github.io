@@ -40,19 +40,19 @@ const point = {
 };
 
 const places = [
-    { name: "Har Habait", lat: 31.777493, lng: 35.235799, brg: 0 },
-    { name: "Mecca", lat: 21.4266400, lng: 39.8256300, brg: 0 },
-    { name: "Rome", lat: 41.902782, lng: 12.496366, brg: 0 },
-    { name: "Tokyo", lat: 35.652832, lng: 139.839478, brg: 0 },
-    { name: "Seoul", lat: 37.532600, lng: 127.024612, brg: 0 },
-    { name: "Benjing", lat: 39.916668, lng: 116.383331, brg: 0 },
-    { name: "Paris", lat: 48.864716, lng: 2.349014, brg: 0 },
-    { name: "London", lat:  51.509865, lng: -0.118092, brg: 0 },
-    { name: "New York", lat: 40.730610, lng: -73.935242, brg: 0 },
-    { name: "Berlin", lat: 52.5200066, lng: 13.404954, brg: 0 },
-    { name: "Moscow", lat: 55.751244, lng: 37.618423, brg: 0 },
-    { name: "Buenos Aires", lat: -34.603722, lng: -58.381592, brg: 0 },
-    { name: "Cape Town", lat: -33.918861, lng: 18.423300, brg: 0 }
+    { name: "Har Habait",   lat: 31.777493, lng: 35.235799,  brg: 0 },
+    { name: "Mecca",        lat: 21.426640, lng: 39.825630,  brg: 0 },
+    { name: "Rome",         lat: 41.902782, lng: 12.496366,  brg: 0 },
+    { name: "Tokyo",        lat: 35.652832, lng: 139.839478, brg: 0 },
+    { name: "Seoul",        lat: 37.532600, lng: 127.024612, brg: 0 },
+    { name: "Benjing",      lat: 39.916668, lng: 116.383331, brg: 0 },
+    { name: "Paris",        lat: 48.864716, lng: 2.349014,   brg: 0 },
+    { name: "London",       lat: 51.509865, lng:-0.118092,   brg: 0 },
+    { name: "New York",     lat: 40.730610, lng:-73.935242,  brg: 0 },
+    { name: "Berlin",       lat: 52.520007, lng: 13.404954,  brg: 0 },
+    { name: "Moscow",       lat: 55.751244, lng: 37.618423,  brg: 0 },
+    { name: "Buenos Aires", lat:-34.60372,  lng:-58.381592,  brg: 0 },
+    { name: "Cape Town",    lat:-33.918861, lng: 18.423300,  brg: 0 }
 ]
 
 function handler(e) {
