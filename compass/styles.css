@@ -49,22 +49,23 @@ body {
   transition: opacity 0.5s ease-out;
 }
 
-.degrees {
-  opacity: 1;
-  width: 100%;
+.caption {
   font-family: Arial, Helvetica, sans-serif;
-  font-weight: 100;
   text-align: center;
+  width: 100%;
+  height: 40px;
+  margin-bottom: 20px;
+}
+
+.caption > .degrees {
+  opacity: 1;
+  font-weight: 100;
   font-size: 32px;
 }
 
-.place-name {
+.caption > .place-name {
   opacity: 1;
-  width: 100%;
-  margin-bottom: 20px;
-  font-family: Arial, Helvetica, sans-serif;
   font-weight: 800;
-  text-align: center;
   font-size: 16px;
   transition: opacity 1.0s ease-out;
 }
