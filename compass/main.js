@@ -1,7 +1,8 @@
 const compassCircle = document.querySelector(".compass-circle");
 const myPoint = document.querySelector(".my-point");
 const startBtn = document.querySelector(".start-btn");
-const caption = document.querySelector(".place-name");
+const capDeg = document.querySelector(".degrees");
+const capPlace = document.querySelector(".place-name");
 const delta = 15;
 const isIOS =
     navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
@@ -56,18 +57,20 @@ function handler(e) {
     compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
     compassCircle.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
 
-    let out = compass.toFixed(2) + "º ";
+    var deg = compass.toFixed(2) + "º ";
+    var place = ""
     
-    places.forEach(function(place){
+    places.forEach( function(place) {
         if ( (place.brg < Math.abs(compass) && place.brg + delta > Math.abs(compass)) ||
             place.brg > Math.abs(compass + delta) || place.brg < Math.abs(compass)) {
                 myPoint.style.opacity = 0;
             } else if (place.brg) {
-                out += place.name + " ";
+                place = place + " " + place.name;
                 myPoint.style.opacity = 1;
             }
     });
-    caption.innerHTML = out;
+    capDeg.innerHTML = deg;
+    capPlace.innerHTML = place;
 }
 
 function locHandler(position) {
