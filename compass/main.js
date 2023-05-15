@@ -9,6 +9,10 @@ const isIOS =
     navigator.userAgent.match(/AppleWebKit/);
 
 function init() {
+    navigator.permissions.query({ name: 'geolocation' })
+        .then((props) => {
+            startBtn.hidden = props.state === "granted";
+        });
     startBtn.addEventListener("click", startCompass);
     navigator.geolocation.getCurrentPosition(locHandler);
 
@@ -23,6 +27,7 @@ function startCompass() {
         .then((response) => {
         if (response === "granted") {
             window.addEventListener("deviceorientation", handler, true);
+            startBtn.hidden = true;
         } else {
             alert("has to be allowed!");
         }
