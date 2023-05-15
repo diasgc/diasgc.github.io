@@ -41,9 +41,9 @@ body {
 }
 
 .compass > .my-point {
-  opacity: 0;
-  width: 20%;
-  height: 20%;
+  opacity: 1;
+  width: 10%;
+  height: 10%;
   background: rgb(8, 223, 69);
   border-radius: 50%;
   transition: opacity 0.5s ease-out;
@@ -65,7 +65,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   font-weight: 800;
   text-align: center;
-  font-size: 18px;
+  font-size: 16px;
   transition: opacity 1.0s ease-out;
 }
 
