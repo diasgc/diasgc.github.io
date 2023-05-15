@@ -57,8 +57,9 @@ function handler(e) {
     compass = e.webkitCompassHeading || Math.abs(e.alpha - 360);
     compassCircle.style.transform = `translate(-50%, -50%) rotate(${-compass}deg)`;
 
-    var deg = compass.toFixed(2) + "º ";
-    var p = "-"
+    var deg = compass.toFixed(1) + "º ";
+    var p = "";
+    const delta = 15;
     
     places.forEach( function(place) {
         let c = Math.abs(compass);
