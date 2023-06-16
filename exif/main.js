@@ -28,7 +28,7 @@ function addCardArray(parent, key, val){
     k.className="cardKey";
     k.innerHTML=key;
     let v=document.createElement('p');
-    v.className="cardBinArray";
+    v.className="cardHexArray";
     var hex = val.map( (x) => {
         return x.toString(16);
     }).join(' ');
