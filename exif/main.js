@@ -32,9 +32,7 @@ function populate(parent, obj){
     });
 }
 
-document.getElementById('picker').addEventListener('change', async e => {
-    let file = e.target.files[0];
-    let res = document.getElementById('result');
+function parseImage(parent, file){
     EXIF.getData(file, function () {
         let meta = EXIF.getAllTags(this);
         // keep it simple, stupid!
@@ -44,4 +42,11 @@ document.getElementById('picker').addEventListener('change', async e => {
         addHeader(res,"Main")
         populate(res, m2);
       });
+}
+
+document.getElementById('picker').addEventListener('change', async e => {
+    let file = e.target.files[0];
+    let res = document.getElementById('result');
+    if (file.type.match("^image/"))
+        parseImage(res, file);
 })
