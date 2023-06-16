@@ -1,6 +1,13 @@
-const res=document.getElementById('result');
 
-function addCard(parent, key,val){
+
+function addHeader(parent, head){
+    let k=document.createElement('p');
+    k.className="cardHead";
+    k.innerHTML=head;
+    parent.appendChild(k);
+}
+
+function addCard(parent, key, val){
     let item=document.createElement('div');
     item.className="card";
     let k=document.createElement('p');
@@ -16,18 +23,25 @@ function addCard(parent, key,val){
 
 function populate(parent, obj){
     Object.entries(obj).forEach(([key, value]) => {
-        if (value instanceof Object)
+        if (value instanceof Object){
+            addHeader(parent, key);
             populate(parent, value);
-        else
+        } else {
             addCard(parent,key,value);
+        }
     });
 }
 
 document.getElementById('picker').addEventListener('change', async e => {
     let file = e.target.files[0];
+    let res = document.getElementById('result');
     EXIF.getData(file, function () {
         let meta = EXIF.getAllTags(this);
-        res.innerHTML=JSON.stringify(meta, null, "\t")
-        populate(res,meta);
+        // keep it simple, stupid!
+        let m1 = JSON.stringify(meta);
+        let m2 = JSON.parse(m1);
+        res.innerHTML=m1;
+        addHeader(res,"Main")
+        populate(res, m2);
       });
 })
