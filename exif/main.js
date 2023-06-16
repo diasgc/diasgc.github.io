@@ -27,7 +27,7 @@ document.getElementById('picker').addEventListener('change', async e => {
     let file = e.target.files[0];
     EXIF.getData(file, function () {
         let meta = EXIF.getAllTags(this);
+        res.innerHTML=JSON.stringify(meta, null, "\t")
         populate(res,meta);
-        //res.innerHTML=JSON.stringify(meta, null, "\t")
       });
 })
