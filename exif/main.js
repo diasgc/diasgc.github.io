@@ -40,9 +40,10 @@ function addCardArray(parent, key, val){
 
 function populate(parent, obj){
     Object.entries(obj).forEach(([key, value]) => {
-        if (key.match("MakerNote")){
+        let t = Object.prototype.toString.call(value);
+        if (t === '[object Array]'){
             addCardArray(parent, key, value);
-        } else if (value instanceof Object){
+        } else if (t === '[object Object]'){
             addHeader(parent, key);
             populate(parent, value);
         } else {
