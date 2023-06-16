@@ -30,10 +30,7 @@ function addCardArray(parent, key, val){
     let v=document.createElement('p');
     v.className="cardBinArray";
     var hex = val.map( (x) => {
-        x = x + 0xFFFF + 1; 
-        x = x.toString(16);
-        x = ("0000"+x).substr(-4);
-        return x;
+        return x.toString(16);
     }).join(' ');
     v.innerHTML = hex;
     item.appendChild(v);
