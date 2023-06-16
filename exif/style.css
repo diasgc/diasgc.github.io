@@ -16,13 +16,13 @@ div {
 
 .cardKey {
   padding: 2px 16px;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 800;
 }
 
 .cardValue {
   padding: 2px 16px;
-  font-size: 12px;
-  font-weight: 200;
+  font-size: 24px;
+  font-weight: 100;
 }
 
