@@ -21,9 +21,31 @@ function addCard(parent, key, val){
     parent.appendChild(item);
 }
 
+function addCardArray(parent, key, val){
+    let item=document.createElement('div');
+    item.className="card";
+    let k=document.createElement('p');
+    k.className="cardKey";
+    k.innerHTML=key;
+    let v=document.createElement('p');
+    v.className="cardBinArray";
+    var hex = val.map( (x) => {
+        x = x + 0xFFFF + 1; 
+        x = x.toString(16);
+        x = ("0000"+x).substr(-4);
+        return x;
+    }).join(' ');
+    v.innerHTML = hex;
+    item.appendChild(v);
+    item.appendChild(k);
+    parent.appendChild(item);
+}
+
 function populate(parent, obj){
     Object.entries(obj).forEach(([key, value]) => {
-        if (value instanceof Object){
+        if (key == "MarkerNote"){
+            addCardArray(parent, key, value);
+        } else if (value instanceof Object){
             addHeader(parent, key);
             populate(parent, value);
         } else {
