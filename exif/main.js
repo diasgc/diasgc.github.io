@@ -32,7 +32,7 @@ function populate(parent, obj){
     });
 }
 
-function parseImage(parent, file){
+function parseImage(res, file){
     EXIF.getData(file, function () {
         let meta = EXIF.getAllTags(this);
         // keep it simple, stupid!
