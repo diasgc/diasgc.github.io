@@ -30,7 +30,7 @@ function addCardArray(parent, key, val){
     let v=document.createElement('p');
     v.className="cardHexArray";
     var hex = val.map( (x) => {
-        return key.match("GPS*") ? x.padStart(3,' ') : x.toString(16).padStart(2,'0');
+        return key.match("GPS*") ? x.toString().padStart(3,' ') : x.toString(16).padStart(2,'0');
     }).join(' ');
     v.innerHTML = hex;
     item.appendChild(v);
