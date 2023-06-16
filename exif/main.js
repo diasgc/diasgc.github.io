@@ -40,7 +40,7 @@ function addCardArray(parent, key, val){
 
 function populate(parent, obj){
     Object.entries(obj).forEach(([key, value]) => {
-        if (key == "MarkerNote"){
+        if (key.match("MarkerNote")){
             addCardArray(parent, key, value);
         } else if (value instanceof Object){
             addHeader(parent, key);
