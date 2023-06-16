@@ -10,10 +10,10 @@ function addHeader(parent, head){
 function addCard(parent, key, val){
     let item=document.createElement('div');
     item.className="card";
-    let k=document.createElement('p');
+    let k=document.createElement('div');
     k.className="cardKey";
     k.innerHTML=key;
-    let v=document.createElement('p');
+    let v=document.createElement('div');
     v.className="cardValue";
     v.innerHTML=val;
     item.appendChild(v);
@@ -24,10 +24,10 @@ function addCard(parent, key, val){
 function addCardArray(parent, key, val){
     let item=document.createElement('div');
     item.className="card";
-    let k=document.createElement('p');
+    let k=document.createElement('div');
     k.className="cardKey";
     k.innerHTML=key;
-    let v=document.createElement('p');
+    let v=document.createElement('div');
     v.className="cardHexArray";
     var hex = val.map( (x) => {
         return key.match("GPS*") ? x.toString().padStart(3,' ') : x.toString(16).padStart(2,'0');
