@@ -10,8 +10,9 @@ div {
 
 .card {
   border-radius: 25px;
-  border: 2px solid rgba(0,0,0,0.2);
-  padding: 20px;
+  border: 2px solid rgba(0.5, 0.5, 0.5, 0.2);
+  padding: 8px;
+  margin: 12px;
   transition: 0.3s;
 }
 
@@ -23,14 +24,14 @@ div {
 }
 
 .cardKey {
-  padding: 2px 16px;
-  font-size: 12px;
+  padding: 0px 16px;
+  font-size: 14px;
   font-weight: 800;
 }
 
 .cardValue {
-  padding: 2px 2px 16px;
-  font-size: 24px;
+  padding: 0px 16px;
+  font-size: 18px;
   font-weight: 100;
 }
 
