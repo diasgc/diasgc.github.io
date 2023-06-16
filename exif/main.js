@@ -32,7 +32,7 @@ function addCardArray(parent, key, val){
     var hex = val.map( (x) => {
         return key.match("GPS*") ? x.toString().padStart(3,' ') : x.toString(16).padStart(2,'0');
     }).join(' ');
-    //v.innerHTML = hex;
+    v.innerHTML = hex;
     item.appendChild(v);
     item.appendChild(k);
     parent.appendChild(item);
@@ -58,7 +58,7 @@ function parseImage(res, file){
         // keep it simple, stupid!
         let m1 = JSON.stringify(meta);
         let m2 = JSON.parse(m1);
-        res.innerHTML=m1;
+        //res.innerHTML=m1;
         addHeader(res,"Main")
         populate(res, m2);
       });
