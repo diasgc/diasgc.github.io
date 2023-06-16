@@ -57,7 +57,7 @@ function parseImage(res, file){
         // keep it simple, stupid!
         let m1 = JSON.stringify(meta);
         let m2 = JSON.parse(m1);
-        //res.innerHTML=m1;
+        res.innerHTML=m1;
         addHeader(res,"Main")
         populate(res, m2);
       });
