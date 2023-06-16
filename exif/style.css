@@ -26,7 +26,6 @@ body {
 .card {
   border-radius: 20px;
   border: 1px solid var(--border-fg);
-  padding: 0px;
   margin: 12px 2px;
   transition: 0.3s;
 }
@@ -45,7 +44,7 @@ body {
 }
 
 .cardValue {
-  padding: 2px 16px;
+  padding: 0px 16px;
   font-size: 16px;
   font-weight: 100;
 }
