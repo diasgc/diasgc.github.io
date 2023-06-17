@@ -41,6 +41,7 @@ body {
   padding: 2px 16px 8px 16px;
   font-size: 12px;
   font-weight: 800;
+  opacity: 0.75;
 }
 
 .cardValue {
