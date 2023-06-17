@@ -38,6 +38,16 @@ function addCardArrayString(parent, key, val){
     parent.appendChild(item);
 }
 
+function testArrayAscii(arr){
+    var c;
+    for (var i=0; i < arr.length; i++){
+        c = arr[i];
+        if (!Number.isInteger(c) && ( c < 32 || c > 126 ))
+            return false;
+    }
+    return true;
+}
+
 function addCardArray(parent, key, val){
     let item=document.createElement('div');
     item.className="card";
@@ -45,13 +55,14 @@ function addCardArray(parent, key, val){
     k.className="cardKey";
     k.innerHTML=key;
     let v=document.createElement('div');
-    var isAscii=false;
+    v.className = "cardHexArray";
+    let isAscii = testArrayAscii(val);
     /*val.forEach( char => {
         var code = char.charCodeAt(0);
         isAscii = (code > 31 && code < 127) & isAscii;
     })
     */
-    v.className = "cardHexArray";
+    
     var hex = val.map( (x) => {
         if (key.match("GPS*"))
             return x.toString().padStart(3,' ');
