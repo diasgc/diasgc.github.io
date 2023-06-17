@@ -45,13 +45,20 @@ function addCardArray(parent, key, val){
     k.className="cardKey";
     k.innerHTML=key;
     let v=document.createElement('div');
-    v.className="cardHexArray";
+    var isAscii=false;
+    val.forEach( char => {
+        var code = char.charCodeAt(0);
+        isAscii = (code < 32 || code > 126) & isAscii;
+    })
+    v.className = "cardHexArray";
     var hex = val.map( (x) => {
-        return key.match("GPS*") ? x.toString().padStart(3,' ') : x.toString(16).padStart(2,'0');
-    }).join(' ');
+        if (key.match("GPS*"))
+            return x.toString().padStart(3,' ');
+        return isAscii ? String.fromCharCode(x) : x.toString(16).padStart(2,'0');
+    }).join(isAscii ? '' : ' ');
     v.innerHTML = hex;
     item.appendChild(v);
-    item.appendChild(k);
+    item.appendChild(k);+
     parent.appendChild(item);
 }
 
