@@ -46,10 +46,11 @@ function addCardArray(parent, key, val){
     k.innerHTML=key;
     let v=document.createElement('div');
     var isAscii=false;
-    val.forEach( char => {
+    /*val.forEach( char => {
         var code = char.charCodeAt(0);
         isAscii = (code > 31 && code < 127) & isAscii;
     })
+    */
     v.className = "cardHexArray";
     var hex = val.map( (x) => {
         if (key.match("GPS*"))
