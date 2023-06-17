@@ -48,7 +48,7 @@ function addCardArray(parent, key, val){
     var isAscii=false;
     val.forEach( char => {
         var code = char.charCodeAt(0);
-        isAscii = (code < 32 || code > 126) & isAscii;
+        isAscii = (code > 31 && code < 127) & isAscii;
     })
     v.className = "cardHexArray";
     var hex = val.map( (x) => {
