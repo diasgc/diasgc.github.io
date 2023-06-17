@@ -30,6 +30,7 @@ function testArrayAscii(arr){
     }
     return true;
 }
+
 const exifTags = {
     MakerNote: (val) => {return val.map((c) => {return String.fromCharCode(c)}).join('')}
 }
@@ -42,11 +43,14 @@ function addCardArray(parent, key, val){
         return isAscii ? String.fromCharCode(x) : x.toString(16).padStart(2,'0');
     }).join(isAscii ? '' : ' ');
     if (isAscii){
-        let jval = JSON.parse(sval);
-        if (typeof jval == "object"){
-            addHeader(parent, key);
-            populate(parent, jval);
-        }
+        try {
+            let jval = JSON.parse(sval);
+            if (typeof jval == "object"){
+                addHeader(parent, key);
+                populate(parent, jval);
+                return;
+            }
+        } catch {}
     }
     let item=document.createElement('div');
     item.className="card";
@@ -82,7 +86,7 @@ function parseImage(res, file){
         let m1 = JSON.stringify(meta);
         let m2 = JSON.parse(m1);
         //res.innerHTML=m1;
-        addHeader(res,"Main")
+        addHeader(res,file.name)
         populate(res, m2);
       });
 }
