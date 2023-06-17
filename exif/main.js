@@ -21,6 +21,23 @@ function addCard(parent, key, val){
     parent.appendChild(item);
 }
 
+function addCardArrayString(parent, key, val){
+    let item=document.createElement('div');
+    item.className="card";
+    let k=document.createElement('div');
+    k.className="cardKey";
+    k.innerHTML=key;
+    let v=document.createElement('div');
+    v.className="cardValue";
+    var hex = val.map( (x) => {
+        return String.fromCharCode(x);
+    }).join('');
+    v.innerHTML = hex;
+    item.appendChild(v);
+    item.appendChild(k);
+    parent.appendChild(item);
+}
+
 function addCardArray(parent, key, val){
     let item=document.createElement('div');
     item.className="card";
