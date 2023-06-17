@@ -44,8 +44,8 @@ function addCardArray(parent, key, val){
     if (isAscii){
         let jval = JSON.parse(sval);
         if (typeof jval == "object"){
+            addHeader(parent, key);
             populate(parent, jval);
-            return;
         }
     }
     let item=document.createElement('div');
