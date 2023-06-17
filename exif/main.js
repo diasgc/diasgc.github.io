@@ -21,23 +21,6 @@ function addCard(parent, key, val){
     parent.appendChild(item);
 }
 
-function addCardArrayString(parent, key, val){
-    let item=document.createElement('div');
-    item.className="card";
-    let k=document.createElement('div');
-    k.className="cardKey";
-    k.innerHTML=key;
-    let v=document.createElement('div');
-    v.className="cardValue";
-    var hex = val.map( (x) => {
-        return String.fromCharCode(x);
-    }).join('');
-    v.innerHTML = hex;
-    item.appendChild(v);
-    item.appendChild(k);
-    parent.appendChild(item);
-}
-
 function testArrayAscii(arr){
     var c;
     for (var i=0; i < arr.length; i++){
@@ -47,28 +30,32 @@ function testArrayAscii(arr){
     }
     return true;
 }
+const exifTags = {
+    MakerNote: (val) => {return val.map((c) => {return String.fromCharCode(c)}).join('')}
+}
 
 function addCardArray(parent, key, val){
+    let isAscii = testArrayAscii(val);
+    var sval = val.map( (x) => {
+        if (key.match("GPS*"))
+            return x.toString().padStart(3,' ');
+        return isAscii ? String.fromCharCode(x) : x.toString(16).padStart(2,'0');
+    }).join(isAscii ? '' : ' ');
+    if (isAscii){
+        let jval = JSON.parse(sval);
+        if (typeof jval == "object"){
+            populate(parent, jval);
+            return;
+        }
+    }
     let item=document.createElement('div');
     item.className="card";
     let k=document.createElement('div');
     k.className="cardKey";
     k.innerHTML=key;
     let v=document.createElement('div');
-    v.className = "cardHexArray";
-    let isAscii = testArrayAscii(val);
-    /*val.forEach( char => {
-        var code = char.charCodeAt(0);
-        isAscii = (code > 31 && code < 127) & isAscii;
-    })
-    */
-    
-    var hex = val.map( (x) => {
-        if (key.match("GPS*"))
-            return x.toString().padStart(3,' ');
-        return isAscii ? String.fromCharCode(x) : x.toString(16).padStart(2,'0');
-    }).join(isAscii ? '' : ' ');
-    v.innerHTML = hex;
+    v.className = "cardHexArray"
+    v.innerHTML = sval;
     item.appendChild(v);
     item.appendChild(k);+
     parent.appendChild(item);
