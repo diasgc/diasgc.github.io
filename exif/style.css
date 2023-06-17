@@ -3,7 +3,7 @@
   :root {
       --body-bg: #ECEFF1;
       --body-color: #263238;
-      --border-fg: rgba(0,0,0,0.125);
+      --border-fg: rgba(0,0,0,0.0625);
   }
 }
 
@@ -12,7 +12,7 @@
   :root {
       --body-bg: #263238;
       --body-color: #ECEFF1;
-      --border-fg: rgba(255,255,255,0.125);
+      --border-fg: rgba(255,255,255,0.0625);
   }
 }
 
@@ -24,7 +24,7 @@ body {
 }
 
 .card {
-  border-radius: 16px;
+  border-radius: 12px;
   border: 1px solid var(--border-fg);
   margin: 12px 2px;
   transition: 0.3s;

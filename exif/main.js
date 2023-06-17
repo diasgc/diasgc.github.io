@@ -32,7 +32,10 @@ function testArrayAscii(arr){
 }
 
 const exifTags = {
-    MakerNote: (val) => {return val.map((c) => {return String.fromCharCode(c)}).join('')}
+    gpsUnits: ['º','\'','\"', ' ', ' '],
+    MakerNote:    (val) => {return val.map((c) => {return String.fromCharCode(c)}).join('')},
+    GPSLatitude:  (val) => {return val.forEach((value, index) => value + this.gpsUnits[index]).join('')},
+    GPSLongitude: (val) => {return val.forEach((value, index) => value + this.gpsUnits[index]).join('')}
 }
 
 function addCardArray(parent, key, val){
