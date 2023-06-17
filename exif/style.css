@@ -23,6 +23,13 @@ body {
     font-size: 13px;
 }
 
+.label-picker {
+  border: 1px solid var(--border-fg);
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
 .card {
   border-radius: 12px;
   border: 1px solid var(--border-fg);
