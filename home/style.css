@@ -27,26 +27,38 @@ div {
   box-sizing: border-box;
 }
 
+h2 {
+  font-size: 20px;
+  padding: 12px 8px;
+}
+
+h3 {
+  font-size: 16px;
+  padding: 12px 8px;
+}
+
 img {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
+  padding: 4px;
 }
 
 .icon-wrap {
   display: inline-block;
-  background: white;
+  background: rgba(255,255,255,0.875);
   border-radius: 48px;
   text-align: center;
   padding: 8px;
-  width: 72px;
-  height: 72px;
+  margin: 8px;
+  width: 64px;
+  height: 64px;
 }
 
 .icon-wrap > div {
   position: absolute;
   /*background-color: red;*/
-  height: 50px;
-  width: 58px;
+  height: 52px;
+  width: 52px;
   display: block;
   border-radius: 30px;
   background: rgb(247, 247, 247);
@@ -58,32 +70,5 @@ img {
 
 .icon-wrap > p {
   font-size: 12px;
-  text-align: center;
-}
-
-.icon-wrap > div:before {
-  content: '';
-  display: inline-block;
-  position: relative;
-  z-index: -1;
-  height: 59px;
-  width: 48px;
-  left: 5px;
-  top: -5px;
-  background-color: lightgray;
-  border-radius: 30px/15px;
-  background: rgb(247, 247, 247);
-  background: -moz-linear-gradient(top, rgba(247, 247, 247, 1) 0%, rgba(229, 229, 229, 1) 100%);
-  background: -webkit-linear-gradient(top, rgba(247, 247, 247, 1) 0%, rgba(229, 229, 229, 1) 100%);
-  background: linear-gradient(to bottom, rgba(247, 247, 247, 1) 0%, rgba(229, 229, 229, 1) 100%);
-  filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#f7f7f7', endColorstr='#e5e5e5', GradientType=0);
-}
-
-.icon-wrap > div > img {
-  position: relative;
-  width: 48px;
-  height: 48px;
-  top: -60px;
-  left: 9px;
-  transition: 0.5s;
+  padding-top: 8px;
 }
