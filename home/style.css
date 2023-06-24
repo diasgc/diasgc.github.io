@@ -34,7 +34,9 @@ img {
 
 .icon-wrap {
   display: inline-block;
-  background: blueviolet;
+  background: white;
+  border-radius: 48px;
+  text-align: center;
   padding: 8px;
   width: 72px;
   height: 72px;
@@ -42,7 +44,7 @@ img {
 
 .icon-wrap > div {
   position: absolute;
-  background-color: red;
+  /*background-color: red;*/
   height: 50px;
   width: 58px;
   display: block;
