@@ -66,7 +66,7 @@ class NoiseTexture extends THREE.DataTexture {
   function applyUniform(v,id){
     mesh.material.uniforms[id].value = v;
     renderer.render(scene, camera);
-    console.log("change "+id+" to "+v);
+    //console.log("change "+id+" to "+v);
   }
 
   function varEnv(mesh, id, func){
