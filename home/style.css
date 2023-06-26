@@ -38,8 +38,11 @@ h3 {
 }
 
 img {
+  /*
   width: 40px;
   height: 40px;
+  */
+  object-fit: contain;
   padding: 4px;
 }
 
