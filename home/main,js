@@ -4,10 +4,17 @@ fetch("data.json")
   .then(json => populate(json));
 
 
+function addHeader(header){
+
+}
+
+function addEntry(entry){
+    
+}
+
 function populate(data){
     for (let [key, value] of Object.entries(data)) {
         console.log(key, value);
     }
-
 }
 
