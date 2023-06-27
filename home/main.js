@@ -35,7 +35,7 @@ function populate(data){
   Object.entries(data).forEach(([key, value]) => {
     let t = Object.prototype.toString.call(value);
     if (t === '[object Array]'){
-        addHeader(header, level);
+        addHeader(key, level);
         addArray(value);
     } else if (t === '[object Object]'){
         addEntry(value);
