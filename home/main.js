@@ -1,4 +1,4 @@
-var level = 2;
+var level = 3;
 const container = document.getElementById('container');
 
 fetch("data.json")
@@ -15,14 +15,14 @@ function addArray(array){
       addEntry(entry);
     }
   });
-  level--;
+  //level--;
 }
 
 function addHeader(header,level){
   let h = document.createElement('div');
   h.innerHTML="<h"+level+">"+header+"</h"+level+">";
   container.appendChild(h);
-  level++;
+  //level++;
 }
 
 function addEntry(entry){
