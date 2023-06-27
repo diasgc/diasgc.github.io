@@ -50,7 +50,7 @@
     "Shopping": [
     { "url": "https://shoppinglist.google.com/", "icon": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Google_Shopping.svg", "name": "ShoppingList"},
     { "url": "https://www.amazon.es/", "icon": "https://upload.wikimedia.org/wikipedia/commons/4/4a/Amazon_icon.svg", "name": "Amazon"},
-    { "url": "https://www.ebay.es/", "icon": "https://ir.ebaystatic.com/cr/v/c1/chauffeur/pwa-app-icons/v1/icon-192x192-maskable.png", "name": "eBay", "background": "white"},
+    { "url": "https://www.ebay.es/", "icon": "https://upload.wikimedia.org/wikipedia/commons/1/1b/EBay_logo.svg", "name": "eBay"},
     { "url": "https://best.aliexpress.com/", "icon": "https://www.userlogos.org/files/ic_aliexpress.png", "name": "AliExpress"},
     { "url": "https://www.banggood.com/", "icon": "https://m.banggood.com/templates/default/images/icons/icon-wap256.png?v=1", "name": "Banggood"},
     { "url": "https://www.fnac.pt/", "icon": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Fnac_Logo.svg", "name": "Fnac"},
@@ -67,7 +67,7 @@
     { "url": "https://mauser.pt", "icon": "https://scontent.fopo3-1.fna.fbcdn.net/v/t39.30808-6/271861796_1951243578368550_6793450767153251177_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=f6YMBSBwEI0AX8ZbmVv&_nc_ht=scontent.fopo3-1.fna&oh=00_AfAoOy6hiRWmQgVBddsdjHtwa0oLy5tnCyu1ujKIySRrww&oe=649DF2FF", "name": "Mauser", "background": "#ffc915"},
     { "url": "https://www.castroelectronica.pt/", "icon": "https://www.castroelectronica.pt/interface/imgs/favicon.ico", "name": "Castro"},
     { "url": "https://www.aquario.pt/", "icon": "https://www.aquario.pt/interface/imgs/favicon.ico", "name": "Aquario"},
-    { "url": "https://dropmax.pl/en/", "icon": "https://dropmax.pl/data/include/pwa/1/icon-128.png", "name": "Dropmax"},
+    { "url": "https://dropmax.pl/en/", "icon": "https://dropmax.pl/data/include/pwa/1/icon-128.png", "name": "Dropmax", "background": "#2a7fff"},
     { "url": "https://www.impextrom.com", "icon": "https://www.impextrom.com/img/manifest/apple-touch-icon.png", "name": "Impextron"}
   ],
   "Brands": [
