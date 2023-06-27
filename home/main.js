@@ -30,7 +30,9 @@ function addEntry(entry){
   h.className='icon-wrap';
   if (entry['background'])
     h.style="background: "+entry['background'];
-  h.innerHTML="<a href=\""+entry['url']+"\"><img src=\""+entry['icon']+"\" /></a><p>"+entry['name']+"</p>";
+  let url = entry['url'];
+  let icon="https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url="+url+"&size=128";
+  h.innerHTML="<a href=\""+url+"\"><img src=\""+icon+"\" /></a><p>"+entry['name']+"</p>";
   container.appendChild(h);
 }
 
