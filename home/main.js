@@ -9,7 +9,8 @@ fetch("data.json")
 function addArray(array){
   array.forEach((entry) => {
     if (entry === 'break'){
-      container.appendChild("<div></div>")
+      let h = document.createElement('div');
+      container.appendChild(h)
     } else {
       addEntry(entry);
     }
@@ -18,16 +19,18 @@ function addArray(array){
 }
 
 function addHeader(header,level){
-  let h = "<div><h"+level+">"+header+"</h"+level+"></div>"
+  let h = document.createElement('div');
+  h.innerHTML="<h"+level+">"+header+"</h"+level+">";
   container.appendChild(h);
   level++;
 }
 
 function addEntry(entry){
-  var style="";
+  let h = document.createElement('div');
+  h.className='icon-wrap';
   if (entry['background'])
-    style="style=\"background: "+entry['background'] + "\"";
-  let h="<div class=\"icon-wrap\""+style+"><a href=\""+entry['url']+"\"><img src=\""+entry['icon']+"\" /></a><p>"+entry['name']+"</p></div>"
+    h.style="background: "+entry['background'];
+  h.innerHTML="<a href=\""+entry['url']+"\"><img src=\""+entry['icon']+"\" /></a><p>"+entry['name']+"</p>";
   container.appendChild(h);
 }
 
