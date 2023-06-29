@@ -47,6 +47,7 @@ img {
 .icon-wrap {
   display: inline-block;
   background: rgba(255,255,255,0.875);
+  box-shadow: 0 0 12px 0 black; 
   border-radius: 48px;
   text-align: center;
   padding: 8px;

@@ -1,4 +1,5 @@
 var level = 3;
+const useIcons = false;
 const container = document.getElementById('container');
 
 fetch("data.json")
@@ -31,7 +32,7 @@ function addEntry(entry){
   if (entry['background'])
     h.style="background: "+entry['background'];
   let url  = entry['url'];
-  let icon = entry['icon']; //"https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url="+url+"&size=128";
+  let icon = useIcons ? entry['icon'] : "https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url="+url+"&size=128";
   h.innerHTML="<a href=\""+url+"\"><img src=\""+icon+"\" /></a><p>"+entry['name']+"</p>";
   container.appendChild(h);
 }
