@@ -112,11 +112,12 @@ function locHandler(position) {
     });
 }
 
-function bearing(currLat, currLong, targLat, targLong) {
-    const d2r = Math.PI / 180.0;
-    const dlng = (targLong - currLong) * d2r;
-    const lat1 = currLat * d2r;
-    const lat2 = targLat * d2r;
+const d2r = Math.PI / 180.0;
+
+function bearing(currLat, currLong, targLat, targLong) {    
+    let dlng = (targLong - currLong) * d2r;
+    let lat1 = currLat * d2r;
+    let lat2 = targLat * d2r;
     var y = Math.sin(dlng) * Math.cos(lat2);
     var x = Math.cos(lat1) * Math.sin(lat2) -
             Math.sin(lat1) * Math.cos(lat2) * Math.cos(dlng);
