@@ -1,5 +1,5 @@
 var level = 3;
-const useIcons = false;
+const useIcons = true;
 const container = document.getElementById('container');
 
 fetch("data.json")
