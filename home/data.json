@@ -102,6 +102,7 @@
     { "url": "https://www.tutorialspoint.com/execute_bash_online.php", "icon": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Bash_Logo_Colored.svg", "name": "Bash"}
   ],
   "Utilities": [
-    { "url": "https://www.wolframalpha.com/", "icon": "https://www.wolframalpha.com/_next/static/images/share_3eSzXbxb.png", "name": "WolframAlpha"}
+    { "url": "https://www.wolframalpha.com/", "icon": "https://www.wolframalpha.com/_next/static/images/share_3eSzXbxb.png", "name": "WolframAlpha"},
+    { "url": "https://diasgc.github.io/compass/", "icon": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Compass_Rose-Black.svg", "name": "Compass"}
   ]
 }
