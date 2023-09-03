@@ -70,6 +70,11 @@
     { "url": "https://dropmax.pl/en/", "icon": "https://dropmax.pl/data/include/pwa/1/icon-128.png", "name": "Dropmax", "background": "#2a7fff"},
     { "url": "https://www.impextrom.com", "icon": "https://www.impextrom.com/img/manifest/apple-touch-icon.png", "name": "Impextron"}
   ],
+  "Home": [
+    { "url": "https://www.ikea.com/pt/pt/", "icon": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Ikea_logo.svg", "name": "Ikea" },
+    { "url": "https://www.bricodepot.pt/", "name": "Bricodepot", "icon": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Bricodepot.svg "},
+    { "url": "https://www.leroymerlin.pt/", "name": "Leroy Merlin", "icon": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Leroy_Merlin.svg" }
+  ],
   "Brands": [
     { "url": "https://www.chuwi.com/pt/", "icon": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Chuwi_logo_2019.png", "name": "Chuwi"},
     { "url": "https://www.xiaomistore.pt/", "icon": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Xiaomi_logo_%282021-%29.svg", "name": "Xiaomi"},
