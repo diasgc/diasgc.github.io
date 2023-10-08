@@ -109,6 +109,13 @@
   ],
   "Utilities": [
     { "url": "https://www.wolframalpha.com/", "icon": "https://www.wolframalpha.com/_next/static/images/share_3eSzXbxb.png", "name": "WolframAlpha"},
-    { "url": "https://diasgc.github.io/compass/", "icon": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Compass_Rose-Black.svg", "name": "Compass"}
+    { "url": "https://diasgc.github.io/compass/", "icon": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Compass_Rose-Black.svg", "name": "Compass"},
+    { "url": "https://diasgc.github.io/capc/", "icon": "icon-192x192.png", "name": "Capc"},
+    { "url": "https://diasgc.github.io/exif/", "icon": "icon-192x192.png", "name": "Exif"},
+    { "url": "https://diasgc.github.io/igdl/", "icon": "icon-192x192.png", "name": "igdl"},
+    { "url": "https://diasgc.github.io/kanban/", "icon": "icon-192x192.png", "name": "kanban"},
+    { "url": "https://diasgc.github.io/lc/", "icon": "icon-192x192.png", "name": "lc"},
+    { "url": "https://diasgc.github.io/mylist/", "icon": "icon-192x192.png", "name": "mylist"},
+    { "url": "https://diasgc.github.io/scanner/", "icon": "icon-192x192.png", "name": "scanner"}
   ]
 }
