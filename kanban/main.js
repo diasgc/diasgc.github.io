@@ -29,9 +29,10 @@ function depecr_apply(){
 }
 
 function apply(){
-  var str = "KANBAN;"+cod.value + ";" + quant.value;
+  var str = cod.value + tab + quant.value;
   if (notes.value)
-    str += ";" + notes.value;
+    str += tab + notes.value;
+  str += enter;
   qrc.clear();
   qrc.makeCode(str); 
 }
