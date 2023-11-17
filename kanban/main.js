@@ -18,18 +18,8 @@ let qrc = new QRCode(document.getElementById("qrcode"), opts);
 const tab ='\t';   // ????
 const enter='\n';  // ????
 
-function depecr_apply(){
-  document.getElementById("tname").innerText = document.getElementById("des").value;
-  var str = cod.value + enter + quant.value;
-  if (notes.value)
-    str += tab + tab + tab + notes.value;
-  str += enter;
-  qrc.clear();
-  qrc.makeCode(str); 
-}
-
 function apply(){
-  var str = cod.value + tab + quant.value;
+  var str = cod.value + enter + enter + quant.value;
   if (notes.value)
     str += tab + notes.value;
   str += enter;
