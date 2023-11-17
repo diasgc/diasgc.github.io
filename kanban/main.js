@@ -20,7 +20,7 @@ const enter='\n';  // ????
 
 function apply(){
   //var str = cod.value + enter + enter + quant.value + enter;
-  var str = cod.value + tab + tab + quant.value + enter;
+  var str = cod.value + enter + quant.value + enter;
   //if (notes.value)
   //  str += tab + notes.value;
   //str += enter;
