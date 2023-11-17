@@ -19,7 +19,7 @@ const tab ='\t';   // ????
 const enter='\n';  // ????
 
 function apply(){
-  var str = cod.value + enter + enter + quant.value;
+  var str = cod.value + enter + enter + quant.value + enter;
   if (notes.value)
     str += tab + notes.value;
   str += enter;
