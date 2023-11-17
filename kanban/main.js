@@ -15,8 +15,8 @@ let qrc = new QRCode(document.getElementById("qrcode"), opts);
 
 // https://supportcommunity.zebra.com/s/article/Enter-and-Tab-keys-in-the-Scanned-Data-are-Not-Properly-Recognized-in-Some-Applications?language=en_US
 // ;s:;-s:;a:110001918;-a:;l:w24231;-l:;p:31'08'2025;-p:;c:;-c:
-const tab ='\<HT\>';   // ????
-const enter='\<CR\>';  // ????
+const tab ='\x3CHT\x3E';   // ????
+const enter='\x3CCR\x3E';  // ????
 
 function depecr_apply(){
   document.getElementById("tname").innerText = document.getElementById("des").value;
