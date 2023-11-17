@@ -14,8 +14,8 @@ const opts = {
 let qrc = new QRCode(document.getElementById("qrcode"), opts);
 
 // ;s:;-s:;a:110001918;-a:;l:w24231;-l:;p:31'08'2025;-p:;c:;-c:
-const tab ='\t';   // ????
-const enter='\n';  // ????
+const tab ='$I';   // ????
+const enter='$M';  // ????
 
 function depecr_apply(){
   document.getElementById("tname").innerText = document.getElementById("des").value;
