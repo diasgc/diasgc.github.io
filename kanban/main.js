@@ -20,8 +20,8 @@ const enter='\n';  // ????
 
 function apply(){
   var str = cod.value + enter + enter + quant.value + enter;
-  if (notes.value)
-    str += tab + notes.value;
+  //if (notes.value)
+  //  str += tab + notes.value;
   str += enter;
   qrc.clear();
   qrc.makeCode(str); 
