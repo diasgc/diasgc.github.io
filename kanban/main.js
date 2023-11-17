@@ -19,10 +19,11 @@ const tab ='\t';   // ????
 const enter='\n';  // ????
 
 function apply(){
-  var str = cod.value + enter + enter + quant.value + enter;
+  //var str = cod.value + enter + enter + quant.value + enter;
+  var str = cod.value + tab + tab + quant.value
   //if (notes.value)
   //  str += tab + notes.value;
-  str += enter;
+  //str += enter;
   qrc.clear();
   qrc.makeCode(str); 
 }
