@@ -16,14 +16,14 @@ let qrc = new QRCode(document.getElementById("qrcode"), opts);
 // https://supportcommunity.zebra.com/s/article/Enter-and-Tab-keys-in-the-Scanned-Data-are-Not-Properly-Recognized-in-Some-Applications?language=en_US
 // ;s:;-s:;a:110001918;-a:;l:w24231;-l:;p:31'08'2025;-p:;c:;-c:
 const tab ='\t';   // ????
-const enter='\n';  // ????
+const enter='\r\n';  // ????
 
 function apply(){
   //var str = cod.value + enter + enter + quant.value + enter;
-  var str = cod.value + enter + quant.value + enter;
-  //if (notes.value)
-  //  str += tab + notes.value;
-  //str += enter;
+  var str = cod.value + enter + enter + quant.value + enter;
+  if (notes.value)
+    str += tab + notes.value + enter;
+  str += enter;
   qrc.clear();
   qrc.makeCode(str); 
 }
