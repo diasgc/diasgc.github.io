@@ -19,11 +19,17 @@ const tab ='\t';   // ????
 const enter='\r\n';  // ????
 
 function apply(){
-  //var str = cod.value + enter + enter + quant.value + enter;
-  var str = cod.value + enter + enter + quant.value;// + enter;
-  if (notes.value)
-    str += tab + notes.value + enter;
-  str += enter;
+  const raw = document.getElementById("raw");
+  var str;
+  if (raw.value){
+    str = raw.value;
+  } else {
+    //var str = cod.value + enter + enter + quant.value + enter;
+    var str = cod.value + enter + enter + quant.value;// + enter;
+    if (notes.value)
+      str += tab + notes.value + enter;
+    str += enter;
+  }
   qrc.clear();
   qrc.makeCode(str); 
 }
