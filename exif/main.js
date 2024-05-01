@@ -137,19 +137,17 @@ function parseMediaInfo(res, file){
                 reader.readAsArrayBuffer(file.slice(offset, offset + chunkSize))
             })
         
-            mediainfo
-            .analyzeData(getSize, readChunk)
-            .then((result) => {
-                //res.value = result
-                let m1 = JSON.stringify(result);
-                let m2 = JSON.parse(m1);
-                //res.innerHTML=m1;
-                addHeader(res,file.name)
-                populate(res, m2);
-            })
-            .catch((error) => {
-                res.value = `An error occured:\n${error.stack}`
-            })
+            mediainfo.analyzeData(getSize, readChunk)
+                .then((result) => {
+                    let m1 = JSON.stringify(result);
+                    let m2 = JSON.parse(m1);
+                    res.innerHTML=m1;
+                    //addHeader(res,file.name)
+                    //populate(res, m2);
+                })
+                .catch((error) => {
+                    res.value = `An error occured:\n${error.stack}`
+                })
         }
     }
 
