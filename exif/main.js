@@ -139,11 +139,16 @@ function parseMediaInfo(res, file){
         
             mediainfo.analyzeData(getSize, readChunk)
                 .then((result) => {
-                    let m1 = JSON.stringify(result);
-                    let m2 = JSON.parse(m1);
-                    res.innerHTML=m1;
-                    //addHeader(res,file.name)
-                    //populate(res, m2);
+                    //let m1 = JSON.stringify(result);
+                    let m2 = JSON.parse(result);
+                    //res.innerHTML=result;
+                    addHeader(res,"MediaInfo")
+                    let media = m2.media.track;
+                    for(let i = 0; i < media.length; i++) {
+                        let m1 = media[i];
+                        addHeader(res, m1['@type'])
+                        populate(res, m1);
+                    }
                 })
                 .catch((error) => {
                     res.value = `An error occured:\n${error.stack}`
