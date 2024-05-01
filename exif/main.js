@@ -153,7 +153,7 @@ function parseMediaInfo(res, file){
         }
     }
 
-    MediaInfo({ format: 'json' }, (mediainfo) => {
+    MediaInfo({ format: 'JSON' }, (mediainfo) => {
         onChangeFile(mediainfo)
       }, (err) => {
         console.error(err)
