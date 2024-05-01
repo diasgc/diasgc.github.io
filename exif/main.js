@@ -118,9 +118,48 @@ function parseImage(res, file){
       });
 }
 
+function parseMediaInfo(res, file){
+    
+    const onChangeFile = (mediainfo) => {
+        if (file) {
+        
+            const getSize = () => file.size
+        
+            const readChunk = (chunkSize, offset) =>
+            new Promise((resolve, reject) => {
+                const reader = new FileReader()
+                reader.onload = (event) => {
+                if (event.target.error) {
+                    reject(event.target.error)
+                }
+                resolve(new Uint8Array(event.target.result))
+                }
+                reader.readAsArrayBuffer(file.slice(offset, offset + chunkSize))
+            })
+        
+            mediainfo
+            .analyzeData(getSize, readChunk)
+            .then((result) => {
+                res.value = result
+            })
+            .catch((error) => {
+                res.value = `An error occured:\n${error.stack}`
+            })
+        }
+    }
+
+    MediaInfo({ format: 'text' }, (mediainfo) => {
+        onChangeFile(mediainfo)
+      }, (err) => {
+        console.error(err)
+      }
+    )
+}
+
 document.getElementById('picker').addEventListener('change', async e => {
     let file = e.target.files[0];
     let res = document.getElementById('result');
     if (file.type.match("^image/"))
         parseImage(res, file);
+    parseMediaInfo(res, file);
 })
