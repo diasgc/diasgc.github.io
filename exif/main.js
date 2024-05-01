@@ -118,6 +118,22 @@ function parseImage(res, file){
       });
 }
 
+function parseCode(file, res){
+    let reader = new FileReader();
+    reader.onload = function(){
+        let pre = document.createElement('pre');
+        let code = document.createElement('code');
+        //code.setAttribute('class','language-java');
+        //code.innerHTML="<![CDATA["+reader.result+"]]>";
+        code.innerHTML=reader.result;
+        pre.appendChild(code);
+        res.innerHTML="";
+        res.appendChild(pre);
+        hljs.highlightElement(code);
+    }
+    reader.readAsText(file);
+}
+
 function parseMediaInfo(res, file){
     
     const onChangeFile = (mediainfo) => {
@@ -166,8 +182,16 @@ function parseMediaInfo(res, file){
 
 document.getElementById('picker').addEventListener('change', async e => {
     let file = e.target.files[0];
+    console.log("mimetype: "+file.type);
     let res = document.getElementById('result');
-    if (file.type.match("^image/"))
+    if (file.type.match("^image/")){
         parseImage(res, file);
-    parseMediaInfo(res, file);
+        parseMediaInfo(res, file);
+    } else if (file.type.match("^image/") || file.type.match("^audio/") || file.type.match("^video/")){
+        parseMediaInfo(res, file);
+    } else if (file.type.match("^text/") || file.type.match("script"))
+        parseCode(file,res)
+    else {
+        res.innerHTML="Unknown type " + file.type;
+    }
 })
