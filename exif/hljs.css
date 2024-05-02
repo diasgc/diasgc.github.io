@@ -1,15 +1,10 @@
-/*
-  codepen.io Embed Theme
-  Author: Justin Perry <http://github.com/ourmaninamsterdam>
-  Original theme - https://github.com/chriskempson/tomorrow-theme
-*/
-/* Light mode */
 @media (prefers-color-scheme: light) {
     :root {
         --body-bg: #ECEFF1;
         --body-color: #263238;
         --border-fg: rgba(0,0,0,0.0625);
         --hljs-comment: #777;
+        --hjls-tag: #875dab;
         --hjls-var: #7d87ab;
         --hjls-attr: #9b869b;
         --hjls-str: #6c9c8f;
@@ -23,6 +18,7 @@
         --body-color: #ECEFF1;
         --border-fg: rgba(255,255,255,0.0625);
         --hljs-comment: #777;
+        --hjls-tag: #ab5d87;
         --hjls-var: #ab875d;
         --hjls-attr: #9b869b;
         --hjls-str: #8f9c6c;
@@ -42,14 +38,17 @@
     color: var(--hljs-comment);
   }
   
-  .hljs-variable,
-  .hljs-template-variable,
-  .hljs-tag,
-  .hljs-regexp,
-  .hljs-meta,
-  .hljs-number,
   .hljs-built_in,
   .hljs-builtin-name,
+  .hljs-tag,
+  .hljs-meta {
+    color: var(--hjls-tag);
+  }
+
+  .hljs-variable,
+  .hljs-template-variable,
+  .hljs-regexp,
+  .hljs-number,
   .hljs-literal,
   .hljs-params,
   .hljs-symbol,
