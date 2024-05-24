@@ -97,7 +97,8 @@
     { "url": "https://www.shadertoy.com", "icon": "https://www.shadertoy.com/img/launch_icon_114.png", "name": "ShaderToy", "background": "white"},
     { "url": "https://shaderfrog.com/app/", "icon": "https://s3-us-west-1.amazonaws.com/shader-frog/favicon.ico", "name": "ShaderFrog"},
     { "url": "https://www.overleaf.com/", "icon": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Overleaf_Logo.svg", "name": "Overleaf"},
-    { "url": "https://www.desmos.com/calculator", "icon": "https://www.desmos.com/assets/pwa/icon-192x192.png", "name": "Desmos", "background": "#00a000"}
+    { "url": "https://www.desmos.com/calculator", "icon": "https://www.desmos.com/assets/pwa/icon-192x192.png", "name": "Desmos", "background": "#00a000"},
+    { "url": "https://it-tools.tech", "name": "IT-Tools", "background": "#18a058"}
   ],
   "Online Compilers": [
     { "url": "https://www.programiz.com/python-programming/online-compiler/", "icon": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Python_logo_01.svg", "name": "Python"},
