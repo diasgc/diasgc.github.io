@@ -10,163 +10,159 @@
   <link rel="apple-touch-startup-image" href="https://s3-us-west-2.amazonaws.com/s.cdpn.io/443195/icon_04.png">
   <meta name="apple-mobile-web-app-title" content="Level">
   <meta name="application-name" content="Level">
-  
+  <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="site.webmanifest">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<script type="text/javascript" src="main.js"></script>
+	<script type="text/javascript" src="main.js"></script>
+	<!-- Learn about this code on MDN: https://developer.mozilla.org/en-US/docs/Web/API/Detecting_device_orientation 
+	-->
+	<link href="https://fonts.googleapis.com/css?family=Roboto+Mono:700" rel="stylesheet">
 
-
-
-<!-- Learn about this code on MDN: https://developer.mozilla.org/en-US/docs/Web/API/Detecting_device_orientation 
--->
-<link href="https://fonts.googleapis.com/css?family=Roboto+Mono:700" rel="stylesheet">
-
-<div class="container">
-	<div class="grid-item">
-		<div class="vmarkerl">-45°</div>
-	</div>
-	<div class="grid-item">
-		<div class="hmarkert">-45°</div>
-	</div>
-	<div class="grid-item">
-		<div class="hmarkert">0°</div>
-		<div class="hbar">
-			<div class="bg_hbarl">
-				<div class="hbarl"></div>
-			</div>
-			<div class="bg_hbarr">
-				<div class="hbarr"></div>
-			</div>
-			<div class="hbartxt">--°</div>
+	<div class="container">
+		<div class="grid-item">
+			<div class="vmarkerl">-45°</div>
 		</div>
-
-	</div>
-	<div class="grid-item">
-		<div class="vmarkerr">-45°</div>
-		<div class="hmarkert thack">45°</div>
-	</div>
-	<div class="grid-item">
-		<div class="vmarkerl">0°</div>
-		<div class="vbar">
-			<div class="bg_vbart">
-				<div class="vbart"></div>
-			</div>
-			<div class="bg_vbarb">
-				<div class="vbarb"></div>
-			</div>
-			<div class="vbartxt">--°</div>
+		<div class="grid-item">
+			<div class="hmarkert">-45°</div>
 		</div>
-	</div>
-	<div class="grid-item"></div>
-	<div class="grid-item"></div>
-	<div class="grid-item">
-		<div class="vmarkerr">0°</div>
-	</div>
-	<div class="grid-item">
-		<div class="vmarkerl">45°</div>
-	</div>
-	<div class="grid-item"></div>
-	<div class="grid-item"></div>
-	<div class="grid-item">
-		<div class="vmarkerr">45°</div>
-	</div>
-	<div class="grid-item"></div>
-	<div class="grid-item">
-		<div class="hmarkerb">-45°</div>
-	</div>
-	<div class="grid-item"></div>
-	<div class="grid-item">
-		<div class="hmarkerb">45°</div>
-	</div>
-
-	<div class="zero"></div>
-
-	<div class="menu">
-		<div class="txtBlock">
-			<div class="txtAlpha">Beta angle:</div>
-			<div class="txtAlpha">Gamma angle:</div>
-			<div class="txtAlpha">Beta raw:</div>
-			<div class="txtAlpha">Gamma raw:</div>
-			<div class="txtAlpha">Beta offset:</div>
-			<div class="txtAlpha">Gamma offset:</div>
-			<div class="txtAlpha">Viewport:</div>
-			<div class="txtAlpha">Device type:</div>
-			<div class="txtAlpha tA2">Vibration:</div>
-			<div class="txtAlpha tA2">Beep-Sound:</div>
-		</div>
-		<div class="dat">
-			<div id="betaCurrent">?</div>
-			<div id="gammaCurrent">?</div>
-			<div id="betaCorrected">?</div>
-			<div id="gammaCorrected">?</div>
-			<div id="betaOffset">?</div>
-			<div id="gammaOffset">?</div>
-			<div id="scrnOr"></div>
-			<div id="devType"></div>
-			<div class="vibSwitchBG" onclick="VibraSwitch()">
-				<div class="vibSwitch"></div>
+		<div class="grid-item">
+			<div class="hmarkert">0°</div>
+			<div class="hbar">
+				<div class="bg_hbarl">
+					<div class="hbarl"></div>
+				</div>
+				<div class="bg_hbarr">
+					<div class="hbarr"></div>
+				</div>
+				<div class="hbartxt">--°</div>
 			</div>
-			<div class="soundSwitchBG" onclick="SoundSwitch()">
-				<div class="soundSwitch"></div>
+
+		</div>
+		<div class="grid-item">
+			<div class="vmarkerr">-45°</div>
+			<div class="hmarkert thack">45°</div>
+		</div>
+		<div class="grid-item">
+			<div class="vmarkerl">0°</div>
+			<div class="vbar">
+				<div class="bg_vbart">
+					<div class="vbart"></div>
+				</div>
+				<div class="bg_vbarb">
+					<div class="vbarb"></div>
+				</div>
+				<div class="vbartxt">--°</div>
 			</div>
 		</div>
-		<div class="inf">
-			<div id="inftxt">This might not work flawlessly on all devices or browsers. Your setup seems to support:<br><br>device orientation:<span id="dosup"></span><br>navigator vibration:<span id="vibsup"></span><br><br>---<br><br>Made with
-				<svg aria-hidden="true" data-prefix="fas" data-icon="heart" class="svg-inline--fa fa-heart fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" height="16" width="16"><path fill="currentColor" d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"></path></svg>				by <a href="https://www.valentinnaegeli.com/" target=”_blank”></i>valentin</a>.</div>
+		<div class="grid-item"></div>
+		<div class="grid-item"></div>
+		<div class="grid-item">
+			<div class="vmarkerr">0°</div>
+		</div>
+		<div class="grid-item">
+			<div class="vmarkerl">45°</div>
+		</div>
+		<div class="grid-item"></div>
+		<div class="grid-item"></div>
+		<div class="grid-item">
+			<div class="vmarkerr">45°</div>
+		</div>
+		<div class="grid-item"></div>
+		<div class="grid-item">
+			<div class="hmarkerb">-45°</div>
+		</div>
+		<div class="grid-item"></div>
+		<div class="grid-item">
+			<div class="hmarkerb">45°</div>
+		</div>
+
+		<div class="zero"></div>
+
+		<div class="menu">
+			<div class="txtBlock">
+				<div class="txtAlpha">Beta angle:</div>
+				<div class="txtAlpha">Gamma angle:</div>
+				<div class="txtAlpha">Beta raw:</div>
+				<div class="txtAlpha">Gamma raw:</div>
+				<div class="txtAlpha">Beta offset:</div>
+				<div class="txtAlpha">Gamma offset:</div>
+				<div class="txtAlpha">Viewport:</div>
+				<div class="txtAlpha">Device type:</div>
+				<div class="txtAlpha tA2">Vibration:</div>
+				<div class="txtAlpha tA2">Beep-Sound:</div>
+			</div>
+			<div class="dat">
+				<div id="betaCurrent">?</div>
+				<div id="gammaCurrent">?</div>
+				<div id="betaCorrected">?</div>
+				<div id="gammaCorrected">?</div>
+				<div id="betaOffset">?</div>
+				<div id="gammaOffset">?</div>
+				<div id="scrnOr"></div>
+				<div id="devType"></div>
+				<div class="vibSwitchBG" onclick="VibraSwitch()">
+					<div class="vibSwitch"></div>
+				</div>
+				<div class="soundSwitchBG" onclick="SoundSwitch()">
+					<div class="soundSwitch"></div>
+				</div>
+			</div>
+			<div class="inf">
+				<div id="inftxt">This might not work flawlessly on all devices or browsers. Your setup seems to support:<br><br>device orientation:<span id="dosup"></span><br>navigator vibration:<span id="vibsup"></span><br><br>---<br><br>Made with
+					<svg aria-hidden="true" data-prefix="fas" data-icon="heart" class="svg-inline--fa fa-heart fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" height="16" width="16"><path fill="currentColor" d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"></path></svg>				by <a href="https://www.valentinnaegeli.com/" target=”_blank”></i>valentin</a>.</div>
+			</div>
+		</div>
+
+		<div class="calbutt" onclick="calibrate()">
+			<div class="buttTxt" id="calTxt">Zero</div>
+			<div class="cal1">
+				<div class="cal2"></div>
+				<div class="cal3"></div>
+			</div>
+		</div>
+
+		<div class="resbutt" onclick="resOffset()">
+			<div class="buttTxt" id="resTxt">Clear</div>
+			<div class="res1"></div>
+			<div class="res5"></div>
+			<div class="res2"></div>
+			<div class="res3"></div>
+			<div class="res4"></div>
+		</div>
+
+		<div class="infbutt" onclick="infDisp()">
+			<div class="buttTxt" id="infTxt">Info</div>
+			<div class="iicon">
+				<svg aria-hidden="true" data-prefix="fas" data-icon="info" class="svg-inline--fa fa-info fa-w-6" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 512" height="36" width="36"><path fill="currentColor" d="M20 424.229h20V279.771H20c-11.046 0-20-8.954-20-20V212c0-11.046 8.954-20 20-20h112c11.046 0 20 8.954 20 20v212.229h20c11.046 0 20 8.954 20 20V492c0 11.046-8.954 20-20 20H20c-11.046 0-20-8.954-20-20v-47.771c0-11.046 8.954-20 20-20zM96 0C56.235 0 24 32.235 24 72s32.235 72 72 72 72-32.235 72-72S135.764 0 96 0z"></path></svg>
+			</div>
+		</div>
+
+		<div class="burger" onclick="switchMenu()">
+			<div class="buttTxt" id="menuTxt">Menu</div>
+			<div class="b1"></div>
+			<div class="b2"></div>
+			<div class="b3"></div>
 		</div>
 	</div>
 
-	<div class="calbutt" onclick="calibrate()">
-		<div class="buttTxt" id="calTxt">Zero</div>
-		<div class="cal1">
-			<div class="cal2"></div>
-			<div class="cal3"></div>
-		</div>
+	<div class="indicator">
+		<div class="ud"></div>
+		<div class="lr"></div>
 	</div>
 
-	<div class="resbutt" onclick="resOffset()">
-		<div class="buttTxt" id="resTxt">Clear</div>
-		<div class="res1"></div>
-		<div class="res5"></div>
-		<div class="res2"></div>
-		<div class="res3"></div>
-		<div class="res4"></div>
+	<div class="supWarn">
+		<div class="cltxt">Your device or browser seems not to support device orientation detection. :(</div>
+		<div class="cl1"></div>
+		<div class="cl2"></div>
+		<div class="clClick" onclick="closeWarning()"></div>
 	</div>
 
-	<div class="infbutt" onclick="infDisp()">
-		<div class="buttTxt" id="infTxt">Info</div>
-		<div class="iicon">
-			<svg aria-hidden="true" data-prefix="fas" data-icon="info" class="svg-inline--fa fa-info fa-w-6" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 512" height="36" width="36"><path fill="currentColor" d="M20 424.229h20V279.771H20c-11.046 0-20-8.954-20-20V212c0-11.046 8.954-20 20-20h112c11.046 0 20 8.954 20 20v212.229h20c11.046 0 20 8.954 20 20V492c0 11.046-8.954 20-20 20H20c-11.046 0-20-8.954-20-20v-47.771c0-11.046 8.954-20 20-20zM96 0C56.235 0 24 32.235 24 72s32.235 72 72 72 72-32.235 72-72S135.764 0 96 0z"></path></svg>
-		</div>
-	</div>
 
-	<div class="burger" onclick="switchMenu()">
-		<div class="buttTxt" id="menuTxt">Menu</div>
-		<div class="b1"></div>
-		<div class="b2"></div>
-		<div class="b3"></div>
-	</div>
-</div>
+	<audio id="clickSound">
+		<source src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/443195/Button%202.m4a"></source>
+	</audio>
 
-<div class="indicator">
-	<div class="ud"></div>
-	<div class="lr"></div>
-</div>
-
-<div class="supWarn">
-	<div class="cltxt">Your device or browser seems not to support device orientation detection. :(</div>
-	<div class="cl1"></div>
-	<div class="cl2"></div>
-	<div class="clClick" onclick="closeWarning()"></div>
-</div>
-
-
-<audio id="clickSound">
-	<source src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/443195/Button%202.m4a"></source>
-</audio>
-
-</div>
 </body>
 </html>
