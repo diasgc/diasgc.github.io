@@ -10,8 +10,8 @@
 	}
   }
   
-  /* Dark mode */
-  @media (prefers-color-scheme: dark) {
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
 	:root {
 		--bgcolor: #FFEAE0;
 		--blackcolor: #333;
@@ -21,7 +21,7 @@
 		
 		--fontfam: "Roboto Mono", monospace; /*"Anonymous Pro", monospace*/
 	}
-  }
+}
 
 body {
 	overflow: hidden;
