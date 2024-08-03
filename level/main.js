@@ -1,8 +1,10 @@
 // The wake lock sentinel.
 let wakeLock = null;
+const hasWakeLockSupport = () => 'wakeLock' in navigator;
 
 // Function that attempts to request a screen wake lock.
 const requestWakeLock = async () => {
+  if (!hasWakeLockSupport) return;
   try {
     wakeLock = await navigator.wakeLock.request();
     wakeLock.addEventListener('release', () => {
@@ -32,6 +34,7 @@ document.addEventListener('visibilitychange', handleVisibilityChange);
 let bodyStyles = window.getComputedStyle(document.body);
 let barcolor = bodyStyles.getPropertyValue("--barcolor");
 let redcolor = bodyStyles.getPropertyValue("--redcolor");
+let indSize = bodyStyles.getPropertyValue("--indsize").replace("px","")/2;
 console.log(barcolor, redcolor);
 //icons
 let greenCheck =
@@ -219,6 +222,8 @@ function UpdateDataView() {
 		gamang > -1 * centerTol
 	) {
 		indicator.style.borderColor = "var(--barcolor)";
+    indicator.style.opacity = 0.9;
+    indicator.style.background = "var(--barcolor)"
 		ud.style.background = "var(--barcolor)";
 		lr.style.background = "var(--barcolor)";
 		if (vibraSup && vibraOn) {
@@ -228,9 +233,11 @@ function UpdateDataView() {
 			audio.play();
 		}
 	} else {
-		indicator.style.borderColor = "#FFF";
-		ud.style.background = "#FFF";
-		lr.style.background = "#FFF";
+    indicator.style.opacity = 0.75;
+    indicator.style.background = "var(--greycolor)";
+		indicator.style.borderColor = "var(--greycolor)";
+		ud.style.background = "var(--greycolor)";
+		lr.style.background = "var(--greycolor)";
 	}
 }
 
@@ -268,15 +275,15 @@ function handleOrientation(event) {
 	beta += 90;
 	gamma += 90;
 
-	let toLeft = (maxX / 180) * gamma + 10 + "px";
-	let toTop = (maxY / 180) * beta + 10 + "px";
+	let toLeft = (maxX / 180) * gamma + indSize + "px";
+	let toTop = (maxY / 180) * beta + indSize + "px";
 	let device = deviceType();
 	devType = device;
 
 	//Landscape mobile
 	if (orient === 1 && device === "mobile") {
-		toLeft = (maxX / 180) * beta + 10 + "px";
-		toTop = (maxY / 180) * gamma + 10 + "px";
+		toLeft = (maxX / 180) * beta + indSize + "px";
+		toTop = (maxY / 180) * gamma + indSize + "px";
 	}
 
 	//iOS Landscape
@@ -285,14 +292,14 @@ function handleOrientation(event) {
 	if (orient2 === "landscape") {
 		if (iOS === 1) {
 			//alert("hiii");
-			toTop = (maxY / 180) * gamma + 10 + "px";
-			toLeft = (maxX / 180) * beta + 10 + "px";
+			toTop = (maxY / 180) * gamma + indSize + "px";
+			toLeft = (maxX / 180) * beta + indSize + "px";
 		}
 	}
 	//Portrait desktop
 	if (orient === 2 && device === "desktop") {
-		toLeft = (maxX / 180) * beta + 10 + "px";
-		toTop = (maxY / 180) * gamma + 10 + "px";
+		toLeft = (maxX / 180) * beta + indSize + "px";
+		toTop = (maxY / 180) * gamma + indSize + "px";
 	}
 
 	indicator.style.top = toTop;
@@ -309,8 +316,8 @@ function calibrate() {
 	gammaOffset = gammaCurrent;
 	betaCorrected = 0;
 	gammaCorrected = 0;
-	indicator.style.top = maxY / 2 + 10 + "px";
-	indicator.style.left = maxX / 2 + 10 + "px";
+	indicator.style.top = maxY / 2 + indSize + "px";
+	indicator.style.left = maxX / 2 + indSize + "px";
 	indicator.style.borderColor = "var(--barcolor)";
 	ud.style.background = "var(--barcolor)";
 	lr.style.background = "var(--barcolor)";
@@ -323,13 +330,13 @@ function resOffset() {
 	gammaOffset = 0;
 	betaCorrected = betaCurrent;
 	gammaCorrected = gammaCurrent;
-	indicator.style.top = (maxY / 180) * (betaCurrent + 90) + 10 + "px";
-	indicator.style.left = (maxX / 180) * (gammaCurrent + 90) + 10 + "px";
-	indicator.style.borderColor = "#FFF";
-	ud.style.background = "#FFF";
-	lr.style.background = "#FFF";
+	indicator.style.top = (maxY / 180) * (betaCurrent + 90) + indSize + "px";
+	indicator.style.left = (maxX / 180) * (gammaCurrent + 90) + indSize + "px";
+	indicator.style.borderColor = "var(--blackcolor)";
+	ud.style.background = "var(--blackcolor)";
+	lr.style.background = "#var(--blackcolor)";
 	UpdateDataView();
-}
+}"$"
 
 function deviceType() {
 	if (
