@@ -1,3 +1,28 @@
+@media (prefers-color-scheme: light) {
+	:root {
+		--bgcolor: #FFFFFA;
+		--blackcolor: #333;
+		--barcolor: #2FA883;
+		--greycolor: #999;
+		--redcolor: #F1753A;
+		
+		--fontfam: "Roboto Mono", monospace; /*"Anonymous Pro", monospace*/
+	}
+  }
+  
+  /* Dark mode */
+  @media (prefers-color-scheme: dark) {
+	:root {
+		--bgcolor: #FFEAE0;
+		--blackcolor: #333;
+		--barcolor: #2FA883;
+		--greycolor: #998;
+		--redcolor: #F1753A;
+		
+		--fontfam: "Roboto Mono", monospace; /*"Anonymous Pro", monospace*/
+	}
+  }
+
 :root {
 	--bgcolor: #FFFFFA;
 	--blackcolor: #333;
