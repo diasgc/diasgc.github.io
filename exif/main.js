@@ -134,49 +134,29 @@ function parseCode(file, res){
   reader.readAsText(file);
 }
 
+// see https://github.com/buzz/mediainfo.js/blob/main/examples/browser-umd/example.js for static html
 function parseMediaInfo(res, file){
-  
-  const onChangeFile = (mediainfo) => {
-		if (file) {      
-			//const getSize = () => file.size
-			/*
-			const readChunk = (chunkSize, offset) =>
-			#	new Promise((resolve, reject) => {
-					const reader = new FileReader()
-					reader.onload = (event) => {
-					if (event.target.error) {
-						reject(event.target.error)
-					}
-					resolve(new Uint8Array(event.target.result))
-				}
-				reader.readAsArrayBuffer(file.slice(offset, offset + chunkSize))
-			})
-			*/
-			const readChunk = async (chunkSize, offset) =>
-				new Uint8Array(await file.slice(offset, offset + chunkSize).arrayBuffer())
-			mediainfo
-				.analyzeData(file.size, readChunk)
-				.then((result) => {
-					//let m1 = JSON.stringify(result);
-					console.log(result)
-					let m2 = JSON.parse(result);
-					//res.innerHTML=result;
-					addHeader(res,"MediaInfo")
-					let media = m2.media.track;
-					for(let i = 0; i < media.length; i++) {
-						let m1 = media[i];
-						addHeader(res, m1['@type'])
-						populate(res, m1);
-					}
-				})
-				.catch((error) => {
-					res.value = `An error occured:\n${error.stack}`
-				})
-		}
-  }
-
+	if (!file)
+		return;
 	MediaInfo.mediaInfoFactory({ format: 'JSON' }, (mediainfo) => {
-		onChangeFile(mediainfo)
+		const readChunk = async (chunkSize, offset) =>
+			new Uint8Array(await file.slice(offset, offset + chunkSize).arrayBuffer())
+		mediainfo
+			.analyzeData(file.size, readChunk)
+			.then((result) => {
+				console.log(result)
+				let m2 = JSON.parse(result);
+				addHeader(res,"MediaInfo")
+				let media = m2.media.track;
+				for(let i = 0; i < media.length; i++) {
+					let m1 = media[i];
+					addHeader(res, m1['@type'])
+					populate(res, m1);
+				}
+			})
+			.catch((error) => {
+				res.value = `An error occured:\n${error.stack}`
+			})
 	})
 }
 
