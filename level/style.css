@@ -5,7 +5,7 @@
 		--barcolor: #2FA883;
 		--greycolor: #999;
 		--redcolor: #F1753A;
-	    --indsize: 40px;
+	    --indsize: 72px;
 		--fontfam: "Roboto Mono", monospace; /*"Anonymous Pro", monospace*/
 	}
 }
@@ -35,8 +35,8 @@ body {
 	left: 0;
 	right: 0;
 	display: grid;
-	grid-template-columns: 26vw 24vw 24vw 26vw;
-	grid-template-rows: 26% 24% 24% 26%;
+	grid-template-columns: 25vh 25vh 25vh 25vh;
+	grid-template-rows: 25vh 25vh 25vh 25vh;
 	height: calc(100%);
 	background: var(--bgcolor);
 	color: var(--blackcolor);
@@ -47,49 +47,37 @@ body {
 	overflow: hidden;
 }
 
+@media screen and (orientation:landscape) {
+    .box-svg {
+		position: absolute;
+        height: 100vh;
+        width: 100vh;
+		left: calc(50vh - 3.125px);
+    }
+	.container {
+		grid-template-columns: 25% 25% 25% 25%;
+		grid-template-rows: 25vh 25vh 25vh 25vh;
+	}
+}
+@media screen and (orientation:portrait) {
+    .box-svg {
+		position: absolute;
+        height: 100vw;
+        width: 100vw;
+		top: calc(50vw - 3.125px);
+    }
+	.container {
+		grid-template-columns: 25vw 25vw 25vw 25vw;
+		grid-template-rows: 25% 25% 25% 25%;
+	}
+}
+
 /*GRID*/
 .grid-item {
 	border-bottom: 1px solid var(--blackcolor);
 	border-right: 1px solid var(--blackcolor);
 	height: calc(100% - 1px);
 	text-align: center;
-}
-
-.grid-rad1,
-.grid-rad2 {
-	position: absolute;
-	grid-area: 1/1;
-	aspect-ratio: 1;
-	object-fit: fill;
-	width: 50%;
-	opacity: 0.8;
-	border: 2px solid var(--greycolor);
-	border-radius: 50%;
-	text-align: center;
-}
-
-.grid-rad2 {
-	width: 75%;
-}
-
-.gird-lin1 {
-	height: calc(100% - 1px);
-	top: 0%;
-	left: 50%;
-	transform: rotate(45deg);
-	height: 100%;
-  	opacity: 0.8;
-	border: 2px solid var(--greycolor);
-	text-align: center;
-}
-
-.grid-lin2 {
-	top: 50%;
-	left: 00%;
-	transform: rotate(-45deg);
-	opacity: 0.8;
-	border: 2px solid var(--greycolor);
-	width: calc(100% - 1px);
 }
 
 .vmarkerl,
