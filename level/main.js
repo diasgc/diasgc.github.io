@@ -2,9 +2,6 @@
 let wakeLock = null;
 const hasWakeLockSupport = () => 'wakeLock' in navigator;
 
-let lwsup = document.getElementById("wlsup");
-lwsup.innerHTML = hasWakeLockSupport ? greenCheck : redStop;
-
 // Function that attempts to request a screen wake lock.
 const requestWakeLock = async () => {
   if (!hasWakeLockSupport) return;
@@ -152,6 +149,10 @@ function setSup() {
 	supWarn.style.display = "none";
 	dosup.innerHTML = greenCheck;
 }
+
+let lwsup = document.getElementById("wlsup");
+lwsup.innerHTML = hasWakeLockSupport ? greenCheck : redStop;
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 
