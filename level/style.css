@@ -28,7 +28,7 @@
 		--grid-cols: 25% 25% 25% 25%;
 		--grid-rows: 25vh 25vh 25vh 25vh;
 		--box-size: 100vh;
-		--box-left: calc(50vh - 3.125px);
+		--box-left: 50vh;
 		--box-top: 0px;
 	}
 }
@@ -37,8 +37,8 @@
 	:root {
 		--grid-cols: 25vw 25vw 25vw 25vw;
 		--grid-rows: 25% 25% 25% 25%;
-		--box-size: 100vh;
-		--box-top: calc(50vh - 3.125px);
+		--box-size: 100vw;
+		--box-top: 50vw;
 		--box-left: 0px;
 	}
 }
