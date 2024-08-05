@@ -30,8 +30,6 @@ const handleVisibilityChange = async () => {
 	}
 };
 
-await requestWakeLock;
-
 function detectColorScheme(){
   var theme="light";    //default to light
 
