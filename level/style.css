@@ -5,7 +5,7 @@
 		--barcolor: #2FA883;
 		--greycolor: #999;
 		--redcolor: #F1753A;
-    --indsize: 40px;
+	    --indsize: 40px;
 		--fontfam: "Roboto Mono", monospace; /*"Anonymous Pro", monospace*/
 	}
 }
@@ -18,7 +18,7 @@
 		--barcolor: #2FA883;
 		--greycolor: #998;
 		--redcolor: #F1753A;
-    --indsize: 100px;
+    	--indsize: 100px;
 		--fontfam: "Roboto Mono", monospace; /*"Anonymous Pro", monospace*/
 	}
 }
@@ -58,24 +58,38 @@ body {
 .grid-rad1,
 .grid-rad2 {
 	position: absolute;
-	aspect-ratio: 1 / 1;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	grid-area: 1/1;
+	aspect-ratio: 1;
+	object-fit: fill;
 	width: 50%;
-	height: 50%;
-  	opacity: 0.8;
+	opacity: 0.8;
 	border: 2px solid var(--greycolor);
 	border-radius: 50%;
 	text-align: center;
 }
 
 .grid-rad2 {
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
 	width: 75%;
-	height: 75%;
+}
+
+.gird-lin1 {
+	height: calc(100% - 1px);
+	top: 0%;
+	left: 50%;
+	transform: rotate(45deg);
+	height: 100%;
+  	opacity: 0.8;
+	border: 2px solid var(--greycolor);
+	text-align: center;
+}
+
+.grid-lin2 {
+	top: 50%;
+	left: 00%;
+	transform: rotate(-45deg);
+	opacity: 0.8;
+	border: 2px solid var(--greycolor);
+	width: calc(100% - 1px);
 }
 
 .vmarkerl,
