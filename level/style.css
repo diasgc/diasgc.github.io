@@ -58,6 +58,7 @@ body {
 .grid-rad1,
 .grid-rad2 {
 	position: absolute;
+	aspect-ratio: 1 / 1;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
@@ -70,9 +71,9 @@ body {
 }
 
 .grid-rad2 {
-	top: 25%;
-	left: 25%;
-	transform: translate(-75%, -75%);
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 	width: 75%;
 	height: 75%;
 }
