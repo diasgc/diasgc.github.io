@@ -2,6 +2,9 @@
 let wakeLock = null;
 const hasWakeLockSupport = () => 'wakeLock' in navigator;
 
+let lwsup = document.getElementById("wlsup");
+lwsup.innerHTML = hasWakeLockSupport ? greenCheck : redStop;
+
 // Function that attempts to request a screen wake lock.
 const requestWakeLock = async () => {
   if (!hasWakeLockSupport) return;
@@ -26,6 +29,8 @@ const handleVisibilityChange = async () => {
 		}
 	}
 };
+
+await requestWakeLock;
 
 function detectColorScheme(){
   var theme="light";    //default to light
