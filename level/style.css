@@ -55,6 +55,28 @@ body {
 	text-align: center;
 }
 
+.grid-rad1,
+.grid-rad2 {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 50%;
+	height: 50%;
+  	opacity: 0.8;
+	border: 2px solid var(--greycolor);
+	border-radius: var(--indsize);
+	text-align: center;
+}
+
+.grid-rad2 {
+	top: 25%;
+	left: 25%;
+	transform: translate(-75%, -75%);
+	width: 75%;
+	height: 75%;
+}
+
 .vmarkerl,
 .vmarkerr,
 .hmarkert,
@@ -471,7 +493,7 @@ a:visited {
 	transform: translate(-50%, -50%);
 	width: var(--indsize);
 	height: var(--indsize);
-  opacity: 0.8;
+  	opacity: 0.8;
 	/*border: 2px solid var(--greycolor);*/
 	border-radius: var(--indsize);
 }
@@ -479,7 +501,7 @@ a:visited {
 .zero {
 	width: calc(var(--indsize) + 10px);
 	height: calc(var(--indsize) + 10px);
-  opacity: 1.0;
+	opacity: 1.0;
 	border: 2px solid var(--greycolor);
 	border-radius: var(--indsize);
 }
