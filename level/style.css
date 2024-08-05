@@ -65,7 +65,7 @@ body {
 	height: 50%;
   	opacity: 0.8;
 	border: 2px solid var(--greycolor);
-	border-radius: var(--indsize);
+	border-radius: 50%;
 	text-align: center;
 }
 
