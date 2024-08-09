@@ -24,30 +24,16 @@ function init() {
 
     //
 
-    const listener = new THREE.AudioListener();
-
-    const audio = new THREE.Audio( listener );
-    const file = './sounds/376737_Skullbeatz___Bad_Cat_Maste.mp3';
-
-    if ( /(iPad|iPhone|iPod)/g.test( navigator.userAgent ) ) {
-
-        const loader = new THREE.AudioLoader();
-        loader.load( file, function ( buffer ) {
-
-            audio.setBuffer( buffer );
-            audio.play();
-
-        } );
-
-    } else {
-
-        const mediaElement = new Audio( file );
-        mediaElement.play();
-
-        audio.setMediaElementSource( mediaElement );
-
+    function handleSuccess( stream ) {
+        var audio = new THREE.Audio( listener );
+        var context = listener.context;
+        var source = context.createMediaStreamSource( stream );
+        audio.setNodeSource( source );
     }
 
+    const listener = new THREE.AudioListener();
+    navigator.mediaDevices.getUserMedia( { audio: true, video: false } ).then( handleSuccess );
+    
     analyser = new THREE.AudioAnalyser( audio, fftSize );
 
     //
