@@ -2,8 +2,6 @@ import * as THREE from 'three';
 
 let scene, camera, renderer, analyser, uniforms;
 
-const start = Date.now();
-
 const startButton = document.getElementById( 'startButton' );
 startButton.addEventListener( 'click', () => {
     navigator.mediaDevices.getUserMedia( { audio: true, video: false } ).then(init);
@@ -26,7 +24,7 @@ function init(stream){
     analyser = new THREE.AudioAnalyser( audio, fftSize );
     uniforms = {
         tAudioData: { value: new THREE.DataTexture( analyser.data, fftSize / 2, 1, THREE.RedFormat ) },
-        iTime: 0
+        iTime: { value: 0.0 },
     };
 
     const material = new THREE.ShaderMaterial( {
@@ -63,7 +61,6 @@ function onWindowResize() {
 function animate() {
     analyser.getFrequencyData();
     uniforms.tAudioData.value.needsUpdate = true;
-    uniforms.iTime.value=(Date.now()-start)/1000;
-    uniforms.iTime.value.needsUpdate = true;
+    uniforms.iTime.value += 0.01;
     renderer.render( scene, camera );
 }
