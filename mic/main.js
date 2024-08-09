@@ -5,6 +5,18 @@ let scene, camera, renderer, analyser, uniforms;
 const startButton = document.getElementById( 'startButton' );
 startButton.addEventListener( 'click', init );
 
+function handleSuccess( stream ) {
+    const listener = new THREE.AudioListener();
+    const audio = new THREE.Audio( listener );
+    const context = listener.context;
+    const source = context.createMediaStreamSource( stream );
+    audio.setNodeSource( source );
+    analyser = new THREE.AudioAnalyser( audio, fftSize );
+    uniforms = {
+        tAudioData: { value: new THREE.DataTexture( analyser.data, fftSize / 2, 1, THREE.RedFormat ) }
+    };
+}
+
 function init() {
 
     const fftSize = 128;
@@ -22,27 +34,7 @@ function init() {
 
     camera = new THREE.Camera();
 
-    //
-
-    function handleSuccess( stream ) {
-        var audio = new THREE.Audio( listener );
-        var context = listener.context;
-        var source = context.createMediaStreamSource( stream );
-        audio.setNodeSource( source );
-    }
-
-    const listener = new THREE.AudioListener();
     navigator.mediaDevices.getUserMedia( { audio: true, video: false } ).then( handleSuccess );
-    
-    analyser = new THREE.AudioAnalyser( audio, fftSize );
-
-    //
-
-    uniforms = {
-
-        tAudioData: { value: new THREE.DataTexture( analyser.data, fftSize / 2, 1, THREE.RedFormat ) }
-
-    };
 
     const material = new THREE.ShaderMaterial( {
 
