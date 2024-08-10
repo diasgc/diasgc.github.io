@@ -17,7 +17,7 @@ function init(stream){
     //camera = new THREE.Camera();
     //const geometry = new THREE.PlaneGeometry( 1, 1 );
     camera = new THREE.OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-    const geometry = new THREE.PlaneBufferGeometry( 2, 2 );
+    const geometry = new THREE.PlaneGeometry( 2, 2 );
 
     const listener = new THREE.AudioListener();
     const audio = new THREE.Audio( listener );
