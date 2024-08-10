@@ -23,7 +23,7 @@ function init(stream){
     audio.setNodeSource( source );
     analyser = new THREE.AudioAnalyser( audio, fftSize );
     uniforms = {
-        tAudioData: { value: new THREE.DataTexture( analyser.data, fftSize, 1, THREE.RedFormat ) },
+        tAudioData: { value: new THREE.DataTexture( analyser.data, fftSize / 2, 1, THREE.RedFormat ) },
         iTime: { value: 0.0 },
     };
 
