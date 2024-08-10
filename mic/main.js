@@ -31,7 +31,7 @@ function init(stream){
 
         uniforms: uniforms,
         vertexShader: document.getElementById( 'vertexShader' ).textContent,
-        fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+        fragmentShader: document.getElementById( 'fragmentShader_new' ).textContent
 
     } );
 
@@ -61,6 +61,6 @@ function onWindowResize() {
 function animate() {
     analyser.getFrequencyData();
     uniforms.tAudioData.value.needsUpdate = true;
-    uniforms.iTime.value += 0.01;
+    uniforms.iTime.value += 0.005;
     renderer.render( scene, camera );
 }
