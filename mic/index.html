@@ -68,7 +68,7 @@
 			
 			float ringMultiplier(vec2 uv, float amp, float phase, float off, float power) {
 				vec3 noise1 = pow(vec3(2.0), texture2D(tAudioData, noiseDir1 * phase            ).rrr) * vec3(0.5);
-				vec3 noise2 = pow(vec3(1.25), texture2D(tAudioData, noiseDir2 - noiseDir1 * phase).rgb);
+				vec3 noise2 = 0.1 + 0.9 * texture2D(tAudioData, noiseDir2 - noiseDir1 * phase).rgb;
 				vec2 d = vec2(off, 0.5);
 				d.x += 0.6 * waves(
 					uv,
