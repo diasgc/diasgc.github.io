@@ -14,7 +14,10 @@ function init(stream){
 
     const container = document.getElementById( 'container' );
     scene = new THREE.Scene();
-    camera = new THREE.Camera();
+    //camera = new THREE.Camera();
+    //const geometry = new THREE.PlaneGeometry( 1, 1 );
+    camera = new THREE.OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
+    const geometry = new THREE.PlaneBufferGeometry( 2, 2 );
 
     const listener = new THREE.AudioListener();
     const audio = new THREE.Audio( listener );
@@ -35,7 +38,7 @@ function init(stream){
 
     } );
 
-    const geometry = new THREE.PlaneGeometry( 1, 1 );
+    
 
     const mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
