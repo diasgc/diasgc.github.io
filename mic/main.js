@@ -21,6 +21,12 @@ function init(stream){
     //camera = new THREE.Camera();
     //geometry = new THREE.PlaneGeometry( 1, 1 );
 
+    const loader = new THREE.TextureLoader();
+    const texture = loader.load('noise8b256.png');
+    texture.minFilter = THREE.NearestFilter;
+    texture.magFilter = THREE.NearestFilter;
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
     const listener = new THREE.AudioListener();
     const audio = new THREE.Audio( listener );
     const context = listener.context;
@@ -30,6 +36,7 @@ function init(stream){
     uniforms = {
         tAudioData: { value: new THREE.DataTexture( analyser.data, fftSize / 2, 1, THREE.RedFormat ) },
         iTime: { value: 0.0 },
+        iChannel0: { value: texture },
     };
 
     const material = new THREE.ShaderMaterial( {

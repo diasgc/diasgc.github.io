@@ -39,6 +39,7 @@
 		<script id="fragmentShader_new" type="x-shader/x-fragment">
 
 			uniform sampler2D tAudioData;
+			uniform sampler2D iChannel0;
 			uniform float iTime;
 			varying vec2 vUv;
 
@@ -68,7 +69,7 @@
 			
 			float ringMultiplier(vec2 uv, float amp, float phase, float off, float power) {
 				vec3 noise1 = pow(vec3(2.0), texture2D(tAudioData, noiseDir1 * phase            ).rrr) * vec3(1.0);
-				vec3 noise2 = vec3(0.25) + 0.75 * texture2D(tAudioData, noiseDir2 - noiseDir1 * phase).rgb;
+				vec3 noise2 = vec3(0.25) + 0.75 * texture2D(iChannel0, noiseDir2 - noiseDir1 * phase).rgb;
 				vec2 d = vec2(off, 0.5);
 				d.x += 0.6 * waves(
 					uv,
