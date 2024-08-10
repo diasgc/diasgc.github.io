@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-let scene, camera, renderer, analyser, uniforms;
+let scene, camera, geometry, renderer, analyser, uniforms;
 
 const startButton = document.getElementById( 'startButton' );
 startButton.addEventListener( 'click', () => {
@@ -14,10 +14,12 @@ function init(stream){
 
     const container = document.getElementById( 'container' );
     scene = new THREE.Scene();
-    //camera = new THREE.Camera();
-    //const geometry = new THREE.PlaneGeometry( 1, 1 );
+    // full screen
     camera = new THREE.OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-    const geometry = new THREE.PlaneGeometry( 2, 2 );
+    geometry = new THREE.PlaneGeometry( 2, 2 );
+    // default
+    //camera = new THREE.Camera();
+    //geometry = new THREE.PlaneGeometry( 1, 1 );
 
     const listener = new THREE.AudioListener();
     const audio = new THREE.Audio( listener );
