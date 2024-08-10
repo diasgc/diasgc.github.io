@@ -8,7 +8,7 @@ startButton.addEventListener( 'click', () => {
 } );
 
 function init(stream){
-    const fftSize = 128;
+    const fftSize = 64;
     const overlay = document.getElementById( 'overlay' );
     overlay.remove();
 
