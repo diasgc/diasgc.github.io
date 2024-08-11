@@ -30,14 +30,15 @@
 			void main() {
 				vec3 c;
 				float z = 0.1 * iTime;
+				vec2 uv = vUv;
 				vec2 p = vUv - 0.5;
-				float rx = texture2D(iChannel0, vUv).x;
-				float ry = texture2D(iChannel0, vUv).y;
+				float rx = texture2D(iChannel0, uv).x;
+				float ry = texture2D(iChannel0, uv).y;
 				float l = rx * length(p);
 				for (int i = 0; i < 3; i++) {
 					z += 0.01;
 					uv += p / l * (sin(z) + 1.0) * abs(sin(l * 7.0 * ry - z * 2.3));
-					c[i] = 0.005 / length(abs(mod(vUv, 1.0) - 0.5));
+					c[i] = 0.005 / length(abs(mod(uv, 1.0) - 0.5));
 				}
 				float intensity = texture2D(tAudioData, vec2(l, 0.5)).x;
 				gl_FragColor = vec4(c / l * intensity, iTime);
