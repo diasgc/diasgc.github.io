@@ -1,6 +1,14 @@
 body {
 	background-color: #000;
-    overflow: hidden;
+	overflow: hidden;
+}
+
+#overlay {
+	position: absolute;
+	margin: 0;
+	z-index: 2;
+	top: 50%;
+	left: 50%;
 }
 
 .button {
@@ -27,7 +35,7 @@ body {
 	> span {
 	  position: absolute;
 	  transform: rotate(calc(16deg * var(--index)));
-	  inset: 2px;
+	  inset: 0;
 	}
   }
   
