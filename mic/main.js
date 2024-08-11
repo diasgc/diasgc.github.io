@@ -48,7 +48,7 @@ function init(stream){
 
         uniforms: uniforms,
         vertexShader: document.getElementById( 'vertexShader' ).textContent,
-        fragmentShader: document.getElementById( 'frag03' ).textContent
+        fragmentShader: document.getElementById( 'frag02' ).textContent
 
     } );
 
