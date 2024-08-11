@@ -5,7 +5,6 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 		<meta name="apple-mobile-web-app-capable" content="yes">
-	
 		<meta name="mobile-web-app-capable" content="yes">
 		<link rel="manifest" href="site.webmanifest">
 		<link type="text/css" rel="stylesheet" href="style.css">
@@ -21,6 +20,28 @@
 
 		</script>
 
+		<script id="frag01" type="x-shader/x-fragment">
+
+			uniform sampler2D tAudioData;
+			uniform sampler2D iChannel0;
+			uniform float iTime;
+			varying vec2 vUv;
+
+			void main() {
+				vec3 c;
+				float z = 0.1 * iTime;
+				vec2 p = vUv - 0.5;
+				vec2 r =  texture2D(iChannel0, vec2(l, 0.5));
+				float l = r.x * length(p);
+				for (int i = 0; i < 3; i++) {
+					z += 0.01;
+					uv += p / l * (sin(z) + 1.0) * abs(sin(l * 7.0 * r.y - z * 2.3));
+					c[i] = 0.005 / length(abs(mod(vUv, 1.0) - 0.5));
+				}
+				float intensity = texture2D(tAudioData, vec2(l, 0.5)).x;
+				gl_FragColor = vec4(c / l * intensity, iTime);
+			}
+		</script>
 		<script id="fragmentShader" type="x-shader/x-fragment">
 
 			uniform sampler2D tAudioData;
