@@ -26,8 +26,8 @@ body {
   
 	> span {
 	  position: absolute;
-	  transform: rotate(calc(17deg * var(--index)));
-	  inset: 7px;
+	  transform: rotate(calc(16deg * var(--index)));
+	  inset: 2px;
 	}
   }
   
