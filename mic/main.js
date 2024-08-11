@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 let scene, camera, geometry, renderer, analyser, uniforms;
 
-const fftSize = 64;
+const fftSize = 128;
 
 const overlay = document.getElementById( 'overlay' );
 const container = document.getElementById( 'container' );
