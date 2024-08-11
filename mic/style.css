@@ -11,68 +11,66 @@ body {
 	left: 50%;
 }
 
-.button {
-	cursor: pointer;
-	border: none;
-	background: #7808d0;
+button {
+	--border-radius: 15px;
+	--border-width: 4px;
+	appearance: none;
+	position: relative;
+	padding: 1em 2em;
+	border: 0;
+	background-color: #212121;
+	font-family: "Roboto", Arial, "Segoe UI", sans-serif;
+	font-size: 18px;
+	font-weight: 500;
 	color: #fff;
-	width: 100px;
-	height: 100px;
-	border-radius: 50%;
-	overflow: hidden;
-	position: relative;
-	display: grid;
-	place-content: center;
-	transition: background 300ms;
-	font-weight: 600;
-  }
-  
-  .button__text {
+	z-index: 2;
+   }
+   
+   button::after {
+	--m-i: linear-gradient(#000, #000);
+	--m-o: content-box, padding-box;
+	content: "";
 	position: absolute;
-	inset: 0;
-	animation: text-rotation 8s linear infinite;
-  
-	> span {
-	  position: absolute;
-	  transform: rotate(calc(16deg * var(--index)));
-	  inset: 0;
-	}
-  }
-  
-  .button__circle {
-	position: relative;
-	width: 40px;
-	height: 40px;
-	overflow: hidden;
-	background: #fff;
-	color: #7808d0;
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-  }
-  
-  .button__icon--copy {
-	position: absolute;
-	transform: translate(-150%, 150%);
-  }
-  
-  .button:hover {
-	background: #000;
-  }
-  
-  .button:hover .button__icon:first-child {
-	transition: transform 0.3s ease-in-out;
-	transform: translate(150%, -150%);
-  }
-  
-  .button:hover .button__icon--copy {
-	transition: transform 0.3s ease-in-out 0.1s;
-	transform: translate(0);
-  }
-  
-  @keyframes text-rotation {
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	padding: var(--border-width);
+	border-radius: var(--border-radius);
+	background-image: conic-gradient(
+		   #488cfb,
+		   #655adc,
+		   #e440bb,
+		   #655adc,
+		   #488cfb
+	   );
+	-webkit-mask-image: var(--m-i), var(--m-i);
+	mask-image: var(--m-i), var(--m-i);
+	-webkit-mask-origin: var(--m-o);
+	mask-origin: var(--m-o);
+	-webkit-mask-clip: var(--m-o);
+	mask-composite: exclude;
+	-webkit-mask-composite: destination-out;
+	filter: hue-rotate(0);
+	animation: rotate-hue linear 500ms infinite;
+	animation-play-state: paused;
+   }
+   
+   button:hover::after {
+	animation-play-state: running;
+   }
+   
+   @keyframes rotate-hue {
 	to {
-	  rotate: 360deg;
+	 filter: hue-rotate(1turn);
 	}
-  }
+   }
+   
+   button,
+   button::after {
+	box-sizing: border-box;
+   }
+   
+   button:active {
+	--border-width: 5px;
+   }
