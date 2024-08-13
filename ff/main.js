@@ -3,7 +3,7 @@ import * as ffmpegffmpeg from 'https://esm.run/@ffmpeg/ffmpeg';
 console.log(ffmpegffmpeg)
 
 const message = document.getElementById('message');
-const { createFFmpeg, fetchFile } = FFmpeg;
+const { createFFmpeg, fetchFile } = ffmpegffmpeg;
 const ffmpeg = createFFmpeg({
   log: true,
   progress: ({ ratio }) => {
