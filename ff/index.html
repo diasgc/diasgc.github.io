@@ -14,6 +14,13 @@
 		<video id="output-video" controls></video><br/>
 		<input type="file" id="uploader">
 		<p id="message" />
-		<script type="text/javascript" src="main.js"></script>
+		<script type="importmap">
+			{
+				"imports": {
+					"ffmpeg": "https://esm.run/@ffmpeg/ffmpeg"
+				}
+			}
+		</script>
+		<script type="module" src="main.js"></script>
 	</body>
 </html>

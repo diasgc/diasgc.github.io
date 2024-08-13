@@ -1,4 +1,4 @@
-import * as ffmpegffmpeg from 'https://esm.run/@ffmpeg/ffmpeg';
+import * as ffmpegffmpeg from 'ffmpeg';
 
 console.log(ffmpegffmpeg)
 
