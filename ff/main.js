@@ -1,3 +1,7 @@
+import * as ffmpegffmpeg from 'https://esm.run/@ffmpeg/ffmpeg';
+
+console.log(ffmpegffmpeg)
+
 const message = document.getElementById('message');
 const { createFFmpeg, fetchFile } = FFmpeg;
 const ffmpeg = createFFmpeg({
