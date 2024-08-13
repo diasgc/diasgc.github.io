@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="mobile-web-app-capable" content="yes">
+		<link rel="manifest" href="site.webmanifest">
+		<link type="text/css" rel="stylesheet" href="style.css">
+		<script src="ffmpeg.min.js" crossorigin="true"></script>
+	</head>
+	<body>
+		<h3>Upload a video to transcode to mp4 (x264) and play!</h3>
+		<video id="output-video" controls></video><br/>
+		<input type="file" id="uploader">
+		<p id="message" />
+		<script type="text/javascript" src="main.js"></script>
+	</body>
+</html>
