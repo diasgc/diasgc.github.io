@@ -1,10 +1,11 @@
-import * as FFmpeg from 'ffmpeg';
-
-console.log(FFmpeg)
-
 const message = document.getElementById('message');
 const { createFFmpeg, fetchFile } = FFmpeg;
-const ffmpeg = new FFmpeg();
+const ffmpeg = createFFmpeg({
+  log: true,
+  progress: ({ ratio }) => {
+    message.innerHTML = `Complete: ${(ratio * 100.0).toFixed(2)}%`;
+  },
+});
 
 const transcode = async ({ target: { files }  }) => {
   const { name } = files[0];
@@ -12,7 +13,7 @@ const transcode = async ({ target: { files }  }) => {
   await ffmpeg.load();
   message.innerHTML = 'Start transcoding';
   ffmpeg.FS('writeFile', name, await fetchFile(files[0]));
-  await ffmpeg.run('-i', name,  '-c:v', 'libx265', 'output.mp4');
+  await ffmpeg.run('-i', name,  'output.mp4');
   message.innerHTML = 'Complete transcoding';
   const data = ffmpeg.FS('readFile', 'output.mp4');
  
