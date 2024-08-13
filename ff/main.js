@@ -3,7 +3,7 @@ import * as FFmpeg from 'ffmpeg';
 console.log(FFmpeg)
 
 const message = document.getElementById('message');
-const { createFFmpeg, fetchFile } = ffmpegffmpeg;
+const { createFFmpeg, fetchFile } = FFmpeg;
 const ffmpeg = new FFmpeg();
 
 const transcode = async ({ target: { files }  }) => {
