@@ -1,15 +1,10 @@
-import * as ffmpegffmpeg from 'ffmpeg';
+import * as FFmpeg from 'ffmpeg';
 
-console.log(ffmpegffmpeg)
+console.log(FFmpeg)
 
 const message = document.getElementById('message');
 const { createFFmpeg, fetchFile } = ffmpegffmpeg;
-const ffmpeg = createFFmpeg({
-  log: true,
-  progress: ({ ratio }) => {
-    message.innerHTML = `Complete: ${(ratio * 100.0).toFixed(2)}%`;
-  },
-});
+const ffmpeg = new FFmpeg();
 
 const transcode = async ({ target: { files }  }) => {
   const { name } = files[0];
