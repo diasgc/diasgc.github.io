@@ -32,7 +32,7 @@
 				const { stdoutBytes } = await instance.wait();
 				console.log(`The audio stream: ${output.stdoutBytes}`);
 			}
-			document.getElementById('uploader').addEventListener('change', runMe);
+			document.getElementById('uploader').addEventListener('change', transcode);
 		</script>
 	</body>
 </html>
