@@ -1,38 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja" style="width:100%;height:100%;overflow:hidden">
+<!--
+https://dannadori.medium.com/how-to-deploy-ffmpeg-wasm-application-to-github-pages-76d1ca143b17
+Simple Movie Editor and Ffmpeg CLI Generator
+source: https://github.com/w-okada/screen-recorder-ts
+demo: https://w-okada.github.io/screen-recorder-ts/
+-->
 	<head>
-		<meta charset="utf-8">
+		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="mobile-web-app-capable" content="yes">
 		<link rel="manifest" href="site.webmanifest">
 		<link type="text/css" rel="stylesheet" href="style.css">
+
+		<title>Screen Capture with ffmpeg-wasm</title>
+		<script src="168807ed5cb27992bea8.js"></script>
+		<script defer="defer" src="index.js"></script>
 	</head>
 	<body>
-		<h3>Upload a video to transcode to mp4 (x264) and play!</h3>
+		<noscript><strong>javascriptを有効にしてください</strong></noscript>
+		<div id="app"/>
+		<!--
 		<video id="output-video" controls></video><br/>
 		<input type="file" id="uploader">
 		<p id="message" />
-		<script defer type="module">
-			import { init, Wasmer } from "https://unpkg.com/@wasmer/sdk@latest/dist/index.mjs";
-			const message = document.getElementById('message');
-			const transcode = async ({ target: { files }  }) => {
-				await init();
-				const { name } = files[0];
-				let ffmpeg = await Wasmer.fromRegistry("wasmer/ffmpeg");
-				let resp = await fetch(name);
-				let video = await resp.arrayBuffer();
-				// We take stdin ("-") as input and write the output to stdout ("-") as a
-				// WAV audio stream.
-				const instance = await ffmpeg.entrypoint.run({
-				args: ["-i", "-", "-c:v", "libx265", "-"],
-				stdin: new Uint8Array(video),
-				});
-				const { stdoutBytes } = await instance.wait();
-				console.log(`The audio stream: ${output.stdoutBytes}`);
-			}
-			document.getElementById('uploader').addEventListener('change', transcode);
-		</script>
+		-->
 	</body>
 </html>
