@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="mobile-web-app-capable" content="yes">
+		<link rel="manifest" href="site.webmanifest">
+		<link type="text/css" rel="stylesheet" href="style.css">
+
+		<script id="vertex" type="x-shader/x-vertex">
+			varying vec2 vUv;
+			void main(){
+			  vUv = uv;
+			  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0 );
+			}
+		  </script>
+		  <script id="frag" type="x-shader/x-fragment">
+			
+			varying vec2 vUv;
+			uniform float iTime;
+			uniform float opacity;
+			
+			// Plasma Globe by nimitz (twitter: @stormoid)
+			// https://www.shadertoy.com/view/XsjXRm
+			// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License
+			// Contact the author for other licensing options
+		  
+			//looks best with around 25 rays
+			#define RENDER_RAYS 1
+			#define NUM_RAYS 13
+			#define TIME_SPEED 0.1
+			#define VOLUMETRIC_STEPS 10
+			#define FLOW_MAX_ITER 8
+			#define FLOW_GLOW 0.5
+			#define SINS_MAX_ITER 3
+			#define MAX_ITER 16
+			#define FAR 6.
+		  
+			#define time iTime * 0.09
+		  
+			const float SEGMSZ   = 0.52;
+			const float INTENS   = 1.3;
+			const vec2  OUTSZ    = vec2( 0.12 );
+			const vec3  BCOLOR1  = vec3( 0.12, 0.12, 0.5  );
+			const vec3  BCOLOR2  = vec3( 0.55, 0.2,  0.55 );
+		  
+			mat2 mm2(in float a){
+			  float c = cos(a), s = sin(a);
+			  return mat2(c,-s,s,c);
+			}
+			
+			float hash( float n ){
+			  return fract(sin(n) * 43758.5453);
+			}
+			
+			float noise(vec3 x) {
+				const vec3 step = vec3(110, 241, 171);
+		  
+				vec3 i = floor(x);
+				vec3 f = fract(x);
+		  
+				// For performance, compute the base input to a 1D hash from the integer part of the argument and the 
+				// incremental change to the 1D based on the 3D -> 1D wrapping
+				float n = dot(i, step);
+		  
+				vec3 u = f * f * (3.0 - 2.0 * f);
+				return mix(mix(mix( hash(n + dot(step, vec3(0, 0, 0))), hash(n + dot(step, vec3(1, 0, 0))), u.x),
+							   mix( hash(n + dot(step, vec3(0, 1, 0))), hash(n + dot(step, vec3(1, 1, 0))), u.x), u.y),
+						   mix(mix( hash(n + dot(step, vec3(0, 0, 1))), hash(n + dot(step, vec3(1, 0, 1))), u.x),
+							   mix( hash(n + dot(step, vec3(0, 1, 1))), hash(n + dot(step, vec3(1, 1, 1))), u.x), u.y), u.z);
+			}
+		  
+			const mat3 m3 = mat3( 0.00,  0.80,  0.60,
+								 -0.80,  0.36, -0.48,
+								 -0.60, -0.48,  0.64  );
+		  
+		  
+			//See: https://www.shadertoy.com/view/XdfXRj
+			float flow(in vec3 p, in float t){
+			  float z = 0.5;
+			  float rz = 0.;
+			  vec3 bp = p;
+			  for (int i= 1; i < FLOW_MAX_ITER; i++ ){
+				p += time * TIME_SPEED;
+				rz+= ( sin( noise( p + t * 0.8) * 6.0) * 0.5 + 0.5) * z;
+				p = mix( bp, p, FLOW_GLOW);
+				z *= 0.5;
+				p *= 2.01;
+				p *= m3;
+			  }
+			  return rz;	
+			}
+		  
+			//could be improved
+			float sins(in float x){
+			  float rz = 0.;
+			  float z = 0.5;
+			  for (int i= 0; i < SINS_MAX_ITER; i++ ){
+				rz += abs( fract( x * 1.8 ) - 0.5) * z;
+				x *= 1.2;
+				z *= 0.87;
+				x -= time * 0.65 / z;
+			  }
+			  return rz;
+			}
+		  
+			float segm( vec3 p, vec3 a, vec3 b){
+			  vec3 pa = p - a;
+			  vec3 ba = b - a;
+			  float h = clamp( dot( pa, ba ) / dot( ba, ba ), 0.0, 1.0 );	
+			  return length( pa - ba * h ) * SEGMSZ;
+			}
+		  
+			vec3 path(in float i, in float d){
+			  vec3 en = vec3(0.,0.,1.);
+			  float sns2 = sins( d + i * 0.5 ) * 0.22;
+			  float sns =  sins( d + i * 0.6) * 0.21;
+			  en.xz *= mm2( ( hash( i * 10.569 ) - 0.5 ) * 6.2 + sns2 );
+			  en.xy *= mm2( ( hash( i * 4.732  ) - 0.5 ) * 6.2 + sns  );
+			  return en;
+			}
+		  
+			vec2 map(vec3 p, float i){
+			  float lp = length(p);
+			  vec3 bg = vec3(0.0);   
+			  vec3 en = path( i, lp );
+		  
+			  float ins = smoothstep( 0.11, 0.5, lp);
+			  float outs = OUTSZ.x + smoothstep(0.0, OUTSZ.y, abs( lp - 1.0));
+			  p *= ins * outs;
+			  float id = ins * outs;
+		  
+			  float rz = segm(p, bg, en) - 0.011;
+			  return vec2(rz,id);
+			}
+		  
+			float march(in vec3 ro, in vec3 rd, in float startf, in float maxd, in float j){
+			  float precis = 0.0001;
+			  float h = 0.2;
+			  float d = startf;
+			  for( int i = 0; i < MAX_ITER; i++ ){
+				if( abs( h ) < precis || d > maxd ) break;
+				d += h * 1.5;
+				float res = map( ro + rd * d, j).x;
+				h = res;
+			  }
+			  return d;
+			}
+		  
+			//volumetric marching
+			vec3 vmarch(in vec3 ro, in vec3 rd, in float j, in vec3 orig){   
+			  vec3 p = ro;
+			  vec2 r = vec2(0.0);
+			  vec3 sum = vec3(0);
+			  float w = 0.;
+			  for( int i = 0; i < VOLUMETRIC_STEPS; i++ ){
+				r = map( p, j );
+				p += rd * 0.030;
+				float lp = length(p);
+		  
+				vec3 col = sin( vec3(1.05, 2.5, 1.52) * 3.94 + r.y) * 0.85 + 0.4;
+				col.rgb *= smoothstep( 0.0, 0.015, -r.x );
+				col *= smoothstep( 0.04,  0.2, abs( lp - 1.1 ) );
+				col *= smoothstep(  0.1, 0.34, lp );
+				sum += abs(col) * 5.0 * ( 1.2 - hash( lp * 2.0 + j * 13.0 + time * 5.0) * 1.1) / ( log( distance( p, orig ) - 2.0 ) + 0.95);
+			  }
+			  return sum;
+			}
+		  
+			//returns both collision dists of unit sphere
+			vec2 iSphere2(in vec3 ro, in vec3 rd){
+			  vec3 oc = ro;
+			  float b = dot(oc, rd);
+			  float c = dot(oc, oc) - 1.0;
+			  float h = b * b - c;
+			  return h < 0.0 ? vec2(-1.0) : vec2((-b - sqrt(h)), (-b + sqrt(h)));
+			}
+			
+			void main(){
+			  vec2 p = vUv - 0.5;
+				vec2 um = vec2(1.0);// - 0.5;
+			  
+				//camera
+				vec3 ro = vec3( 0.0, 0.0, 4.5 );
+			  vec3 rd = normalize( vec3( p * 0.7, -1.5) );
+			  mat2 mx = mm2( time * 0.4 + um.x * 6.0);
+			  mat2 my = mm2( time * 0.3 + um.y * 6.0); 
+			  ro.xz *= mx; rd.xz *= mx;
+			  ro.xy *= my; rd.xy *= my;
+			  
+			  vec3 bro = ro;
+			  vec3 brd = rd;
+			  
+			  vec3 col = vec3(00.0125, 0.0, 0.025);
+			  
+			  #if RENDER_RAYS
+			  for (int j = 1; j < NUM_RAYS + 1; j++){
+				ro = bro;
+				rd = brd;
+				mat2 mm = mm2( ( time * 0.1 + (( float(j) + 1.0) * 5.1) ) * float(j) * 0.25);
+				ro.xy *= mm; rd.xy *= mm;
+				ro.xz *= mm; rd.xz *= mm;
+				float rz = march( ro, rd, 2.5, FAR, float(j));
+					if ( rz >= FAR)
+				  continue;
+				  vec3 pos = ro + rz * rd;
+				  col = max(col, vmarch( pos, rd, float(j), bro));
+			  }
+			  #endif
+			  
+			  ro = bro;
+			  rd = brd;
+			  vec2 sph = iSphere2(ro,rd);
+			  
+			  if (sph.x > 0.){
+				vec3 pos = ro + rd * sph.x;
+				vec3 pos2 = ro + rd * sph.y;
+				vec3 rf = reflect( rd, pos );
+				vec3 rf2 = reflect( rd, pos2 );
+				float nz =  ( -log( abs( flow( rf  * 1.2,  time) - 0.01) ) );
+				float nz2 = ( -log( abs( flow( rf2 * 1.2, -time) - 0.01) ) );
+				col += (0.1 * nz * nz * BCOLOR1 + 0.05 * nz2 * nz2 * BCOLOR2) * 0.8;
+			  }
+			  col *= INTENS;
+			  
+			  gl_FragColor = vec4(col, dot(col, vec3(opacity)));
+			}
+		  </script>
+	</head>
+	<body>
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "https://cdn.jsdelivr.net/npm/three@0.167.1/build/three.module.min.js",
+					"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.167.1/examples/jsm/"
+				}
+			}
+		</script>
+		<script type="module" src="main.js"></script>
+
+	</body>
+</html>
