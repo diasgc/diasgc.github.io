@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-let scene, camera, geometry, renderer, analyser, uniforms;
+let scene, camera, geometry, renderer, uniforms;
 
 scene = new THREE.Scene();
 // full screen
@@ -38,8 +38,6 @@ function onWindowResize() {
 }
 
 function animate() {
-    analyser.getFrequencyData();
-    uniforms.tAudioData.value.needsUpdate = true;
     uniforms.iTime.value += 0.1;
     renderer.render( scene, camera );
 }
