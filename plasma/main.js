@@ -15,8 +15,8 @@ uniforms = {
 const material = new THREE.ShaderMaterial( {
 
     uniforms: uniforms,
-    vertexShader: document.getElementById( 'vertexShader' ).textContent,
-    fragmentShader: document.getElementById( 'frag02' ).textContent
+    vertexShader: document.getElementById( 'vertex' ).textContent,
+    fragmentShader: document.getElementById( 'fragment' ).textContent
 
 } );
 
