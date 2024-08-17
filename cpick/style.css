@@ -9,10 +9,17 @@ body {
     align-items: center;
 }
 
-.camera {
+#rc {
   width: 10vw;
   height: 10vw;
   border-radius: 100%;
-  overflow: hidden;
-  background:red;
+  -webkit-mask-image: -webkit-radial-gradient(circle, white 100%, black 100%);
+  -webkit-transform: rotate(0.000001deg); 
+  -webkit-border-radius: 100%; 
+  -moz-border-radius: 100%;
+}
+
+#canvas {
+  border-radius: 50%;
+  object-fit: cover;
 }
