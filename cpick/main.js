@@ -1,5 +1,10 @@
     const currFacing = 'environment';
-    const videoPreview = document.querySelector('#camera');
+    const videoPreview = document.getElementById('camera');
+    async function getDevices() {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        console.log("devices: " + devices);
+    }
+    getDevices();
     const startCam = (facingMode = 'environment') => {
         navigator.mediaDevices.getUserMedia({
             video: {
