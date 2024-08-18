@@ -11,9 +11,10 @@
   <link type="text/css" rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="circle">
-    <video id="videoStream" class="video-circle" width="300" height="300" autoplay muted loop></video>
-    </div>
+  <!-- the video render is a canvas -->
+  <canvas id="canvas" width="640" height="480"></canvas>
+  <button id="snap">Snap Photo</button>
+  <canvas id="still-canvas" width="640" height="480"></canvas>
   <script src="main.js"></script>
 </body>
 </html>
