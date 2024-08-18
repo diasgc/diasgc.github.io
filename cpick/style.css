@@ -6,19 +6,25 @@ body {
 }
 
 div {
-  width: 500px;
-  height: 400px;
+  width: 10vw;
+  height: 10vw;
   border: 2px solid black;
   position: relative;
 }
 
 video {
-  width: 500px;
-  height: 400px;
+  width: 10vw;
+  height: 10vw;
+  border-radius: 50%;
+  -webkit-mask-image: -webkit-radial-gradient(circle, white 100%, black 100%);
+  -webkit-transform: rotate(0.000001deg); 
+  -webkit-border-radius: 100%; 
+  -moz-border-radius: 100%;
+  position: absolute;
   object-fit: cover;
 }
 
-.circle{
+#vid1 {
  width: 10vw;
  height: 10vw;
  border-radius: 50%;
