@@ -16,14 +16,14 @@ if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 } else {
   // so we'll use a video about volcanos from wikimedia
   video.crossOrigin = mask.crossOrigin = "anonymous";    
-  video.onplaying = startRendering;
-  video.onpause = stopRendering;
   // wait for the image has loaded
   mask.onload = function() {
     video.src = "https://upload.wikimedia.org/wikipedia/commons/transcoded/2/22/Volcano_Lava_Sample.webm/Volcano_Lava_Sample.webm.360p.webm";
     video.play();
   }
 }
+video.onplaying = startRendering;
+video.onpause = stopRendering;
 
 function startRendering() {
   playing = true;
