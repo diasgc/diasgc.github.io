@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
       mediaDevices
           .getUserMedia({
               video: true,
-              audio: true,
+              audio: false,
           })
           .then((stream) => {
               // Changing the source of video to current stream.
