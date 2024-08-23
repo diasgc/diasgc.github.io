@@ -34,11 +34,11 @@ document.body.appendChild(renderer.domElement);
 
 window.addEventListener( 'resize', onWindowResize );
 
-let laSensor = new LinearAccelerationSensor({ frequency: 5 });
+let laSensor = new LinearAccelerationSensor({ frequency: 10 });
 const sens_x = document.getElementById('sens_x');
 const sens_y = document.getElementById('sens_y');
 const sens_z = document.getElementById('sens_z');
-const sens = 0.005;
+const sens = 0.015625;
 
 laSensor.addEventListener("reading", (e) => {
     uniforms.phi.value += laSensor.x * sens;
