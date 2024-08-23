@@ -3,3 +3,15 @@ body {
 	overflow: hidden;
 	background-color: black;
   }
+
+  #sens{
+	padding: 10px;
+	outline: 0;
+	z-index: 99;
+	font-size: 22px;
+	display: block;
+	position: absolute;
+	background-color: transparent;
+	opacity: 0.4;
+	color: #FA4;
+  }
