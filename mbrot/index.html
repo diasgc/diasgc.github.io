@@ -45,7 +45,7 @@
 			
 			const float PI = acos(0.0) * 2.0;
 			
-			const vec3 COL = vec3(0.2,0.6,0.8);
+			const vec3 C0 = vec3(0.2,0.6,0.8);
 			const float B = float(BB);
 			const float B2 = B * B;
 			const int N = BB * 2;
@@ -88,7 +88,7 @@
 		
 				float l = mandelbrot(c);
 		
-				col += 0.5 + 0.5 * cos( PI + l * 0.15 + COL);
+				col += 0.5 + 0.5 * cos( PI + l * 0.15 + C0);
 
 				gl_FragColor = vec4( col, 1.0 );
 			}
