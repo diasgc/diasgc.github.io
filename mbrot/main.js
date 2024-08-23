@@ -27,9 +27,7 @@ const mesh = new THREE.Mesh( geometry, material );
 scene.add( mesh );
 
 renderer = new THREE.WebGLRenderer( { antialias: true } );
-//renderer.setPixelRatio( window.devicePixelRatio );
-// Square it!
-renderer.setPixelRatio( 1 );
+renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.setAnimationLoop( animate );
 document.body.appendChild(renderer.domElement);
@@ -41,6 +39,6 @@ function onWindowResize() {
 }
 
 function animate() {
-    uniforms.iTime.value += 0.1;
+    uniforms.iTime.value += 0.05;
     renderer.render( scene, camera );
 }
