@@ -37,9 +37,9 @@ window.addEventListener( 'resize', onWindowResize );
 let laSensor = new LinearAccelerationSensor({ frequency: 60 });
 
 laSensor.addEventListener("reading", (e) => {
-    uniforms.phi.value = laSensor.x;
-    uniforms.tet.value = laSensor.y;
-    uniforms.zoom.value = laSensor.z;
+    uniforms.phi.value += laSensor.x * 0.1;
+    uniforms.tet.value += laSensor.y * 0.1;
+    uniforms.zoom.value += laSensor.z * 0.1;
 });
 
 laSensor.start();
