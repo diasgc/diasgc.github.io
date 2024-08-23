@@ -21,7 +21,7 @@
 			varying vec2 vUv;
 			uniform float tet;
 			uniform float phi;
-			uniform float zoo;
+			uniform float zoom;
 			uniform float iTime;
 			uniform float opacity;
 
@@ -90,9 +90,9 @@
 				vec2 c = vec2(-.745,.186) + xy * zoo;
 				float l = mandelbrot(c);
 				col += 0.5 + 0.5*cos( 3.0 + l * 0.15 + COL);
-				gl_FragColor = vec4( col, 1.0 );
+				gl_FragColor = vec4( col, opacity );
 			}
-			
+
 			/*
 			void mainImage( out vec4 fragColor, in vec2 fragCoord )
 			{

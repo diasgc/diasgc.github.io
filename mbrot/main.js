@@ -9,7 +9,10 @@ geometry = new THREE.PlaneGeometry( 2, 2 );
 
 uniforms = {
     opacity: { value: 1.0 },
-    iTime: { value: 0.1 }
+    iTime: { value: 0.1 },
+    zoom: { value: 0.1 },
+    tet: { value: 0.1 },
+    phi: { value: 0.1 }
 };
 
 const material = new THREE.ShaderMaterial( {
