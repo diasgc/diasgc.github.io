@@ -79,12 +79,12 @@
 				vec3 col = vec3(0.0);
 				vec2 p = vUv - 0.5;
 				float time = iTime;
-				float zoo = 0.62 + 0.38 * cos(0.07 *time);
-				float coa = cos( 0.015*(1.0 - zoo) * time );
-				float sia = sin( 0.015*(1.0 - zoo) * time );
+				float zoo = 0.62 + 0.38 * cos(zoom); //cos(0.07 *time);
+				float coa = cos(tet); // cos( 0.015*(1.0 - zoo) * time );
+				float sia = sin(phi); // sin( 0.015*(1.0 - zoo) * time );
 				zoo = pow( zoo, 8.0);
 				vec2 xy = vec2( p.x*coa-p.y*sia, p.x*sia+p.y*coa);
-				vec2 c = vec2(-.745,.186) + xy*zoo;
+				vec2 c = vec2(-.745 + tet * 0.1,.186 + phi * 0.1) + xy*zoo;
 		
 				float l = mandelbrot(c);
 		

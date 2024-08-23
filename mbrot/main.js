@@ -34,6 +34,17 @@ document.body.appendChild(renderer.domElement);
 
 window.addEventListener( 'resize', onWindowResize );
 
+let laSensor = new LinearAccelerationSensor({ frequency: 60 });
+
+laSensor.addEventListener("reading", (e) => {
+    uniforms.phi.value = laSensor.x;
+    uniforms.tet.value = laSensor.y;
+    uniforms.zoom.value = laSensor.z;
+});
+
+laSensor.start();
+
+
 function onWindowResize() {
     renderer.setSize( window.innerWidth, window.innerHeight );
 }
