@@ -60,11 +60,10 @@
 				int i = 0;
 				while ( dot(z,z) < BB && i < N){
 					z = vec2( z.x*z.x - z.y*z.y, 2.0*z.x*z.y ) + c;
-					l += 1.0;
 					i++;
 				}
 		
-				if( l>511.0 ) return 0.0;
+				if( i > 511 ) return 0.0;
 				
 				// ------------------------------------------------------
 				// smooth interation count
