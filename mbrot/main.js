@@ -34,12 +34,19 @@ document.body.appendChild(renderer.domElement);
 
 window.addEventListener( 'resize', onWindowResize );
 
-let laSensor = new LinearAccelerationSensor({ frequency: 60 });
+let laSensor = new LinearAccelerationSensor({ frequency: 5 });
+const sens_x = document.getElementById('sens_x');
+const sens_y = document.getElementById('sens_y');
+const sens_z = document.getElementById('sens_z');
+const sens = 0.005;
 
 laSensor.addEventListener("reading", (e) => {
-    uniforms.phi.value += laSensor.x * 0.1;
-    uniforms.tet.value += laSensor.y * 0.1;
-    uniforms.zoom.value += laSensor.z * 0.1;
+    uniforms.phi.value += laSensor.x * sens;
+    uniforms.tet.value += laSensor.y * sens;
+    uniforms.zoom.value += laSensor.z * sens;
+    sens_x.value = laSensor.x;
+    sens_y.value = laSensor.y;
+    sens_z.value = laSensor.z;
 });
 
 laSensor.start();
