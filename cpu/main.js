@@ -43,11 +43,6 @@ const blob = new Blob(
       }]
     },
     options: {
-      scales: {
-        y: {
-          min: 0,
-        }
-      },
       title: {
         display: !1
       },
