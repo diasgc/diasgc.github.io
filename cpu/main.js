@@ -1,3 +1,5 @@
+const dataLen = 10;
+const invervalMs = 250;
 const blob = new Blob(
     [
       `let time = performance.now()
@@ -5,7 +7,7 @@ const blob = new Blob(
              while(true){
                   iterations++;
                   let now = performance.now()
-                  if(now - time > 100){
+                  if(now - time > 250){
                       postMessage(iterations)
                       time = performance.now()
                       iterations = 0
@@ -17,7 +19,6 @@ const blob = new Blob(
   );
   
   const processWorker = new Worker(window.URL.createObjectURL(blob));
-  const dataLen = 10;
   const performanceData = [];
   
   processWorker.onmessage = (e) => {
