@@ -1,18 +1,18 @@
-const dataLen = 10;
-const intervalMs = 250;
+const dataLen = 50;
+const intervalMs = 100;
 const blob = new Blob(
     [
-      `let time = performance.now()
-             let iterations = 0;
-             while(true){
-                  iterations++;
-                  let now = performance.now()
-                  if(now - time > ${intervalMs}){
-                      postMessage(iterations)
-                      time = performance.now()
-                      iterations = 0
-                  }
-             }`,
+      `let time = performance.now();
+       let iterations = 0;
+       while(true){
+         iterations++;
+         let now = performance.now();
+         if(now - time > ${intervalMs}){
+           postMessage(iterations);
+           time = performance.now();
+           iterations = 0;
+         }
+       }`,
     ], {
       type: "text/javascript"
     }
