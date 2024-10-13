@@ -1,5 +1,5 @@
 const dataLen = 10;
-const invervalMs = 250;
+const intervalMs = 250;
 const blob = new Blob(
     [
       `let time = performance.now()
@@ -7,7 +7,7 @@ const blob = new Blob(
              while(true){
                   iterations++;
                   let now = performance.now()
-                  if(now - time > 250){
+                  if(now - time > ${intervalMs}){
                       postMessage(iterations)
                       time = performance.now()
                       iterations = 0
