@@ -35,7 +35,7 @@ const blob = new Blob(
       labels: Array(dataLen).fill(""),
       datasets: [{
         data: performanceData,
-        borderColor: Utils.CHART_COLORS.blue,
+        borderColor: "#2080a0",
         fill: false,
         fillColor: "#96c4be",
         tension: 10,
