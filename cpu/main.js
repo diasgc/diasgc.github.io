@@ -35,11 +35,11 @@ const blob = new Blob(
       labels: Array(dataLen).fill(""),
       datasets: [{
         data: performanceData,
-        borderColor: "#0f796b",
-        fill: !0,
+        borderColor: Utils.CHART_COLORS.blue,
+        fill: false,
         fillColor: "#96c4be",
         tension: 10,
-        cubicInterpolationMode: "monotone"
+        cubicInterpolationMode: "cubic" // monotone, linear
       }]
     },
     options: {
