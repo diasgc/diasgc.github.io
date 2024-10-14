@@ -39,7 +39,7 @@ const blob = new Blob(
         fill: false,
         fillColor: "#96c4be",
         tension: 10,
-        cubicInterpolationMode: "cubic" // monotone, linear
+        cubicInterpolationMode: "monotone" // cubic, monotone, linear
       }]
     },
     options: {
