@@ -12,6 +12,14 @@
   float: left;
 }
 
+#cbox {
+  display: inline-block;
+  border-radius: 2px;
+  margin-left: 20px;
+  width: 10px;
+  height: 10px;
+}
+
 #js-legend {
   margin-left: 50%;
   height: 240px;

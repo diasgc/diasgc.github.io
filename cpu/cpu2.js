@@ -14,7 +14,7 @@ const ul = document.createElement('div');
 document.getElementById("js-legend").appendChild(ul);
 for (let i = 0 ; i < 8 ; i++){
   const li = document.createElement('div');
-  li.innerHTML = `<span style="color: ${ backgroundColor[i] }; opacity: 1;">&#x25a0;&nbsp;&nbsp;&nbsp;</span>`
+  li.innerHTML = `<div id="cbox" style="background-color: ${ backgroundColor[i] }"></span>`
   const sp = document.createElement('span');
   li.appendChild(sp);
   labelIds.push(sp);
