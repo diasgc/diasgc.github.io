@@ -1,10 +1,10 @@
 if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-  body.style.backgroundColor = "#263238";
   Chart.defaults.color = "#fff";
   Chart.defaults.borderColor = "#263238";
   Chart.defaults.backgroundColor = "#263238";
   Chart.defaults.elements.arc.borderColor = "#263238";
   document.body.style.color = "#ffffff";
+  document.body.style.backgroundColor = "#263238";
 }
 
 const mainPalette = [
