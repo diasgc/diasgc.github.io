@@ -1,4 +1,5 @@
 if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+  body.style.backgroundColor = "#263238";
   Chart.defaults.color = "#fff";
   Chart.defaults.borderColor = "#263238";
   Chart.defaults.backgroundColor = "#263238";
@@ -52,7 +53,7 @@ function loadData(data){
 
 
 function setPalette(palette){
-  palette.splice(8);
+  palette.splice(nproc);
   palette.push("#80808020");
   console.log("Palette: " + palette);
   chart.data.datasets[0].backgroundColor = palette;
