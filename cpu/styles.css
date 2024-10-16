@@ -1,0 +1,21 @@
+.container {
+  width: 90%;
+  height: 240px;
+  margin: auto;
+  padding: 5px;
+  font-size: small;
+}
+
+#js-chart {
+  width: 40%;
+  height: 240px;
+  float: left;
+}
+
+#js-legend {
+  margin-left: 50%;
+  height: 240px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
