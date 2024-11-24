@@ -1,0 +1,28 @@
+input {
+    font-family: sans;
+    font-size: 18px;
+    font-weight: 800;
+    margin: 12px;
+    padding: 8px;
+    border-radius: 12px;
+    background: #9882;
+    &::file-selector-button {
+        font-weight: bold;
+        background: #eee;
+        color: #5af;
+        padding: 0.5em;
+        border: none;
+        outline: none;
+        margin-right: 1.5em;
+        border-radius: 12px;
+        transition: 1s;
+    }
+    &::file-selector-button:hover {
+        color: #eee;
+        background-color: #5af;
+    };
+    }
+
+#csvOut {
+    display: none;
+}

@@ -93,6 +93,7 @@ function prepareData(dataIn){
     outHTML +=v+"<br>";
   }
   document.getElementById("result").innerHTML = outHTML;
+  document.getElementById("csvOut").style.display = 'block';
 }
 
 
