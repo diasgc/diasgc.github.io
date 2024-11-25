@@ -1,30 +1,22 @@
-function maxV(v){
+function maxV(arr){
+  const max = Math.max(...arr); // Find the minimum value
+  const index = arr.indexOf(max)
   const out = {
-    max: Number.MIN_SAFE_INTEGER,
-    idx: -1
+    max: max,
+    idx: index
   };
-  for (let i = 0 ; i < v.length; i++){
-    if (v[i] > out.max){
-      out.max = v[i];
-      out.idx = i;
-    }
-  }
-  console.log("max " + v + ": "+JSON.stringify(out));
+  console.log("max " + arr + ": "+JSON.stringify(out));
   return out;
 }
 
-function minV(v){
+function minV(arr){
+  const min = Math.min(...arr); // Find the minimum value
+  const index = arr.indexOf(min)
   const out = {
-    min: Number.MAX_SAFE_INTEGER,
-    idx: -1
+    min: min,
+    idx: index
   };
-  for (let i = 0 ; i < v.length; i++){
-    if (v[i] < out.min){
-      out.min = v[i];
-      out.idx = i;
-    }
-  }
-  console.log("min " + v + ": "+JSON.stringify(out));
+  console.log("min " + arr + ": "+JSON.stringify(out));
   return out;
 }
 
@@ -36,6 +28,13 @@ function parseRow(opList, cols){
   let vals = cols.slice(2);
   let max = maxV(vals);
   let min = minV(vals);
+
+  /*
+  max [88,-415,0,0,0,0,-30]: {"max":"88","idx":0}
+  min [88,-415,0,0,0,0,-30]: {"min":"-30","idx":6}
+  transf: {"id":"110000414","src":0,"dst":6,"qt":88}
+  */
+ 
   if (max.max > 0 && min.min < 0){
     let qt = max.max > -min.min
               ? Math.max(max.max, -min.min)
