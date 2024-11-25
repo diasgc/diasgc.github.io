@@ -85,7 +85,7 @@ function prepareData(dataIn){
     header = rows[0].split(CS);
   }
   for (let i = 1; i < rows.length; i++){
-    //var row = rows[i].replaceAll(CS+CS,CS+"0"+CS).replaceAll(CS+LF,CS+"0"+LF);
+    var row = rows[i].replaceAll(CS+CS,CS+"0"+CS).replaceAll(CS+LF,CS+"0"+LF);
     row = row.split(CS);
     if (row.length == header.length)
         parseRow(dataOut, row);
