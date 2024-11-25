@@ -9,6 +9,7 @@ function maxV(v){
       out.idx = i;
     }
   }
+  console.log("max " + v + ": "+JSON.stringify(out));
   return out;
 }
 
@@ -23,6 +24,7 @@ function minV(v){
       out.idx = i;
     }
   }
+  console.log("min " + v + ": "+JSON.stringify(out));
   return out;
 }
 
@@ -81,7 +83,7 @@ function prepareData(dataIn){
     header = rows[0].split(CS);
   }
   for (let i = 1; i < rows.length; i++){
-    var row = rows[i].replaceAll(CS+CS,CS+"0"+CS).replaceAll(CS+LF,CS+"0"+LF);
+    //var row = rows[i].replaceAll(CS+CS,CS+"0"+CS).replaceAll(CS+LF,CS+"0"+LF);
     row = row.split(CS);
     if (row.length == header.length)
         parseRow(dataOut, row);
@@ -98,6 +100,23 @@ function prepareData(dataIn){
   document.getElementById("result").innerHTML = outHTML;
   saveCsv();
 }
+
+function showResults(){
+  for (let i = 0 ; i < header.length - 2; i++){
+    let from = header[i + 2];
+    for (let j = 0; j < header.length - 2; j++){
+      if (i == j)
+        continue;
+      let to = header[j + 2];
+      outLines.map((l) => {
+        if (l[1] == from)
+      })
+    }
+  }
+
+}
+
+
 
 function saveCsv() {
   document.getElementById("saveCsv").style.display = 'block';
