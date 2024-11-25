@@ -110,12 +110,9 @@ function showResults(){
       if (i == j)
         continue;
       let to = header[j + 2];
-      outLines.map((l) => {
-        if (l[1] == from)
-      })
+      // todo
     }
   }
-
 }
 
 
