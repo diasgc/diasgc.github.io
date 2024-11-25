@@ -150,7 +150,8 @@ function showResults(){
         continue;
       let el_dst = document.createElement("a");
       el_dst.setAttribute("href", getUri(filteredData));
-      el_dst.setAttribute("download", "transf_de_" + from + "_para_" + to +"_" + new Date().getTime() + ".csv");
+      let name = "transf_de_" + from + "_para_" + to +"_";
+      el_dst.setAttribute("download", name +"-" + new Date().getTime() + ".csv");
       el_src.appendChild(el_dst);
     }
     res.appendChild(el_src);
