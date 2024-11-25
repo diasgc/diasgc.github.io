@@ -93,9 +93,20 @@ function prepareData(dataIn){
     outHTML +=v+"<br>";
   }
   document.getElementById("result").innerHTML = outHTML;
-  document.getElementById("csvOut").style.display = 'block';
+  saveCsv();
 }
 
+function saveCsv() {
+  document.getElementById("saveCsv").style.display = 'block';
+  let csvIn = document.getElementById('csvIn');
+  let savecsv = () => {
+    let csvText = "data:text/csv;charset=utf-8," 
+      + outLines.map(e => e.join(CS)).join(LF);
+    let uri = encodeURI(csvText);
+    window.open(uri);
+  }
+  csvIn.addEventListener('change', savecsv);
+}
 
 let csvIn = document.getElementById('csvIn');
 let opencsv = () => {

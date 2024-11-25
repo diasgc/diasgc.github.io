@@ -1,5 +1,9 @@
-input {
+body {
     font-family: sans;
+    font-size: 14px;
+}
+
+input {
     font-size: 18px;
     font-weight: 800;
     margin: 12px;
@@ -22,7 +26,18 @@ input {
         background-color: #5af;
     };
     }
+#loadCsv,
+#saveCsv {
+    color: #06a;
+    margin: 12px;;
+    border-radius: 12px;
+    border: 1px solid #8881;
+}
 
-#csvOut {
+#saveCsv {
     display: none;
+}
+
+.title {
+    font-size: 10px;
 }
