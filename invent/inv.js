@@ -170,8 +170,10 @@ function saveCsv() {
   csvOut.data = outLines;
   let savecsv = (evt) => {
     let link = document.createElement("a");
+    let name = "transf_de_" + from + "_para_" + to +"_";
     link.setAttribute("href", getUri(evt.currentTarget.data));
-    link.setAttribute("download", "inventario-" + new Date().getTime() + ".csv");
+    link.setAttribute("download", name + "-" + new Date().getTime() + ".csv");
+    link.innerHTML = name;
     document.body.appendChild(link); // Required for FF
     link.click();
   }
