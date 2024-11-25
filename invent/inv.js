@@ -40,12 +40,14 @@ function parseRow(opList, cols){
     let qt = max.max > -min.min
               ? Math.max(max.max, -min.min)
               : Math.min(max.max, -min.min);
-    opList.push({
+    let trs = {
       id: id,
       src: max.idx,
       dst: min.idx,
       qt: qt
-    });
+    };
+    opList.push(trs);
+    console.log("transf: " + JSON.stringify(trs));
     cols[max.idx + 2] -= qt;
     cols[min.idx + 2] += qt;
     parseRow(opList,cols);
