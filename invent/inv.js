@@ -151,7 +151,7 @@ function showResults(){
       if (filteredData.length == 0)
         continue;
       let name = "trsf_de_" + from + "_para_" + to +"_";
-      let el_dst = getLinkElement(name, from + "-&gt;" + to, getUri(filteredData));
+      let el_dst = getLinkElement(name, from + "-&gt;" + to, filteredDataToGhaf(filteredData));
       el_src.appendChild(el_dst);
     }
     res.appendChild(el_src);
