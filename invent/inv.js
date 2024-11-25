@@ -132,6 +132,7 @@ function prepareData(dataIn){
     outLines.push(l);
     outHTML += l.join(CS)+"<br>";
   }
+  saveCsv();
   showResults();
 }
 
@@ -145,13 +146,15 @@ function showResults(){
       if (i == j)
         continue;
       let to = header[j + offset];
-      const filteredData = outLines.filter(row => row[i] === from && row[j] === to);
+      const filteredData = outLines.filter(row => row[1] === from && row[2] === to);
+      console.log("from " + from + " to " + to + ": " + filteredData.length); 
       if (filteredData.length == 0)
         continue;
+      let name = "transf_de_" + from + "_para_" + to +"_";
       let el_dst = document.createElement("a");
       el_dst.setAttribute("href", getUri(filteredData));
-      let name = "transf_de_" + from + "_para_" + to +"_";
       el_dst.setAttribute("download", name +"-" + new Date().getTime() + ".csv");
+      el_dst.innerHTML = name;
       el_src.appendChild(el_dst);
     }
     res.appendChild(el_src);
@@ -171,7 +174,7 @@ function saveCsv() {
   csvOut.data = outLines;
   let savecsv = (evt) => {
     let link = document.createElement("a");
-    let name = "transf_de_" + from + "_para_" + to +"_";
+    let name = "transferencias_global";
     link.setAttribute("href", getUri(evt.currentTarget.data));
     link.setAttribute("download", name + "-" + new Date().getTime() + ".csv");
     link.innerHTML = name;
