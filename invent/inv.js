@@ -4,6 +4,8 @@ function maxV(v){
     idx: -1
   };
   for (let i = 0 ; i < v.length; i++){
+    if (!v[i] || v[i].length == 0)
+      v[i] = 0;
     if (v[i] > out.max){
       out.max = v[i];
       out.idx = i;
@@ -18,6 +20,8 @@ function minV(v){
     idx: -1
   };
   for (let i = 0 ; i < v.length; i++){
+    if (!v[i] || v[i].length == 0)
+      v[i] = 0;
     if (v[i] < out.min){
       out.min = v[i];
       out.idx = i;
