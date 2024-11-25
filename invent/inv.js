@@ -4,8 +4,6 @@ function maxV(v){
     idx: -1
   };
   for (let i = 0 ; i < v.length; i++){
-    if (!v[i] || v[i].length == 0)
-      v[i] = 0;
     if (v[i] > out.max){
       out.max = v[i];
       out.idx = i;
@@ -20,8 +18,6 @@ function minV(v){
     idx: -1
   };
   for (let i = 0 ; i < v.length; i++){
-    if (!v[i] || v[i].length == 0)
-      v[i] = 0;
     if (v[i] < out.min){
       out.min = v[i];
       out.idx = i;
@@ -85,7 +81,8 @@ function prepareData(dataIn){
     header = rows[0].split(CS);
   }
   for (let i = 1; i < rows.length; i++){
-    let row = rows[i].split(CS);
+    var row = rows[i].repaceAll(CS+CS,CS+"0"+CS).replaceAll(CS+LF,CS+"0"+LF);
+    row = row.split(CS);
     if (row.length == header.length)
         parseRow(dataOut, row);
   }
