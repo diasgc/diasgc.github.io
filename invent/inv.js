@@ -1,4 +1,4 @@
-function maxV(arr){
+function maxV2(arr){
   const max = Math.max(...arr); // Find the minimum value
   const index = arr.indexOf(max)
   const out = {
@@ -9,7 +9,7 @@ function maxV(arr){
   return out;
 }
 
-function minV(arr){
+function minV2(arr){
   const min = Math.min(...arr); // Find the minimum value
   const index = arr.indexOf(min)
   const out = {
@@ -20,12 +20,42 @@ function minV(arr){
   return out;
 }
 
+function minV(arr){
+  const out = {
+    min: arr[0],
+    idx: 0
+  };
+  for (let i = 1 ; i < arr.length; i++){
+    if (arr[i] < out.min){
+      out.max = arr[i];
+      out.idx = i;
+    }
+  }
+  console.log("max " + arr + ": "+JSON.stringify(out));
+  return out;
+}
+
+function maxV(arr){
+  const out = {
+    max: arr[0],
+    idx: 0
+  };
+  for (let i = 1 ; i < arr.length; i++){
+    if (arr[i] > out.max){
+      out.max = arr[i];
+      out.idx = i;
+    }
+  }
+  console.log("max " + arr + ": "+JSON.stringify(out));
+  return out;
+}
+
 function parseRow(opList, cols){
   console.log("cols: " + cols);
   let id = cols[0];
   let prior = cols[1];
-  let nArm = cols.length - 2;
-  let vals = cols.slice(2);
+  let nArm = cols.length - offset;
+  let vals = cols.slice(offset);
   let max = maxV(vals);
   let min = minV(vals);
 
@@ -47,8 +77,8 @@ function parseRow(opList, cols){
     };
     opList.push(trs);
     console.log("transf: " + JSON.stringify(trs));
-    cols[max.idx + 2] -= qt;
-    cols[min.idx + 2] += qt;
+    cols[max.idx + offset] -= qt;
+    cols[min.idx + offset] += qt;
     parseRow(opList,cols);
   }
 }
@@ -69,24 +99,28 @@ document.getElementById("result").innerHTML = JSON.stringify(out, null, 2);
 
 var LF = "\r\n";
 var CS = ";";
+var DC = ",";
 let dataOut = [];
 let offset = 2; // primeira coluna do armazem (from 0)
 var header;
 let outLines = [];
 
 function prepareData(dataIn){
-  
   if (dataIn.indexOf(LF) < 0)
     LF = "\n";
   let rows = dataIn.split(LF);
   header = rows[0].split(CS);
-  if (header.length < 2){
+  if (header.length < offset){
     CS = ",";
+    DC = ".";
     header = rows[0].split(CS);
   }
+  let keepDec = DC === '.';
   for (let i = 1; i < rows.length; i++){
-    var row = rows[i].replaceAll(CS+CS,CS+"0"+CS).replaceAll(CS+LF,CS+"0"+LF);
-    row = row.split(CS);
+    var row = keepDec
+      ? rows[i]
+      : rows[i].replaceAll(DC,".").replaceAll(DC,".");
+    row = row.split(CS).map(x => parseInt(x || 0));
     if (row.length == header.length)
         parseRow(dataOut, row);
   }
@@ -94,7 +128,6 @@ function prepareData(dataIn){
   outLines.push(["cod","src","dst","qt"]);
   for (let i = 0; i < dataOut.length; i++){
     let r = dataOut[i];
-    let v = r.id + CS + header[r.src + offset] + CS + header[r.dst + offset] + CS + r.qt;
     let l = [r.id, header[r.src + offset], header[r.dst + offset], r.qt];
     outLines.push(l);
     outHTML += l.join(CS)+"<br>";
@@ -104,13 +137,13 @@ function prepareData(dataIn){
 
 function showResults(){
   let res = document.getElementById("result");
-  for (let i = 0 ; i < header.length - 2; i++){
-    let from = header[i + 2];
+  for (let i = 0 ; i < header.length - offset; i++){
+    let from = header[i + offset];
     let el_src = document.createElement("div");
-    for (let j = 0; j < header.length - 2; j++){
+    for (let j = 0; j < header.length - offset; j++){
       if (i == j)
         continue;
-      let to = header[j + 2];
+      let to = header[j + offset];
       const filteredData = outLines.filter(row => row[i] === from && row[j] === to);
       let el_dst = document.createElement("a");
       el_dst.setAttribute("href", getUri(filteredData));
