@@ -150,11 +150,8 @@ function showResults(){
       console.log("from " + from + " to " + to + ": " + filteredData.length); 
       if (filteredData.length == 0)
         continue;
-      let name = "transf_de_" + from + "_para_" + to +"_";
-      let el_dst = document.createElement("a");
-      el_dst.setAttribute("href", getUri(filteredData));
-      el_dst.setAttribute("download", name +"-" + new Date().getTime() + ".csv");
-      el_dst.innerHTML = name;
+      let name = "trsf_de_" + from + "_para_" + to +"_";
+      let el_dst = getLinkElement(name, from + "-&gt;" + to, getUri(filteredData));
       el_src.appendChild(el_dst);
     }
     res.appendChild(el_src);
@@ -167,6 +164,22 @@ function getUri(arr){
   return encodeURI(csvText);
 }
 
+function getLinkElement(name, label, uri){
+  let el = document.createElement("a");
+  el.setAttribute("href", uri);
+  el.setAttribute("download", name +"-" + new Date().getTime() + ".csv");
+  el.innerHTML = name;
+  return el;
+}
+
+function filteredDataToGhaf(filteredData){
+  let out = [];
+  out.push(['Codigo','Designacao','Qtd','Armazem','CentroDeCusto','Caract','Obs','RefForn','EmbForn','Lote','PrzValidade','PTotal']);
+  for (let i = 0 ; i < filteredData.length; i++)
+    out.push([filteredData[0],,filteredData[3],filteredData[1],,,,,,,,,,]);
+  let csvText = "data:text/csv;charset=utf-8," + out.map(e => e.join(CS)).join(LF);
+  return encodeURI(csvText);
+}
 
 function saveCsv() {
   document.getElementById("saveCsv").style.display = 'block';
@@ -174,11 +187,9 @@ function saveCsv() {
   csvOut.data = outLines;
   let savecsv = (evt) => {
     let link = document.createElement("a");
-    let name = "transferencias_global";
-    link.setAttribute("href", getUri(evt.currentTarget.data));
-    link.setAttribute("download", name + "-" + new Date().getTime() + ".csv");
-    link.innerHTML = name;
-    document.body.appendChild(link); // Required for FF
+    let name = "trsf_all";
+    let el_dst = getLinkElement(name, name + "_" + new Date().getTime(), getUri(evt.currentTarget.data));
+    document.body.appendChild(el_dst); // Required for FF
     link.click();
   }
   csvOut.addEventListener('click', savecsv, false);
