@@ -72,14 +72,15 @@ var LF = "\r\n";
 var CS = ";";
 let dataOut = [];
 let offset = 2; // primeira coluna do armazem (from 0)
-
+var header;
 let outLines = [];
+
 function prepareData(dataIn){
   
   if (dataIn.indexOf(LF) < 0)
     LF = "\n";
   let rows = dataIn.split(LF);
-  let header = rows[0].split(CS);
+  header = rows[0].split(CS);
   if (header.length < 2){
     CS = ",";
     header = rows[0].split(CS);
