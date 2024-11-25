@@ -25,7 +25,25 @@ input {
         color: #eee;
         background-color: #5af;
     };
-    }
+}
+
+#csvOut {
+    font-weight: bold;
+    background: #eee;
+    color: #5af;
+    padding: 0.5em;
+    border: none;
+    outline: none;
+    margin-right: 1.5em;
+    border-radius: 12px;
+    transition: 1s;
+}
+
+#csvOut:hover {
+    color: #eee;
+    background-color: #5af;
+}
+
 #loadCsv,
 #saveCsv {
     color: #06a;

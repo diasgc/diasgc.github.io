@@ -69,6 +69,7 @@ var CS = ";";
 let dataOut = [];
 let offset = 2; // primeira coluna do armazem (from 0)
 
+let outLines = [];
 function prepareData(dataIn){
   
   if (dataIn.indexOf(LF) < 0)
@@ -84,13 +85,14 @@ function prepareData(dataIn){
     if (row.length == header.length)
         parseRow(dataOut, row);
   }
-  let outLines = [];
   let outHTML = "";
+  outLines.push(["cod","src","dst","qt"]);
   for (let i = 0; i < dataOut.length; i++){
     let r = dataOut[i];
     let v = r.id + CS + header[r.src + offset] + CS + header[r.dst + offset] + CS + r.qt;
-    outLines.push(v);
-    outHTML +=v+"<br>";
+    let l = [r.id, header[r.src + offset], header[r.dst + offset], r.qt];
+    outLines.push(l);
+    outHTML += l.join(CS)+"<br>";
   }
   document.getElementById("result").innerHTML = outHTML;
   saveCsv();
@@ -98,14 +100,19 @@ function prepareData(dataIn){
 
 function saveCsv() {
   document.getElementById("saveCsv").style.display = 'block';
-  let csvIn = document.getElementById('csvIn');
-  let savecsv = () => {
+  let csvOut = document.getElementById('csvOut');
+  csvOut.data = outLines;
+  let savecsv = (evt) => {
     let csvText = "data:text/csv;charset=utf-8," 
-      + outLines.map(e => e.join(CS)).join(LF);
+      + evt.currentTarget.data.map(e => e.join(",")).join(LF);
     let uri = encodeURI(csvText);
-    window.open(uri);
+    let link = document.createElement("a");
+    link.setAttribute("href", uri);
+    link.setAttribute("download", "inventario-" + new Date().getTime() + ".csv");
+    document.body.appendChild(link); // Required for FF
+    link.click();
   }
-  csvIn.addEventListener('change', savecsv);
+  csvOut.addEventListener('click', savecsv, false);
 }
 
 let csvIn = document.getElementById('csvIn');
