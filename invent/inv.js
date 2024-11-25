@@ -27,11 +27,11 @@ function minV(arr){
   };
   for (let i = 1 ; i < arr.length; i++){
     if (arr[i] < out.min){
-      out.max = arr[i];
+      out.min = arr[i];
       out.idx = i;
     }
   }
-  console.log("max " + arr + ": "+JSON.stringify(out));
+  console.log("min " + arr + ": "+JSON.stringify(out));
   return out;
 }
 
