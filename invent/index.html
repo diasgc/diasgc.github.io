@@ -19,15 +19,41 @@
     <link rel="stylesheet" href="inv.css">
 </head>
 <body>
-  <div id="loadCsv">
+  <fieldset id="loadCsv">
     <div class="title">load csv</div>
     <input type="file" id="csvIn" name="csv-in" accept="text/csv">
-  </div>
-  <div id="saveCsv">
+    <fieldset id="inOptions">
+      <legend>Options</legend>
+      <div style="display: block;">
+      <label for="crlf">line feed</label>
+      <select id="crlf" name="line-feed">
+        <option value="auto">auto</option>
+        <option value="\r\n">CRLF</option>
+        <option value="\n">LF</option>
+      </select>
+      <label for="fieldsep">separator</label>
+      <select id="fieldsep" name="sep">
+        <option value="auto">auto</option>
+        <option value=",">, comma</option>
+        <option value=";">; semicolon</option>
+      </select>
+      <label for="offset">offset</label>
+      <select id="offset" name="offset">
+        <option value="1">1</option>
+        <option value="2" selected>2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      </select>
+      </div>
+    </fieldset>
+  </fieldset>
+  <fieldset id="saveCsv">
     <div class="title">save csv</div>
     <button id="csvOut">save file</button>
-  </div>
-  <div id="result"><p>result</p><a href="url://">name</a></div>
+  </fieldset>
+  <fieldset id="result">
+    <legend>Result</legend>
+  </fieldset>
   <script src="inv.js"></script>
 </body>
 </html>

@@ -138,10 +138,13 @@ function prepareData(dataIn){
 
 function showResults(){
   let res = document.getElementById("result");
-  res.className = 'btn';
+  res.style.display = 'block';
   for (let i = 0 ; i < header.length - offset; i++){
     let from = header[i + offset];
-    let el_src = document.createElement("div");
+    let el_src = document.createElement("fieldset");
+    let el_src_legend = document.createElement("legent");
+    el_src_legend.innerHTML = "from " + from;
+    el_src.appendChild(el_src_legend);
     for (let j = 0; j < header.length - offset; j++){
       if (i == j)
         continue;
@@ -150,8 +153,7 @@ function showResults(){
       console.log("from " + from + " to " + to + ": " + filteredData.length); 
       if (filteredData.length == 0)
         continue;
-      let name = "trsf_de_" + from + "_para_" + to +"_";
-      let el_dst = getLinkElement(name, from + "-&gt;" + to, filteredDataToGhaf(filteredData));
+      let el_dst = getLinkElement("trf-" + from + "-to-" + to, from + "-&gt;" + to, filteredDataToGhaf(filteredData));
       el_src.appendChild(el_dst);
     }
     res.appendChild(el_src);
@@ -168,7 +170,7 @@ function getLinkElement(name, label, uri){
   let el = document.createElement("a");
   el.setAttribute("href", uri);
   el.setAttribute("download", name +"-" + new Date().getTime() + ".csv");
-  el.innerHTML = name;
+  el.innerHTML = label;
   return el;
 }
 
@@ -176,7 +178,7 @@ function filteredDataToGhaf(filteredData){
   let out = [];
   out.push(['Codigo','Designacao','Qtd','Armazem','CentroDeCusto','Caract','Obs','RefForn','EmbForn','Lote','PrzValidade','PTotal']);
   for (let i = 0 ; i < filteredData.length; i++)
-    out.push([filteredData[0],,filteredData[3],filteredData[1],,,,,,,,,,]);
+    out.push([filteredData[i][0],'',filteredData[i][3],filteredData[i][1],'','','','','','','','']);
   let csvText = "data:text/csv;charset=utf-8," + out.map(e => e.join(CS)).join(LF);
   return encodeURI(csvText);
 }
