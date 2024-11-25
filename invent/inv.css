@@ -44,6 +44,7 @@ input {
     background-color: #5af;
 }
 
+.btn,
 #loadCsv,
 #saveCsv {
     color: #06a;

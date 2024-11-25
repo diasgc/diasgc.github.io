@@ -137,6 +137,7 @@ function prepareData(dataIn){
 
 function showResults(){
   let res = document.getElementById("result");
+  res.className = 'btn';
   for (let i = 0 ; i < header.length - offset; i++){
     let from = header[i + offset];
     let el_src = document.createElement("div");
@@ -145,6 +146,8 @@ function showResults(){
         continue;
       let to = header[j + offset];
       const filteredData = outLines.filter(row => row[i] === from && row[j] === to);
+      if (filteredData.length == 0)
+        continue;
       let el_dst = document.createElement("a");
       el_dst.setAttribute("href", getUri(filteredData));
       el_dst.setAttribute("download", "transf_de_" + from + "_para_" + to +"_" + new Date().getTime() + ".csv");
