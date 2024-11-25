@@ -99,22 +99,33 @@ function prepareData(dataIn){
     outLines.push(l);
     outHTML += l.join(CS)+"<br>";
   }
-  document.getElementById("result").innerHTML = outHTML;
-  saveCsv();
+  showResults();
 }
 
 function showResults(){
+  let res = document.getElementById("result");
   for (let i = 0 ; i < header.length - 2; i++){
     let from = header[i + 2];
+    let el_src = document.createElement("div");
     for (let j = 0; j < header.length - 2; j++){
       if (i == j)
         continue;
       let to = header[j + 2];
-      // todo
+      const filteredData = outLines.filter(row => row[i] === from && row[j] === to);
+      let el_dst = document.createElement("a");
+      el_dst.setAttribute("href", getUri(filteredData));
+      el_dst.setAttribute("download", "transf_de_" + from + "_para_" + to +"_" + new Date().getTime() + ".csv");
+      el_src.appendChild(el_dst);
     }
+    res.appendChild(el_src);
   }
 }
 
+function getUri(arr){
+  let csvText = "data:text/csv;charset=utf-8," 
+      + arr.map(e => e.join(CS)).join(LF);
+  return encodeURI(csvText);
+}
 
 
 function saveCsv() {
@@ -122,11 +133,8 @@ function saveCsv() {
   let csvOut = document.getElementById('csvOut');
   csvOut.data = outLines;
   let savecsv = (evt) => {
-    let csvText = "data:text/csv;charset=utf-8," 
-      + evt.currentTarget.data.map(e => e.join(",")).join(LF);
-    let uri = encodeURI(csvText);
     let link = document.createElement("a");
-    link.setAttribute("href", uri);
+    link.setAttribute("href", getUri(evt.currentTarget.data));
     link.setAttribute("download", "inventario-" + new Date().getTime() + ".csv");
     document.body.appendChild(link); // Required for FF
     link.click();
