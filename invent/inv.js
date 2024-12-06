@@ -73,8 +73,8 @@ function parseRow(opList, cols){
               : Math.max(max.max, min.min);
     let trs = {
       id: id,
-      src: max.idx,
-      dst: min.idx,
+      src: min.idx,
+      dst: max.idx,
       qt: qt
     };
     opList.push(trs);
