@@ -67,8 +67,8 @@ function parseRow(opList, cols){
  
   if (max.max > 0 && min.min < 0){
     let qt = max.max > -min.min
-              ? Math.max(max.max, -min.min)
-              : Math.min(max.max, -min.min);
+              ? Math.min(max.max, -min.min)
+              : Math.max(max.max, -min.min);
     let trs = {
       id: id,
       src: max.idx,

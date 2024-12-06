@@ -87,3 +87,8 @@ a:link {
 .title {
     font-size: 10px;
 }
+.subtitle {
+    font-family: monospace;
+    font-size: 10px;
+    margin: 12px;
+}
