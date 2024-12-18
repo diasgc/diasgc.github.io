@@ -65,14 +65,16 @@ function parseRow(opList, cols){
   transf: {"id":"110000414","src":0,"dst":6,"qt":88}
   */
  
+  // max:1, min:-2 -> 1 > 2 false -> max(1,-2) = 1
+  // max:200, min:-2 -> 200 > 2 true -> min(200,2) = 2
   if (max.max > 0 && min.min < 0){
     let qt = max.max > -min.min
               ? Math.min(max.max, -min.min)
-              : Math.max(max.max, -min.min);
+              : Math.max(max.max, min.min);
     let trs = {
       id: id,
-      src: max.idx,
-      dst: min.idx,
+      src: min.idx,
+      dst: max.idx,
       qt: qt
     };
     opList.push(trs);
