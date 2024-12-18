@@ -1,0 +1,287 @@
+:root {
+  --top-offset: 8px;
+  --menu-h: 40px;
+  --menu-opacity: 0.9;
+  --menu-blur: 6px;
+}
+
+/* Light mode */
+@media (prefers-color-scheme: light) {
+:root {
+  --body-bg: #e0e0e0;
+  --menu-bg: #e0e0e0;
+  --blur-bg: rgba(255,255,255,0.5);
+  --body-bg-strong: #fff;
+  --body-fg: #202020;
+  --body-fg-strong: #000;
+  --border-fg: rgba(0,0,0,0.0625);
+  --accent: #01579B;
+  --accent1: #01579B10;
+  --accent2: #01579B20;
+  --protected: #9c0268;
+  --faded-accent: #0157920;
+}
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+:root {
+  --body-bg: #202020;
+  --menu-bg: #202020;
+  --blur-bg: rgba(0,0,0,0.5);
+  --body-bg-strong: #000;
+  --body-fg: #e0e0e0;
+  --body-fg-strong: #fff;
+  --border-fg: rgba(255,255,255,0.0625);
+  --accent: #FFB74D;
+  --accent1: #FFB74D10;
+  --accent2: #FFB74D20;
+  --protected: #ff744d;
+  --faded-accent: #FFB74D10;
+}
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  background: var(--body-bg);
+  color: var(--body-fg);
+}
+
+.c-content {
+  position: absolute;
+  padding-top: var(--top-offset);
+  padding-bottom: calc(var(--menu-h) + 24px);
+  bottom: 0;
+  top: 0;
+  margin: 0;
+  left: 0;
+  right: 0;
+  overflow: auto;
+  z-index: 0;
+}
+
+#file-picker {
+  display: none;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+
+input {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 12px;
+  padding: 8px;
+  border-radius: 12px;
+  background: #9882;
+  &::file-selector-button {
+      font-weight: bold;
+      background: #eee;
+      color: #5af;
+      padding: 0.5em;
+      border: none;
+      outline: none;
+      margin-right: 1.5em;
+      border-radius: 12px;
+      transition: 1s;
+  }
+  &::file-selector-button:hover {
+      color: #eee;
+      background-color: #5af;
+  };
+}
+
+.tab-content {
+  display: block;
+  padding: 6px 12px;
+  border-top: none;
+}
+
+.table-fixed-head {
+  overflow-y: auto;
+  top: calc(var(--menu-h) + 12px);
+  height: 100vh;
+  width: 100%;
+  margin: 0;
+}
+
+
+.table-fixed-head thead th {
+  position: sticky;
+  top: 0;
+}
+
+th {
+  padding: 12px 8px;
+  color: var(--accent);
+  background-color: var(--blur-bg);
+  backdrop-filter: blur(var(--menu-blur));
+}
+
+tr:nth-child(even) {
+  background-color: #8881;
+}
+
+.table-hex {
+  width:100%;
+  margin: 0;
+  border-collapse: collapse;
+  font-family: monospace;
+  font-size: 13px;
+}
+
+.tdo
+.td0,.td0s,
+.td8,.td8s,
+.td12,.td12s,
+.td16,.td16s {
+  font-family: monospace;
+  font-weight: 800;
+  font-size: 12px;
+  text-align: center;
+  &:focus,
+  &:hover {
+    color: red;
+  };
+}
+
+.tda {
+  font-size: 11px;
+  padding: 0;
+}
+
+.tdo {
+  font-size: 10px;
+}
+
+.hvo {
+  font-size: 12px;
+}
+
+.tda8 {
+  padding: 0;
+  font-size: 12px;
+}
+
+.td8 {
+  padding: 14px 2px;
+  font-size: 18px;
+}
+
+.td8s {
+  padding-right: 12px;
+  font-size: 18px;
+}
+
+.tda12 {
+  padding: 0;
+  font-size: 12px;
+}
+
+.td12 {
+  padding: 8px 1px;
+  font-size: 12px;
+}
+
+.td12s {
+  padding-right: 6px;
+  font-size: 12px;
+}
+
+.tda16 {
+  padding: 0;
+  font-size: 12px;
+}
+
+.td16 {
+  padding-right: 1px;
+  font-size: 10px;
+}
+
+.td16s {
+  padding-right: 3px;
+  font-size: 10px;
+}
+
+.c-footer {
+  position: absolute;
+  bottom: 0;
+  /*height: var(--menu-h);*/
+  height: 200px;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  padding: 8px 12px;
+  border-radius: 12px 12px 0px 0px;
+  background-color: var(--blur-bg);
+  backdrop-filter: blur(var(--menu-blur));
+  color: var(--accent);
+  z-index: 1;
+}
+
+#f-opts {
+  display: none;
+}
+
+.c-footer-opts {
+  display: none;
+  border: none;
+  border-top: 4px solid var(--body-bg);
+  border-width: 32px;
+}
+
+.opt-div {
+  font-size: 16px;
+  font-weight: 800;
+  margin: 12px;
+  border-radius: 12px; 
+}
+
+.f-fsv,
+.f-fs {
+  display: inline;
+  border: 1px solid var(--accent1);
+  border-radius: 12px;
+  font-size: 8px;
+  color: var(--accent);
+}
+
+.f-fs input[type="radio"] {
+  display: none;
+}
+
+.f-fs label {
+  display: inline-block;
+  background-color: rgba(var(--body-bg),0.1);
+  color: var(--accent);
+  padding: 4px 6px;
+  margin: -2px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 0.5px solid var(--accent);
+}
+
+.f-fs input[type="radio"]:checked+label {
+  background-color: var(--accent);
+  margin: 0;
+  border: 0.5px solid var(--accent);
+  color: var(--body-bg);
+}
+
+.f-fsv {
+  display: block;
+}
+
+.hvi-val {
+  font-size: 2em;
+  font-family: monospace;
+  padding: 8px;
+}
+
+#hvi-bin {
+  font-size: 1.3em;
+}
