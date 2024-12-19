@@ -13,6 +13,7 @@ const hexv_table = document.getElementById('thex');
 const hexv_f_hoffset = document.getElementById('f-hoffset');
 const hexv_f_hinfo = document.getElementById('f-hinfo');
 const hexv_input_offset = document.getElementById('hvi-offset');
+const hexv_foot = document.getElementById('footer');
 
 
 const hexv_footer = {
@@ -111,10 +112,6 @@ const hexv_info = {
 
 hexv_footer.init();
 
-window.onclick = function(event) {
-  hexv_footer.setVisibility(false);
-}
-
 let hex_reader;
 var hex_offset = 0;
 var hex_pagesize = 2048;
@@ -188,6 +185,7 @@ function tdhclick(e){
   let id = e.id.replace("h","");
   hexv_f_hinfo.style.display = 'block';
   hexv_f_hoffset.style.display = 'none';
+  hexv_foot.style.height = '200px';
   console.log("click offset=" + id);
   hexv_info.apply(id);
 }
@@ -196,6 +194,7 @@ function tdoclick(e){
   let id = e.id.replace("h","");
   hexv_f_hinfo.style.display = 'none';
   hexv_f_hoffset.style.display = 'block';
+  hexv_foot.style.height = '80px';
 }
 
 function hcfg(){
@@ -203,9 +202,7 @@ function hcfg(){
 }
 
 function updateHexv(){
-  //var offset = hex_offset;
   let offset_end = Math.min(hex_offset + hex_pagesize, hex_data.source.byteLength);
-  //label_offset.innerHTML = hex_offset.strHex(4) + "-" + offset_end.strHex(4);
   let header = document.getElementById('th-data');
   header.replaceChildren();
   header.innerHTML = "<tr onclick='tdoclick(this)'><th>offset</th><th colspan='" + (hex_rowbytes + 1) + "'>hex</th><th colspan='" + hex_rowbytes + "'>ascii</th></tr>"

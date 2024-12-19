@@ -257,13 +257,14 @@ tr:nth-child(even) {
 }
 
 .f-offset input {
-  width: 10vw;
+  width: 15vw;
   font-family: monospace;
   font-size: 12px;
   text-align: center;
   padding: 4px 8px;
-  margin: 0 8px;
+  margin: 0;
   border: none;
+  color: var(--accent);
   background: transparent;
   &::selection {
     background: transparent;
@@ -298,7 +299,6 @@ tr:nth-child(even) {
 
 .f-div {
   overflow-y: auto;
-  height: 200px;
   bottom: 0;
   left: 0;
   right: 0;
