@@ -4,7 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="mobile-web-app-capable" content="yes">
-  <title>CodeView</title>
+  
+  <title>HexView</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,6 +40,25 @@
       <button id='opt-bytes' class='menu-item' onclick="setRowbytes()">8 byte</button>
       <button id='opt-char' class='menu-item' onclick="setAscii()">char: '.'</button>
     </div>
+    <div id="f-hoffset">
+      <fieldset class="f-offset"><legend>offset</legend>
+        <div id="off-first" onclick="offsetFirst()">&#x23EE;</div>
+        <div id="off-prev" onclick="offsetPrev()">&#x25C0;</div>
+        <input type="text" id="hvi-offset" name="offset" value="0" onchange="offsetChange()"/>
+        <div id="off-next" onclick="offsetNext()">&#x25B6;</div>
+        <div id="off-last" onclick="offsetLast()">&#x23ED;</div>
+      </fieldset>
+      <fieldset class="f-fs"><legend>bytes per row</legend>
+        <input type="radio" id="hvi-r8" name="rowb" value="8" checked onchange="hcfg()"/><label for="hvi-r8">8</label>
+        <input type="radio" id="hvi-r12" name="rowb" value="12" onchange="hcfg()"/><label for="hvi-r12">12</label>
+        <input type="radio" id="hvi-r16" name="rowb" value="16" onchange="hcfg()"/><label for="hvi-r16">16</label>
+      </fieldset>
+      <fieldset class="f-fs"><legend>space char</legend>
+        <input type="radio" id="hvi-ch1" name="schar" value="." checked onchange="hcfg()"/><label for="hvi-ch1">dot</label>
+        <input type="radio" id="hvi-ch2" name="schar" value="&nbsp;" onchange="hcfg()"/><label for="hvi-ch2">spc</label>
+        <input type="radio" id="hvi-ch3" name="schar" value="-" onchange="hcfg()"/><label for="hvi-ch3">dsh</label>
+      </fieldset>
+    </div>
     <div id='f-hinfo' class='f-div'>
       <div>
         <fieldset class="f-fs"><legend>endianess</legend>
@@ -53,7 +78,7 @@
           <input type="radio" id="hvi-64f" name="bwidth" value="f64" /><label for="hvi-64f">float64</label>
         </fieldset>
       </div>
-      <div>
+      <div class="f-vinfo">
         <fieldset class="f-fsv"><legend>decimal</legend>
           <div id="hvi-dec" class="hvi-val">0</div>
         </fieldset>

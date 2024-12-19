@@ -10,6 +10,10 @@ const mimeType = urlParams.get('mime');
 
 const hexv_content = document.getElementById('content');
 const hexv_table = document.getElementById('thex');
+const hexv_f_hoffset = document.getElementById('f-hoffset');
+const hexv_f_hinfo = document.getElementById('f-hinfo');
+const hexv_input_offset = document.getElementById('hvi-offset');
+
 
 const hexv_footer = {
   t: document.getElementById('thex'),
@@ -31,6 +35,31 @@ const hexv_footer = {
   },
   toggle: function(){
     this.setVisibility(this.i.style.display !== 'block');
+  }
+}
+
+const hexv_cfg = {
+  optR8:  document.getElementById('hvi-r8'),
+  optR12: document.getElementById('hvi-r12'),
+  optR16: document.getElementById('hvi-r16'),
+  optCh1: document.getElementById('hvi-ch1'),
+  optCh2: document.getElementById('hvi-ch2'),
+  optCh3: document.getElementById('hvi-ch3'),
+  apply:  function(){
+    let rb, as;
+    if (this.optR8.checked)
+      hex_rowbytes = 8;
+    else if (this.optR12.checked)
+      hex_rowbytes = 12;
+    else if (this.optR16.checked)
+      hex_rowbytes = 16;
+    if (this.optCh1.checked)
+      hex_asciichar = '.';
+    else if (this.optCh2.checked)
+      hex_asciichar = '&nbsp;';
+    else if (this.optCh3.checked)
+      hex_asciichar = '-';
+    updateHexv();
   }
 }
 
@@ -140,7 +169,7 @@ function byteArrayToTR(offset, arr, tdClass){
     out.hex += "<td "
       + "id='h" + (offset + i)
       + "' class='" + tdClass + ((i % 4) === 3 ? "s" : "") 
-      + "' onclick='tdclick(this)'>" 
+      + "' onclick='tdhclick(this)'>" 
       + v.strHex(2,false) + "</td>";
     out.ascii += "<td "
       + "id='a" + (offset + i) 
@@ -155,11 +184,22 @@ function toAsciiStr(char, nonReadableChar){
   return char < 33 || char > 126 ? nonReadableChar : String.fromCharCode(char);
 }
 
-function tdclick(e){
+function tdhclick(e){
   let id = e.id.replace("h","");
-  hexv_footer.setVisibility(true);
+  hexv_f_hinfo.style.display = 'block';
+  hexv_f_hoffset.style.display = 'none';
   console.log("click offset=" + id);
   hexv_info.apply(id);
+}
+
+function tdoclick(e){
+  let id = e.id.replace("h","");
+  hexv_f_hinfo.style.display = 'none';
+  hexv_f_hoffset.style.display = 'block';
+}
+
+function hcfg(){
+  hexv_cfg.apply();
 }
 
 function updateHexv(){
@@ -168,7 +208,7 @@ function updateHexv(){
   //label_offset.innerHTML = hex_offset.strHex(4) + "-" + offset_end.strHex(4);
   let header = document.getElementById('th-data');
   header.replaceChildren();
-  header.innerHTML = "<tr><th>offset</th><th colspan='" + (hex_rowbytes + 1) + "'>hex</th><th colspan='" + hex_rowbytes + "'>ascii</th></tr>"
+  header.innerHTML = "<tr onclick='tdoclick(this)'><th>offset</th><th colspan='" + (hex_rowbytes + 1) + "'>hex</th><th colspan='" + hex_rowbytes + "'>ascii</th></tr>"
   let table = document.getElementById('tdata');
   table.replaceChildren();
   hex_data.pushOffset(hex_offset);
@@ -176,10 +216,47 @@ function updateHexv(){
   let sep = "<td>&nbsp</td>";
   while(hex_data.offset < offset_end){
     let row = _newElement('tr');
-    row.innerHTML = "<td class='tdo'>" + hex_data.offset.strHex(8) + "</td>";
+    row.innerHTML = "<td id='o" + hex_data.offset + "' class='tdo' onclick='tdoclick(this)'>" + hex_data.offset.strHex(8) + "</td>";
     let row_bytes = byteArrayToTR(hex_data.offset, hex_data.readUInt8Array(hex_rowbytes), td_class);
     row.innerHTML += row_bytes.hex + sep + row_bytes.ascii;
     table.appendChild(row);
   }
 }
 
+
+
+//#region offset NAV
+function offsetFirst(){
+  hex_offset = 0;
+  hexv_input_offset.value = hex_offset.strHex();
+  updateHexv();
+}
+
+function offsetPrev(){
+  hex_offset = Math.max(
+    0,
+    hex_offset - hex_pagesize);
+  hexv_input_offset.value = hex_offset.strHex();
+  updateHexv();
+}
+
+function offsetChange(e){
+
+}
+
+function offsetNext(){
+  hex_offset = Math.min(
+    hex_data.source.byteLength - hex_pagesize,
+    hex_offset + hex_pagesize);
+  hexv_input_offset.value = hex_offset.strHex();
+  updateHexv();
+}
+
+function offsetLast(){
+  hex_offset = Math.max(
+    0,
+    hex_data.source.byteLength - hex_pagesize);
+  hexv_input_offset.value = hex_offset.strHex();
+  updateHexv();
+}
+//#endregion

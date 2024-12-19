@@ -241,6 +241,7 @@ tr:nth-child(even) {
   border-radius: 12px; 
 }
 
+.f-offset,
 .f-fsv,
 .f-fs {
   display: inline;
@@ -248,6 +249,25 @@ tr:nth-child(even) {
   border-radius: 12px;
   font-size: 8px;
   color: var(--accent);
+}
+
+.f-offset div {
+  font-size: 18px;
+  display: inline-block;
+}
+
+.f-offset input {
+  width: 10vw;
+  font-family: monospace;
+  font-size: 12px;
+  text-align: center;
+  padding: 4px 8px;
+  margin: 0 8px;
+  border: none;
+  background: transparent;
+  &::selection {
+    background: transparent;
+  }
 }
 
 .f-fs input[type="radio"] {
@@ -276,6 +296,18 @@ tr:nth-child(even) {
   display: block;
 }
 
+.f-div {
+  overflow-y: auto;
+  height: 200px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.f-vinfo {
+  overflow-y: scroll;
+}
+
 .hvi-val {
   font-size: 2em;
   font-family: monospace;
@@ -284,4 +316,9 @@ tr:nth-child(even) {
 
 #hvi-bin {
   font-size: 1.3em;
+}
+
+#f-hoffset,
+#f-hinfo {
+  display: none;
 }
