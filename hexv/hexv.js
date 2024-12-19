@@ -221,6 +221,7 @@ function updateHexv(){
     row.innerHTML += row_bytes.hex + sep + row_bytes.ascii;
     table.appendChild(row);
   }
+  hex_data.popOffset();
 }
 
 
