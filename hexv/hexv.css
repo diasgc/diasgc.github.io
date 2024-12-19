@@ -18,6 +18,7 @@
   --accent: #01579B;
   --accent1: #01579B10;
   --accent2: #01579B20;
+  --accent3: #01579B80;
   --protected: #9c0268;
   --faded-accent: #0157920;
 }
@@ -36,6 +37,7 @@
   --accent: #FFB74D;
   --accent1: #FFB74D10;
   --accent2: #FFB74D20;
+  --accent3: #FFB74D80;
   --protected: #ff744d;
   --faded-accent: #FFB74D10;
 }
@@ -124,6 +126,14 @@ th {
 
 tr:nth-child(even) {
   background-color: #8881;
+}
+
+#tdata {
+  transition: height 1s linear;
+}
+
+.f-hide {
+  height: 2px;
 }
 
 .table-hex {
@@ -278,19 +288,26 @@ tr:nth-child(even) {
 .f-fs label {
   display: inline-block;
   background-color: rgba(var(--body-bg),0.1);
-  color: var(--accent);
+  color: var(--accent3);
   padding: 4px 6px;
-  margin: -2px;
+  margin: 0;
   font-size: 12px;
   font-weight: 600;
+  /*
+  color: var(--accent);
   border: 0.5px solid var(--accent);
+  */
 }
 
 .f-fs input[type="radio"]:checked+label {
-  background-color: var(--accent);
   margin: 0;
+  /*
+  background-color: var(--accent);
   border: 0.5px solid var(--accent);
   color: var(--body-bg);
+  */
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
 }
 
 .f-fsv {

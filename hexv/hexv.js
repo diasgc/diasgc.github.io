@@ -14,6 +14,11 @@ const hexv_f_hoffset = document.getElementById('f-hoffset');
 const hexv_f_hinfo = document.getElementById('f-hinfo');
 const hexv_input_offset = document.getElementById('hvi-offset');
 const hexv_foot = document.getElementById('footer');
+const header = document.getElementById('th-data');
+
+function hideFooter(){
+  hexv_foot.style.height = '2px';
+}
 
 
 const hexv_footer = {
@@ -203,7 +208,8 @@ function hcfg(){
 
 function updateHexv(){
   let offset_end = Math.min(hex_offset + hex_pagesize, hex_data.source.byteLength);
-  let header = document.getElementById('th-data');
+  
+  
   header.replaceChildren();
   header.innerHTML = "<tr onclick='tdoclick(this)'><th>offset</th><th colspan='" + (hex_rowbytes + 1) + "'>hex</th><th colspan='" + hex_rowbytes + "'>ascii</th></tr>"
   let table = document.getElementById('tdata');
@@ -253,7 +259,7 @@ function offsetNext(){
 function offsetLast(){
   hex_offset = Math.max(
     0,
-    hex_data.source.byteLength - hex_pagesize);
+    hex_data.source.byteLength - hex_pagesize - 1);
   hexv_input_offset.value = hex_offset.strHex();
   updateHexv();
 }
