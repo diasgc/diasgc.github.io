@@ -211,7 +211,7 @@ tr:nth-child(even) {
   position: absolute;
   bottom: 0;
   /*height: var(--menu-h);*/
-  height: 200px;
+  height: 8px;
   left: 0;
   right: 0;
   overflow: hidden;
