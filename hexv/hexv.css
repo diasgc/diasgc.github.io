@@ -1,4 +1,4 @@
-:root {
+um:root {
   --top-offset: 8px;
   --menu-h: 40px;
   --menu-opacity: 0.9;
@@ -313,7 +313,8 @@ tr:nth-child(even) {
 }
 
 .f-fsv {
-  padding-top: 12px;
+  padding: 4px 6px;
+  margin: 0;
   display: block;
 }
 
