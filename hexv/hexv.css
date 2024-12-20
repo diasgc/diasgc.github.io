@@ -313,8 +313,8 @@ tr:nth-child(even) {
 }
 
 .f-fsv {
-  padding: 0 6px;
-  margin: 0;
+  padding: 4px 6px;
+  margin: 4px 0;
   display: block;
 }
 
@@ -333,7 +333,7 @@ tr:nth-child(even) {
 .hvi-val {
   font-size: 2em;
   font-family: monospace;
-  padding: 0 8px;
+  padding: 4px 6px;
   color: var(--body-fg);
 }
 
