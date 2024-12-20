@@ -4,8 +4,11 @@ Number.prototype.strHex = function(pad, prefix=true){
 }
 
 Number.prototype.strBin = function(pad, prefix=true, group=true){
-  pad = pad || Math.floor(Math.log(this)/Math.log(256) + 1) * 2;
-  return (prefix ? "0x" : "") + this.toString(16).padStart(pad,'0');
+  pad = pad || Math.floor(Math.log(this)/Math.log(4) + 1) * 2;
+  let ret = this.toString(2).padStart(pad,'0');
+  if (group)
+    ret = ret.match(/.{1,8}/g).join('&nbsp;');
+  return (prefix ? "0b" : "") + ret;
 }
 
 let urlParams = new URLSearchParams(window.location.search);
@@ -115,8 +118,7 @@ const hexv_info = {
     if (val){
       this.valDec.innerHTML = val;
       this.valHex.innerHTML = val.strHex();
-      this.valBin.innerHTML = val.toString(2);
-      let padb = strb.match(/.{1,8}/g).join(' ');
+      this.valBin.innerHTML = val.strBin();
     }
   }
 }
