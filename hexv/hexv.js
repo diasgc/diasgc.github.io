@@ -99,8 +99,8 @@ const hexv_info = {
         : hex_data.getInt32(offset, this.optLE.checked);
     } else if (this.opt64b.checked){
       val = this.optU.checked
-        ? hex_data.getUInt32(offset, this.optLE.checked)
-        : hex_data.getInt32(offset, this.optLE.checked);
+        ? hex_data.getUInt64(offset, this.optLE.checked)
+        : hex_data.getInt64(offset, this.optLE.checked);
       val = parseInt(val);
     } else if (this.opt32f.checked){
       val = hex_data.getFloat32(offset, this.optLE.checked);

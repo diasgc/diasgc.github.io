@@ -300,7 +300,7 @@ tr:nth-child(even) {
 }
 
 .f-fsv {
-  padding-top: 12px;
+  margin: 8px 0;
   display: block;
 }
 
