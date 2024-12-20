@@ -3,6 +3,9 @@
   --menu-h: 40px;
   --menu-opacity: 0.9;
   --menu-blur: 6px;
+  --hexv-font8: 16px;
+  --hexv-font12: 12px;
+  --hexv-font16: 10px;
 }
 
 /* Light mode */
@@ -144,13 +147,14 @@ tr:nth-child(even) {
   border-collapse: collapse;
   font-family: monospace;
   font-size: 13px;
+  align-items: center;
 }
 
-.tdo
+.tdo,
 .td0,.td0s,
-.td8,.td8s,
-.td12,.td12s,
-.td16,.td16s {
+.tdo8,.tda8,.td8,.td8s,
+.tdo12,.tda12,.td12,.td12s,
+.tdo16,.tda16,.td16,.td16s {
   font-family: monospace;
   font-weight: 800;
   font-size: 12px;
@@ -161,62 +165,45 @@ tr:nth-child(even) {
   };
 }
 
-.tda {
-  font-size: 11px;
-  padding: 0;
-}
-
-.tdo {
-  font-size: 10px;
-}
-
 .hvo {
   font-size: 12px;
 }
 
-.tda8 {
+.tdo8, .td8, .tds8, .tda8 {
+  font-size: var(--hexv-font8);
+}
+
+.tdo12, .td12, .tds12, .tda12 {
+  font-size: var(--hexv-font12);
+}
+
+.tdo8,.tdo12,.tdo16,
+.tda8,.tda12,.tda16 {
   padding: 0;
-  font-size: 12px;
 }
 
 .td8 {
   padding: 14px 2px;
-  font-size: 18px;
 }
 
 .td8s {
   padding-right: 12px;
-  font-size: 18px;
-}
-
-.tda12 {
-  padding: 0;
-  font-size: 12px;
 }
 
 .td12 {
   padding: 8px 1px;
-  font-size: 12px;
 }
 
 .td12s {
   padding-right: 6px;
-  font-size: 12px;
-}
-
-.tda16 {
-  padding: 0;
-  font-size: 12px;
 }
 
 .td16 {
   padding-right: 1px;
-  font-size: 10px;
 }
 
 .td16s {
   padding-right: 3px;
-  font-size: 10px;
 }
 
 .c-footer {

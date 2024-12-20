@@ -208,8 +208,6 @@ function hcfg(){
 
 function updateHexv(){
   let offset_end = Math.min(hex_offset + hex_pagesize, hex_data.source.byteLength);
-  
-  
   header.replaceChildren();
   header.innerHTML = "<tr onclick='tdoclick(this)'><th>offset</th><th colspan='" + (hex_rowbytes + 1) + "'>hex</th><th colspan='" + hex_rowbytes + "'>ascii</th></tr>"
   let table = document.getElementById('tdata');
@@ -219,7 +217,7 @@ function updateHexv(){
   let sep = "<td>&nbsp</td>";
   while(hex_data.offset < offset_end){
     let row = _newElement('tr');
-    row.innerHTML = "<td id='o" + hex_data.offset + "' class='tdo' onclick='tdoclick(this)'>" + hex_data.offset.strHex(8) + "</td>";
+    row.innerHTML = "<td id='o" + hex_data.offset + "' class='tdo" + hex_rowbytes + "' onclick='tdoclick(this)'>" + hex_data.offset.strHex(8) + "</td>";
     let row_bytes = byteArrayToTR(hex_data.offset, hex_data.readUInt8Array(hex_rowbytes), td_class);
     row.innerHTML += row_bytes.hex + sep + row_bytes.ascii;
     table.appendChild(row);
