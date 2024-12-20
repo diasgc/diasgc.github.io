@@ -13,6 +13,7 @@
   --blur-bg: rgba(255,255,255,0.5);
   --body-bg-strong: #fff;
   --body-fg: #202020;
+  --body-fg2: #20202080;
   --body-fg-strong: #000;
   --border-fg: rgba(0,0,0,0.0625);
   --accent: #01579B;
@@ -32,6 +33,7 @@
   --blur-bg: rgba(0,0,0,0.5);
   --body-bg-strong: #000;
   --body-fg: #e0e0e0;
+  --body-fg2: #e0e0e080;
   --body-fg-strong: #fff;
   --border-fg: rgba(255,255,255,0.0625);
   --accent: #FFB74D;
@@ -255,7 +257,7 @@ tr:nth-child(even) {
 .f-fsv,
 .f-fs {
   display: inline;
-  border: 1px solid var(--accent1);
+  border: 1px solid var(--accent2);
   border-radius: 12px;
   font-size: 8px;
   color: var(--accent);
@@ -287,8 +289,8 @@ tr:nth-child(even) {
 
 .f-fs label {
   display: inline-block;
-  background-color: rgba(var(--body-bg),0.1);
-  color: var(--accent3);
+  background-color: rgba(var(--body-bg), 0.1);
+  color: var(--body-fg2);
   padding: 4px 6px;
   margin: 0;
   font-size: 12px;
@@ -311,6 +313,7 @@ tr:nth-child(even) {
 }
 
 .f-fsv {
+  padding-top: 12px;
   display: block;
 }
 
@@ -323,16 +326,18 @@ tr:nth-child(even) {
 
 .f-vinfo {
   overflow-y: scroll;
+  margin-top: 12px;
 }
 
 .hvi-val {
   font-size: 2em;
   font-family: monospace;
-  padding: 8px;
+  padding: 2px 8px;
+  color: var(--body-fg);
 }
 
 #hvi-bin {
-  font-size: 1.3em;
+  font-size: 1.5em;
 }
 
 #f-hoffset,
