@@ -171,15 +171,15 @@ tr:nth-child(even) {
   };
 }
 
-.tdo8, .td8, .tds8, .tda8 {
+.tdo8, .td8, .td8s, .tda8 {
   font-size: var(--hexv-font8);
 }
 
-.tdo12, .td12, .tds12, .tda12 {
+.tdo12, .td12, .td12s, .tda12 {
   font-size: var(--hexv-font12);
 }
 
-.tdo16, .td16, .tds16, .tda16 {
+.tdo16, .td16, .td16s, .tda16 {
   font-size: var(--hexv-font16);
 }
 
