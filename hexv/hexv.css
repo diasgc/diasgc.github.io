@@ -150,6 +150,12 @@ tr:nth-child(even) {
   align-items: center;
 }
 
+
+.hvo {
+  font-size: 12px;
+}
+
+
 .tdo,
 .td0,.td0s,
 .tdo8,.tda8,.td8,.td8s,
@@ -163,10 +169,6 @@ tr:nth-child(even) {
   &:hover {
     color: red;
   };
-}
-
-.hvo {
-  font-size: 12px;
 }
 
 .tdo8, .td8, .tds8, .tda8 {
@@ -209,6 +211,8 @@ tr:nth-child(even) {
 .td16s {
   padding-right: 3px;
 }
+
+
 
 .c-footer {
   position: absolute;
