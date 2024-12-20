@@ -177,6 +177,10 @@ tr:nth-child(even) {
   font-size: var(--hexv-font12);
 }
 
+.tdo16, .td16, .tds16, .tda16 {
+  font-size: var(--hexv-font16);
+}
+
 .tdo8,.tdo12,.tdo16,
 .tda8,.tda12,.tda16 {
   padding: 0;
