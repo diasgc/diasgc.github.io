@@ -3,6 +3,11 @@ Number.prototype.strHex = function(pad, prefix=true){
   return (prefix ? "0x" : "") + this.toString(16).padStart(pad,'0');
 }
 
+Number.prototype.strBin = function(pad, prefix=true, group=true){
+  pad = pad || Math.floor(Math.log(this)/Math.log(256) + 1) * 2;
+  return (prefix ? "0x" : "") + this.toString(16).padStart(pad,'0');
+}
+
 let urlParams = new URLSearchParams(window.location.search);
 const filePath = urlParams.get('path');
 const uri = urlParams.get('u');
@@ -111,6 +116,7 @@ const hexv_info = {
       this.valDec.innerHTML = val;
       this.valHex.innerHTML = val.strHex();
       this.valBin.innerHTML = val.toString(2);
+      let padb = strb.match(/.{1,8}/g).join(' ');
     }
   }
 }

@@ -188,6 +188,10 @@ tr:nth-child(even) {
   padding: 0;
 }
 
+.tdo8,.tdo12,.tdo16 {
+  color: var(--accent);
+}
+
 .td8 {
   padding: 14px 2px;
 }
