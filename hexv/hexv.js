@@ -178,12 +178,13 @@ function byteArrayToTR(offset, arr, tdClass){
   arr.forEach( (v,i) => {
     out.hex += "<td "
       + "id='h" + (offset + i)
-      + "' class='" + tdClass + ((i % 4) === 3 ? "s" : "") 
-      + "' onclick='tdhclick(this)'>" 
+      + "' class='" + tdClass + ((i % 4) === 3 ? "s" : "")
+      + "' onclick='tdhclick(this)'>"
       + v.strHex(2,false) + "</td>";
     out.ascii += "<td "
-      + "id='a" + (offset + i) 
-      + "' class='tda" + hex_rowbytes + "'>"
+      + "id='a" + (offset + i)
+      + "' class='tda" + hex_rowbytes
+      + "' onclick='tdaclick(this)'>"
       + toAsciiStr(v, hex_asciichar) + "</td>";
   });
   return out;
@@ -196,6 +197,15 @@ function toAsciiStr(char, nonReadableChar){
 
 function tdhclick(e){
   let id = e.id.replace("h","");
+  hexv_f_hinfo.style.display = 'block';
+  hexv_f_hoffset.style.display = 'none';
+  hexv_foot.style.height = '200px';
+  console.log("click offset=" + id);
+  hexv_info.apply(id);
+}
+
+function tdaclick(e){
+  let id = e.id.replace("a","");
   hexv_f_hinfo.style.display = 'block';
   hexv_f_hoffset.style.display = 'none';
   hexv_foot.style.height = '200px';

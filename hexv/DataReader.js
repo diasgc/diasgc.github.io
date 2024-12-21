@@ -6,16 +6,17 @@ class DataReader {
     this.le = this.nativeEndianness;
     this.offsetStack = [];
     let fileReader = new FileReader();
-    fileReader.onload = (event) => this.source = new DataView(event.target.result, 0, file.size;
+    fileReader.onload = function (event){
+      this.source = new DataView(event.target.result, 0, file.size);
+    };
     fileReader.readAsArrayBuffer(file);
-
   }
 
   function getEndianness(){
     let uInt16 = new Uint16Array([0xFF00]);
     let uInt8 = new Uint8Array(uInt16.buffer);
     return uInt8[0] === 0x00;
-  },
+  }
 
   types = {
     "uint8": 8,
@@ -280,6 +281,7 @@ class DataReader {
       return ret;
     }
   }
+
   function readFloat64Array(len=1, le=this.le, offset=this.offset){
     let ret = this.getFloat32Array(offset=this.offset, len);
     if (ret){
@@ -288,4 +290,3 @@ class DataReader {
     }
   }
   //#endregion
-}
