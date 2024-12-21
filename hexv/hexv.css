@@ -126,6 +126,7 @@ th {
   padding: 12px 8px;
   color: var(--accent);
   background-color: var(--blur-bg);
+  -webkit-backdrop-filter: blur(var(--menu-blur));
   backdrop-filter: blur(var(--menu-blur));
 }
 
@@ -240,6 +241,7 @@ tr:nth-child(even) {
   padding: 8px 12px;
   border-radius: 12px 12px 0px 0px;
   background-color: var(--blur-bg);
+  -webkit-backdrop-filter: blur(var(--menu-blur));
   backdrop-filter: blur(var(--menu-blur));
   color: var(--accent);
   z-index: 1;
