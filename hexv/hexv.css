@@ -156,7 +156,8 @@ tr:nth-child(even) {
 }
 
 .td-sel {
-  color: red;
+  background: red;
+  color: white;
 }
 
 .tdo,
@@ -215,6 +216,17 @@ tr:nth-child(even) {
   padding-right: 3px;
 }
 
+.chip-offset {
+  float:right;
+  padding: 4px 8px;
+  margin: 2px 4px;
+  background-color: var(--accent);
+  color: var(--body-bg-strong);
+  font-size: 12px;
+  font-weight: 800;
+  border-radius: 12px;
+  text-align: center;
+}
 
 
 .c-footer {

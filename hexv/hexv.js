@@ -127,6 +127,9 @@ const hexv_info = {
       this.valDec.innerHTML = val;
       this.valHex.innerHTML = val.strHex();
       this.valBin.innerHTML = val.strBin();
+      if (val < hex_data.source.byteLength){
+        this.valHex.innerHTML += "<span class='chip-offset' onclick='offsetGoTo(" + hex_selected + ")'>offset</span>";
+      }
     }
   }
 }
@@ -221,23 +224,23 @@ function tdaclick(e){
 }
 
 function tdoclick(e){
-  let id = e.id.replace("h","");
   hexv_f_hinfo.style.display = 'none';
   hexv_f_hoffset.style.display = 'block';
   hexv_foot.style.height = '80px';
 }
 
 function newSelection(offset){
-  let h_new = document.getElementById("h" + offset);
-  let a_new = document.getElementById("a" + offset);
-  h_new.classList.add('td-sel');
-  a_new.classList.add('td-sel');
   if (hex_selected !== -1){
     let h_old =  document.getElementById("h" + hex_selected);
     let a_old = document.getElementById("a" + hex_selected);
     h_old.classList.remove('td-sel');
     a_old.classList.remove('td-sel');
   }
+  let h_new = document.getElementById("h" + offset);
+  let a_new = document.getElementById("a" + offset);
+  h_new.classList.add('td-sel');
+  a_new.classList.add('td-sel');
+
   hex_selected = offset;
 }
 
@@ -282,6 +285,11 @@ function offsetPrev(){
     0,
     hex_offset - hex_pagesize);
   hexv_input_offset.value = hex_offset.strHex();
+  updateHexv();
+}
+
+function offsetGoTo(offset){
+  hex_offset = offset;
   updateHexv();
 }
 
