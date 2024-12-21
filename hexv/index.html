@@ -53,20 +53,20 @@
     <div id='f-hinfo' class='f-div'>
       <div>
         <fieldset class="f-fs"><legend>endianess</legend>
-          <input type="radio" id="hvi-le" name="endn" value="le" checked /><label for="hvi-le">LE</label>
-          <input type="radio" id="hvi-be" name="endn" value="be" /><label for="hvi-be">BE</label>
+          <input type="radio" id="hvi-le" name="endn" value="le" onchange="hnfo()" checked /><label for="hvi-le">LE</label>
+          <input type="radio" id="hvi-be" name="endn" value="be" onchange="hnfo()"/><label for="hvi-be">BE</label>
         </fieldset>
         <fieldset class="f-fs"><legend>sign</legend>
-          <input type="radio" id="hvi-u" name="sign" value="u" checked /><label for="hvi-u">U</label>
-          <input type="radio" id="hvi-s" name="sign" value="s" /><label for="hvi-s">S</label>
+          <input type="radio" id="hvi-u" name="sign" value="u" onchange="hnfo()" checked /><label for="hvi-u">U</label>
+          <input type="radio" id="hvi-s" name="sign" value="s" onchange="hnfo()"/><label for="hvi-s">S</label>
         </fieldset>
         <fieldset class="f-fs"><legend>bytes</legend>
-          <input type="radio" id="hvi-8b" name="bwidth" value="8" checked /><label for="hvi-8b">int8</label>
-          <input type="radio" id="hvi-16b" name="bwidth" value="16" /><label for="hvi-16b">int16</label>
-          <input type="radio" id="hvi-32b" name="bwidth" value="32" /><label for="hvi-32b">int32</label>
-          <input type="radio" id="hvi-64b" name="bwidth" value="64" /><label for="hvi-64b">int64</label>
-          <input type="radio" id="hvi-32f" name="bwidth" value="f32" /><label for="hvi-32f">float32</label>
-          <input type="radio" id="hvi-64f" name="bwidth" value="f64" /><label for="hvi-64f">float64</label>
+          <input type="radio" id="hvi-8b" name="bwidth" value="8" onchange="hnfo()"/><label for="hvi-8b">int8</label>
+          <input type="radio" id="hvi-16b" name="bwidth" value="16" onchange="hnfo()" checked/><label for="hvi-16b">int16</label>
+          <input type="radio" id="hvi-32b" name="bwidth" value="32" onchange="hnfo()"/><label for="hvi-32b">int32</label>
+          <input type="radio" id="hvi-64b" name="bwidth" value="64" onchange="hnfo()"/><label for="hvi-64b">int64</label>
+          <input type="radio" id="hvi-32f" name="bwidth" value="f32" onchange="hnfo()"/><label for="hvi-32f">float32</label>
+          <input type="radio" id="hvi-64f" name="bwidth" value="f64" onchange="hnfo()"/><label for="hvi-64f">float64</label>
         </fieldset>
       </div>
       <div class="f-vinfo">

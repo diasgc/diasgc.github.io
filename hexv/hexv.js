@@ -24,6 +24,15 @@ const hexv_input_offset = document.getElementById('hvi-offset');
 const hexv_foot = document.getElementById('footer');
 const header = document.getElementById('th-data');
 
+
+let hex_reader;
+var hex_offset = 0;
+var hex_pagesize = 2048;
+var hex_rowbytes = 12;
+var hex_asciichar = '.';
+var hex_selected = -1;
+
+
 function hideFooter(){
   hexv_foot.style.height = '2px';
 }
@@ -60,7 +69,6 @@ const hexv_cfg = {
   optCh2: document.getElementById('hvi-ch2'),
   optCh3: document.getElementById('hvi-ch3'),
   apply:  function(){
-    let rb, as;
     if (this.optR8.checked)
       hex_rowbytes = 8;
     else if (this.optR12.checked)
@@ -91,29 +99,29 @@ const hexv_info = {
   valDec: document.getElementById('hvi-dec'),
   valHex: document.getElementById('hvi-hex'),
   valBin: document.getElementById('hvi-bin'),
-  apply: function(offset){
+  apply: function(){
     let val;
     if (this.opt8b.checked){
       val = this.optU.checked
-        ? hex_data.getUInt8(offset)
-        : hex_data.getInt8(offset);
+        ? hex_data.getUInt8(hex_selected)
+        : hex_data.getInt8(hex_selected);
     } else if (this.opt16b.checked){
       val = this.optU.checked
-        ? hex_data.getUInt16(offset, this.optLE.checked)
-        : hex_data.getInt16(offset, this.optLE.checked);
+        ? hex_data.getUInt16(hex_selected, this.optLE.checked)
+        : hex_data.getInt16(hex_selected, this.optLE.checked);
     } else if (this.opt32b.checked){
       val = this.optU.checked
-        ? hex_data.getUInt32(offset, this.optLE.checked)
-        : hex_data.getInt32(offset, this.optLE.checked);
+        ? hex_data.getUInt32(hex_selected, this.optLE.checked)
+        : hex_data.getInt32(hex_selected, this.optLE.checked);
     } else if (this.opt64b.checked){
       val = this.optU.checked
-        ? hex_data.getUInt64(offset, this.optLE.checked)
-        : hex_data.getInt64(offset, this.optLE.checked);
+        ? hex_data.getUInt64(hex_selected, this.optLE.checked)
+        : hex_data.getInt64(hex_selected, this.optLE.checked);
       val = parseInt(val);
     } else if (this.opt32f.checked){
-      val = hex_data.getFloat32(offset, this.optLE.checked);
+      val = hex_data.getFloat32(hex_selected, this.optLE.checked);
     } else if (this.opt64f.checked){
-      val = hex_data.getFloat64(offset, this.optLE.checked);
+      val = hex_data.getFloat64(hex_selected, this.optLE.checked);
     }
     if (val){
       this.valDec.innerHTML = val;
@@ -123,13 +131,10 @@ const hexv_info = {
   }
 }
 
-hexv_footer.init();
 
-let hex_reader;
-var hex_offset = 0;
-var hex_pagesize = 2048;
-var hex_rowbytes = 12;
-var hex_asciichar = '.';
+
+
+hexv_footer.init();
 
 if (filePath != null){
   loadFile(filePath);
@@ -196,21 +201,23 @@ function toAsciiStr(char, nonReadableChar){
 }
 
 function tdhclick(e){
-  let id = e.id.replace("h","");
+  let offset = e.id.replace("h","");
   hexv_f_hinfo.style.display = 'block';
   hexv_f_hoffset.style.display = 'none';
   hexv_foot.style.height = '200px';
-  console.log("click offset=" + id);
-  hexv_info.apply(id);
+  console.log("click offset=" + offset);
+  newSelection(offset);
+  hexv_info.apply();
 }
 
 function tdaclick(e){
-  let id = e.id.replace("a","");
+  let offset = e.id.replace("a","");
   hexv_f_hinfo.style.display = 'block';
   hexv_f_hoffset.style.display = 'none';
   hexv_foot.style.height = '200px';
-  console.log("click offset=" + id);
-  hexv_info.apply(id);
+  console.log("click offset=" + offset);
+  newSelection(offset);
+  hexv_info.apply();
 }
 
 function tdoclick(e){
@@ -220,8 +227,26 @@ function tdoclick(e){
   hexv_foot.style.height = '80px';
 }
 
+function newSelection(offset){
+  let h_new = document.getElementById("h" + offset);
+  let a_new = document.getElementById("a" + offset);
+  h_new.classList.add('td-sel');
+  a_new.classList.add('td-sel');
+  if (hex_selected !== -1){
+    let h_old =  document.getElementById("h" + hex_selected);
+    let a_old = document.getElementById("a" + hex_selected);
+    h_old.classList.remove('td-sel');
+    a_old.classList.remove('td-sel');
+  }
+  hex_selected = offset;
+}
+
 function hcfg(){
   hexv_cfg.apply();
+}
+
+function hnfo(){
+  hexv_info.apply();
 }
 
 function updateHexv(){
@@ -280,3 +305,7 @@ function offsetLast(){
   updateHexv();
 }
 //#endregion
+
+
+
+

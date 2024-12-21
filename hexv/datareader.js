@@ -4,6 +4,7 @@ const DataReader = {
   le: true,
   nativeEndianness: true,
   offsetStack: [],
+  byteOrderStack: [],
   types: {
     "uint8": 8,
     "int8": 8,
@@ -26,6 +27,14 @@ const DataReader = {
     }
     fileReader.readAsArrayBuffer(file);
   },
+  
+  pushByteOrder(newLE){
+    this.byteOrderStack.push(this.le);
+  },
+  popByteOrder(){
+    this.le = this.byteOrderStack.pop();
+  },
+
   withDataView: function(dataView, callback){
     this.nativeEndianness = this.getEndianness();
     this.le = this.nativeEndianness;

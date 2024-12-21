@@ -155,6 +155,9 @@ tr:nth-child(even) {
   font-size: 12px;
 }
 
+.td-sel {
+  color: red;
+}
 
 .tdo,
 .td0,.td0s,
@@ -165,10 +168,6 @@ tr:nth-child(even) {
   font-weight: 800;
   font-size: 12px;
   text-align: center;
-  &:focus,
-  &:hover {
-    color: red;
-  };
 }
 
 .tdo8, .td8, .td8s, .tda8 {
