@@ -233,11 +233,13 @@ tr:nth-child(even) {
 .c-footer {
   position: absolute;
   bottom: 0;
-  /*height: var(--menu-h);*/
+  /*
+  height: var(--menu-h);
+  overflow: hidden;
+  */
   height: 8px;
   left: 0;
   right: 0;
-  overflow: hidden;
   padding: 8px 12px;
   border-radius: 12px 12px 0px 0px;
   background-color: var(--blur-bg);
@@ -281,7 +283,6 @@ tr:nth-child(even) {
 }
 
 .f-offset input {
-  width: 15vw;
   font-family: monospace;
   font-size: 12px;
   text-align: center;
@@ -330,7 +331,6 @@ tr:nth-child(even) {
 }
 
 .f-div {
-  overflow-y: auto;
   bottom: 0;
   left: 0;
   right: 0;

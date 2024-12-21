@@ -32,32 +32,27 @@ var hex_rowbytes = 12;
 var hex_asciichar = '.';
 var hex_selected = -1;
 
-
-function hideFooter(){
-  hexv_foot.style.height = '2px';
-}
-
-
 const hexv_footer = {
   t: document.getElementById('thex'),
   f: document.getElementById('footer'),
   i: document.getElementById('f-hinfo'),
-  h: '200px',
-  init: function(){
-    //this.tHeight = this.t.style.height;
-    this.fHeight = this.f.style.height;
-    this.cPad = hexv_content.style.paddingBottom;
+  h_info: '200px',
+  h_offs: '100px',
+  h_hide: '2px',
+  showInfo: function(){
+    hexv_f_hinfo.style.display = 'block';
+    hexv_f_hoffset.style.display = 'none';
+    hexv_foot.style.height = this.h_info;
   },
-  isVisible: function(){
-    this.e.style.display === 'block';
+  showOffset: function(){
+    hexv_f_hinfo.style.display = 'none';
+    hexv_f_hoffset.style.display = 'block';
+    hexv_foot.style.height = this.h_offs;
   },
-  setVisibility: function(show){
-    hexv_content.style.paddingBottom = show ? this.h : this.cPad;
-    this.f.style.height = show ? this.h : this.fHeight;
-    this.i.style.display = show ? 'block' : 'hide';
-  },
-  toggle: function(){
-    this.setVisibility(this.i.style.display !== 'block');
+  hideAll: function(){
+    hexv_foot.style.height = this.h_hide;
+    hexv_f_hinfo.style.display = 'none';
+    hexv_f_hoffset.style.display = 'none';
   }
 }
 
@@ -135,10 +130,6 @@ const hexv_info = {
 }
 
 
-
-
-hexv_footer.init();
-
 if (filePath != null){
   loadFile(filePath);
 } else {
@@ -205,28 +196,20 @@ function toAsciiStr(char, nonReadableChar){
 
 function tdhclick(e){
   let offset = e.id.replace("h","");
-  hexv_f_hinfo.style.display = 'block';
-  hexv_f_hoffset.style.display = 'none';
-  hexv_foot.style.height = '200px';
-  console.log("click offset=" + offset);
+  hexv_footer.showInfo();
   newSelection(offset);
   hexv_info.apply();
 }
 
 function tdaclick(e){
   let offset = e.id.replace("a","");
-  hexv_f_hinfo.style.display = 'block';
-  hexv_f_hoffset.style.display = 'none';
-  hexv_foot.style.height = '200px';
-  console.log("click offset=" + offset);
+  hexv_footer.showInfo();
   newSelection(offset);
   hexv_info.apply();
 }
 
 function tdoclick(e){
-  hexv_f_hinfo.style.display = 'none';
-  hexv_f_hoffset.style.display = 'block';
-  hexv_foot.style.height = '80px';
+  hexv_footer.showOffset();
 }
 
 function newSelection(offset){
@@ -290,6 +273,8 @@ function offsetPrev(){
 
 function offsetGoTo(offset){
   hex_offset = offset;
+  hex_selected = -1;
+  hexv_footer.hideAll();
   updateHexv();
 }
 
