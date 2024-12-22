@@ -58,6 +58,12 @@ const DataReader = {
   getInt16: function(offset=this.offset, le=this.le){
     return this.source.getInt16(offset, le);
   },
+  getUInt24: function(offset=this.offset, le=this.le){
+    return this.source.getUint32(offset, le) & 0xffffff;
+  },
+  getInt24: function(offset=this.offset, le=this.le){
+    return this.source.getInt32(offset, le) & 0xffffff;
+  },
   getUInt32: function(offset=this.offset, le=this.le){
     return this.source.getUint32(offset, le);
   },

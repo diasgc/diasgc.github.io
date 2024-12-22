@@ -88,6 +88,7 @@ const hexv_info = {
   opt8b:  document.getElementById('hvi-8b'),
   opt16b: document.getElementById('hvi-16b'),
   opt32b: document.getElementById('hvi-32b'),
+  opt24b: document.getElementById('hvi-24b'),
   opt64b: document.getElementById('hvi-64b'),
   opt32f: document.getElementById('hvi-32f'),
   opt64f: document.getElementById('hvi-64f'),
@@ -95,38 +96,79 @@ const hexv_info = {
   valHex: document.getElementById('hvi-hex'),
   valBin: document.getElementById('hvi-bin'),
   apply: function(){
-    let val;
+    let val, len, showHex = true;
     if (this.opt8b.checked){
+      len = 1;
       val = this.optU.checked
         ? hex_data.getUInt8(hex_selected)
         : hex_data.getInt8(hex_selected);
     } else if (this.opt16b.checked){
+      len = 2;
       val = this.optU.checked
         ? hex_data.getUInt16(hex_selected, this.optLE.checked)
         : hex_data.getInt16(hex_selected, this.optLE.checked);
+    } else if (this.opt24b.checked){
+      len = 3;
+      val = this.optU.checked
+        ? hex_data.getUInt24(hex_selected, this.optLE.checked)
+        : hex_data.getInt24(hex_selected, this.optLE.checked);
     } else if (this.opt32b.checked){
+      len = 4;
       val = this.optU.checked
         ? hex_data.getUInt32(hex_selected, this.optLE.checked)
         : hex_data.getInt32(hex_selected, this.optLE.checked);
     } else if (this.opt64b.checked){
+      len = 8;
       val = this.optU.checked
         ? hex_data.getUInt64(hex_selected, this.optLE.checked)
         : hex_data.getInt64(hex_selected, this.optLE.checked);
       val = parseInt(val);
     } else if (this.opt32f.checked){
+      showHex = false;
+      len = 4;
       val = hex_data.getFloat32(hex_selected, this.optLE.checked);
     } else if (this.opt64f.checked){
+      showHex = false;
+      len = 8;
       val = hex_data.getFloat64(hex_selected, this.optLE.checked);
     }
     if (val !== null){
       this.valDec.innerHTML = val;
-      this.valHex.innerHTML = val.strHex();
-      this.valBin.innerHTML = val.strBin();
-      if (val < hex_data.source.byteLength){
-        this.valHex.innerHTML += "<span class='chip-offset' onclick='offsetGoTo(" + hex_selected + ")'>offset</span>";
+      if (showHex){
+        this.valHex.innerHTML = val.strHex(len * 2);
+        this.valBin.innerHTML = val.strBin();
+        checkOffset(val,this.valHex);
+        if (this.opt24b.checked)
+          chipColorRgb(val, this.valHex, 3);
+        else if (this.opt32b.checked)
+          chipColorRgb(val, this.valHex, 4);
+      } else {
+        this.valHex.innerHTML = '-';
+        this.valBin.innerHTML = '-';
       }
     }
   }
+}
+
+function checkOffset(val, el){
+  if (val < hex_data.source.byteLength)
+    el.innerHTML += "<span class='chip-offset' onclick='offsetGoTo(" + hex_selected + ")'>offset</span>";
+}
+
+function chipColorRgb(val, el, bytes){
+  let ch = ['grey','','','rgb','rgba'];
+  let rgb = "#" + val.strHex(2 * bytes, false);
+  let cls = "chip-color-" + (this.lumOfRgb(val) > 0.5 ? "b" : "w");
+  el.innerHTML += "<span class='" + cls + "' style='background: " + rgb + ";'>" + ch[bytes] + "</span>";
+}
+
+function lumOfRgb(v){
+  if (v > 0xffffff)
+    v = (v >> 8);
+  let r = (v >> 16) & 0xff;
+  let g = (v >> 8) & 0xff;
+  let b = v & 0xff;
+  return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 256;
 }
 
 function hideFooter(){
@@ -242,7 +284,9 @@ function hnfo(){
 function updateHexv(){
   let offset_end = Math.min(hex_offset + hex_pagesize, hex_data.source.byteLength);
   header.replaceChildren();
-  header.innerHTML = "<tr onclick='tdoclick(this)'><th>offset</th><th colspan='" + (hex_rowbytes + 1) + "'>hex</th><th colspan='" + hex_rowbytes + "'>ascii</th></tr>"
+  header.innerHTML = "<tr onclick='tdoclick(this)'>"
+    + "<th>offset</th><th colspan='" + (hex_rowbytes + 1) + "'>hex</th>"
+    + "<th colspan='" + hex_rowbytes + "'>ascii</th></tr>"
   let table = document.getElementById('tdata');
   table.replaceChildren();
   hex_data.pushOffset(hex_offset);
@@ -250,7 +294,9 @@ function updateHexv(){
   let sep = "<td>&nbsp</td>";
   while(hex_data.offset < offset_end){
     let row = _newElement('tr');
-    row.innerHTML = "<td id='o" + hex_data.offset + "' class='tdo" + hex_rowbytes + "' onclick='tdoclick(this)'>" + hex_data.offset.strHex(8) + "</td>";
+    row.innerHTML = "<td id='o" + hex_data.offset + "' "
+      + "class='tdo" + hex_rowbytes + "' "
+      + "onclick='tdoclick(this)'>" + hex_data.offset.strHex(8) + "</td>";
     let row_bytes = byteArrayToTR(hex_data.offset, hex_data.readUInt8Array(hex_rowbytes), td_class);
     row.innerHTML += row_bytes.hex + sep + row_bytes.ascii;
     table.appendChild(row);

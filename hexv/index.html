@@ -25,7 +25,7 @@
       <div class='table-fixed-head' >
         <table id='thex' class='table-hex'>
           <thead id="th-data"></thead>
-          <tbody id='tdata' onwheel="hideFooter()"></tbody>
+          <tbody id='tdata'"></tbody>
         </table>
       </div>
     </div>
@@ -70,10 +70,23 @@
         <fieldset class="f-fs"><legend>bytes</legend>
           <input type="radio" id="hvi-8b" name="bwidth" value="8" onchange="hnfo()"/><label for="hvi-8b">int8</label>
           <input type="radio" id="hvi-16b" name="bwidth" value="16" onchange="hnfo()" checked/><label for="hvi-16b">int16</label>
+          <input type="radio" id="hvi-24b" name="bwidth" value="24" onchange="hnfo()"/><label for="hvi-24b">int24</label>
           <input type="radio" id="hvi-32b" name="bwidth" value="32" onchange="hnfo()"/><label for="hvi-32b">int32</label>
           <input type="radio" id="hvi-64b" name="bwidth" value="64" onchange="hnfo()"/><label for="hvi-64b">int64</label>
-          <input type="radio" id="hvi-32f" name="bwidth" value="f32" onchange="hnfo()"/><label for="hvi-32f">float32</label>
-          <input type="radio" id="hvi-64f" name="bwidth" value="f64" onchange="hnfo()"/><label for="hvi-64f">float64</label>
+          <input type="radio" id="hvi-32f" name="bwidth" value="f32" onchange="hnfo()"/><label for="hvi-32f">FLT32</label>
+          <input type="radio" id="hvi-64f" name="bwidth" value="f64" onchange="hnfo()"/><label for="hvi-64f">FLT64</label>
+          <input type="radio" id="hvi-oth" name="bwidth" value="oth" onchange="hnfo()"/><label for="hvi-oth">other</label>
+        </fieldset>
+      </div>
+      <div class="f-div" hidden>
+        <fieldset class="f-fs"><legend>Output</legend>
+          <input type="radio" id="hvo-dec" name="hvout" value="dec" onchange="hnfo()" checked/><label for="hvo-dec">dec</label>
+          <input type="radio" id="hvo-oct" name="hvout" value="oct" onchange="hnfo()"/><label for="hvo-oct">oct</label>
+          <input type="radio" id="hvo-hex" name="hvout" value="hex" onchange="hnfo()"/><label for="hvo-hex">hex</label>
+          <input type="radio" id="hvo-bin" name="hvout" value="bin" onchange="hnfo()"/><label for="hvo-bin">bin</label>
+          <input type="radio" id="hvo-rgb" name="hvout" value="rgb" onchange="hnfo()"/><label for="hvo-rgb">rgb</label>
+          <input type="radio" id="hvo-hls" name="hvout" value="hls" onchange="hnfo()"/><label for="hvo-hls">hls</label>
+          <input type="radio" id="hvo-hsv" name="hvout" value="hsv" onchange="hnfo()"/><label for="hvo-hsv">hsv</label>
         </fieldset>
       </div>
       <div class="f-vinfo">
