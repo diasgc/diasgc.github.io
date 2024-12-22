@@ -11,6 +11,12 @@ Number.prototype.strBin = function(pad, prefix=true, group=true){
   return (prefix ? "0b" : "") + ret;
 }
 
+Number.prototype.strOct = function(pad, prefix=true){
+  pad = pad || Math.floor(Math.log(this)/Math.log(128) + 1) * 2;
+  let ret = this.toString(8).padStart(pad,'0');
+  return (prefix ? "0" : "") + ret;
+}
+
 let urlParams = new URLSearchParams(window.location.search);
 const filePath = urlParams.get('path');
 const uri = urlParams.get('u');
@@ -92,9 +98,13 @@ const hexv_info = {
   opt64b: document.getElementById('hvi-64b'),
   opt32f: document.getElementById('hvi-32f'),
   opt64f: document.getElementById('hvi-64f'),
-  valDec: document.getElementById('hvi-dec'),
-  valHex: document.getElementById('hvi-hex'),
-  valBin: document.getElementById('hvi-bin'),
+  outDec: document.getElementById('hvo-dec'),
+  outHex: document.getElementById('hvo-hex'),
+  outOct: document.getElementById('hvo-oct'),
+  outBin: document.getElementById('hvo-bin'),
+  outRgb: document.getElementById('hvo-rgb'),
+  outDat: document.getElementById('hvo-dat'),
+  outVal: document.getElementById('hvi-val'),
   apply: function(){
     let val, len, showHex = true;
     if (this.opt8b.checked){
@@ -133,19 +143,21 @@ const hexv_info = {
       val = hex_data.getFloat64(hex_selected, this.optLE.checked);
     }
     if (val !== null){
-      this.valDec.innerHTML = val;
-      if (showHex){
-        this.valHex.innerHTML = val.strHex(len * 2);
-        this.valBin.innerHTML = val.strBin();
-        checkOffset(val,this.valHex);
-        if (this.opt24b.checked)
-          chipColorRgb(val, this.valHex, 3);
-        else if (this.opt32b.checked)
-          chipColorRgb(val, this.valHex, 4);
+      if (this.outDec.checked)
+        this.outVal.innerHTML = val;
+      else if (this.outHex.checked)
+        this.outVal.innerHTML = val.strHex(len * 2);
+      else if (this.outOct.checked)
+        this.outVal.innerHTML = val.strOct();
+      else if (this.outBin.checked)
+        this.outVal.innerHTML = val.strBin();
+      else if (this.outRgb.checked){
+        let rgb = "#" + val.strHex(len * 2, false);
+        this.outVal.innerHTML = "<span class='sp-rgb' style='background-color: " + rgb + ";'></span>" + rgb;
       } else {
-        this.valHex.innerHTML = '-';
-        this.valBin.innerHTML = '-';
+        this.outVal.innerHTML = "n/a";
       }
+      checkOffset(val, this.outVal);
     }
   }
 }

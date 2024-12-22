@@ -343,7 +343,14 @@ tr:nth-child(even) {
 .hvi-val {
   font-size: 2em;
   font-family: var(--font-mono);
-  padding: 2px 8px;
+  padding: 4px 8px;
+  color: var(--body-fg);
+}
+
+#hvi-val {
+  font-size: 2em;
+  font-family: var(--font-mono);
+  padding: 8px;
   color: var(--body-fg);
 }
 
@@ -357,6 +364,14 @@ tr:nth-child(even) {
   text-align: center;
   background-color: var(--accent2);
   color: var(--body-fg);
+}
+
+.sp-rgb {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 12px;
+  margin-right: 12px;
 }
 
 .chip-color-w,
