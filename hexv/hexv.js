@@ -70,6 +70,9 @@ const hexv_cfg = {
   optCh1: document.getElementById('hvi-ch1'),
   optCh2: document.getElementById('hvi-ch2'),
   optCh3: document.getElementById('hvi-ch3'),
+  optP05: document.getElementById('hvi-p05'),
+  optP1k: document.getElementById('hvi-p1k'),
+  optP2k: document.getElementById('hvi-p2k'),
   apply:  function(){
     if (this.optR8.checked)
       hex_rowbytes = 8;
@@ -83,6 +86,12 @@ const hexv_cfg = {
       hex_asciichar = '&nbsp;';
     else if (this.optCh3.checked)
       hex_asciichar = '-';
+    if (this.optP05.checked)
+      hex_pagesize = 512;
+    else if (this.optP1k.checked)
+      hex_pagesize = 1024;
+    else if (this.optP2k.checked)
+      hex_pagesize = 2048;
     updateHexv();
   }
 }
