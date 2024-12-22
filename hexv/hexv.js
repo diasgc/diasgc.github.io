@@ -6,8 +6,9 @@ Number.prototype.strHex = function(pad, prefix=true){
 Number.prototype.strBin = function(pad, prefix=true, group=true){
   pad = pad || Math.floor(Math.log(this)/Math.log(4) + 1) * 2;
   let ret = this.toString(2).padStart(pad,'0');
-  if (group)
+  if (group){
     ret = ret.match(/.{1,8}/g).join('&nbsp;');
+  }
   return (prefix ? "0b" : "") + ret;
 }
 
@@ -106,7 +107,7 @@ const hexv_info = {
   outDat: document.getElementById('hvo-dat'),
   outVal: document.getElementById('hvi-val'),
   apply: function(){
-    let val, len, showHex = true;
+    let val, len, isInt = true, isRgb = false;
     if (this.opt8b.checked){
       len = 1;
       val = this.optU.checked
@@ -119,11 +120,13 @@ const hexv_info = {
         : hex_data.getInt16(hex_selected, this.optLE.checked);
     } else if (this.opt24b.checked){
       len = 3;
+      isRgb = true;
       val = this.optU.checked
         ? hex_data.getUInt24(hex_selected, this.optLE.checked)
         : hex_data.getInt24(hex_selected, this.optLE.checked);
     } else if (this.opt32b.checked){
       len = 4;
+      isRgb = true;
       val = this.optU.checked
         ? hex_data.getUInt32(hex_selected, this.optLE.checked)
         : hex_data.getInt32(hex_selected, this.optLE.checked);
@@ -134,32 +137,41 @@ const hexv_info = {
         : hex_data.getInt64(hex_selected, this.optLE.checked);
       val = parseInt(val);
     } else if (this.opt32f.checked){
-      showHex = false;
+      isInt = false;
       len = 4;
       val = hex_data.getFloat32(hex_selected, this.optLE.checked);
     } else if (this.opt64f.checked){
-      showHex = false;
+      isInt = false;
       len = 8;
       val = hex_data.getFloat64(hex_selected, this.optLE.checked);
     }
     if (val !== null){
       if (this.outDec.checked)
         this.outVal.innerHTML = val;
-      else if (this.outHex.checked)
+      else if (isInt && this.outHex.checked)
         this.outVal.innerHTML = val.strHex(len * 2);
-      else if (this.outOct.checked)
+      else if (isInt && this.outOct.checked)
         this.outVal.innerHTML = val.strOct();
-      else if (this.outBin.checked)
-        this.outVal.innerHTML = val.strBin();
-      else if (this.outRgb.checked){
+      else if (isInt && this.outBin.checked)
+        this.outVal.innerHTML = val.strBin(null, false);
+      else if (isRgb && this.outRgb.checked){
         let rgb = "#" + val.strHex(len * 2, false);
         this.outVal.innerHTML = "<span class='sp-rgb' style='background-color: " + rgb + ";'></span>" + rgb;
       } else {
         this.outVal.innerHTML = "n/a";
       }
-      checkOffset(val, this.outVal);
+      if (isInt && !this.outRgb.checked)
+        checkOffset(val, this.outVal);
     }
   }
+}
+
+function hcfg(){
+  hexv_cfg.apply();
+}
+
+function hnfo(){
+  hexv_info.apply();
 }
 
 function checkOffset(val, el){
@@ -285,14 +297,6 @@ function newSelection(offset){
   hex_selected = offset;
 }
 
-function hcfg(){
-  hexv_cfg.apply();
-}
-
-function hnfo(){
-  hexv_info.apply();
-}
-
 function updateHexv(){
   let offset_end = Math.min(hex_offset + hex_pagesize, hex_data.source.byteLength);
   header.replaceChildren();
@@ -360,7 +364,3 @@ function offsetLast(){
   updateHexv();
 }
 //#endregion
-
-
-
-

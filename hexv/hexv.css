@@ -253,7 +253,7 @@ tr:nth-child(even) {
   font-size: 16px;
   font-weight: 800;
   margin: 12px;
-  border-radius: 12px; 
+  border-radius: 12px;
 }
 
 .f-offset,
@@ -303,23 +303,14 @@ tr:nth-child(even) {
   display: inline-block;
   background-color: rgba(var(--body-bg), 0.1);
   color: var(--body-fg2);
-  padding: 4px 6px;
+  padding: 4px 5px;
   margin: 0;
   font-size: 12px;
-  font-weight: 600;
-  /*
-  color: var(--accent);
-  border: 0.5px solid var(--accent);
-  */
+  font-weight: 800;
 }
 
 .f-fs input[type="radio"]:checked+label {
   margin: 0;
-  /*
-  background-color: var(--accent);
-  border: 0.5px solid var(--accent);
-  color: var(--body-bg);
-  */
   color: var(--accent);
   border-bottom: 2px solid var(--accent);
 }
@@ -341,13 +332,14 @@ tr:nth-child(even) {
 }
 
 .hvi-val {
-  font-size: 2em;
+  font-size: 2.5em;
   font-family: var(--font-mono);
   padding: 4px 8px;
   color: var(--body-fg);
 }
 
 #hvi-val {
+  width: 100%;
   font-size: 2em;
   font-family: var(--font-mono);
   padding: 8px;
@@ -356,6 +348,7 @@ tr:nth-child(even) {
 
 .chip-offset {
   float:right;
+  margin: 0 4px;
   padding: 2px 8px;
   border-radius: 12px;
   font-family: var(--font-sans);
@@ -372,25 +365,6 @@ tr:nth-child(even) {
   height: 12px;
   border-radius: 12px;
   margin-right: 12px;
-}
-
-.chip-color-w,
-.chip-color-b {
-  float:inline-end;
-  padding: 2px 8px;
-  margin-right: 2px;
-  border-radius: 12px;
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.chip-color-b {
-  color: black;
-}
-
-.chip-color-w {
-  color: white;
 }
 
 #hvi-bin {
