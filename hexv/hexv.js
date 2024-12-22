@@ -118,7 +118,7 @@ const hexv_info = {
     } else if (this.opt64f.checked){
       val = hex_data.getFloat64(hex_selected, this.optLE.checked);
     }
-    if (val){
+    if (val !== null){
       this.valDec.innerHTML = val;
       this.valHex.innerHTML = val.strHex();
       this.valBin.innerHTML = val.strBin();
@@ -129,6 +129,9 @@ const hexv_info = {
   }
 }
 
+function hideFooter(){
+  hexv_footer.hideAll();
+}
 
 if (filePath != null){
   loadFile(filePath);
@@ -147,6 +150,7 @@ function loadFile(path){
       blob.name = _filenameFromPath(path);
       DataReader.load(blob, r => {
         hex_data = r;
+        hexv_input_offset.max = hex_data.source.byteLength;
         updateHexv();
       });
     } else {
@@ -259,7 +263,7 @@ function updateHexv(){
 //#region offset NAV
 function offsetFirst(){
   hex_offset = 0;
-  hexv_input_offset.value = hex_offset.strHex();
+  hexv_input_offset.value = hex_offset.strHex(8);
   updateHexv();
 }
 
@@ -267,15 +271,17 @@ function offsetPrev(){
   hex_offset = Math.max(
     0,
     hex_offset - hex_pagesize);
-  hexv_input_offset.value = hex_offset.strHex();
+    hexv_input_offset.value = hex_offset.strHex(8);
   updateHexv();
 }
 
 function offsetGoTo(offset){
   hex_offset = offset;
   hex_selected = -1;
+  hexv_input_offset.value = hex_offset.strHex(8);
   hexv_footer.hideAll();
   updateHexv();
+  window.scrollTo(0,1);
 }
 
 function offsetChange(e){
@@ -286,15 +292,13 @@ function offsetNext(){
   hex_offset = Math.min(
     hex_data.source.byteLength - hex_pagesize,
     hex_offset + hex_pagesize);
-  hexv_input_offset.value = hex_offset.strHex();
+  hexv_input_offset.value = hex_offset.strHex(8);
   updateHexv();
 }
 
 function offsetLast(){
-  hex_offset = Math.max(
-    0,
-    hex_data.source.byteLength - hex_pagesize - 1);
-  hexv_input_offset.value = hex_offset.strHex();
+  hex_offset = hex_data.source.byteLength - hex_pagesize - 1;
+  hexv_input_offset.value = hex_offset.strHex(8);
   updateHexv();
 }
 //#endregion

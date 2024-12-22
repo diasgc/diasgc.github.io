@@ -277,9 +277,19 @@ tr:nth-child(even) {
   color: var(--accent);
 }
 
+.f-offset {
+  display: flex;
+  flex-direction: row;
+  margin-right: 12px;
+  align-items: center;
+  vertical-align: middle;
+}
+
 .f-offset div {
+  align-items: center;
+  vertical-align: middle;
+  margin: 0 6px;
   font-size: 18px;
-  display: inline-block;
 }
 
 .f-offset input {

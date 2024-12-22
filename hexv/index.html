@@ -32,15 +32,14 @@
   </div>
   <div id="footer" class='c-footer'>
     <div id="f-hoffset">
-      <div>
-      <fieldset class="f-offset"><legend>offset</legend>
-        <div id="off-first" onclick="offsetFirst()">&#x23EE;</div>
-        <div id="off-prev" onclick="offsetPrev()">&#x25C0;</div>
-        <!--<input type="text" id="hvi-offset" name="offset" value="0" onchange="offsetChange()"/>-->
-        <input type="range" id="hvi-roff" name="offset" value="0" min="0" max="100" onchange="offsetChange()"/>
-        <div id="off-next" onclick="offsetNext()">&#x25B6;</div>
-        <div id="off-last" onclick="offsetLast()">&#x23ED;</div>
-      </fieldset>
+      <div style="width: 100%;">
+        <fieldset class="f-offset"><legend>offset</legend>
+          <div id="off-first" onclick="offsetFirst()">&#x23EE;</div>
+          <div id="off-prev" onclick="offsetPrev()">&#x25C0;</div>
+          <input type="text" id="hvi-offset" name="offset" value="0" onchange="offsetChange()"/>
+          <div id="off-next" onclick="offsetNext()">&#x25B6;</div>
+          <div id="off-last" onclick="offsetLast()">&#x23ED;</div>
+        </fieldset>
       </div>
       <fieldset class="f-fs"><legend>bytes per row</legend>
         <input type="radio" id="hvi-r8" name="rowb" value="8" onchange="hcfg()"/><label for="hvi-r8">8</label>
