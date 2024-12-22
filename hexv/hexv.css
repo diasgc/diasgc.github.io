@@ -295,20 +295,23 @@ tr:nth-child(even) {
   }
 }
 
+.f-fsv input[type="radio"],
 .f-fs input[type="radio"] {
   display: none;
 }
 
+.f-fsv label,
 .f-fs label {
   display: inline-block;
   background-color: rgba(var(--body-bg), 0.1);
   color: var(--body-fg2);
   padding: 4px 5px;
-  margin: 0;
+  margin: 8;
   font-size: 12px;
   font-weight: 800;
 }
 
+.f-fsv input[type="radio"]:checked+label,
 .f-fs input[type="radio"]:checked+label {
   margin: 0;
   color: var(--accent);
@@ -316,14 +319,20 @@ tr:nth-child(even) {
 }
 
 .f-fsv {
-  margin: 8px 0;
   display: block;
+  margin: 8px 0;
+  
 }
 
 .f-div {
   bottom: 0;
   left: 0;
   right: 0;
+  padding: 12px 0;
+}
+
+.f-out {
+  display: inline;
 }
 
 .f-vinfo {
@@ -334,29 +343,28 @@ tr:nth-child(even) {
 .hvi-val {
   font-size: 2.5em;
   font-family: var(--font-mono);
-  padding: 4px 8px;
   color: var(--body-fg);
 }
 
 #hvi-val {
   width: 100%;
-  font-size: 2em;
+  font-size: 2.5em;
   font-family: var(--font-mono);
-  padding: 8px;
+  padding: 12px 8px;
   color: var(--body-fg);
 }
 
 .chip-offset {
   float:right;
-  margin: 0 4px;
-  padding: 2px 8px;
+  margin: 0 8px;
+  padding: 4px 12px;
   border-radius: 12px;
   font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 800;
   text-align: center;
-  background-color: var(--accent2);
-  color: var(--body-fg);
+  background-color: #8884;
+  color: var(--accent);
 }
 
 .sp-rgb {
