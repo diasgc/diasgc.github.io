@@ -169,8 +169,8 @@ const hexv_info = {
       } else {
         this.outVal.innerHTML = "n/a";
       }
-      if (isInt && !this.outRgb.checked)
-        checkOffset(val, this.outVal);
+      if (isInt && !this.outRgb.checked && val < hex_data.source.byteLength)
+        this.outVal.innerHTML += "<span class='chip-offset' onclick='offsetGoTo(" + hex_selected + ")'>offset</span>";
     }
   }
 }
@@ -183,11 +183,6 @@ function hnfo(){
   hexv_info.apply();
 }
 
-function checkOffset(val, el){
-  if (val < hex_data.source.byteLength)
-    el.innerHTML += "<span class='chip-offset' onclick='offsetGoTo(" + hex_selected + ")'>offset</span>";
-}
-
 function chipColorRgb(val, el, bytes){
   let ch = ['grey','','','rgb','rgba'];
   let rgb = "#" + val.strHex(2 * bytes, false);
@@ -195,14 +190,6 @@ function chipColorRgb(val, el, bytes){
   el.innerHTML += "<span class='" + cls + "' style='background: " + rgb + ";'>" + ch[bytes] + "</span>";
 }
 
-function lumOfRgb(v){
-  if (v > 0xffffff)
-    v = (v >> 8);
-  let r = (v >> 16) & 0xff;
-  let g = (v >> 8) & 0xff;
-  let b = v & 0xff;
-  return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 256;
-}
 
 function hideFooter(){
   hexv_footer.hideAll();
@@ -371,5 +358,9 @@ function offsetLast(){
   hex_offset = hex_data.source.byteLength - hex_pagesize - 1;
   hexv_input_offset.value = hex_offset.strHex(8);
   updateHexv();
+}
+
+function addFs(div, label, name, id, val, cap){
+  let i = "<input type='radio' id='" + id + "'  name='" + name + "' value='" + val + "' onchange='hcfg()'/><label for='" + id + "'>" + cap + "</label>";
 }
 //#endregion
