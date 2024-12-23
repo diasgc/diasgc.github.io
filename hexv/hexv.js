@@ -308,7 +308,8 @@ function updateHexv(){
     let row = _newElement('tr');
     row.innerHTML = "<td id='o" + hex_data.offset + "' "
       + "class='tdo" + hex_rowbytes + "' "
-      + "onclick='tdoclick(this)'>" + hex_data.offset.strHex(8) + "</td>";
+      + "onclick='tdoclick(this)'>" + hex_data.offset.strHex(8) + "</td>"
+      + sep;
     let row_bytes = byteArrayToTR(hex_data.offset, hex_data.readUInt8Array(hex_rowbytes), td_class);
     row.innerHTML += row_bytes.hex + sep + row_bytes.ascii;
     table.appendChild(row);
@@ -362,5 +363,10 @@ function offsetLast(){
 
 function addFs(div, label, name, id, val, cap){
   let i = "<input type='radio' id='" + id + "'  name='" + name + "' value='" + val + "' onchange='hcfg()'/><label for='" + id + "'>" + cap + "</label>";
+}
+
+function onBackPressed(){
+  if (android)
+    android.requestAction("exit","");
 }
 //#endregion
