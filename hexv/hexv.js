@@ -46,20 +46,24 @@ const hexv_footer = {
   h_info: '200px',
   h_offs: '100px',
   h_hide: '2px',
+  h_defb: hexv_content.style.paddingBottom,
   showInfo: function(){
     hexv_f_hinfo.style.display = 'block';
     hexv_f_hoffset.style.display = 'none';
     hexv_foot.style.height = this.h_info;
+    hexv_content.style.paddingBottom = this.h_info;
   },
   showOffset: function(){
     hexv_f_hinfo.style.display = 'none';
     hexv_f_hoffset.style.display = 'block';
     hexv_foot.style.height = this.h_offs;
+    hexv_content.style.paddingBottom = this.h_offs;
   },
   hideAll: function(){
     hexv_foot.style.height = this.h_hide;
     hexv_f_hinfo.style.display = 'none';
     hexv_f_hoffset.style.display = 'none';
+    hexv_content.style.paddingBottom = this.h_defb;
   }
 }
 
@@ -115,13 +119,43 @@ const hexv_info = {
   outRgb: document.getElementById('hvo-rgb'),
   outDat: document.getElementById('hvo-dat'),
   outVal: document.getElementById('hvi-val'),
+  val: 0,
+  len: 0,
+  byteCount: function(){
+    if (this.opt8b.checked){
+      this.val = this.optU.checked
+        ? hex_data.getUInt8(hex_selected)
+        : hex_data.getInt8(hex_selected);
+      this.len = 1;
+    } else if (this.opt16b.checked){
+      this.val = this.optU.checked
+        ? hex_data.getUInt16(hex_selected)
+        : hex_data.getInt16(hex_selected);
+      this.len = 2;
+    } else if (this.opt24b.checked){
+      this.val = this.optU.checked
+        ? hex_data.getUInt24(hex_selected)
+        : hex_data.getInt24(hex_selected);
+      this.len = 3;
+    } else if (this.opt32b.checked){
+      this.val = this.optU.checked
+        ? hex_data.getUInt32(hex_selected)
+        : hex_data.getInt32(hex_selected);
+      this.len = 4;
+    } else if (this.opt64b.checked){
+      this.val = this.optU.checked
+        ? hex_data.getUInt64(hex_selected)
+        : hex_data.getInt64(hex_selected);
+      this.len = 8;
+    }
+  },
   apply: function(){
     let val, len, isInt = true, isRgb = false;
     if (this.opt8b.checked){
-      len = 1;
       val = this.optU.checked
         ? hex_data.getUInt8(hex_selected)
         : hex_data.getInt8(hex_selected);
+      len = 1;
     } else if (this.opt16b.checked){
       len = 2;
       val = this.optU.checked
@@ -154,6 +188,8 @@ const hexv_info = {
       len = 8;
       val = hex_data.getFloat64(hex_selected, this.optLE.checked);
     }
+    this.outRgb.disabled = !isRgb;
+    this.outDat.disabled = len !== 4;
     if (val !== null){
       if (this.outDec.checked)
         this.outVal.innerHTML = val;
@@ -166,6 +202,9 @@ const hexv_info = {
       else if (isRgb && this.outRgb.checked){
         let rgb = "#" + val.strHex(len * 2, false);
         this.outVal.innerHTML = "<span class='sp-rgb' style='background-color: " + rgb + ";'></span>" + rgb;
+      } else if (isInt && len === 4 && this.outDat.checked){
+        let d = new Date(val);
+        this.outVal.innerHTML = d.toString();
       } else {
         this.outVal.innerHTML = "n/a";
       }

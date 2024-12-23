@@ -329,7 +329,9 @@ tr:nth-child(even) {
 .f-fsv {
   display: block;
   margin: 8px 0;
-  
+}
+.f-fsv input[type="radio"]:disabled+label {
+  color: #8884;
 }
 
 .f-div {

@@ -5,6 +5,8 @@ const DataReader = {
   nativeEndianness: true,
   offsetStack: [],
   byteOrderStack: [],
+  BigEndian:false,
+  LittleEndian:true,
   types: {
     "uint8": 8,
     "int8": 8,
@@ -27,19 +29,18 @@ const DataReader = {
     }
     fileReader.readAsArrayBuffer(file);
   },
-  
-  pushByteOrder(newLE){
-    this.byteOrderStack.push(this.le);
-  },
-  popByteOrder(){
-    this.le = this.byteOrderStack.pop();
-  },
-
   withDataView: function(dataView, callback){
     this.nativeEndianness = this.getEndianness();
     this.le = this.nativeEndianness;
     this.source = dataView;
     callback(this);
+  },
+  pushByteOrder(newLE){
+    this.byteOrderStack.push(this.le);
+    this.le = newLE;
+  },
+  popByteOrder(){
+    this.le = this.byteOrderStack.pop();
   },
   getEndianness: function(){
     let uInt16 = new Uint16Array([0xFF00]);
@@ -59,16 +60,22 @@ const DataReader = {
     return this.source.getInt16(offset, le);
   },
   getUInt24: function(offset=this.offset, le=this.le){
-    return this.source.getUint32(offset, le) & 0xffffff;
+    return this.getUIntBytes(3, offset,le);
   },
   getInt24: function(offset=this.offset, le=this.le){
-    return this.source.getInt32(offset, le) & 0xffffff;
+    return this.getIntBytes(3, offset,le);
   },
   getUInt32: function(offset=this.offset, le=this.le){
     return this.source.getUint32(offset, le);
   },
   getInt32: function(offset=this.offset, le=this.le){
     return this.source.getInt32(offset, le);
+  },
+  getInt40: function(offset=this.offset, le=this.le){
+    return this.getIntBytes(5, offset,le);
+  },
+  getUInt40: function(offset=this.offset, le=this.le){
+    return this.getUIntBytes(5, offset,le);
   },
   getUInt64: function(offset=this.offset, le=this.le){
     return this.source.getBigUint64(offset, le);
@@ -81,6 +88,46 @@ const DataReader = {
   },
   getFloat64: function(offset=this.offset, le=this.le){
     return this.source.getFloat64(offset,le);
+  },
+  getIntBytes: function(bytes, offset=this.offset, le=this.le){
+    let out;
+    if (bytes > 4){
+      // hack this, since js does not support int32+ let us build
+      // an hex string and parse it to int at the end
+      out = "";
+      for (let i = 0; i < bytes; i++)
+        out += (this.source.getUint8(offset + (le ? (bytes - i - 1) : i)) & 0xff).strHex(2,false);
+      out = parseInt("0x"+out);
+    } else {
+      out = 0;
+      for (let i = 0; i < bytes; i++){
+        out = out << 8;
+        out |= (this.source.getUint8(offset + (le ? (bytes - i - 1) : i)) & 0xff);
+      } 
+    }
+    return out;
+  },
+  getUIntBytes: function(bytes, offset=this.offset, le=this.le){
+    return this.getIntBytes(bytes, offset, le) >>> 0;
+  },
+  getUIntBits: function(bits, offset=this.offset, le=this.le){
+    return this.getIntBits(bits, offset, le) >>> 0;
+  },
+  getIntBits: function(bits, offset=this.offset, le=this.le){
+    return this.getIntBytes((bits/8) & 0xff, offset, le);
+  },
+  getFP80: function(offset=this.offset, le=this.le){
+    // todo: implement this
+    // as in https://moocaholic.medium.com/fp64-fp32-fp16-bfloat16-tf32-and-other-members-of-the-zoo-a1ca7897d407
+    let high = parseInt(this.getUInt64(offset, le));
+    let low = this.getInt32(offset + 8, le);
+    return high + low / Math.pow(2, 32);
+  },
+  getFP64: function(offset=this.offset, le=this.le){
+    // todo: implement this
+    let high = this.getUIntBits(n,offset,le);
+    let low = this.getInt32(offset + 4, le);
+    return high + low / Math.pow(2, 32);
   },
   checkOffset: function(newOffset, len=0){
     return newOffset + len < this.source.byteLength;
@@ -231,6 +278,16 @@ const DataReader = {
     this.offset += 2;
     return r;
   },
+  readInt24: function(le=this.le){
+    let r = this.getInt24(le);
+    this.offset += 3;
+    return r;
+  },
+  readUInt24: function(le=this.le){
+    let r = this.getUInt24(le);
+    this.offset += 3;
+    return r;
+  },
   readUInt32: function(le=this.le){
     let r = this.source.getUint32(this.offset, le);
     this.offset += 4;
@@ -250,6 +307,14 @@ const DataReader = {
     let r = this.source.getBigInt64(this.offset, le);
     this.offset += 8;
     return parseInt(r);
+  },
+  readIntN: function(bits, offset=this.offset,le=this.le){
+    let r = this.getIntBits(bits, offset, le);
+    this.offset += n;
+    return r;
+  },
+  readUIntN: function(bits, offset=this.offset,le=this.le){
+    return this.readUIntBits(bits, offset, le) >>> 0;
   },
   readUInt8Array: function(len){
     if (this.checkOffset(this.offset, len)){
@@ -332,7 +397,7 @@ const DataReader = {
     let limit = Math.min(this.offset + len + 1, this.source.byteLength);
     var str = '', c;
     while ((c = this.readUInt8()) != 0 && this.offset < limit)
-      str += String.fromCharCode(c); 
+      str += String.fromCharCode(c);
     return str;
   },
   readStringAt: function(offset, len=this.source.byteLength){
@@ -377,33 +442,8 @@ const DataReader = {
     } else {
       for (let i = b - 1 ; i >= 0; i--)
         out |= (r.readUInt8() << (i * 8));
-    }this.le
-    return out & (Math.pow(2, b) - 1)
-  },
-  readUIntBytes: function(bytes, le=this.le){
-    let out = 0;
-    for (let i = 0; i < bytes; i++)
-      out |= ((this.readUInt8() & 0xff) << (le ? i * 8 : (bytes - i) * 8));
-    return out & (Math.pow(256, bytes) - 1);
-  },
-  readUIntBits: function(n){
-    let out;
-    let b = n < 9 
-      ? this.source.getUint8(this.offset)
-      : n < 17
-      ? this.source.getUint16(this.offset)
-      : n < 33
-      ? this.source.getUint32(this.offset)
-      : this.source.getBigUint64(this.offset);
-    if (this.le){
-      for (let i = 0; i < n; i += 8)
-        out |= (b << i);
-    } else {
-      for (let i = n - 8; i >= 0; i -= 8)
-        out |= (b << i);
     }
-    this.offset += n/8;
-    return out;
+    return out & (Math.pow(2, b) - 1)
   },
   skip: function(bytes){
     this.offset += bytes;
@@ -412,34 +452,22 @@ const DataReader = {
     while(this.source.getUint8(this.offset) === 0)
       this.offset++;
   },
-  splitUInt8: function(src, srcSize, n, le=this.le){
-    if (le){
-      return src & 0xff;
-    } else {
-      return (src >> srcSize) & 0xff;
-    }
-  }, // todo
-  splitUInt16: function(src, srcSize, n, le=this.le){
-    if (le){
-      console.log("splitUInt16: src="+src+" sz="+srcSize+" LE: " + (src & 0xffff));
-      return src & 0xffff;
-    } else {
-      console.log("splitUInt16: src="+src+" sz="+srcSize+" BE: " + ((src >> 16) & 0xffff));
-      return (src >> 16) & 0xffff;
-    }
-  }, // todo
+  splitUInt8: function(src, srcSize, le=this.le){
+    return le ? src & 0xff : (src >> srcSize) & 0xff;
+  },
+  splitUInt16: function(src, srcSize, le=this.le){
+    const result = le ? src & 0xffff : (src >> 16) & 0xffff;
+    console.log(`splitUInt16: src=${src} sz=${srcSize} ${le ? 'LE' : 'BE'}: ${result}`);
+    return result;
+  },
   swap16: function(value){
-    return ((value & 0xff) << 8)
-           | ((value >> 8) & 0xff);
+    return ((value & 0xff) << 8) | ((value >> 8) & 0xff);
   },
   swap32: function(value){
-    return ((value & 0xff) << 24)
-           | ((value & 0xff00) << 8)
-           | ((value >> 8) & 0xff00)
-           | ((value >> 24) & 0xff);
+    return ((value & 0xff) << 24) | ((value & 0xff00) << 8) | ((value >> 8) & 0xff00) | ((value >> 24) & 0xff);
   },
   uint32to16: function(val, le=this.nativeEndianness){
-    return this.le == this.nativeEndianness
+    return le == this.nativeEndianness
       ? val & 0xffff
       : (val >> 16) & 0xffff;
   },
