@@ -297,7 +297,7 @@ function updateHexv(){
   let offset_end = Math.min(hex_offset + hex_pagesize, hex_data.source.byteLength);
   header.replaceChildren();
   header.innerHTML = "<tr onclick='tdoclick(this)'>"
-    + "<th>offset</th><th colspan='" + (hex_rowbytes + 1) + "'>hex</th>"
+    + "<th>offset</th><th colspan='" + (hex_rowbytes + 2) + "'>hex</th>"
     + "<th colspan='" + hex_rowbytes + "'>ascii</th></tr>"
   let table = document.getElementById('tdata');
   table.replaceChildren();
