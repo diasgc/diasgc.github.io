@@ -29,7 +29,7 @@ stopMicrophoneButton.addEventListener("click", () => {
 
   startRecordButton.disabled = true;
   stopRecordButton.disabled = true;
-  log("Your microphone audio is not used anymore.");
+  console.log("Your microphone audio is not used anymore.");
 });
 
 
@@ -45,6 +45,8 @@ startRecordButton.addEventListener("click", async () => {
   const writable = await handle.createWritable();
 
   // Start recording.
+  recorder.channelCount = 2;
+  recorder.sampleRate = 48000;
   recorder.start();
   recorder.addEventListener("dataavailable", async (event) => {
     // Write chunks to the file.
@@ -56,7 +58,7 @@ startRecordButton.addEventListener("click", async () => {
   });
 
   stopRecordButton.disabled = false;
-  log("Your microphone audio is being recorded locally.");
+  console.log("Your microphone audio is being recorded locally.");
 });
 
 stopRecordButton.addEventListener("click", () => {
@@ -64,6 +66,6 @@ stopRecordButton.addEventListener("click", () => {
   recorder.stop();
 
   stopRecordButton.disabled = true;
-  log("Your microphone audio has been successfully recorded locally.");
+  console.log("Your microphone audio has been successfully recorded locally.");
 });
         
