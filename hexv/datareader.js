@@ -100,10 +100,8 @@ const DataReader = {
       out = parseInt("0x"+out);
     } else {
       out = 0;
-      for (let i = 0; i < bytes; i++){
-        out = out << 8;
-        out |= (this.source.getUint8(offset + (le ? (bytes - i - 1) : i)) & 0xff);
-      } 
+      for (let i = 0; i < bytes; i++)
+        out = (out << 8) | (this.source.getUint8(offset + (le ? (bytes - i - 1) : i)) & 0xff);
     }
     return out;
   },
