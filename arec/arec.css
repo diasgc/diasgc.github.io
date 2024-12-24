@@ -13,9 +13,25 @@ body {
   margin: 1rem;
   font-family: system-ui, sans-serif;
 }
+.container {
+  display: flex; /* Use flexbox */
+  flex-direction: column; /* Arrange children in a column */
+  justify-content: center; /* Center vertically */
+  height: 100vh; /* Full viewport height */
+}
+
+#timer {
+  font-size: 4rem;
+  font-weight: 100;
+  text-align: center;
+  margin-bottom: 1rem;
+}
 button {
   display: block;
   margin-bottom: 4px;
+  border: 1px solid #8888;
+  border-radius: 12px;
+  padding: 8px 16px;
 }
 pre {
   color: red;

@@ -26,6 +26,23 @@ function saveFile(data, filename, type) {
   document.body.removeChild(a);
 }
 
+let timerInterval;
+let startTime;
+
+function updateTimer() {
+  const elapsedTime = Date.now() - startTime;
+  const seconds = Math.floor((elapsedTime / 1000) % 60);
+  const minutes = Math.floor((elapsedTime / (1000 * 60)) % 60);
+  const hours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);
+
+  const formattedTime = 
+    `${hours.toString().padStart(2, '0')}:` +
+    `${minutes.toString().padStart(2, '0')}:` +
+    `${seconds.toString().padStart(2, '0')}`;
+
+  document.getElementById('timer').innerText = formattedTime;
+}
+
 startMicrophoneButton.addEventListener("click", async () => {
   // Prompt the user to use their microphone.
   stream = await navigator.mediaDevices.getUserMedia({ audio: {
@@ -47,7 +64,7 @@ startMicrophoneButton.addEventListener("click", async () => {
 
   stopMicrophoneButton.disabled = false;
   startRecordButton.disabled = false;
-  log("Your microphone audio is being used.");
+  console.log("Your microphone audio is being used.");
 });
 
 stopMicrophoneButton.addEventListener("click", () => {
@@ -73,8 +90,6 @@ startRecordButton.addEventListener("click", async () => {
 
   let chunks = [];
   // Start recording.
-  recorder.channelCount = 2;
-  recorder.sampleRate = 48000;
   recorder.start();
   recorder.addEventListener("dataavailable", async (event) => {
     // Write chunks to the file.
@@ -87,6 +102,10 @@ startRecordButton.addEventListener("click", async () => {
     }
   });
 
+  // Start the timer
+  startTime = Date.now();
+  timerInterval = setInterval(updateTimer, 1000);
+
   stopRecordButton.disabled = false;
   console.log("Your microphone audio is being recorded locally.");
 });
@@ -94,7 +113,8 @@ startRecordButton.addEventListener("click", async () => {
 stopRecordButton.addEventListener("click", () => {
   // Stop the recording.
   recorder.stop();
-
+  timerInterval = clearInterval(timerInterval);
+  
   stopRecordButton.disabled = true;
   console.log("Your microphone audio has been successfully recorded locally.");
 });
