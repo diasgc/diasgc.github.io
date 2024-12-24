@@ -90,7 +90,7 @@ const outputCtl = {
       input.onchange = function(){
         if (input.checked){
           outputCtl.mimeType = e;
-          outputCtl.ext = sp[0];
+          outputCtl.ext = sp[0].replace('mp4', 'm4a');
           console.log("Selected: " + outputCtl.mimeType + " ext: " + outputCtl.ext);
         }
       };
