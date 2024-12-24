@@ -44,10 +44,58 @@ pre {
   white-space: pre-line;
 }
 
+.div-start,
 .div-mic {
   display: flex;
   justify-content: center; /* Center horizontally */
 }
+
+.div-start {
+  margin-bottom: 1rem;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.div-start input[type="checkbox"]{
+  display: none;
+}
+
+.container input:checked ~ .start-button {
+  width: 42px;
+  height: 42px;
+  background-color: #b00;
+  border: 12px solid #fff;
+  outline: 1px solid #000;;
+  animation: glowing 1300ms infinite;
+}
+
+.start-button {
+  width: 48px;
+  height: 48px;
+  margin: 32px 0;
+  border-radius: 48px;
+  background-color: #eee;
+  border: 2px solid #fff;
+  outline: 1px solid #000;
+  transition: 0.5s;
+  animation: none;
+}
+
+@keyframes glowing {
+  0% {
+    background-color: #b00;
+  }
+  50% {
+    background-color: #fff;
+  }
+  100% {
+    background-color: #b00;
+  }
+}
+
+
 
 .fs-mic,
 .fs-setup {

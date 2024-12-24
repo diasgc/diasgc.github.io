@@ -1,5 +1,6 @@
 
 const divMain = document.getElementById('div-main');
+const startStopButton = document.getElementById('startStop');
 const startMicrophoneButton = document.querySelector('#startMicrophoneButton');
 const stopMicrophoneButton = document.querySelector('#stopMicrophoneButton');
 const startRecordButton = document.querySelector('#startRecordButton');
@@ -18,9 +19,11 @@ function rmic(){
     divMain.disabled = false;
     divMain.style.opacity = 1;
     navigator.mediaDevices.getUserMedia({ audio: true });
+    startRecordButton.disabled = false;
   } else {
     divMain.disabled = true;
     divMain.style.opacity = 0.1;
+    startRecordButton.disabled = true;
     if (stream)
       stream.getTracks().forEach(track => track.stop());
   }
@@ -167,31 +170,6 @@ function updateTimer() {
   document.getElementById('timer').innerText = formattedTime;
 }
 
-startMic = async() =>{
-  // Prompt the user to use their microphone.
-  stream = await navigator.mediaDevices.getUserMedia({ audio: inputCtl.getOptions() });
-
-  const options = { 
-    mimeType: "audio/webm;codecs=opus",
-    audioBitsPerSecond : 256000,
-    audioBitrateMode : "variable",
-  };
-  recorder = new MediaRecorder(stream, options);
-
-  stopMicrophoneButton.disabled = false;
-  startRecordButton.disabled = false;
-  console.log("Your microphone audio is being used.");
-}
-
-function stopMic(){
-  // Stop the stream.
-  stream.getTracks().forEach(track => track.stop());
-
-  startRecordButton.disabled = true;
-  stopRecordButton.disabled = true;
-  console.log("Your microphone audio is not used anymore.");
-}
-
 function getTimestampFilename(ext) {
   const now = new Date();
   const year = now.getFullYear();
@@ -222,13 +200,14 @@ rmic();
 
 outputCtl.loadSupportedAudioMimeTypes();
 
-startMicrophoneButton.addEventListener("click", startMic);
+function startStop(){
+  if (startStopButton.checked)
+    startRecording();
+  else
+    stopRecording();
+}
 
-stopMicrophoneButton.addEventListener("click", stopMic);
-
-
-startRecordButton.addEventListener("click", async () => {
-
+startRecording = async() => {
   stream = await navigator.mediaDevices.getUserMedia({ audio: inputCtl.getOptions() });
 
   recorder = new MediaRecorder(stream, outputCtl.getOptions());
@@ -257,14 +236,14 @@ startRecordButton.addEventListener("click", async () => {
 
   stopRecordButton.disabled = false;
   console.log("Your microphone audio is being recorded locally.");
-});
+}
 
-stopRecordButton.addEventListener("click", () => {
+stopRecording = () => {
   // Stop the recording.
   recorder.stop();
   timerInterval = clearInterval(timerInterval);
   
   stopRecordButton.disabled = true;
   console.log("Your microphone audio has been successfully recorded locally.");
-});
+}
         
