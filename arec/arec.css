@@ -1,6 +1,9 @@
 :root {
   color-scheme: dark light;
+  --accent: #01579B;
+  --swsz: 20px;
 }
+
 html {
   box-sizing: border-box;
 }
@@ -9,10 +12,12 @@ html {
 *:after {
   box-sizing: inherit;
 }
+
 body {
   margin: 1rem;
   font-family: system-ui, sans-serif;
 }
+
 .container {
   display: flex; /* Use flexbox */
   flex-direction: column; /* Arrange children in a column */
@@ -26,6 +31,7 @@ body {
   text-align: center;
   margin-bottom: 1rem;
 }
+
 button {
   display: block;
   margin-bottom: 4px;
@@ -36,4 +42,58 @@ button {
 pre {
   color: red;
   white-space: pre-line;
+}
+
+.div-mic {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+}
+
+.fs-mic,
+.fs-setup {
+  display: inline;
+  border: 1px solid #8888;
+  border-radius: 12px;
+  font-size: 8px;
+  color: var(--accent);
+  margin: 4px 0;
+}
+
+.fs-mic {
+  display: flex;
+  top: 12px;
+  width: 42px;
+}
+
+.fs-mic input[type="radio"],
+.fs-setup input[type="radio"] {
+  display: none;
+}
+
+.fs-mic label,
+.fs-setup label {
+  display: inline-block;
+  color: #8888;
+  padding: 4px 5px;
+  margin: 8;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.fs-mic input[type="radio"]:checked + label {
+  margin: 0;
+  color: #0b0;
+  border-bottom: 2px solid  #0b0;
+}
+
+.fs-mic #r0 input[type="radio"]:checked + label {
+  margin: 0;
+  color: #b00;
+  border-bottom: 2px solid  #b00;
+}
+
+.fs-setup input[type="radio"]:checked+label {
+  margin: 0;
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
 }
