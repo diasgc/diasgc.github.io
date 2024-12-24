@@ -8,7 +8,7 @@ const timer = {
   timerInterval: 0,
   start: function(){
     this.startTime = Date.now();
-    this.timerInterval = setInterval(this.updateTimer, 1000);
+    //this.timerInterval = setInterval(this.updateTimer, 1000);
   },
   updateTimer: function(){
     const elapsedTime = Date.now() - this.startTime;
@@ -24,7 +24,7 @@ const timer = {
     this.id.innerText = formattedTime;
   },
   stop: function(){
-    this.timerInterval = clearInterval(this.timerInterval);
+    //this.timerInterval = clearInterval(this.timerInterval);
     this.id.innerText = "00:00:00";
   }
 }
@@ -208,6 +208,7 @@ function getTimestampFilename(ext) {
 
 let stream;
 let recorder;
+let lock;
 
 rmic();
 
@@ -222,7 +223,7 @@ function startStop(){
 
 startRecording = async() => {
   stream = await navigator.mediaDevices.getUserMedia({ audio: inputCtl.getOptions() });
-
+  lock = await navigator.wakeLock.request('screen');
   recorder = new MediaRecorder(stream, outputCtl.getOptions());
   
   const suggestedName = getTimestampFilename(outputCtl.ext);
@@ -245,11 +246,17 @@ startRecording = async() => {
 
   // Start the timer
   timer.start();
+  timer.timerInterval = setInterval(timer.updateTimer, 1000);
 }
 
-stopRecording = () => {
+stopRecording = async() => {
   // Stop the recording.
   recorder.stop();
   timer.stop();
+  timer.timerInterval = clearInterval(timer.timerInterval);
+  if (lock != null){
+    await lock.release();
+    lock = null;
+  }
 }
         
