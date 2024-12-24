@@ -52,17 +52,20 @@ pre {
 .fs-mic,
 .fs-setup {
   display: inline;
-  border: 1px solid #8888;
+  border: 1px solid #8884;
   border-radius: 12px;
   font-size: 8px;
   color: var(--accent);
   margin: 4px 0;
+  text-align: center;
 }
 
 .fs-mic {
   display: flex;
   top: 12px;
   width: 42px;
+  border: none;
+  
 }
 
 .fs-mic input[type="radio"],
@@ -92,7 +95,7 @@ pre {
   border-bottom: 2px solid  #b00;
 }
 
-.fs-setup input[type="radio"]:checked+label {
+.fs-setup input[type="radio"]:checked + label {
   margin: 0;
   color: var(--accent);
   border-bottom: 2px solid var(--accent);

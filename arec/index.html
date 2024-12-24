@@ -33,54 +33,53 @@
     <div class="c-setup">
       <fieldset class="fs-setup"><legend>input</legend>
         <fieldset class="fs-setup"><legend>channels</legend>
-          <input type="radio" id="rec-ch1"  name="channels" value="1" onchange="rcfg()"/><label for="rec-ch1">mono</label>
-          <input type="radio" id="rec-ch2"  name="channels" value="2" onchange="rcfg()" checked/><label for="rec-ch2">stereo</label>
+          <input type="radio" id="rec-ch1"  name="channels" value="1"/><label for="rec-ch1">mono</label>
+          <input type="radio" id="rec-ch2"  name="channels" value="2" checked/><label for="rec-ch2">stereo</label>
         </fieldset>
         <fieldset class="fs-setup"><legend>samplerate</legend>
-          <input type="radio" id="rec-s08"  name="samplerate" value="8000" onchange="rcfg()"/><label for="rec-s08">11k</label>
-          <input type="radio" id="rec-s11"  name="samplerate" value="11025" onchange="rcfg()"/><label for="rec-s11">22k</label>
-          <input type="radio" id="rec-s22"  name="samplerate" value="22050" onchange="rcfg()"/><label for="rec-s22">22k</label>
-          <input type="radio" id="rec-s44"  name="samplerate" value="44100" onchange="rcfg()"/><label for="rec-s44">44k</label>
-          <input type="radio" id="rec-s48"  name="samplerate" value="48000" onchange="rcfg()" checked/><label for="rec-s48">48k</label>
-          <input type="radio" id="rec-s96"  name="samplerate" value="96000" onchange="rcfg()"/><label for="rec-s96">96k</label>
+          <input type="radio" id="rec-s08"  name="samplerate" value="8000"/><label for="rec-s08">11k</label>
+          <input type="radio" id="rec-s11"  name="samplerate" value="11025"/><label for="rec-s11">22k</label>
+          <input type="radio" id="rec-s22"  name="samplerate" value="22050"/><label for="rec-s22">22k</label>
+          <input type="radio" id="rec-s44"  name="samplerate" value="44100"/><label for="rec-s44">44k</label>
+          <input type="radio" id="rec-s48"  name="samplerate" value="48000" checked/><label for="rec-s48">48k</label>
+          <input type="radio" id="rec-s96"  name="samplerate" value="96000"/><label for="rec-s96">96k</label>
         </fieldset>
         <fieldset class="fs-setup"><legend>bitdepth</legend>
-          <input type="radio" id="rec-b08"  name="bitdepth" value="8" onchange="rcfg()"/><label for="rec-b08">8</label>
-          <input type="radio" id="rec-b16"  name="bitdepth" value="16" onchange="rcfg()" checked/><label for="rec-ch2">16</label>
-          <input type="radio" id="rec-b32"  name="bitdepth" value="32" onchange="rcfg()"/><label for="rec-ch2">f32</label>
+          <input type="radio" id="rec-b08"  name="bitdepth" value="8"/><label for="rec-b08">8</label>
+          <input type="radio" id="rec-b16"  name="bitdepth" value="16" checked/><label for="rec-ch2">16</label>
+          <input type="radio" id="rec-b32"  name="bitdepth" value="32"/><label for="rec-ch2">f32</label>
         </fieldset>
         <fieldset class="fs-setup"><legend>agc gain</legend>
-          <input type="radio" id="rec-ag0"  name="agc" value="0" onchange="rcfg()" checked/><label for="rec-ag0">off</label>
-          <input type="radio" id="rec-ag1"  name="agc" value="1" onchange="rcfg()"/><label for="rec-ag1">on</label>
+          <input type="radio" id="rec-ag0"  name="agc" value="0" checked/><label for="rec-ag0">off</label>
+          <input type="radio" id="rec-ag1"  name="agc" value="1"/><label for="rec-ag1">on</label>
         </fieldset>
         <fieldset class="fs-setup"><legend>noise reduction</legend>
-          <input type="radio" id="rec-nr0"  name="noise" value="0" onchange="rcfg()" checked/><label for="rec-nr0">off</label>
-          <input type="radio" id="rec-nr1"  name="noise" value="1" onchange="rcfg()"/><label for="rec-nr1">on</label>
+          <input type="radio" id="rec-nr0"  name="noise" value="0" checked/><label for="rec-nr0">off</label>
+          <input type="radio" id="rec-nr1"  name="noise" value="1"/><label for="rec-nr1">on</label>
         </fieldset>
         <fieldset class="fs-setup"><legend>echo cancel</legend>
-          <input type="radio" id="rec-ec0"  name="echo" value="0" onchange="rcfg()" checked/><label for="rec-ec0">off</label>
-          <input type="radio" id="rec-ec1"  name="echo" value="1" onchange="rcfg()"/><label for="rec-ec1">on</label>
+          <input type="radio" id="rec-ec0"  name="echo" value="0" checked/><label for="rec-ec0">off</label>
+          <input type="radio" id="rec-ec1"  name="echo" value="1"/><label for="rec-ec1">on</label>
         </fieldset>
       </fieldset>
       <fieldset class="fs-setup"><legend>output</legend>
         <fieldset class="fs-setup"><legend>bitrate</legend>
-          <input type="radio" id="rec-r32"  name="bitrate" value="32"  onchange="rcfg()"/><label for="rec-r32">32k</label>
-          <input type="radio" id="rec-r64"  name="bitrate" value="64"  onchange="rcfg()"/><label for="rec-r64">64k</label>
-          <input type="radio" id="rec-r128" name="bitrate" value="128" onchange="rcfg()"/><label for="rec-r128">128k</label>
-          <input type="radio" id="rec-r192" name="bitrate" value="192" onchange="rcfg()"/><label for="rec-r192">192k</label>
-          <input type="radio" id="rec-r256" name="bitrate" value="256" onchange="rcfg()" checked/><label for="rec-r256">256k</label>
-          <input type="radio" id="rec-r320" name="bitrate" value="320" onchange="rcfg()"/><label for="rec-r320">320k</label>
-          <input type="radio" id="rec-r480" name="bitrate" value="480" onchange="rcfg()"/><label for="rec-r480">480k</label>
-          <input type="radio" id="rec-r512" name="bitrate" value="512" onchange="rcfg()"/><label for="rec-r512">512k</label>
+          <input type="radio" id="rec-r32"  name="bitrate" value="32" /><label for="rec-r32">32k</label>
+          <input type="radio" id="rec-r64"  name="bitrate" value="64" /><label for="rec-r64">64k</label>
+          <input type="radio" id="rec-r128" name="bitrate" value="128"/><label for="rec-r128">128k</label>
+          <input type="radio" id="rec-r192" name="bitrate" value="192"/><label for="rec-r192">192k</label>
+          <input type="radio" id="rec-r256" name="bitrate" value="256" checked/><label for="rec-r256">256k</label>
+          <input type="radio" id="rec-r320" name="bitrate" value="320"/><label for="rec-r320">320k</label>
+          <input type="radio" id="rec-r480" name="bitrate" value="480"/><label for="rec-r480">480k</label>
+          <input type="radio" id="rec-r512" name="bitrate" value="512"/><label for="rec-r512">512k</label>
         </fieldset>
         <fieldset class="fs-setup"><legend>mode</legend>
-          <input type="radio" id="rec-cbr"  name="vbr" value="0" onchange="rcfg()"/><label for="rec-vbr0">cbr</label>
-          <input type="radio" id="rec-vbr"  name="vbr" value="1" onchange="rcfg()" checked/><label for="rec-vbr0">vbr</label>
+          <input type="radio" id="rec-cbr"  name="vbr" value="0"/><label for="rec-cbr">cbr</label>
+          <input type="radio" id="rec-vbr"  name="vbr" value="1" checked/><label for="rec-vbr">vbr</label>
         </fieldset>
         <fieldset class="fs-setup"><legend>codec</legend>
-          <input type="radio" id="rec-mp3"  name="codec" value="mp3" onchange="rcfg()"/><label for="rec-mp3">mp3</label>
-          <input type="radio" id="rec-ogg"  name="codec" value="ogg" onchange="rcfg()" checked/><label for="rec-ogg">ogg</label>
-          <input type="radio" id="rec-flac"  name="codec" value="flac" onchange="rcfg()" disabled/><label for="rec-flac">flac</label>
+          <div id="fs-mime">
+          </div>
         </fieldset>
       </fieldset>
     </div>
