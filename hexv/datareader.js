@@ -91,7 +91,7 @@ const DataReader = {
   },
   getIntBytes: function(bytes, offset=this.offset, le=this.le){
     let out;
-    if (bytes > 4){
+    if (bytes > 0){
       // hack this, since js does not support int32+ let us build
       // an hex string and parse it to int at the end
       out = "";
