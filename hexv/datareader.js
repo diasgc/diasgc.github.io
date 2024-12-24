@@ -60,10 +60,10 @@ const DataReader = {
     return this.source.getInt16(offset, le);
   },
   getUInt24: function(offset=this.offset, le=this.le){
-    return this.getUIntBytes(3, offset,le);
+    return this.getUIntBytes(3, offset, le);
   },
   getInt24: function(offset=this.offset, le=this.le){
-    return this.getIntBytes(3, offset,le);
+    return this.getIntBytes(3, offset, le);
   },
   getUInt32: function(offset=this.offset, le=this.le){
     return this.source.getUint32(offset, le);
@@ -91,7 +91,7 @@ const DataReader = {
   },
   getIntBytes: function(bytes, offset=this.offset, le=this.le){
     let out;
-    if (bytes > 0){
+    if (bytes > 4){
       // hack this, since js does not support int32+ let us build
       // an hex string and parse it to int at the end
       out = "";
