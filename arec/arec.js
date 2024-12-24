@@ -5,7 +5,6 @@ const startStopButton = document.getElementById('startStop');
 const timer = {
   id: document.getElementById('timer'),
   startTime: 0,
-  timerInterval: 0,
   start: function(){
     this.startTime = Date.now();
     //this.timerInterval = setInterval(this.updateTimer, 1000);
@@ -209,6 +208,7 @@ function getTimestampFilename(ext) {
 let stream;
 let recorder;
 let lock;
+let timerInterval;
 
 rmic();
 
@@ -246,14 +246,14 @@ startRecording = async() => {
 
   // Start the timer
   timer.start();
-  timer.timerInterval = setInterval(timer.updateTimer, 1000);
+  timerInterval = setInterval(timer.updateTimer, 1000);
 }
 
 stopRecording = async() => {
   // Stop the recording.
   recorder.stop();
   timer.stop();
-  timer.timerInterval = clearInterval(timer.timerInterval);
+  timerInterval = clearInterval(timerInterval);
   if (lock != null){
     await lock.release();
     lock = null;
