@@ -7,14 +7,41 @@ const stopRecordButton = document.querySelector('#stopRecordButton');
 let stream;
 let recorder;
 
+function saveFile(data, filename, type) {
+  // Create a Blob from the data
+  const blob = new Blob([data], { type: type });
+
+  // Create a temporary anchor element
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+
+  // Append the anchor to the document body
+  document.body.appendChild(a);
+
+  // Trigger the download by simulating a click
+  a.click();
+
+  // Remove the anchor from the document
+  document.body.removeChild(a);
+}
+
 startMicrophoneButton.addEventListener("click", async () => {
   // Prompt the user to use their microphone.
-  stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  stream = await navigator.mediaDevices.getUserMedia({ audio: {
+    echoCancellation: false,
+    noiseSuppression: false,
+    sampleRate: 48000,
+    channelCount: 2,
+    volume: 1.0,
+    sampleSize: 16,
+    latency: 0
+  }});
+
   const options = { 
     mimeType: "audio/webm;codecs=opus",
     audioBitsPerSecond : 256000,
     audioBitrateMode : "variable",
-    channelCount : 2,
   };
   recorder = new MediaRecorder(stream, options);
 
@@ -41,19 +68,22 @@ startRecordButton.addEventListener("click", async () => {
 
   // Prompt the user to choose where to save the recording file.
   const suggestedName = "microphone-recording.ogg";
-  const handle = await window.showSaveFilePicker({ suggestedName });
-  const writable = await handle.createWritable();
+  //const handle = await window.showSaveFilePicker({ suggestedName });
+  //const writable = await handle.createWritable();
 
+  let chunks = [];
   // Start recording.
   recorder.channelCount = 2;
   recorder.sampleRate = 48000;
   recorder.start();
   recorder.addEventListener("dataavailable", async (event) => {
     // Write chunks to the file.
-    await writable.write(event.data);
+    //await writable.write(event.data);
+    chunks.push(event.data);
     if (recorder.state === "inactive") {
       // Close the file when the recording stops.
-      await writable.close();
+      //await writable.close();
+      saveFile(new Blob(chunks, { type: "audio/ogg" }), suggestedName, "audio/ogg");
     }
   });
 
