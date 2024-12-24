@@ -19,11 +19,11 @@ function rmic(){
     divMain.disabled = false;
     divMain.style.opacity = 1;
     navigator.mediaDevices.getUserMedia({ audio: true });
-    startRecordButton.disabled = false;
+    startStopButton.disabled = false;
   } else {
     divMain.disabled = true;
     divMain.style.opacity = 0.1;
-    startRecordButton.disabled = true;
+    startStopButton.disabled = true;
     if (stream)
       stream.getTracks().forEach(track => track.stop());
   }
