@@ -1,4 +1,5 @@
 
+const divMain = document.getElementById('div-main');
 const startMicrophoneButton = document.querySelector('#startMicrophoneButton');
 const stopMicrophoneButton = document.querySelector('#stopMicrophoneButton');
 const startRecordButton = document.querySelector('#startRecordButton');
@@ -10,6 +11,20 @@ const micCtl = {
   start: function(){
 
   }
+}
+
+function rmic(){
+  if (micCtl.micOn.checked){
+    divMain.disabled = false;
+    divMain.style.opacity = 1;
+    navigator.mediaDevices.getUserMedia({ audio: true });
+  } else {
+    divMain.disabled = true;
+    divMain.style.opacity = 0.1;
+    if (stream)
+      stream.getTracks().forEach(track => track.stop());
+  }
+  
 }
 
 const inputCtl = {
@@ -45,6 +60,7 @@ const outputCtl = {
   mimeType: "audio/webm;codecs=opus",
   containers: [],
   codecs: [],
+  ext: 'ogg',
   getOptions: function(){
     let btr = this.btr.forEach( e => {
       let id = document.getElementById(e);
@@ -74,7 +90,8 @@ const outputCtl = {
       input.onchange = function(){
         if (input.checked){
           outputCtl.mimeType = e;
-          console.log("Selected: " + outputCtl.mimeType);
+          outputCtl.ext = sp[0];
+          console.log("Selected: " + outputCtl.mimeType + " ext: " + outputCtl.ext);
         }
       };
       input.name = "codec";
@@ -150,6 +167,43 @@ function updateTimer() {
   document.getElementById('timer').innerText = formattedTime;
 }
 
+startMic = async() =>{
+  // Prompt the user to use their microphone.
+  stream = await navigator.mediaDevices.getUserMedia({ audio: inputCtl.getOptions() });
+
+  const options = { 
+    mimeType: "audio/webm;codecs=opus",
+    audioBitsPerSecond : 256000,
+    audioBitrateMode : "variable",
+  };
+  recorder = new MediaRecorder(stream, options);
+
+  stopMicrophoneButton.disabled = false;
+  startRecordButton.disabled = false;
+  console.log("Your microphone audio is being used.");
+}
+
+function stopMic(){
+  // Stop the stream.
+  stream.getTracks().forEach(track => track.stop());
+
+  startRecordButton.disabled = true;
+  stopRecordButton.disabled = true;
+  console.log("Your microphone audio is not used anymore.");
+}
+
+function getTimestampFilename(ext) {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  
+  return `rec-${year}${month}${day}-${hours}${minutes}${seconds}.${ext}`;
+}
+
 let stream;
 let recorder;
 let timerInterval;
@@ -164,41 +218,21 @@ var streamConfig = {
   latency: 0
 }
 
+rmic();
+
 outputCtl.loadSupportedAudioMimeTypes();
 
-startMicrophoneButton.addEventListener("click", async () => {
-  // Prompt the user to use their microphone.
-  stream = await navigator.mediaDevices.getUserMedia({ audio: inputCtl.getOptions() });
+startMicrophoneButton.addEventListener("click", startMic);
 
-  const options = { 
-    mimeType: "audio/webm;codecs=opus",
-    audioBitsPerSecond : 256000,
-    audioBitrateMode : "variable",
-  };
-  recorder = new MediaRecorder(stream, options);
-
-  stopMicrophoneButton.disabled = false;
-  startRecordButton.disabled = false;
-  console.log("Your microphone audio is being used.");
-});
-
-stopMicrophoneButton.addEventListener("click", () => {
-  // Stop the stream.
-  stream.getTracks().forEach(track => track.stop());
-
-  startRecordButton.disabled = true;
-  stopRecordButton.disabled = true;
-  console.log("Your microphone audio is not used anymore.");
-});
+stopMicrophoneButton.addEventListener("click", stopMic);
 
 
 startRecordButton.addEventListener("click", async () => {
-  // For the sake of more legible code, this sample only uses the
-  // `showSaveFilePicker()` method. In production, you need to
-  // cater for browsers that don't support this method, as
-  // outlined in https://web.dev/patterns/files/save-a-file/.
 
-  // Prompt the user to choose where to save the recording file.
+  stream = await navigator.mediaDevices.getUserMedia({ audio: inputCtl.getOptions() });
+
+  recorder = new MediaRecorder(stream, outputCtl.getOptions());
+  
   const suggestedName = "microphone-recording.ogg";
   //const handle = await window.showSaveFilePicker({ suggestedName });
   //const writable = await handle.createWritable();
