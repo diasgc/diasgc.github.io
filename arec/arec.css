@@ -1,6 +1,6 @@
 :root {
   color-scheme: dark light;
-  --accent: #01579B;
+  --accent: light-dark(#01579B,#9b5701);
   --swsz: 20px;
 }
 
