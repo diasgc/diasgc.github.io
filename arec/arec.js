@@ -12,7 +12,7 @@ startMicrophoneButton.addEventListener("click", async () => {
   stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   const options = { 
     mimeType: "audio/webm;codecs=opus",
-    audioBitsPerSecond : 128000,
+    audioBitsPerSecond : 256000,
     audioBitrateMode : "variable",
     channelCount : 2,
   };
@@ -31,6 +31,7 @@ stopMicrophoneButton.addEventListener("click", () => {
   stopRecordButton.disabled = true;
   log("Your microphone audio is not used anymore.");
 });
+
 
 startRecordButton.addEventListener("click", async () => {
   // For the sake of more legible code, this sample only uses the
