@@ -233,7 +233,7 @@ startRecordButton.addEventListener("click", async () => {
 
   recorder = new MediaRecorder(stream, outputCtl.getOptions());
   
-  const suggestedName = "microphone-recording.ogg";
+  const suggestedName = getTimestampFilename(outputCtl.ext);
   //const handle = await window.showSaveFilePicker({ suggestedName });
   //const writable = await handle.createWritable();
 
