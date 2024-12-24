@@ -1,6 +1,6 @@
 :root {
   color-scheme: dark light;
-  --accent: light-dark(#01579B,#9b5701);
+  --accent: light-dark(#01579B,#ccff00);
   --swsz: 20px;
 }
 
@@ -51,7 +51,7 @@ pre {
 }
 
 .div-start {
-  margin-bottom: 1rem;
+  margin: 3rem;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;

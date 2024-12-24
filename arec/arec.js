@@ -1,11 +1,33 @@
 
 const divMain = document.getElementById('div-main');
 const startStopButton = document.getElementById('startStop');
-const startMicrophoneButton = document.querySelector('#startMicrophoneButton');
-const stopMicrophoneButton = document.querySelector('#stopMicrophoneButton');
-const startRecordButton = document.querySelector('#startRecordButton');
-const stopRecordButton = document.querySelector('#stopRecordButton');
 
+const timer = {
+  id: document.getElementById('timer'),
+  startTime: 0,
+  timerInterval: 0,
+  start: function(){
+    this.startTime = Date.now();
+    this.timerInterval = setInterval(this.updateTimer, 1000);
+  },
+  updateTimer: function(){
+    const elapsedTime = Date.now() - this.startTime;
+    const seconds = Math.floor((elapsedTime / 1000) % 60);
+    const minutes = Math.floor((elapsedTime / (1000 * 60)) % 60);
+    const hours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);
+  
+    const formattedTime = 
+      `${hours.toString().padStart(2, '0')}:` +
+      `${minutes.toString().padStart(2, '0')}:` +
+      `${seconds.toString().padStart(2, '0')}`;
+  
+    this.id.innerText = formattedTime;
+  },
+  stop: function(){
+    this.timerInterval = clearInterval(this.timerInterval);
+    this.id.innerText = "00:00:00";
+  }
+}
 
 const micCtl = {
   micOn: document.getElementById('rec-mc1'),
@@ -26,6 +48,7 @@ function rmic(){
     startStopButton.disabled = true;
     if (stream)
       stream.getTracks().forEach(track => track.stop());
+
   }
   
 }
@@ -46,6 +69,7 @@ const inputCtl = {
     return {
       echoCancellation: this.ech.checked,
       noiseSuppression: this.nrx.checked,
+      autoGainControl: this.agc.checked,
       sampleRate: srate,
       channelCount: this.ch2.checked ? 2 : 1,
       volume: 1.0,
@@ -167,7 +191,7 @@ function updateTimer() {
     `${minutes.toString().padStart(2, '0')}:` +
     `${seconds.toString().padStart(2, '0')}`;
 
-  document.getElementById('timer').innerText = formattedTime;
+  timer.innerText = formattedTime;
 }
 
 function getTimestampFilename(ext) {
@@ -184,17 +208,6 @@ function getTimestampFilename(ext) {
 
 let stream;
 let recorder;
-let timerInterval;
-let startTime;
-var streamConfig = {
-  echoCancellation: false,
-  noiseSuppression: false,
-  sampleRate: 48000,
-  channelCount: 2,
-  volume: 1.0,
-  sampleSize: 16,
-  latency: 0
-}
 
 rmic();
 
@@ -231,19 +244,12 @@ startRecording = async() => {
   });
 
   // Start the timer
-  startTime = Date.now();
-  timerInterval = setInterval(updateTimer, 1000);
-
-  stopRecordButton.disabled = false;
-  console.log("Your microphone audio is being recorded locally.");
+  timer.start();
 }
 
 stopRecording = () => {
   // Stop the recording.
   recorder.stop();
-  timerInterval = clearInterval(timerInterval);
-  
-  stopRecordButton.disabled = true;
-  console.log("Your microphone audio has been successfully recorded locally.");
+  timer.stop();
 }
         
