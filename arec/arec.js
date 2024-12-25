@@ -23,18 +23,16 @@ const timer = {
 const devices = {
   inputDevices: '',
   init: function(){
-    async() => {
-      navigator.mediaDevices
-      .enumerateDevices()
-      .then((devices) => {
-        devices.forEach((device) => {
-          console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
-        });
-      })
-      .catch((err) => {
-        console.error(`${err.name}: ${err.message}`);
+    navigator.mediaDevices
+    .enumerateDevices()
+    .then((devices) => {
+      devices.forEach((device) => {
+        console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
       });
-    }
+    })
+    .catch((err) => {
+      console.error(`${err.name}: ${err.message}`);
+    });
   }
 }
 const micCtl = {
