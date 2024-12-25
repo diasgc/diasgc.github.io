@@ -97,7 +97,7 @@ const outputCtl = {
     return {
       audioBitsPerSecond : btr,
       audioBitrateMode : this.vbr.checked ? "variable" : "constant",
-      mimeType: "audio/webm;codecs=opus"
+      mimeType: this.mimeType
     }
   },
 
@@ -243,7 +243,8 @@ startRecording = async() => {
     if (recorder.state === "inactive") {
       // Close the file when the recording stops.
       //await writable.close();
-      saveFile(new Blob(chunks, { type: "audio/ogg" }), suggestedName, "audio/ogg");
+      let t = outputCtl.mimeType.split(";")[0];
+      saveFile(new Blob(chunks, { type: t }), suggestedName, t);
     }
   });
 
