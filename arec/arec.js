@@ -180,7 +180,7 @@ function saveFile(data, filename, type) {
 }
 
 function updateTimer() {
-  const elapsedTime = Date.now() - startTime;
+  const elapsedTime = Date.now() - timer.startTime;
   const seconds = Math.floor((elapsedTime / 1000) % 60);
   const minutes = Math.floor((elapsedTime / (1000 * 60)) % 60);
   const hours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);
@@ -190,7 +190,7 @@ function updateTimer() {
     `${minutes.toString().padStart(2, '0')}:` +
     `${seconds.toString().padStart(2, '0')}`;
 
-  timer.innerText = formattedTime;
+  timer.id.innerText = formattedTime;
 }
 
 function getTimestampFilename(ext) {
@@ -202,7 +202,7 @@ function getTimestampFilename(ext) {
   const minutes = String(now.getMinutes()).padStart(2, '0');
   const seconds = String(now.getSeconds()).padStart(2, '0');
   
-  return `rec-${year}${month}${day}-${hours}${minutes}${seconds}.${ext}`;
+  return `rec-${year}${month}${day}-${hours}${minutes}${seconds}`;
 }
 
 let stream;
@@ -246,7 +246,7 @@ startRecording = async() => {
 
   // Start the timer
   timer.start();
-  timerInterval = setInterval(timer.updateTimer, 1000);
+  timerInterval = setInterval(updateTimer, 1000);
 }
 
 stopRecording = async() => {
