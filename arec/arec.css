@@ -21,8 +21,9 @@ body {
 .container {
   display: flex; /* Use flexbox */
   flex-direction: column; /* Arrange children in a column */
+  flex: 1;
   justify-content: center; /* Center vertically */
-  height: 100vh; /* Full viewport height */
+  height: calc(100vh - 52px); /* Full viewport height */
 }
 
 #timer {
@@ -32,15 +33,9 @@ body {
   margin-bottom: 1rem;
 }
 
-button {
-  display: block;
-  margin-bottom: auto;
-  border: 1px solid #8888;
-  border-radius: 12px;
-  padding: 8px 16px;
-}
 pre {
   color: red;
+  font-family: monospace;
   white-space: pre-line;
 }
 
@@ -51,7 +46,7 @@ pre {
 }
 
 .div-start {
-  bottom: 1rem;
+  margin-top: auto;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -65,7 +60,6 @@ pre {
 .container input:checked ~ .start-button {
   width: 56px;
   height: 56px;
-  margin-bottom: auto;
   background-color: #b00;
   border: 12px solid #fff;
   outline: 1px solid #000;;

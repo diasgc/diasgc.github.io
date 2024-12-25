@@ -27,6 +27,8 @@ const devices = {
     .enumerateDevices()
     .then((devices) => {
       devices.forEach((device) => {
+        if (device.kind === 'audioinput')
+          this.inputDevices[device.deviceId] = device.label;
         console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
       });
     })
@@ -35,6 +37,7 @@ const devices = {
     });
   }
 }
+
 const micCtl = {
   micOn: document.getElementById('rec-mc1'),
   start: function(){
