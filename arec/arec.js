@@ -6,8 +6,6 @@ const timer = {
   id: document.getElementById('timer'),
   startTime: 0,
   timerInterval: '',
-  MILLIS_HOURS: 1000 * 60 * 60,
-  MILLIS_MINS: 1000 * 60,
   start: function(){
     this.startTime = Date.now();
     this.timerInterval = setInterval(timer.update.bind(timer), 1000);
@@ -16,25 +14,29 @@ const timer = {
     const elapsedTime = Date.now() - this.startTime;
     this.id.innerText = new Date(elapsedTime).toISOString().slice(11, 19);
   },
-  updateTimer: function(){
-    const elapsedTime = Date.now() - this.startTime;
-    const seconds = Math.floor((elapsedTime / 1000) % 60);
-    const minutes = Math.floor((elapsedTime / this.MILLIS_MINS) % 60);
-    const hours = Math.floor((elapsedTime / this.MILLIS_HOURS) % 24);
-  
-    const formattedTime = 
-      `${hours.toString().padStart(2, '0')}:` +
-      `${minutes.toString().padStart(2, '0')}:` +
-      `${seconds.toString().padStart(2, '0')}`;
-  
-    this.id.innerText = formattedTime;
-  },
   stop: function(){
     this.timerInterval = clearInterval(timer.timerInterval.bind(timer));
     this.id.innerText = "00:00:00";
   }
 }
 
+const devices = {
+  inputDevices: '',
+  init: function(){
+    async() => {
+      navigator.mediaDevices
+      .enumerateDevices()
+      .then((devices) => {
+        devices.forEach((device) => {
+          console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
+        });
+      })
+      .catch((err) => {
+        console.error(`${err.name}: ${err.message}`);
+      });
+    }
+  }
+}
 const micCtl = {
   micOn: document.getElementById('rec-mc1'),
   start: function(){
@@ -47,6 +49,7 @@ function rmic(){
     divMain.disabled = false;
     divMain.style.opacity = 1;
     navigator.mediaDevices.getUserMedia({ audio: true });
+    devices.init();
     startStopButton.disabled = false;
   } else {
     divMain.disabled = true;
