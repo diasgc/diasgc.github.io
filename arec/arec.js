@@ -6,15 +6,21 @@ const timer = {
   id: document.getElementById('timer'),
   startTime: 0,
   timerInterval: '',
+  MILLIS_HOURS: 1000 * 60 * 60,
+  MILLIS_MINS: 1000 * 60; 
   start: function(){
     this.startTime = Date.now();
-    this.timerInterval = setInterval(timer.updateTimer.bind(timer), 1000);
+    this.timerInterval = setInterval(timer.update.bind(timer), 1000);
+  },
+  update: function(){
+    const elapsedTime = Date.now() - this.startTime;
+    this.id.innerText = new Date(elapsedTime).toISOString().slice(11, 19);
   },
   updateTimer: function(){
     const elapsedTime = Date.now() - this.startTime;
     const seconds = Math.floor((elapsedTime / 1000) % 60);
-    const minutes = Math.floor((elapsedTime / (1000 * 60)) % 60);
-    const hours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((elapsedTime / this.MILLIS_MINS) % 60);
+    const hours = Math.floor((elapsedTime / this.MILLIS_HOURS) % 24);
   
     const formattedTime = 
       `${hours.toString().padStart(2, '0')}:` +
@@ -180,38 +186,17 @@ function saveFile(data, filename, type) {
   document.body.removeChild(a);
 }
 
-/*
-function updateTimer() {
-  const elapsedTime = Date.now() - timer.startTime;
-  const seconds = Math.floor((elapsedTime / 1000) % 60);
-  const minutes = Math.floor((elapsedTime / (1000 * 60)) % 60);
-  const hours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);
-
-  const formattedTime = 
-    `${hours.toString().padStart(2, '0')}:` +
-    `${minutes.toString().padStart(2, '0')}:` +
-    `${seconds.toString().padStart(2, '0')}`;
-
-  timer.id.innerText = formattedTime;
-}
-*/
-
 function getTimestampFilename(ext) {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const seconds = String(now.getSeconds()).padStart(2, '0');
-  
-  return `rec-${year}${month}${day}-${hours}${minutes}${seconds}`;
+  return "rec-" + new Date(now)
+    .toISOString()
+    .slice(0, 19)
+    .replace(/-|:/g,'')
+    .replace(/T/g,'-');
 }
 
 let stream;
 let recorder;
 let lock;
-//let timerInterval;
 
 rmic();
 
@@ -229,7 +214,7 @@ startRecording = async() => {
   lock = await navigator.wakeLock.request('screen');
   recorder = new MediaRecorder(stream, outputCtl.getOptions());
   
-  const suggestedName = getTimestampFilename(outputCtl.ext);
+  const suggestedName = getTimestampFilename();
   //const handle = await window.showSaveFilePicker({ suggestedName });
   //const writable = await handle.createWritable();
 
