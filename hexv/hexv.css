@@ -41,12 +41,12 @@
   --body-fg2: #e0e0e080;
   --body-fg-strong: #fff;
   --border-fg: rgba(255,255,255,0.0625);
-  --accent: #FFB74D;
-  --accent1: #FFB74D10;
-  --accent2: #FFB74D20;
-  --accent3: #FFB74D80;
+  --accent: #0b0;
+  --accent1: #0b01;
+  --accent2: #0b02;
+  --accent3: #0b08;
   --protected: #ff744d;
-  --faded-accent: #FFB74D10;
+  --faded-accent: #0b01;
 }
 }
 
