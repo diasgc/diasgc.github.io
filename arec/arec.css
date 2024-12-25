@@ -4,33 +4,28 @@
   --swsz: 20px;
 }
 
-html {
-  box-sizing: border-box;
-}
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
-}
-
 body {
-  margin: 1rem;
+  overflow: hidden;
   font-family: system-ui, sans-serif;
+  height: calc(100svh - 24px);
+  display: flex; /* Use flexbox */
+  flex-direction: column; /* Arrange children in a column */
+  justify-content: center; /* Center vertically */
 }
 
 .container {
-  display: flex; /* Use flexbox */
-  flex-direction: column; /* Arrange children in a column */
-  flex: 1;
-  justify-content: center; /* Center vertically */
-  height: calc(100vh - 52px); /* Full viewport height */
+  justify-content: space-between;
+  height: 100%;
 }
 
 #timer {
+  margin-top: 100px;
   font-size: 4rem;
   font-weight: 100;
   text-align: center;
-  margin-bottom: 1rem;
+}
+#input-setup {
+  display: none;
 }
 
 pre {
@@ -46,7 +41,7 @@ pre {
 }
 
 .div-start {
-  margin-top: auto;
+  margin-top: 200px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -57,26 +52,28 @@ pre {
   display: none;
 }
 
+.start-button {
+  width: 48px;
+  height: 48px;
+  margin: 32px 0;
+  border-radius: 50%;
+  background-color: #eee;
+  border: 2px solid #fff;
+  outline: 1px solid #0008;
+  transition: 0.5s;
+  animation: none;
+}
+
 .container input:checked ~ .start-button {
   width: 56px;
   height: 56px;
   background-color: #b00;
   border: 12px solid #fff;
-  outline: 1px solid #000;;
+  outline: 1px solid #000b;
   animation: glowing 1000ms infinite;
 }
 
-.start-button {
-  width: 48px;
-  height: 48px;
-  margin: 32px 0;
-  border-radius: 48px;
-  background-color: #eee;
-  border: 2px solid #fff;
-  outline: 1px solid #000;
-  transition: 0.5s;
-  animation: none;
-}
+
 
 @keyframes glowing {
   0%   { background-color: #b00; }
