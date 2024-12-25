@@ -187,7 +187,7 @@ function saveFile(data, filename, type) {
 }
 
 function getTimestampFilename(ext) {
-  return "rec-" + new Date(now)
+  return "rec-" + new Date(Date.now())
     .toISOString()
     .slice(0, 19)
     .replace(/-|:/g,'')
