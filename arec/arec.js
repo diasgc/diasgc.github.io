@@ -7,7 +7,7 @@ const timer = {
   startTime: 0,
   timerInterval: '',
   MILLIS_HOURS: 1000 * 60 * 60,
-  MILLIS_MINS: 1000 * 60; 
+  MILLIS_MINS: 1000 * 60,
   start: function(){
     this.startTime = Date.now();
     this.timerInterval = setInterval(timer.update.bind(timer), 1000);
