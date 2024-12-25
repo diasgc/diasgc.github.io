@@ -15,7 +15,7 @@ const timer = {
     this.id.innerText = new Date(elapsedTime).toISOString().slice(11, 19);
   },
   stop: function(){
-    this.timerInterval = clearInterval(timer.timerInterval.bind(timer));
+    this.timerInterval = clearInterval(timer.timerInterval);
     this.id.innerText = "00:00:00";
   }
 }
@@ -249,3 +249,31 @@ stopRecording = async() => {
     lock = null;
   }
 }
+
+
+/*
+
+var txt = document.getElementById('log');
+const { createFFmpeg } = FFmpeg;
+const ffmpeg = createFFmpeg({ log: true, logger: ({ message }) => { txt.value += "\n" + message; } });
+const transcode = async ({ target: { files } }) => {
+  const message = document.getElementById('message');
+  const { name } = files[0];
+  message.innerHTML = 'Loading ffmpeg-core.js';
+  await ffmpeg.load();
+  await ffmpeg.write(name, files[0]);
+  message.innerHTML = 'Start transcoding';
+  await ffmpeg.transcode(name, 'output.mp4');
+  message.innerHTML = 'Transcoding completed';
+  const data = ffmpeg.read('output.mp4');
+  ffmpeg.remove('output.mp4');
+
+  const video = document.getElementById('output-video');
+  video.src = URL.createObjectURL(new Blob([data.buffer], {
+    type: 'video/mp4'
+  }));
+}
+const elm = document.getElementById('uploader');
+elm.addEventListener('change', transcode);
+
+*/
