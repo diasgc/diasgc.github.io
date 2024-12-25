@@ -5,9 +5,10 @@ const startStopButton = document.getElementById('startStop');
 const timer = {
   id: document.getElementById('timer'),
   startTime: 0,
+  timerInterval: '',
   start: function(){
     this.startTime = Date.now();
-    //this.timerInterval = setInterval(this.updateTimer, 1000);
+    this.timerInterval = setInterval(timer.updateTimer.bind(timer), 1000);
   },
   updateTimer: function(){
     const elapsedTime = Date.now() - this.startTime;
@@ -23,7 +24,7 @@ const timer = {
     this.id.innerText = formattedTime;
   },
   stop: function(){
-    //this.timerInterval = clearInterval(this.timerInterval);
+    this.timerInterval = clearInterval(timer.timerInterval.bind(timer));
     this.id.innerText = "00:00:00";
   }
 }
@@ -179,6 +180,7 @@ function saveFile(data, filename, type) {
   document.body.removeChild(a);
 }
 
+/*
 function updateTimer() {
   const elapsedTime = Date.now() - timer.startTime;
   const seconds = Math.floor((elapsedTime / 1000) % 60);
@@ -192,6 +194,7 @@ function updateTimer() {
 
   timer.id.innerText = formattedTime;
 }
+*/
 
 function getTimestampFilename(ext) {
   const now = new Date();
@@ -208,7 +211,7 @@ function getTimestampFilename(ext) {
 let stream;
 let recorder;
 let lock;
-let timerInterval;
+//let timerInterval;
 
 rmic();
 
@@ -246,17 +249,16 @@ startRecording = async() => {
 
   // Start the timer
   timer.start();
-  timerInterval = setInterval(updateTimer, 1000);
+  //timerInterval = setInterval(updateTimer, 1000);
 }
 
 stopRecording = async() => {
   // Stop the recording.
   recorder.stop();
   timer.stop();
-  timerInterval = clearInterval(timerInterval);
+  //timerInterval = clearInterval(timerInterval);
   if (lock != null){
     await lock.release();
     lock = null;
   }
 }
-        
