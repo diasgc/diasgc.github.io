@@ -131,6 +131,7 @@ const inputCtl = {
     sampleSize: 16,
     latency: 0
   },
+
   getSummary: function(){
     let ret = "";
     Object.keys(this.options).forEach(key => {
@@ -139,6 +140,7 @@ const inputCtl = {
     });
     return ret;
   },
+  
   init: function(){
     let fs = document.getElementById('fsi');
     fs.onclick = (e) => {
