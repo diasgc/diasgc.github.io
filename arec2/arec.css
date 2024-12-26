@@ -57,6 +57,7 @@ pre {
   font-size: 10px;
   white-space: pre-line;
   margin: 4px 12px;
+  overflow-y: auto;
 }
 
 .fs-mic,
