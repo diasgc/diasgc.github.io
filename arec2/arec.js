@@ -107,16 +107,17 @@ const fsBuilder = {
 
 const inputCtl = {
   fsi: document.getElementById('fs-input'),
-  audioConstraints: [ 'channelCount', 'sampleSize', 'sampleRate','autoGainControl', 'echoCancellation', 'latency', 'noiseSuppression', 'pan', 'suppressLocalAudioPlayback','voiceIsolation', 'deviceId'],
-  
+  audioConstraints: [ 'deviceId', 'channelCount', 'sampleSize', 'sampleRate','autoGainControl', 'echoCancellation', 'latency', 'noiseSuppression', 'pan', 'suppressLocalAudioPlayback','voiceIsolation', 'deviceId'],
+  supportedConstraints: {},
+  deviceId:         { name: "source", entries: {} },
   channelCount:     { name: "channels", entries: { "mono": 1, "stereo*": 2 } },
   sampleSize:       { name: "bitsize", entries: { "8": 8, "16*": 16 } },
   sampleRate:       { name: "samplerate", entries: {"8k": 8000, "11k": 11025, "22k": 22050, "44k": 44100, "48k*": 48000, "96k": 96000 } },
   autoGainControl:  { name: "autogain", entries: { "off": false, "on*": true } },
-  noiseSuppression: { name: "supNoise", entries: { "off*": false, "on": true } },
-  echoCancellation: { name: "supEcho", entries: { "off*": false, "on": true } },
-  voiceIsolation:   { name: "voice", entries: { "off*": false, "on": true } },
-  suppressLocalAudioPlayback: { name: "supPlay", entries: { "off*": false, "on": true } },
+  noiseSuppression: { name: "s-noise", entries: { "off*": false, "on": true } },
+  echoCancellation: { name: "s-echo", entries: { "off*": false, "on": true } },
+  voiceIsolation:   { name: "i-voice", entries: { "off*": false, "on": true } },
+  suppressLocalAudioPlayback: { name: "s-local", entries: { "off*": false, "on": true } },
   
   options: {
     echoCancellation: false,
@@ -130,8 +131,20 @@ const inputCtl = {
   },
   init: function(){
     this.fsi.replaceChildren();
+    this.supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
+    Object.keys(this.supportedConstraints).forEach((key) => {
+      if (this[key] === 'undefined')
+        delete this.supportedConstraints[key];
+    });
+    navigator.mediaDevices.enumerateDevices()
+    .then((devices) => {
+      devices.forEach((device) => {
+        if (device.kind === 'audioinput')
+          this.deviceId.entries[device.label.substring(0,7)] = device.deviceId;
+      });
+    })
     this.audioConstraints.forEach(constraint => {
-      if (this[constraint])
+      if (this[constraint] && JSON.stringify(this[constraint].entries).length > 2 )
         this.fsi.appendChild(fsBuilder.build("radio", this[constraint], this.options, constraint));
     });
   },
@@ -148,12 +161,12 @@ const outputCtl = {
   vbr: { name: "mode", entries: { "cbr": "constant", "vbr*": "variable" } },
   cnt: { name: "extension", entries: { "webm": "webm", "mp4*": "mp4" } },
   cod: { name: "codec", entries: { "pcm": "pcm", "opus*": "opus" } },
-  mimeType: "audio/webm",
+  mimeType: "audio/mp4",
   options: {
     audioBitsPerSecond : 256000,
     audioBitrateMode : "variable",
-    mimeType: "audio/webm;codecs=opus",
-    container: 'webm',
+    mimeType: "audio/mp4;codecs=opus",
+    container: 'mp4',
     codec: 'opus',
   },
   init: function(){
