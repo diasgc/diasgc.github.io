@@ -107,17 +107,19 @@ const fsBuilder = {
 
 const inputCtl = {
   fsi: document.getElementById('fs-input'),
-  audioConstraints: [ 'deviceId', 'channelCount', 'sampleSize', 'sampleRate','autoGainControl', 'echoCancellation', 'latency', 'noiseSuppression', 'pan', 'suppressLocalAudioPlayback','voiceIsolation', 'deviceId'],
+  summary: document.getElementById('fs-input-summary'),
+  audioConstraints: [ 'deviceId', 'channelCount', 'sampleSize', 'sampleRate','autoGainControl', 'echoCancellation', 'latency', 'noiseSuppression', 'pan', 'suppressLocalAudioPlayback','voiceIsolation' ],
   supportedConstraints: {},
+
   deviceId:         { name: "source", entries: {} },
   channelCount:     { name: "channels", entries: { "mono": 1, "stereo*": 2 } },
-  sampleSize:       { name: "bitsize", entries: { "8": 8, "16*": 16 } },
-  sampleRate:       { name: "samplerate", entries: {"8k": 8000, "11k": 11025, "22k": 22050, "44k": 44100, "48k*": 48000, "96k": 96000 } },
+  sampleSize:       { name: "bits", entries: { "8": 8, "16*": 16, "24": 24 } },
+  sampleRate:       { name: "samplerate", entries: {"8k": 8000, "11k": 11025, "44k": 44100, "48k*": 48000, "96k": 96000 } },
   autoGainControl:  { name: "autogain", entries: { "off": false, "on*": true } },
-  noiseSuppression: { name: "s-noise", entries: { "off*": false, "on": true } },
-  echoCancellation: { name: "s-echo", entries: { "off*": false, "on": true } },
-  voiceIsolation:   { name: "i-voice", entries: { "off*": false, "on": true } },
-  suppressLocalAudioPlayback: { name: "s-local", entries: { "off*": false, "on": true } },
+  noiseSuppression: { name: "noise", entries: { "off*": false, "on": true } },
+  echoCancellation: { name: "echo", entries: { "off*": false, "on": true } },
+  voiceIsolation:   { name: "voice", entries: { "off*": false, "on": true } },
+  suppressLocalAudioPlayback: { name: "local", entries: { "off*": false, "on": true } },
   
   options: {
     echoCancellation: false,
@@ -129,7 +131,26 @@ const inputCtl = {
     sampleSize: 16,
     latency: 0
   },
+  getSummary: function(){
+    let ret = "";
+    Object.keys(this.options).forEach(key => {
+      if (this[key] && this.options[key])
+        ret += this[key].name + " " + (this.options[key] === 'true' ? ' ' : this.options[key] + '  ');
+    });
+    return ret;
+  },
   init: function(){
+    let fs = document.getElementById('fsi');
+    fs.onclick = (e) => {
+      if (inputCtl.summary.style.display === 'none'){
+        inputCtl.summary.innerHTML = inputCtl.getSummary();
+        inputCtl.summary.style.display = 'inline';
+        inputCtl.fsi.style.display = 'none';
+      } else {
+        inputCtl.summary.style.display = 'none';
+        inputCtl.fsi.style.display = 'inline';
+      } 
+    }
     this.fsi.replaceChildren();
     this.supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
     Object.keys(this.supportedConstraints).forEach((key) => {
@@ -139,14 +160,19 @@ const inputCtl = {
     navigator.mediaDevices.enumerateDevices()
     .then((devices) => {
       devices.forEach((device) => {
-        if (device.kind === 'audioinput')
-          this.deviceId.entries[device.label.substring(0,7)] = device.deviceId;
+        if (device.kind === 'audioinput'){
+          let lab = device.label.substring(0,7) + (device.deviceId === 'default' ? "*" : "");
+          this.deviceId.entries[lab] = device.deviceId;
+        }
       });
       this.audioConstraints.forEach(constraint => {
         if (this[constraint] && JSON.stringify(this[constraint].entries).length > 8 )
           this.fsi.appendChild(fsBuilder.build("radio", this[constraint], this.options, constraint));
       });
-    })
+      this.summary.style.display = 'inline';
+      this.summary.innerHTML = this.getSummary();
+      this.fsi.style.display = 'none';
+    });
   },
   getOptions: function(){
     return this.options;
