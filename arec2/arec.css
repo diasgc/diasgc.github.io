@@ -41,6 +41,17 @@ body {
   text-align: center;
 }
 
+#btn {
+  position: absolute;
+  bottom: 24px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  
+  
+  align-items: center;
+}
+
 .container {
   justify-content: space-between;
   height: 100%;
@@ -123,7 +134,7 @@ pre {
 
 
 .div-start {
-  height: 20dvh;
+  margin: 24px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
