@@ -2,6 +2,17 @@
 const divMain = document.getElementById('div-main');
 const startStopButton = document.getElementById('startStop');
 
+const logger = {
+  id: document.getElementById('outinfo'),
+  dataSize: 0,
+  log: function(msg){
+    this.id.innerText = msg;
+  },
+  addSize: function(size){
+    this.dataSize += size;
+  }
+}
+
 const timer = {
   id: document.getElementById('timer'),
   startTime: 0,
@@ -13,6 +24,7 @@ const timer = {
   update: function(){
     const elapsedTime = Date.now() - this.startTime;
     this.id.innerText = new Date(elapsedTime).toISOString().slice(11, 19);
+    //logger.log("size: " + logger.dataSize + " bytes");
   },
   stop: function(){
     this.timerInterval = clearInterval(timer.timerInterval);
@@ -225,12 +237,14 @@ startRecording = async() => {
   //const writable = await handle.createWritable();
 
   let chunks = [];
+  
   // Start recording.
   recorder.start();
   recorder.addEventListener("dataavailable", async (event) => {
     // Write chunks to the file.
     //await writable.write(event.data);
     chunks.push(event.data);
+    logger.addSize(event.data.size);
     if (recorder.state === "inactive") {
       // Close the file when the recording stops.
       //await writable.close();

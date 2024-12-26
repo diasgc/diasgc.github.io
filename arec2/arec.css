@@ -34,6 +34,13 @@ body {
   text-align: center;
 }
 
+#outinfo {
+  height: 24px;
+  font-size: 12px;
+  align-items: center;
+  text-align: center;
+}
+
 .container {
   justify-content: space-between;
   height: 100%;
