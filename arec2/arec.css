@@ -27,7 +27,7 @@ body {
 }
 
 #timer {
-  height: 32dvh;
+  height: 28dvh;
   font-size: 4rem;
   font-weight: 100;
   align-items: center;
@@ -79,7 +79,7 @@ pre {
 
 .fs-mic {
   display: flex;
-  top: 12px;
+  top: 24px;
   width: 42px;
   border: none;
 }
@@ -123,11 +123,13 @@ pre {
 
 
 .div-start {
-  margin-bottom: auto;
+  height: 20dvh;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  align-items: center;
+  justify-content: center;
 }
 
 .div-start input[type="checkbox"]{
@@ -135,9 +137,8 @@ pre {
 }
 
 .start-button {
-  width: 48px;
-  height: 48px;
-  margin: 32px 0;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background-color: #eee;
   border: 2px solid #fff;
@@ -150,7 +151,7 @@ input:checked ~ .start-button {
   width: 22px;
   height: 22px;
   background-color: #b00;
-  border: 18px solid #fff;
+  border: 22px solid #fff;
   outline: 1px solid #000b;
   animation: glowing 1000ms infinite;
 }

@@ -142,11 +142,11 @@ const inputCtl = {
         if (device.kind === 'audioinput')
           this.deviceId.entries[device.label.substring(0,7)] = device.deviceId;
       });
+      this.audioConstraints.forEach(constraint => {
+        if (this[constraint] && JSON.stringify(this[constraint].entries).length > 8 )
+          this.fsi.appendChild(fsBuilder.build("radio", this[constraint], this.options, constraint));
+      });
     })
-    this.audioConstraints.forEach(constraint => {
-      if (this[constraint] && JSON.stringify(this[constraint].entries).length > 2 )
-        this.fsi.appendChild(fsBuilder.build("radio", this[constraint], this.options, constraint));
-    });
   },
   getOptions: function(){
     return this.options;
