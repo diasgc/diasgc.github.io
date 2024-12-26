@@ -150,7 +150,6 @@ const outputCtl = {
   vbr: { name: "mode", entries: { "cbr": "constant", "vbr*": "variable" } },
   cnt: { name: "extension", entries: { "webm": "webm", "mp4*": "mp4" } },
   cod: { name: "codec", entries: { "pcm": "pcm", "opus*": "opus" } },
-  supportedMimeTypes: [],
   mimeType: "audio/webm",
   options: {
     audioBitsPerSecond : 256000,
@@ -167,7 +166,7 @@ const outputCtl = {
     this.fsi.appendChild(fsBuilder.build("radio", this.cod, this.options, "codec"));
   },
   getOptions: function(){
-    let opts = this.options;
+    let opts = JSON.parse(JSON.stringify(this.options));
     this.mimeType = "audio/" + opts.container;
     opts.mimeType = this.mimeType + ";codecs=" + opts.codec;
     delete opts.container;
@@ -198,6 +197,28 @@ const micCtl = {
   micOn: document.getElementById('rec-mc1')
 }
 
+const dataManager = {
+  chunks: [],
+  add: function(data){
+    this.chunks.push(data);
+  },
+  getTimestampFilename() {
+    return "rec-" + new Date(Date.now())
+      .toISOString()
+      .slice(0, 19)
+      .replace(/-|:/g,'')
+      .replace(/T/g,'-');
+  },
+  save: function() {
+    const blob = new Blob(this.chunks, { type: outputCtl.mimeType });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = this.getTimestampFilename() + "." + outputCtl.options.container;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+}
 
 function startStop(){
   if (startStopButton.checked)
@@ -211,16 +232,11 @@ startRecording = async() => {
   lock = await navigator.wakeLock.request('screen');
   recorder = new MediaRecorder(stream, outputCtl.getOptions());
   
-  const filename = getTimestampFilename();
-  
-  let chunks = [];
-  
   recorder.start();
   recorder.addEventListener("dataavailable", async (event) => {
-    chunks.push(event.data);
-    logger.addSize(event.data.size);
+    dataManager.add(event.data);
     if (recorder.state === "inactive")
-      saveFile(new Blob(chunks, { type: outputCtl.mimeType }), filename, outputCtl.mimeType);
+      dataManager.save();
   });
 
   timer.start();
@@ -236,8 +252,6 @@ stopRecording = async() => {
     lock = null;
   }
 }
-
-
 
 let stream;
 let recorder;
