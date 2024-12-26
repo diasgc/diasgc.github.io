@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  
+  <title>Audio Recorder</title>
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎙️</text></svg>"/>
+  <link rel="stylesheet" href="arec.css">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ffmpeg/0.12.13/umd/ffmpeg.min.js" integrity="sha512-RPp6kuF/XLoXVTFGd1QGQxZ93lEBxXnFZrHhUuLt/dpZGwHi1VQqH54z0HNG7BAlVarTgpahULqWLqQP2PBtxg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  
+</head>
+<body>
+  <div class="div-center">
+    <fieldset class="fs-mic"><legend>microphone</legend>
+      <input type="radio" id="rec-mc0" name="mic" value="0" onchange="rmic()" checked/><label id="r0" for="rec-mc0">off</label>
+      <input type="radio" id="rec-mc1" name="mic" value="1" onchange="rmic()"/><label id="r1" for="rec-mc1">on</label>
+    </fieldset>
+  </div>
+  <div id="timer" class="div-center">00:00:00</div>
+  <div id="div-main" class="container" disabled>
+    <div class="c-setup">
+      <fieldset class="fs-main"><legend>input</legend>
+        <fieldset class="fs-setup"><legend>channels</legend>
+          <input type="radio" id="rec-ch1"  name="channels" value="1"/><label for="rec-ch1">mono</label>
+          <input type="radio" id="rec-ch2"  name="channels" value="2" checked/><label for="rec-ch2">stereo</label>
+        </fieldset>
+        <fieldset class="fs-setup"><legend>samplerate</legend>
+          <input type="radio" id="rec-s08"  name="samplerate" value="8000"/><label for="rec-s08">11k</label>
+          <input type="radio" id="rec-s11"  name="samplerate" value="11025"/><label for="rec-s11">22k</label>
+          <input type="radio" id="rec-s22"  name="samplerate" value="22050"/><label for="rec-s22">22k</label>
+          <input type="radio" id="rec-s44"  name="samplerate" value="44100"/><label for="rec-s44">44k</label>
+          <input type="radio" id="rec-s48"  name="samplerate" value="48000" checked/><label for="rec-s48">48k</label>
+          <input type="radio" id="rec-s96"  name="samplerate" value="96000"/><label for="rec-s96">96k</label>
+        </fieldset>
+        <fieldset class="fs-setup"><legend>bitdepth</legend>
+          <input type="radio" id="rec-b08"  name="bitdepth" value="8"/><label for="rec-b08">8</label>
+          <input type="radio" id="rec-b16"  name="bitdepth" value="16" checked/><label for="rec-ch2">16</label>
+          <input type="radio" id="rec-b32"  name="bitdepth" value="32"/><label for="rec-ch2">f32</label>
+        </fieldset>
+        <fieldset class="fs-setup"><legend>agc gain</legend>
+          <input type="radio" id="rec-ag0"  name="agc" value="0" checked/><label for="rec-ag0">off</label>
+          <input type="radio" id="rec-ag1"  name="agc" value="1"/><label for="rec-ag1">on</label>
+        </fieldset>
+        <fieldset class="fs-setup"><legend>noise reduction</legend>
+          <input type="radio" id="rec-nr0"  name="noise" value="0" checked/><label for="rec-nr0">off</label>
+          <input type="radio" id="rec-nr1"  name="noise" value="1"/><label for="rec-nr1">on</label>
+        </fieldset>
+        <fieldset class="fs-setup"><legend>echo cancel</legend>
+          <input type="radio" id="rec-ec0"  name="echo" value="0" checked/><label for="rec-ec0">off</label>
+          <input type="radio" id="rec-ec1"  name="echo" value="1"/><label for="rec-ec1">on</label>
+        </fieldset>
+      </fieldset>
+      <fieldset class="fs-main"><legend>output</legend>
+        <fieldset class="fs-setup"><legend>bitrate</legend>
+          <input type="radio" id="rec-r32"  name="bitrate" value="32" /><label for="rec-r32">32k</label>
+          <input type="radio" id="rec-r64"  name="bitrate" value="64" /><label for="rec-r64">64k</label>
+          <input type="radio" id="rec-r128" name="bitrate" value="128"/><label for="rec-r128">128k</label>
+          <input type="radio" id="rec-r192" name="bitrate" value="192"/><label for="rec-r192">192k</label>
+          <input type="radio" id="rec-r256" name="bitrate" value="256" checked/><label for="rec-r256">256k</label>
+          <input type="radio" id="rec-r320" name="bitrate" value="320"/><label for="rec-r320">320k</label>
+          <input type="radio" id="rec-r480" name="bitrate" value="480"/><label for="rec-r480">480k</label>
+          <input type="radio" id="rec-r512" name="bitrate" value="512"/><label for="rec-r512">512k</label>
+        </fieldset>
+        <fieldset class="fs-setup"><legend>mode</legend>
+          <input type="radio" id="rec-cbr"  name="vbr" value="0"/><label for="rec-cbr">cbr</label>
+          <input type="radio" id="rec-vbr"  name="vbr" value="1" checked/><label for="rec-vbr">vbr</label>
+        </fieldset>
+        <fieldset class="fs-setup"><legend>codec</legend>
+          <div id="fs-mime"></div>
+        </fieldset>
+      </fieldset>
+    </div>
+    <pre id="logs"></pre>
+  </div>
+  <label class="div-start div-center">
+    <input id="startStop" type="checkbox" onchange="startStop()"/>
+    <span class="start-button"></span>
+  </label>
+  <script src="arec.js?v=2412242300"></script>
+</body>
+</html>
