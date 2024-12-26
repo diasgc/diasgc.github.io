@@ -140,13 +140,13 @@ const inputCtl = {
     });
     return ret;
   },
-  
+
   init: function(){
     let fs = document.getElementById('fsi');
     fs.onclick = (e) => {
       if (inputCtl.summary.style.display === 'none'){
         inputCtl.summary.innerHTML = inputCtl.getSummary();
-        inputCtl.summary.style.display = 'inline';
+        inputCtl.summary.style.display = 'block';
         inputCtl.fsi.style.display = 'none';
       } else {
         inputCtl.summary.style.display = 'none';
@@ -160,21 +160,21 @@ const inputCtl = {
         delete this.supportedConstraints[key];
     });
     navigator.mediaDevices.enumerateDevices()
-    .then((devices) => {
-      devices.forEach((device) => {
-        if (device.kind === 'audioinput'){
-          let lab = device.label.substring(0,7) + (device.deviceId === 'default' ? "*" : "");
-          this.deviceId.entries[lab] = device.deviceId;
-        }
+      .then((devices) => {
+        devices.forEach((device) => {
+          if (device.kind === 'audioinput'){
+            let lab = device.label.substring(0,7) + (device.deviceId === 'default' ? "*" : "");
+            this.deviceId.entries[lab] = device.deviceId;
+          }
+        });
+        this.audioConstraints.forEach(constraint => {
+          if (this[constraint] && JSON.stringify(this[constraint].entries).length > 8 )
+            this.fsi.appendChild(fsBuilder.build("radio", this[constraint], this.options, constraint));
+        });
+        this.summary.style.display = 'block';
+        this.summary.innerHTML = this.getSummary();
+        this.fsi.style.display = 'none';
       });
-      this.audioConstraints.forEach(constraint => {
-        if (this[constraint] && JSON.stringify(this[constraint].entries).length > 8 )
-          this.fsi.appendChild(fsBuilder.build("radio", this[constraint], this.options, constraint));
-      });
-      this.summary.style.display = 'inline';
-      this.summary.innerHTML = this.getSummary();
-      this.fsi.style.display = 'none';
-    });
   },
   getOptions: function(){
     return this.options;

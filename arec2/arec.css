@@ -71,6 +71,14 @@ pre {
   overflow-y: auto;
 }
 
+#fs-input-summary,
+#fs-output-summary {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--main-fg);
+  padding: 12px;
+}
+
 .fs-mic,
 .fs-main,
 .fs-setup {
@@ -107,7 +115,7 @@ pre {
   padding: 4px 5px;
   margin: 8;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 00;
 }
 
 .fs-mic input[type="radio"]:checked + label {
@@ -116,7 +124,7 @@ pre {
   border-bottom: 2px solid  #0b0;
 }
 
-.fs-mic #r0 input[type="radio"]:checked + label {
+.fs-mic input[type="radio"]:checked + #r0 {
   margin: 0;
   color: #b00;
   border-bottom: 2px solid  #b00;
