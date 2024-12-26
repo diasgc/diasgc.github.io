@@ -194,6 +194,8 @@ const dataManager = {
   chunks: [],
   add: function(data){
     this.chunks.push(data);
+    logger.addSize(data.size);
+    logger.log("size: " + logger.dataSize + " bytes");
   },
   getTimestampFilename() {
     return "rec-" + new Date(Date.now())
@@ -225,7 +227,7 @@ startRecording = async() => {
   lock = await navigator.wakeLock.request('screen');
   recorder = new MediaRecorder(stream, outputCtl.getOptions());
   
-  recorder.start();
+  recorder.start(2000);
   recorder.addEventListener("dataavailable", async (event) => {
     dataManager.add(event.data);
     if (recorder.state === "inactive")
