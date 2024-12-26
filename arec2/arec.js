@@ -60,8 +60,8 @@ function rmic(){
   if (micCtl.micOn.checked){
     divMain.disabled = false;
     divMain.style.opacity = 1;
-    //navigator.mediaDevices.getUserMedia({ audio });
-    devices.init();
+    navigator.mediaDevices.getUserMedia({ audio:true });
+    //devices.init();
     startStopButton.disabled = false;
   } else {
     divMain.disabled = true;
