@@ -3,7 +3,7 @@ const divMain = document.getElementById('div-main');
 const startStopButton = document.getElementById('startStop');
 
 const logger = {
-  id: document.getElementById('outinfo'),
+  id: document.getElementById('log-stat'),
   dataSize: 0,
   log: function(msg){
     this.id.innerText = msg;
@@ -52,13 +52,6 @@ const devices = {
   }
 }
 
-const micCtl = {
-  micOn: document.getElementById('rec-mc1'),
-  start: function(){
-
-  }
-}
-
 function rmic(){
   if (micCtl.micOn.checked){
     divMain.disabled = false;
@@ -77,121 +70,110 @@ function rmic(){
   
 }
 
-const inputCtl = {
-  ch2: document.getElementById('rec-ch2'),
-  b16: document.getElementById('rec-b16'),
-  agc: document.getElementById('rec-ag1'),
-  nrx: document.getElementById('rec-nr1'),
-  ech: document.getElementById('rec-ec1'),
-  srt: [ "rec-s08", "rec-s11", "rec-s22", "rec-s44", "rec-s48", "rec-s96" ],
-  getOptions: function(){
-    let srate = this.srt.forEach( e => {
-      let id = document.getElementById(e);
-      if (id.checked)
-        return id.value;
+const fsBuilder = {
+  build: function(type, fs, options, opt){
+    let fieldset = document.createElement('fieldset');
+    fieldset.className = "fs-setup";
+    let legend = document.createElement('legend');
+    legend.innerText = fs.name;
+    fieldset.appendChild(legend);
+    Object.keys(fs.entries).forEach(function (key) {
+      let input = document.createElement('input');
+      if(key.includes('*')){
+        input.checked = true;
+        key = key.replace('*', '');
+      }
+      let id = fs.name.substring(0,2) + "-" + key;
+      input.type = type;
+      input.id = id;
+      input.name = fs.name;
+      input.value = fs.entries[key];
+      input.onchange = function(){
+        options[opt] = input.value;
+      };
+      let label = document.createElement('label');
+      label.setAttribute("for", id);
+      label.innerText = key;
+      fieldset.appendChild(input);
+      fieldset.appendChild(label);  
     });
-    return {
-      echoCancellation: this.ech.checked,
-      noiseSuppression: this.nrx.checked,
-      autoGainControl: this.agc.checked,
-      sampleRate: srate,
-      channelCount: this.ch2.checked ? 2 : 1,
-      volume: 1.0,
-      sampleSize: this.b16.checked ? 16 : 8,
-      latency: 0
+    return fieldset;
+  }
+}
+
+const inputCtl = {
+  fsi: document.getElementById('fs-input'),
+  ich: { name: "channels", entries: { "mono": 1, "stereo*": 2 } },
+  ibt: { name: "bitdepth", entries: { "8": 8, "16*": 16 } },
+  isr: { name: "samplerate",
+    entries: {
+      "8k": 8000,
+      "11k": 11025,
+      "22k": 22050,
+      "44k": 44100,
+      "48k*": 48000,
+      "96k": 96000
     }
+  },
+  iag: { name: "gain", entries: { "off": false, "on*": true } },
+  inr: { name: "noise", entries: { "off*": false, "on": true } },
+  iec: { name: "echo", entries: { "off*": false, "on": true } },
+  options: {
+    echoCancellation: false,
+    noiseSuppression: false,
+    autoGainControl: false,
+    sampleRate: 48000,
+    channelCount: 2,
+    volume: 1.0,
+    sampleSize: 16,
+    latency: 0
+  },
+  init: function(){
+    this.fsi.replaceChildren();
+    this.fsi.appendChild(fsBuilder.build("radio", this.ich, this.options, "channelCount"));
+    this.fsi.appendChild(fsBuilder.build("radio", this.ibt, this.options, "sampleSize"));
+    this.fsi.appendChild(fsBuilder.build("radio", this.isr, this.options, "sampleRate"));
+    this.fsi.appendChild(fsBuilder.build("radio", this.iag, this.options, "autoGainControl"));
+    this.fsi.appendChild(fsBuilder.build("radio", this.inr, this.options, "noiseSuppression"));
+    this.fsi.appendChild(fsBuilder.build("radio", this.iec, this.options, "echoCancellation"));
+  },
+  getOptions: function(){
+    return this.options;
   }
 }
 
 const outputCtl = {
-  btr: [ "rec-r32", "rec-r64", "rec-r128", "rec-r192", "rec-r256", "rec-r320", "rec-r480", "rec-r512" ],
-  vbr: document.getElementById('rec-b16'),
-  cod: [ "rec-mp3", "rec-ogg", "rec-wav", "rec-webm" ],
+  fsi: document.getElementById('fs-output'),
+  brt: { name: "bitrate", entries: {
+    "32k": 32000, "56k": 56000, "128k": 128000,
+    "192k": 192000, "256k*": 256000, "320k": 320000, "512k": 512000 } },
+  vbr: { name: "mode", entries: { "cbr": "constant", "vbr*": "variable" } },
+  cnt: { name: "extension", entries: { "webm": "webm", "mp4*": "mp4" } },
+  cod: { name: "codec", entries: { "pcm": "pcm", "opus*": "opus" } },
   supportedMimeTypes: [],
-  mimeType: "audio/webm;codecs=opus",
-  containers: [],
-  codecs: [],
-  ext: 'ogg',
+  mimeType: "audio/webm",
+  options: {
+    audioBitsPerSecond : 256000,
+    audioBitrateMode : "variable",
+    mimeType: "audio/webm;codecs=opus",
+    container: 'mp4',
+    codec: 'opus',
+  },
+  init: function(){
+    this.fsi.replaceChildren();
+    this.fsi.appendChild(fsBuilder.build("radio", this.brt, this.options, "audioBitsPerSecond"));
+    this.fsi.appendChild(fsBuilder.build("radio", this.vbr, this.options, "audioBitrateMode"));
+    this.fsi.appendChild(fsBuilder.build("radio", this.cnt, this.options, "container"));
+    this.fsi.appendChild(fsBuilder.build("radio", this.cod, this.options, "codec"));
+  },
   getOptions: function(){
-    let btr = this.btr.forEach( e => {
-      let id = document.getElementById(e);
-      if (id.checked)
-        return id.value;
-    });
-    return {
-      audioBitsPerSecond : btr,
-      audioBitrateMode : this.vbr.checked ? "variable" : "constant",
-      mimeType: this.mimeType
-    }
-  },
-
-  loadSupportedAudioMimeTypes: function(){
-    this.supportedMimeTypes = this.getAllSupportedMimeTypes('audio');
-    let fs = document.getElementById('fs-mime');
-    fs.replaceChildren();
-    this.supportedMimeTypes.forEach( e => {
-      if (e.match('\"'))
-        return;
-      let sp = e.replaceAll('audio/', '').split(';codecs=');
-      let id = sp[0] + ( sp[1] ? '-' + sp[1] : '' );
-      let input = document.createElement('input');
-      // <input type="radio" id="rec-mp3"  name="codec" value="mp3"/><label for="rec-mp3">mp3</label>
-      input.type = "radio";
-      input.id = id;
-      input.onchange = function(){
-        if (input.checked){
-          outputCtl.mimeType = e;
-          outputCtl.ext = sp[0].replace('mp4', 'm4a');
-          console.log("Selected: " + outputCtl.mimeType + " ext: " + outputCtl.ext);
-        }
-      };
-      input.name = "codec";
-      input.value = e;
-      let label = document.createElement('label');
-      label.setAttribute("for",id);
-      label.innerText = e.replace('audio/', '').replace(';codecs=', '/');
-      fs.appendChild(input);
-      fs.appendChild(label);
-    })
-  },
-
-  getAllSupportedMimeTypes(...mediaTypes) {
-    if (!mediaTypes.length) mediaTypes.push('video', 'audio')
-    const CONTAINERS = ['webm', 'ogg', 'mp3', 'mp4', 'x-matroska', '3gpp', '3gpp2', '3gp2', 'quicktime', 'mpeg', 'aac', 'flac', 'x-flac', 'wave', 'wav', 'x-wav', 'x-pn-wav', 'not-supported']
-    const CODECS = ['vp9', 'vp9.0', 'vp8', 'vp8.0', 'avc1', 'av1', 'h265', 'h.265', 'h264', 'h.264', 'opus', 'vorbis', 'pcm', 'aac', 'mpeg', 'mp4a', 'rtx', 'red', 'ulpfec', 'g722', 'pcmu', 'pcma', 'cn', 'telephone-event', 'not-supported']
-    
-    return [...new Set(
-      CONTAINERS.flatMap(ext =>
-          mediaTypes.flatMap(mediaType => [
-            `${mediaType}/${ext}`,
-          ]),
-      ),
-    ), ...new Set(
-      CONTAINERS.flatMap(ext =>
-        CODECS.flatMap(codec =>
-          mediaTypes.flatMap(mediaType => [
-            // NOTE: 'codecs:' will always be true (false positive)
-            `${mediaType}/${ext};codecs=${codec}`,
-          ]),
-        ),
-      ),
-    ), ...new Set(
-      CONTAINERS.flatMap(ext =>
-        CODECS.flatMap(codec1 =>
-        CODECS.flatMap(codec2 =>
-          mediaTypes.flatMap(mediaType => [
-            `${mediaType}/${ext};codecs="${codec1}, ${codec2}"`,
-          ]),
-        ),
-        ),
-      ),
-    )].filter(variation => MediaRecorder.isTypeSupported(variation))
+    let opts = this.options;
+    this.mimeType = "audio/" + opts.container;
+    opts.mimeType = this.mimeType + ";codecs=" + opts.codec;
+    delete opts.container;
+    delete opts.codec;
+    return opts;
   }
-}
-
-function rcfg(){
-  streamConfig = inputCtl.getOptions();
-  console.log(streamConfig);
 }
 
 function saveFile(data, filename, type) {
@@ -204,7 +186,7 @@ function saveFile(data, filename, type) {
   document.body.removeChild(a);
 }
 
-function getTimestampFilename(ext) {
+function getTimestampFilename() {
   return "rec-" + new Date(Date.now())
     .toISOString()
     .slice(0, 19)
@@ -212,13 +194,10 @@ function getTimestampFilename(ext) {
     .replace(/T/g,'-');
 }
 
-let stream;
-let recorder;
-let lock;
+const micCtl = {
+  micOn: document.getElementById('rec-mc1')
+}
 
-rmic();
-
-outputCtl.loadSupportedAudioMimeTypes();
 
 function startStop(){
   if (startStopButton.checked)
@@ -231,43 +210,44 @@ startRecording = async() => {
   stream = await navigator.mediaDevices.getUserMedia({ audio: inputCtl.getOptions() });
   lock = await navigator.wakeLock.request('screen');
   recorder = new MediaRecorder(stream, outputCtl.getOptions());
-  devices.init();
-  const suggestedName = getTimestampFilename();
-  //const handle = await window.showSaveFilePicker({ suggestedName });
-  //const writable = await handle.createWritable();
-
+  
+  const filename = getTimestampFilename();
+  
   let chunks = [];
   
-  // Start recording.
   recorder.start();
   recorder.addEventListener("dataavailable", async (event) => {
-    // Write chunks to the file.
-    //await writable.write(event.data);
     chunks.push(event.data);
     logger.addSize(event.data.size);
-    if (recorder.state === "inactive") {
-      // Close the file when the recording stops.
-      //await writable.close();
-      let t = outputCtl.mimeType.split(";")[0];
-      saveFile(new Blob(chunks, { type: t }), suggestedName, t);
-    }
+    if (recorder.state === "inactive")
+      saveFile(new Blob(chunks, { type: outputCtl.mimeType }), filename, outputCtl.mimeType);
   });
 
-  // Start the timer
   timer.start();
-  //timerInterval = setInterval(updateTimer, 1000);
+  
 }
 
 stopRecording = async() => {
   // Stop the recording.
   recorder.stop();
   timer.stop();
-  //timerInterval = clearInterval(timerInterval);
   if (lock != null){
     await lock.release();
     lock = null;
   }
 }
+
+
+
+let stream;
+let recorder;
+let lock;
+
+rmic();
+inputCtl.init();
+outputCtl.init();
+
+
 
 
 /*
