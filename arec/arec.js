@@ -151,7 +151,7 @@ const inputCtl = {
   },
 
   collapse: function(){
-    inputCtl.summary.innerHTML = outputCtl.getSummary();
+    inputCtl.summary.innerHTML = inputCtl.getSummary();
     inputCtl.summary.style.display = 'block';
     inputCtl.fsi.style.display = 'none';
   },

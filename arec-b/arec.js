@@ -151,14 +151,20 @@ const inputCtl = {
   },
 
   collapse: function(){
-    inputCtl.summary.innerHTML = outputCtl.getSummary();
-    inputCtl.summary.style.display = 'block';
-    inputCtl.fsi.style.display = 'none';
+    this.fsi.querySelectorAll('fieldset.fs-setup').forEach(el => {
+      el.classList.replace('fs-setup','fs-setup-d')
+    });
+    //inputCtl.summary.innerHTML = inputCtl.getSummary();
+    //inputCtl.summary.style.display = 'block';
+    //inputCtl.fsi.style.display = 'none';
   },
 
   expand: function(){
-    inputCtl.summary.style.display = 'none';
-    inputCtl.fsi.style.display = 'inline';
+    this.fsi.querySelectorAll('fieldset.fs-setup-d').forEach(el => {
+      el.classList.replace('fs-setup-d','fs-setup')
+    });
+    //inputCtl.summary.style.display = 'none';
+    //inputCtl.fsi.style.display = 'inline';
   },
 
   setDisabled: function(state){
