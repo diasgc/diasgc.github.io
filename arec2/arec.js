@@ -33,11 +33,15 @@ const timer = {
   }
 }
 
+const session = {
+  audio: true
+}
+
 function rmic(){
   if (micCtl.micOn.checked){
     divMain.disabled = false;
     divMain.style.opacity = 1;
-    navigator.mediaDevices.getUserMedia({ audio:true });
+    navigator.mediaDevices.getUserMedia(session);
     startStopButton.disabled = false;
   } else {
     divMain.disabled = true;
@@ -110,7 +114,7 @@ const inputCtl = {
     sampleSize: "16",
     latency: "0"
   },
-  
+
   getSummary: function(){
     let ret = "";
     Object.keys(this.options).forEach(key => {
@@ -175,14 +179,17 @@ const inputCtl = {
 const outputCtl = {
   fsi: document.getElementById('fs-output'),
   summary: document.getElementById('fs-output-summary'),
+  builtInContainers: [ "webm", "mp4" ],
+  builtInCodecs: [ "opus", "pcm" ],
+
   audioBitsPerSecond: { name: "bitrate", entries: { "32k": "32000", "56k": "56000", "128k": "128000", "192k": "192000", "256k*": "256000", "320k": "320000", "512k": "512000" } },
   audioBitrateMode:   { name: "mode",    entries: { "cbr": "constant", "vbr*": "variable" } },
   cnt: { name: "extension", entries: { "webm": "webm", "mp4*": "mp4" } },
   cod: { name: "codec", entries: { "pcm": "pcm", "opus*": "opus" } },
-  builtInContainers: [ "webm", "mp4" ],
-  builtInCodecs: [ "opus", "pcm" ],
+
   mimeType: "audio/mp4",
   transcode: false,
+
   options: {
     audioBitsPerSecond : "256000",
     audioBitrateMode : "variable",
@@ -190,6 +197,7 @@ const outputCtl = {
     container: 'mp4',
     codec: 'opus',
   },
+
   toggleView: function(){
     if (outputCtl.fsi.style.display === 'none'){
       outputCtl.summary.style.display = 'none';
@@ -200,13 +208,16 @@ const outputCtl = {
       outputCtl.fsi.style.display = 'none';
     }
   },
+
   registerEncoder(container, codec){
     this.cnt.entries[container] = container;
     this.cod.entries[codec] = codec;
   },
+
   getSummary: function(){
     return `${this.options.container} ${this.options.codec} ${this.options.audioBitsPerSecond/1000}kbps ${this.options.audioBitrateMode}`;
   },
+
   init: function(){
     this.fsi.replaceChildren();
     if (useFFmpeg)
@@ -219,14 +230,15 @@ const outputCtl = {
     this.fsi.appendChild(fsBuilder.build("radio", this.cod, this.options, "codec"));
     this.toggleView();
   },
+  
   getOptions: function(){
     let opts = JSON.parse(JSON.stringify(this.options));
-    this.mimeType = "audio/" + opts.container;
+    this.mimeType = `audio/${opts.container}`;
     if (this.builtInContainers.indexOf(opts.container) < 0){
       opts.mimeType = "audio/webm;codecs=pcm";
       this.transcode = true;
     } else {
-      opts.mimeType = this.mimeType + ";codecs=" + opts.codec;
+      opts.mimeType = `${this.mimeType};codecs=${opts.codec}`;
     }
     delete opts.container;
     delete opts.codec;
@@ -240,10 +252,11 @@ const micCtl = {
 
 const dataManager = {
   chunks: [],
+  chunkTimeout: 2000,
   add: function(data){
     this.chunks.push(data);
     logger.addSize(data.size);
-    logger.log("size: " + logger.dataSize + " bytes");
+    logger.log(`size: ${logger.dataSize} bytes`);
   },
   getTimestampFilename() {
     return "rec-" + new Date(Date.now())
@@ -288,17 +301,16 @@ function startStop(){
 }
 
 startRecording = async() => {
-  stream = await navigator.mediaDevices.getUserMedia({ audio: inputCtl.getOptions() });
+  session.audio = inputCtl.getOptions();
+  stream = await navigator.mediaDevices.getUserMedia(session);
   lock = await navigator.wakeLock.request('screen');
   recorder = new MediaRecorder(stream, outputCtl.getOptions());
-  
-  recorder.start(2000);
+  recorder.start(dataManager.chunkTimeout);
   recorder.addEventListener("dataavailable", async (event) => {
     dataManager.add(event.data);
     if (recorder.state === "inactive")
       dataManager.save();
   });
-
   timer.start();
   
 }
