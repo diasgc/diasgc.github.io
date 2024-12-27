@@ -120,14 +120,14 @@ pre {
 
 .fs-mic input[type="radio"]:checked + label {
   margin: 0;
-  color: #0b0;
-  border-bottom: 2px solid  #0b0;
+  color: #0f0;
+  border-bottom: 2px solid  #0f0;
 }
 
 .fs-mic input[type="radio"]:checked + #r0 {
   margin: 0;
-  color: #b00;
-  border-bottom: 2px solid  #b00;
+  color: #f00;
+  border-bottom: 2px solid  #f00;
 }
 
 .fs-setup input[type="radio"]:checked + label {

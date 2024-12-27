@@ -1,6 +1,8 @@
-
 const divMain = document.getElementById('div-main');
 const startStopButton = document.getElementById('startStop');
+const { createFFmpeg, fetchFile } = FFmpeg;
+const urlParams = new URLSearchParams(window.location.search);
+const useFFmpeg = urlParams.get('ffmpeg') !== null;
 
 const logger = {
   id: document.getElementById('log-stat'),
@@ -24,35 +26,10 @@ const timer = {
   update: function(){
     const elapsedTime = Date.now() - this.startTime;
     this.id.innerText = new Date(elapsedTime).toISOString().slice(11, 19);
-    //logger.log("size: " + logger.dataSize + " bytes");
   },
   stop: function(){
     this.timerInterval = clearInterval(timer.timerInterval);
     this.id.innerText = "00:00:00";
-  }
-}
-
-const devices = {
-  inputDevices: {},
-  log: document.getElementById('logs'),
-  init: function(){
-    this.log.innerText = '';
-    navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-    const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
-      Object.keys(supportedConstraints).forEach((key) => {
-        console.log(`${key}: ${supportedConstraints[key]}`);
-      });
-    navigator.mediaDevices.enumerateDevices()
-    .then((devices) => {
-      devices.forEach((device) => {
-        this.log.innerText += `${device.kind}: ${device.label} id = ${device.deviceId}\n`;
-        if (device.kind === 'audioinput')
-          this.inputDevices[device.deviceId] = device.label;
-      });
-    })
-    .catch((err) => {
-      console.error(`${err.name}: ${err.message}`);
-    });
   }
 }
 
@@ -61,7 +38,6 @@ function rmic(){
     divMain.disabled = false;
     divMain.style.opacity = 1;
     navigator.mediaDevices.getUserMedia({ audio:true });
-    //devices.init();
     startStopButton.disabled = false;
   } else {
     divMain.disabled = true;
@@ -111,15 +87,15 @@ const inputCtl = {
   audioConstraints: [ 'deviceId', 'channelCount', 'sampleSize', 'sampleRate','autoGainControl', 'echoCancellation', 'latency', 'noiseSuppression', 'pan', 'suppressLocalAudioPlayback','voiceIsolation' ],
   supportedConstraints: {},
 
-  deviceId:         { name: "source", entries: {} },
-  channelCount:     { name: "channels", entries: { "mono": 1, "stereo*": 2 } },
-  sampleSize:       { name: "bits", entries: { "8": 8, "16*": 16, "24": 24 } },
-  sampleRate:       { name: "samplerate", entries: {"8k": 8000, "11k": 11025, "44k": 44100, "48k*": 48000, "96k": 96000 } },
-  autoGainControl:  { name: "autogain", entries: { "off": false, "on*": true } },
-  noiseSuppression: { name: "noise", entries: { "off*": false, "on": true } },
-  echoCancellation: { name: "echo", entries: { "off*": false, "on": true } },
-  voiceIsolation:   { name: "voice", entries: { "off*": false, "on": true } },
-  suppressLocalAudioPlayback: { name: "local", entries: { "off*": false, "on": true } },
+  deviceId:         { name: "source", lab: "src ", sfx: "", entries: {} },
+  channelCount:     { name: "channels", lab: "", sfx: "", entries: { "mono": 1, "stereo*": 2 } },
+  sampleSize:       { name: "bits", lab: "", sfx: "-bits", entries: { "8": 8, "16*": 16, "24": 24 } },
+  sampleRate:       { name: "samplerate", lab: "", sfx: "Hz", entries: {"8k": 8000, "11k": 11025, "44k": 44100, "48k*": 48000, "96k": 96000 } },
+  autoGainControl:  { name: "autogain", lab: "agc ", sfx: "", entries: { "off": false, "on*": true } },
+  noiseSuppression: { name: "noise", lab: "nr ", sfx: "", entries: { "off*": false, "on": true } },
+  echoCancellation: { name: "echo", lab: "no-echo ", sfx: "", entries: { "off*": false, "on": true } },
+  voiceIsolation:   { name: "voice", lab: "voice ", sfx: "", entries: { "off*": false, "on": true } },
+  suppressLocalAudioPlayback: { name: "local ", lab: "no-local", sfx: "", entries: { "off*": false, "on": true } },
   
   options: {
     echoCancellation: false,
@@ -131,28 +107,34 @@ const inputCtl = {
     sampleSize: 16,
     latency: 0
   },
-
   getSummary: function(){
     let ret = "";
     Object.keys(this.options).forEach(key => {
       if (this[key] && this.options[key])
-        ret += this[key].name + " " + (this.options[key] === 'true' ? ' ' : this.options[key] + '  ');
+        ret += this[key].lab + " "
+            + (this.options[key] === 'true'
+              ? ' '
+              : this.labelForValue(this[key].entries, this.options[key]) + this[key].sfx + '  ');
     });
     return ret;
   },
-
+  toggleView: function(){
+    if (inputCtl.fsi.style.display === 'none'){
+      inputCtl.summary.style.display = 'none';
+      inputCtl.fsi.style.display = 'inline';
+    } else {
+      inputCtl.summary.innerHTML = inputCtl.getSummary();
+      inputCtl.summary.style.display = 'block';
+      inputCtl.fsi.style.display = 'none';
+    }
+  },
+  labelForValue: function(field, val){
+    let ret = Object.keys(field).find(key => field[key] === val) || val;
+    return ret.replace('*','');
+  },
   init: function(){
     let fs = document.getElementById('fsi');
-    fs.onclick = (e) => {
-      if (inputCtl.summary.style.display === 'none'){
-        inputCtl.summary.innerHTML = inputCtl.getSummary();
-        inputCtl.summary.style.display = 'block';
-        inputCtl.fsi.style.display = 'none';
-      } else {
-        inputCtl.summary.style.display = 'none';
-        inputCtl.fsi.style.display = 'inline';
-      } 
-    }
+    fs.onclick = this.toggleView;
     this.fsi.replaceChildren();
     this.supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
     Object.keys(this.supportedConstraints).forEach((key) => {
@@ -171,9 +153,7 @@ const inputCtl = {
           if (this[constraint] && JSON.stringify(this[constraint].entries).length > 8 )
             this.fsi.appendChild(fsBuilder.build("radio", this[constraint], this.options, constraint));
         });
-        this.summary.style.display = 'block';
-        this.summary.innerHTML = this.getSummary();
-        this.fsi.style.display = 'none';
+        this.toggleView();
       });
   },
   getOptions: function(){
@@ -183,13 +163,17 @@ const inputCtl = {
 
 const outputCtl = {
   fsi: document.getElementById('fs-output'),
+  summary: document.getElementById('fs-output-summary'),
   brt: { name: "bitrate", entries: {
     "32k": 32000, "56k": 56000, "128k": 128000,
     "192k": 192000, "256k*": 256000, "320k": 320000, "512k": 512000 } },
   vbr: { name: "mode", entries: { "cbr": "constant", "vbr*": "variable" } },
   cnt: { name: "extension", entries: { "webm": "webm", "mp4*": "mp4" } },
   cod: { name: "codec", entries: { "pcm": "pcm", "opus*": "opus" } },
+  builtInContainers: [ "webm", "mp4" ],
+  builtInCodecs: [ "opus", "pcm" ],
   mimeType: "audio/mp4",
+  transcode: false,
   options: {
     audioBitsPerSecond : 256000,
     audioBitrateMode : "variable",
@@ -197,17 +181,44 @@ const outputCtl = {
     container: 'mp4',
     codec: 'opus',
   },
+  toggleView: function(){
+    if (outputCtl.fsi.style.display === 'none'){
+      outputCtl.summary.style.display = 'none';
+      outputCtl.fsi.style.display = 'inline';
+    } else {
+      outputCtl.summary.innerHTML = outputCtl.getSummary();
+      outputCtl.summary.style.display = 'block';
+      outputCtl.fsi.style.display = 'none';
+    }
+  },
+  registerEncoder(container, codec){
+    this.cnt.entries[container] = container;
+    this.cod.entries[codec] = codec;
+  },
+  getSummary: function(){
+    return this.options.audioBitsPerSecond/1000 + "kbps " + this.options.audioBitrateMode + " " + this.options.mimeType;
+  },
   init: function(){
     this.fsi.replaceChildren();
+    if (useFFmpeg)
+      this.registerEncoder("flac","flac");
+    let fs = document.getElementById('fso');
+    fs.onclick = this.toggleView;
     this.fsi.appendChild(fsBuilder.build("radio", this.brt, this.options, "audioBitsPerSecond"));
     this.fsi.appendChild(fsBuilder.build("radio", this.vbr, this.options, "audioBitrateMode"));
     this.fsi.appendChild(fsBuilder.build("radio", this.cnt, this.options, "container"));
     this.fsi.appendChild(fsBuilder.build("radio", this.cod, this.options, "codec"));
+    this.toggleView();
   },
   getOptions: function(){
     let opts = JSON.parse(JSON.stringify(this.options));
     this.mimeType = "audio/" + opts.container;
-    opts.mimeType = this.mimeType + ";codecs=" + opts.codec;
+    if (this.builtInContainers.indexOf(opts.container) < 0){
+      opts.mimeType = "audio/webm;codecs=pcm";
+      this.transcode = true;
+    } else {
+      opts.mimeType = this.mimeType + ";codecs=" + opts.codec;
+    }
     delete opts.container;
     delete opts.codec;
     return opts;
@@ -233,13 +244,30 @@ const dataManager = {
       .replace(/T/g,'-');
   },
   save: function() {
-    const blob = new Blob(this.chunks, { type: outputCtl.mimeType });
+    let blob = outputCtl.transcode
+      ? this.transcode()
+      : new Blob(this.chunks, { type: outputCtl.mimeType });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = this.getTimestampFilename() + "." + outputCtl.options.container.replace('mp4','m4a');
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+  },
+  transcode: async function(){
+    logger.log("transcoding...");
+    const ffmpeg = createFFmpeg({ log: true });
+    //ffmpeg.on('log', e => console.log(e.message));
+    //ffmpeg.on('progress', e => console.log(e.progress));
+    if (ffmpeg.isLoaded() === false)
+      await ffmpeg.load();
+    let input = "temp-rec.webm  ";
+    let output = "output." + outputCtl.options.container;
+    ffmpeg.FS("writeFile", input, await fetchFile(new Blob(this.chunks, { type: outputCtl.mimeType })));
+    await ffmpeg.run("-i", input, "-c:a", "copy", output);
+    const data = ffmpeg.FS("readFile", output);
+    logger.log("size: " + data.buffer.byteLength);
+    return new Blob([data.buffer], { type: outputCtl.mimeType });
   }
 }
 
