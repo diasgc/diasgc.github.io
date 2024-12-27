@@ -99,6 +99,7 @@ const fsBuilder = {
 
 const inputCtl = {
   fsi: document.getElementById('fs-input'),
+  isCollapsed: true,
   summary: document.getElementById('fs-input-summary'),
   audioConstraints: [ 'deviceId', 'channelCount', 'sampleSize', 'sampleRate','autoGainControl', 'echoCancellation', 'latency', 'noiseSuppression', 'pan', 'suppressLocalAudioPlayback','voiceIsolation' ],
   supportedConstraints: {},
@@ -107,7 +108,7 @@ const inputCtl = {
   channelCount:     { name: "channels", lab: "", sfx: "", entries: { "mono": "1", "stereo*": "2" } },
   sampleSize:       { name: "bits", lab: "", sfx: "-bits", entries: { "8": "8", "16*": "16", "24": "24" } },
   sampleRate:       { name: "samplerate", lab: "", sfx: "Hz", entries: {"8k": "8000", "11k": "11025", "44k": "44100", "48k*": "48000", "96k": "96000" } },
-  autoGainControl:  { name: "autogain", lab: "agc ", sfx: "", entries: { "off": "false", "on*": "true" } },
+  autoGainControl:  { name: "agc", lab: "agc ", sfx: "", entries: { "off": "false", "on*": "true" } },
   noiseSuppression: { name: "noise", lab: "nr ", sfx: "", entries: { "off*": "false", "on": "true" } },
   echoCancellation: { name: "echo", lab: "echo ", sfx: "", entries: { "off*": "false", "on": "true" } },
   voiceIsolation:   { name: "voice", lab: "voice ", sfx: "", entries: { "off*": "false", "on": "true" } },
@@ -126,45 +127,25 @@ const inputCtl = {
     latency: "0"
   },
 
-  getSummary: function(){
-    let ret = "";
-    Object.keys(this.options).forEach(key => {
-      let tag = "";
-      let val = this.options[key];
-      if (this[key]){
-        tag = this[key].lab;
-        tag = val === 'true'  ? tag
-            : val === 'false' ? ''
-            : tag + this.labelForValue(this[key].entries, this.options[key]) + this[key].sfx;
-        ret += tag + " ";
-      }
-    });
-    return ret;
-  },
-
   toggleView: function(){
-    if (inputCtl.fsi.style.display === 'none'){
+    if (inputCtl.isCollapsed)
       inputCtl.expand();
-    } else {
+    else
       inputCtl.collapse();
-    }
   },
 
   collapse: function(){
+    this.isCollapsed = true;
     this.fsi.querySelectorAll('fieldset.fs-setup').forEach(el => {
       el.classList.replace('fs-setup','fs-setup-d')
     });
-    //inputCtl.summary.innerHTML = inputCtl.getSummary();
-    //inputCtl.summary.style.display = 'block';
-    //inputCtl.fsi.style.display = 'none';
   },
 
   expand: function(){
+    this.isCollapsed = false;
     this.fsi.querySelectorAll('fieldset.fs-setup-d').forEach(el => {
       el.classList.replace('fs-setup-d','fs-setup')
     });
-    //inputCtl.summary.style.display = 'none';
-    //inputCtl.fsi.style.display = 'inline';
   },
 
   setDisabled: function(state){
@@ -210,6 +191,7 @@ const inputCtl = {
 
 const outputCtl = {
   fsi: document.getElementById('fs-output'),
+  isCollapsed: true,
   summary: document.getElementById('fs-output-summary'),
   builtInContainers: [ "webm", "mp4" ],
   builtInCodecs: [ "opus", "pcm" ],
@@ -238,31 +220,29 @@ const outputCtl = {
   },
 
   toggleView: function(){
-    if (outputCtl.fsi.style.display === 'none'){
+    if (outputCtl.isCollapsed)
       outputCtl.expand();
-    } else {
-      outputCtl.collapse();
-    }
+    else
+    outputCtl.collapse();
   },
 
   collapse: function(){
-    outputCtl.summary.innerHTML = outputCtl.getSummary();
-    outputCtl.summary.style.display = 'block';
-    outputCtl.fsi.style.display = 'none';
+    this.isCollapsed = true;
+    this.fsi.querySelectorAll('fieldset.fs-setup').forEach(el => {
+      el.classList.replace('fs-setup','fs-setup-d')
+    });
   },
 
   expand: function(){
-    outputCtl.summary.style.display = 'none';
-    outputCtl.fsi.style.display = 'inline';
+    this.isCollapsed = false;
+    this.fsi.querySelectorAll('fieldset.fs-setup-d').forEach(el => {
+      el.classList.replace('fs-setup-d','fs-setup')
+    });
   },
 
   registerEncoder(container, codec){
     this.cnt.entries[container] = container;
     this.cod.entries[codec] = codec;
-  },
-
-  getSummary: function(){
-    return `${this.options.container} ${this.options.codec} ${this.options.audioBitsPerSecond/1000}kbps ${this.options.audioBitrateMode}`;
   },
 
   init: function(){
