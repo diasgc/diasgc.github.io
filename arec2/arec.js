@@ -59,6 +59,7 @@ const fsBuilder = {
     fieldset.appendChild(legend);
     Object.keys(fs.entries).forEach(function (key) {
       let input = document.createElement('input');
+      let val = fs.entries[key];
       if(key.includes('*')){
         input.checked = true;
         key = key.replace('*', '');
@@ -67,9 +68,9 @@ const fsBuilder = {
       input.type = type;
       input.id = id;
       input.name = fs.name;
-      input.value = fs.entries[key];
+      input.value = val;
       input.onchange = function(){
-        options[opt] = input.value;
+        options[opt] = val;
       };
       let label = document.createElement('label');
       label.setAttribute("for", id);
@@ -88,33 +89,40 @@ const inputCtl = {
   supportedConstraints: {},
 
   deviceId:         { name: "source", lab: "src ", sfx: "", entries: {} },
-  channelCount:     { name: "channels", lab: "", sfx: "", entries: { "mono": 1, "stereo*": 2 } },
-  sampleSize:       { name: "bits", lab: "", sfx: "-bits", entries: { "8": 8, "16*": 16, "24": 24 } },
-  sampleRate:       { name: "samplerate", lab: "", sfx: "Hz", entries: {"8k": 8000, "11k": 11025, "44k": 44100, "48k*": 48000, "96k": 96000 } },
-  autoGainControl:  { name: "autogain", lab: "agc ", sfx: "", entries: { "off": false, "on*": true } },
-  noiseSuppression: { name: "noise", lab: "nr ", sfx: "", entries: { "off*": false, "on": true } },
-  echoCancellation: { name: "echo", lab: "no-echo ", sfx: "", entries: { "off*": false, "on": true } },
-  voiceIsolation:   { name: "voice", lab: "voice ", sfx: "", entries: { "off*": false, "on": true } },
-  suppressLocalAudioPlayback: { name: "local ", lab: "no-local", sfx: "", entries: { "off*": false, "on": true } },
+  channelCount:     { name: "channels", lab: "", sfx: "", entries: { "mono": "1", "stereo*": "2" } },
+  sampleSize:       { name: "bits", lab: "", sfx: "-bits", entries: { "8": "8", "16*": "16", "24": "24" } },
+  sampleRate:       { name: "samplerate", lab: "", sfx: "Hz", entries: {"8k": "8000", "11k": "11025", "44k": "44100", "48k*": "48000", "96k": "96000" } },
+  autoGainControl:  { name: "autogain", lab: "agc ", sfx: "", entries: { "off": "false", "on*": "true" } },
+  noiseSuppression: { name: "noise", lab: "nr ", sfx: "", entries: { "off*": "false", "on": "true" } },
+  echoCancellation: { name: "echo", lab: "echo ", sfx: "", entries: { "off*": "false", "on": "true" } },
+  voiceIsolation:   { name: "voice", lab: "voice ", sfx: "", entries: { "off*": "false", "on": "true" } },
+  suppressLocalAudioPlayback: { name: "local ", lab: "local ", sfx: "", entries: { "off*": "false", "on": "true" } },
   
   options: {
-    echoCancellation: false,
-    noiseSuppression: false,
-    autoGainControl: false,
-    sampleRate: 48000,
-    channelCount: 2,
-    volume: 1.0,
-    sampleSize: 16,
-    latency: 0
+    echoCancellation: "false",
+    noiseSuppression: "false",
+    autoGainControl: "true",
+    voiceIsolation: "false",
+    suppressLocalAudioPlayback: "false",
+    sampleRate: "48000",
+    channelCount: "2",
+    volume: "1.0",
+    sampleSize: "16",
+    latency: "0"
   },
+  
   getSummary: function(){
     let ret = "";
     Object.keys(this.options).forEach(key => {
-      if (this[key] && this.options[key])
-        ret += this[key].lab + " "
-            + (this.options[key] === 'true'
-              ? ' '
-              : this.labelForValue(this[key].entries, this.options[key]) + this[key].sfx + '  ');
+      let tag = "";
+      let val = this.options[key];
+      if (this[key]){
+        tag = this[key].lab;
+        tag = val === 'true'  ? tag
+            : val === 'false' ? ''
+            : tag + this.labelForValue(this[key].entries, this.options[key]) + this[key].sfx;
+        ret += tag + " ";
+      }
     });
     return ret;
   },
@@ -157,17 +165,18 @@ const inputCtl = {
       });
   },
   getOptions: function(){
-    return this.options;
+    let out = JSON.stringify(this.options, (k,v) => {
+      return v === 'true' ? true : v === 'false' ? false : parseInt(v) || v; 
+    });
+    return JSON.parse(out);
   },
 }
 
 const outputCtl = {
   fsi: document.getElementById('fs-output'),
   summary: document.getElementById('fs-output-summary'),
-  brt: { name: "bitrate", entries: {
-    "32k": 32000, "56k": 56000, "128k": 128000,
-    "192k": 192000, "256k*": 256000, "320k": 320000, "512k": 512000 } },
-  vbr: { name: "mode", entries: { "cbr": "constant", "vbr*": "variable" } },
+  audioBitsPerSecond: { name: "bitrate", entries: { "32k": "32000", "56k": "56000", "128k": "128000", "192k": "192000", "256k*": "256000", "320k": "320000", "512k": "512000" } },
+  audioBitrateMode:   { name: "mode",    entries: { "cbr": "constant", "vbr*": "variable" } },
   cnt: { name: "extension", entries: { "webm": "webm", "mp4*": "mp4" } },
   cod: { name: "codec", entries: { "pcm": "pcm", "opus*": "opus" } },
   builtInContainers: [ "webm", "mp4" ],
@@ -175,7 +184,7 @@ const outputCtl = {
   mimeType: "audio/mp4",
   transcode: false,
   options: {
-    audioBitsPerSecond : 256000,
+    audioBitsPerSecond : "256000",
     audioBitrateMode : "variable",
     mimeType: "audio/mp4;codecs=opus",
     container: 'mp4',
@@ -196,7 +205,7 @@ const outputCtl = {
     this.cod.entries[codec] = codec;
   },
   getSummary: function(){
-    return this.options.audioBitsPerSecond/1000 + "kbps " + this.options.audioBitrateMode + " " + this.options.mimeType;
+    return `${this.options.container} ${this.options.codec} ${this.options.audioBitsPerSecond/1000}kbps ${this.options.audioBitrateMode}`;
   },
   init: function(){
     this.fsi.replaceChildren();
@@ -204,8 +213,8 @@ const outputCtl = {
       this.registerEncoder("flac","flac");
     let fs = document.getElementById('fso');
     fs.onclick = this.toggleView;
-    this.fsi.appendChild(fsBuilder.build("radio", this.brt, this.options, "audioBitsPerSecond"));
-    this.fsi.appendChild(fsBuilder.build("radio", this.vbr, this.options, "audioBitrateMode"));
+    this.fsi.appendChild(fsBuilder.build("radio", this.audioBitsPerSecond, this.options, "audioBitsPerSecond"));
+    this.fsi.appendChild(fsBuilder.build("radio", this.audioBitrateMode, this.options, "audioBitrateMode"));
     this.fsi.appendChild(fsBuilder.build("radio", this.cnt, this.options, "container"));
     this.fsi.appendChild(fsBuilder.build("radio", this.cod, this.options, "codec"));
     this.toggleView();
