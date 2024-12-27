@@ -1,6 +1,28 @@
+Number.prototype.strSI = function(unit, fixed=2, mul=1024){
+  const sfx = ['', 'K', 'M', 'G', 'T'];
+  let i = 0;
+  let v = this;
+  while (v >= mul && i++ < 4)
+    v /= 1024;
+  return `${v.toFixed(fixed)} ${sfx[i]}${unit}`;
+}
 
 const divMain = document.getElementById('div-main');
 const startStopButton = document.getElementById('startStop');
+const { createFFmpeg, fetchFile } = FFmpeg;
+const urlParams = new URLSearchParams(window.location.search);
+const useFFmpeg = urlParams.get('ffmpeg') !== null;
+
+const logger = {
+  id: document.getElementById('log-stat'),
+  dataSize: 0,
+  log: function(msg){
+    this.id.innerText = msg;
+  },
+  addSize: function(size){
+    this.dataSize += size;
+  }
+}
 
 const timer = {
   id: document.getElementById('timer'),
@@ -13,6 +35,8 @@ const timer = {
   update: function(){
     const elapsedTime = Date.now() - this.startTime;
     this.id.innerText = new Date(elapsedTime).toISOString().slice(11, 19);
+    if (elapsedTime > outputCtl.timeout)
+      document.getElementById('startStop').click();
   },
   stop: function(){
     this.timerInterval = clearInterval(timer.timerInterval);
@@ -20,37 +44,15 @@ const timer = {
   }
 }
 
-const devices = {
-  inputDevices: '',
-  init: function(){
-    navigator.mediaDevices
-    .enumerateDevices()
-    .then((devices) => {
-      devices.forEach((device) => {
-        if (device.kind === 'audioinput')
-          this.inputDevices[device.deviceId] = device.label;
-        console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
-      });
-    })
-    .catch((err) => {
-      console.error(`${err.name}: ${err.message}`);
-    });
-  }
-}
-
-const micCtl = {
-  micOn: document.getElementById('rec-mc1'),
-  start: function(){
-
-  }
+const session = {
+  audio: true
 }
 
 function rmic(){
   if (micCtl.micOn.checked){
     divMain.disabled = false;
     divMain.style.opacity = 1;
-    navigator.mediaDevices.getUserMedia({ audio: true });
-    devices.init();
+    navigator.mediaDevices.getUserMedia(session);
     startStopButton.disabled = false;
   } else {
     divMain.disabled = true;
@@ -63,148 +65,277 @@ function rmic(){
   
 }
 
-const inputCtl = {
-  ch2: document.getElementById('rec-ch2'),
-  b16: document.getElementById('rec-b16'),
-  agc: document.getElementById('rec-ag1'),
-  nrx: document.getElementById('rec-nr1'),
-  ech: document.getElementById('rec-ec1'),
-  srt: [ "rec-s08", "rec-s11", "rec-s22", "rec-s44", "rec-s48", "rec-s96" ],
-  getOptions: function(){
-    let srate = this.srt.forEach( e => {
-      let id = document.getElementById(e);
-      if (id.checked)
-        return id.value;
+const fsBuilder = {
+  build: function(type, fs, options, opt){
+    let fieldset = document.createElement('fieldset');
+    fieldset.className = "fs-setup";
+    let legend = document.createElement('legend');
+    legend.innerText = fs.name;
+    fieldset.appendChild(legend);
+    Object.keys(fs.entries).forEach(function (key) {
+      let input = document.createElement('input');
+      let val = fs.entries[key];
+      if(key.includes('*')){
+        input.checked = true;
+        key = key.replace('*', '');
+      }
+      let id = fs.name.substring(0,2) + "-" + key;
+      input.type = type;
+      input.id = id;
+      input.name = fs.name;
+      input.value = val;
+      input.onchange = function(){
+        options[opt] = val;
+      };
+      let label = document.createElement('label');
+      label.setAttribute("for", id);
+      label.innerText = key;
+      fieldset.appendChild(input);
+      fieldset.appendChild(label);  
     });
-    return {
-      echoCancellation: this.ech.checked,
-      noiseSuppression: this.nrx.checked,
-      autoGainControl: this.agc.checked,
-      sampleRate: srate,
-      channelCount: this.ch2.checked ? 2 : 1,
-      volume: 1.0,
-      sampleSize: this.b16.checked ? 16 : 8,
-      latency: 0
-    }
+    return fieldset;
   }
+}
+
+const inputCtl = {
+  fsi: document.getElementById('fs-input'),
+  summary: document.getElementById('fs-input-summary'),
+  audioConstraints: [ 'deviceId', 'channelCount', 'sampleSize', 'sampleRate','autoGainControl', 'echoCancellation', 'latency', 'noiseSuppression', 'pan', 'suppressLocalAudioPlayback','voiceIsolation' ],
+  supportedConstraints: {},
+
+  deviceId:         { name: "source", lab: "src ", sfx: "", entries: {} },
+  channelCount:     { name: "channels", lab: "", sfx: "", entries: { "mono": "1", "stereo*": "2" } },
+  sampleSize:       { name: "bits", lab: "", sfx: "-bits", entries: { "8": "8", "16*": "16", "24": "24" } },
+  sampleRate:       { name: "samplerate", lab: "", sfx: "Hz", entries: {"8k": "8000", "11k": "11025", "44k": "44100", "48k*": "48000", "96k": "96000" } },
+  autoGainControl:  { name: "autogain", lab: "agc ", sfx: "", entries: { "off": "false", "on*": "true" } },
+  noiseSuppression: { name: "noise", lab: "nr ", sfx: "", entries: { "off*": "false", "on": "true" } },
+  echoCancellation: { name: "echo", lab: "echo ", sfx: "", entries: { "off*": "false", "on": "true" } },
+  voiceIsolation:   { name: "voice", lab: "voice ", sfx: "", entries: { "off*": "false", "on": "true" } },
+  suppressLocalAudioPlayback: { name: "local ", lab: "local ", sfx: "", entries: { "off*": "false", "on": "true" } },
+  
+  options: {
+    echoCancellation: "false",
+    noiseSuppression: "false",
+    autoGainControl: "true",
+    voiceIsolation: "false",
+    suppressLocalAudioPlayback: "false",
+    sampleRate: "48000",
+    channelCount: "2",
+    volume: "1.0",
+    sampleSize: "16",
+    latency: "0"
+  },
+
+  getSummary: function(){
+    let ret = "";
+    Object.keys(this.options).forEach(key => {
+      let tag = "";
+      let val = this.options[key];
+      if (this[key]){
+        tag = this[key].lab;
+        tag = val === 'true'  ? tag
+            : val === 'false' ? ''
+            : tag + this.labelForValue(this[key].entries, this.options[key]) + this[key].sfx;
+        ret += tag + " ";
+      }
+    });
+    return ret;
+  },
+
+  toggleView: function(){
+    if (inputCtl.fsi.style.display === 'none'){
+      inputCtl.expand();
+    } else {
+      inputCtl.collapse();
+    }
+  },
+
+  collapse: function(){
+    inputCtl.summary.innerHTML = outputCtl.getSummary();
+    inputCtl.summary.style.display = 'block';
+    inputCtl.fsi.style.display = 'none';
+  },
+
+  expand: function(){
+    inputCtl.summary.style.display = 'none';
+    inputCtl.fsi.style.display = 'inline';
+  },
+
+  setDisabled: function(state){
+    document.getElementById('fsi').disabled = state;
+  },
+
+  labelForValue: function(field, val){
+    let ret = Object.keys(field).find(key => field[key] === val) || val;
+    return ret.replace('*','');
+  },
+
+  init: function(){
+    let fs = document.getElementById('fsi');
+    fs.onclick = this.toggleView;
+    this.fsi.replaceChildren();
+    this.supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
+    Object.keys(this.supportedConstraints).forEach((key) => {
+      if (this[key] === 'undefined')
+        delete this.supportedConstraints[key];
+    });
+    navigator.mediaDevices.enumerateDevices()
+      .then((devices) => {
+        devices.forEach((device) => {
+          if (device.kind === 'audioinput'){
+            let lab = device.label.substring(0,7) + (device.deviceId === 'default' ? "*" : "");
+            this.deviceId.entries[lab] = device.deviceId;
+          }
+        });
+        this.audioConstraints.forEach(constraint => {
+          if (this[constraint] && JSON.stringify(this[constraint].entries).length > 8 )
+            this.fsi.appendChild(fsBuilder.build("radio", this[constraint], this.options, constraint));
+        });
+        this.collapse();
+      });
+  },
+  getOptions: function(){
+    let out = JSON.stringify(this.options, (k,v) => {
+      return v === 'true' ? true : v === 'false' ? false : parseInt(v) || v; 
+    });
+    return JSON.parse(out);
+  },
 }
 
 const outputCtl = {
-  btr: [ "rec-r32", "rec-r64", "rec-r128", "rec-r192", "rec-r256", "rec-r320", "rec-r480", "rec-r512" ],
-  vbr: document.getElementById('rec-b16'),
-  cod: [ "rec-mp3", "rec-ogg", "rec-wav", "rec-webm" ],
-  supportedMimeTypes: [],
-  mimeType: "audio/webm;codecs=opus",
-  containers: [],
-  codecs: [],
-  ext: 'ogg',
-  getOptions: function(){
-    let btr = this.btr.forEach( e => {
-      let id = document.getElementById(e);
-      if (id.checked)
-        return id.value;
-    });
-    return {
-      audioBitsPerSecond : btr,
-      audioBitrateMode : this.vbr.checked ? "variable" : "constant",
-      mimeType: this.mimeType
+  fsi: document.getElementById('fs-output'),
+  summary: document.getElementById('fs-output-summary'),
+  builtInContainers: [ "webm", "mp4" ],
+  builtInCodecs: [ "opus", "pcm" ],
+
+  audioBitsPerSecond: { name: "bitrate", entries: { "32k": "32000", "56k": "56000", "128k": "128000", "192k": "192000", "256k*": "256000", "320k": "320000", "512k": "512000" } },
+  audioBitrateMode:   { name: "mode",    entries: { "cbr": "constant", "vbr*": "variable" } },
+  cnt: { name: "extension", entries: { "webm": "webm", "mp4*": "mp4" } },
+  cod: { name: "codec", entries: { "pcm": "pcm", "opus*": "opus" } },
+  timer: { name: "timer", entries: { "off": "0", "1m": "60000", "3m": "180000", "5m*": "300000", "10m": "600000", "20m": "1200000" } },
+
+  mimeType: "audio/mp4",
+  transcode: false,
+  timeout: 300000,
+
+  options: {
+    audioBitsPerSecond : "256000",
+    audioBitrateMode : "variable",
+    mimeType: "audio/mp4;codecs=opus",
+    container: 'mp4',
+    codec: 'opus',
+    timer: "300000"
+  },
+
+  setDisabled: function(state){
+    document.getElementById('fso').disabled = state;
+  },
+
+  toggleView: function(){
+    if (outputCtl.fsi.style.display === 'none'){
+      outputCtl.expand();
+    } else {
+      outputCtl.collapse();
     }
   },
 
-  loadSupportedAudioMimeTypes: function(){
-    this.supportedMimeTypes = this.getAllSupportedMimeTypes('audio');
-    let fs = document.getElementById('fs-mime');
-    fs.replaceChildren();
-    this.supportedMimeTypes.forEach( e => {
-      if (e.match('\"'))
-        return;
-      let sp = e.replaceAll('audio/', '').split(';codecs=');
-      let id = sp[0] + ( sp[1] ? '-' + sp[1] : '' );
-      let input = document.createElement('input');
-      // <input type="radio" id="rec-mp3"  name="codec" value="mp3"/><label for="rec-mp3">mp3</label>
-      input.type = "radio";
-      input.id = id;
-      input.onchange = function(){
-        if (input.checked){
-          outputCtl.mimeType = e;
-          outputCtl.ext = sp[0].replace('mp4', 'm4a');
-          console.log("Selected: " + outputCtl.mimeType + " ext: " + outputCtl.ext);
-        }
-      };
-      input.name = "codec";
-      input.value = e;
-      let label = document.createElement('label');
-      label.setAttribute("for",id);
-      label.innerText = e.replace('audio/', '').replace(';codecs=', '/');
-      fs.appendChild(input);
-      fs.appendChild(label);
-    })
+  collapse: function(){
+    outputCtl.summary.innerHTML = outputCtl.getSummary();
+    outputCtl.summary.style.display = 'block';
+    outputCtl.fsi.style.display = 'none';
   },
 
-  getAllSupportedMimeTypes(...mediaTypes) {
-    if (!mediaTypes.length) mediaTypes.push('video', 'audio')
-    const CONTAINERS = ['webm', 'ogg', 'mp3', 'mp4', 'x-matroska', '3gpp', '3gpp2', '3gp2', 'quicktime', 'mpeg', 'aac', 'flac', 'x-flac', 'wave', 'wav', 'x-wav', 'x-pn-wav', 'not-supported']
-    const CODECS = ['vp9', 'vp9.0', 'vp8', 'vp8.0', 'avc1', 'av1', 'h265', 'h.265', 'h264', 'h.264', 'opus', 'vorbis', 'pcm', 'aac', 'mpeg', 'mp4a', 'rtx', 'red', 'ulpfec', 'g722', 'pcmu', 'pcma', 'cn', 'telephone-event', 'not-supported']
-    
-    return [...new Set(
-      CONTAINERS.flatMap(ext =>
-          mediaTypes.flatMap(mediaType => [
-            `${mediaType}/${ext}`,
-          ]),
-      ),
-    ), ...new Set(
-      CONTAINERS.flatMap(ext =>
-        CODECS.flatMap(codec =>
-          mediaTypes.flatMap(mediaType => [
-            // NOTE: 'codecs:' will always be true (false positive)
-            `${mediaType}/${ext};codecs=${codec}`,
-          ]),
-        ),
-      ),
-    ), ...new Set(
-      CONTAINERS.flatMap(ext =>
-        CODECS.flatMap(codec1 =>
-        CODECS.flatMap(codec2 =>
-          mediaTypes.flatMap(mediaType => [
-            `${mediaType}/${ext};codecs="${codec1}, ${codec2}"`,
-          ]),
-        ),
-        ),
-      ),
-    )].filter(variation => MediaRecorder.isTypeSupported(variation))
+  expand: function(){
+    outputCtl.summary.style.display = 'none';
+    outputCtl.fsi.style.display = 'inline';
+  },
+
+  registerEncoder(container, codec){
+    this.cnt.entries[container] = container;
+    this.cod.entries[codec] = codec;
+  },
+
+  getSummary: function(){
+    return `${this.options.container} ${this.options.codec} ${this.options.audioBitsPerSecond/1000}kbps ${this.options.audioBitrateMode}`;
+  },
+
+  init: function(){
+    this.fsi.replaceChildren();
+    if (useFFmpeg)
+      this.registerEncoder("flac","flac");
+    let fs = document.getElementById('fso');
+    fs.onclick = this.toggleView;
+    this.fsi.appendChild(fsBuilder.build("radio", this.audioBitsPerSecond, this.options, "audioBitsPerSecond"));
+    this.fsi.appendChild(fsBuilder.build("radio", this.audioBitrateMode, this.options, "audioBitrateMode"));
+    this.fsi.appendChild(fsBuilder.build("radio", this.cnt, this.options, "container"));
+    this.fsi.appendChild(fsBuilder.build("radio", this.cod, this.options, "codec"));
+    this.fsi.appendChild(fsBuilder.build("radio", this.timer, this.options, "timer"));
+    this.collapse();
+  },
+
+  getOptions: function(){
+    let opts = JSON.parse(JSON.stringify(this.options));
+    this.timeout = parseInt(opts.timer);
+    this.mimeType = `audio/${opts.container}`;
+    if (this.builtInContainers.indexOf(opts.container) < 0){
+      opts.mimeType = "audio/webm;codecs=pcm";
+      this.transcode = true;
+    } else {
+      opts.mimeType = `${this.mimeType};codecs=${opts.codec}`;
+    }
+    delete opts.container;
+    delete opts.codec;
+    delete opts.timer;
+    return opts;
   }
 }
 
-function rcfg(){
-  streamConfig = inputCtl.getOptions();
-  console.log(streamConfig);
+const micCtl = {
+  micOn: document.getElementById('rec-mc1')
 }
 
-function saveFile(data, filename, type) {
-  const blob = new Blob([data], { type: type });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+const dataManager = {
+  chunks: [],
+  chunkTimeout: 2000,
+  add: function(data){
+    this.chunks.push(data);
+    logger.addSize(data.size);
+    logger.log(`size: ${logger.dataSize.strSI('B')}`);
+  },
+  getTimestampFilename() {
+    return "rec-" + new Date(Date.now())
+      .toISOString()
+      .slice(0, 19)
+      .replace(/-|:/g,'')
+      .replace(/T/g,'-');
+  },
+  save: function() {
+    let blob = outputCtl.transcode
+      ? this.transcode()
+      : new Blob(this.chunks, { type: outputCtl.mimeType });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = this.getTimestampFilename() + "." + outputCtl.options.container.replace('mp4','m4a');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  },
+  transcode: async function(){
+    logger.log("transcoding...");
+    const ffmpeg = createFFmpeg({ log: true });
+    //ffmpeg.on('log', e => console.log(e.message));
+    //ffmpeg.on('progress', e => console.log(e.progress));
+    if (ffmpeg.isLoaded() === false)
+      await ffmpeg.load();
+    let input = "temp-rec.webm  ";
+    let output = "output." + outputCtl.options.container;
+    ffmpeg.FS("writeFile", input, await fetchFile(new Blob(this.chunks, { type: outputCtl.mimeType })));
+    await ffmpeg.run("-i", input, "-c:a", "copy", output);
+    const data = ffmpeg.FS("readFile", output);
+    logger.log("size: " + data.buffer.byteLength);
+    return new Blob([data.buffer], { type: outputCtl.mimeType });
+  }
 }
-
-function getTimestampFilename(ext) {
-  return "rec-" + new Date(Date.now())
-    .toISOString()
-    .slice(0, 19)
-    .replace(/-|:/g,'')
-    .replace(/T/g,'-');
-}
-
-let stream;
-let recorder;
-let lock;
-
-rmic();
-
-outputCtl.loadSupportedAudioMimeTypes();
 
 function startStop(){
   if (startStopButton.checked)
@@ -214,51 +345,52 @@ function startStop(){
 }
 
 startRecording = async() => {
-  stream = await navigator.mediaDevices.getUserMedia({ audio: inputCtl.getOptions() });
+  inputCtl.collapse();
+  inputCtl.setDisabled(true);
+  outputCtl.collapse();
+  outputCtl.setDisabled(true);
+  session.audio = inputCtl.getOptions();
+  stream = await navigator.mediaDevices.getUserMedia(session);
   lock = await navigator.wakeLock.request('screen');
   recorder = new MediaRecorder(stream, outputCtl.getOptions());
-  
-  const suggestedName = getTimestampFilename();
-  //const handle = await window.showSaveFilePicker({ suggestedName });
-  //const writable = await handle.createWritable();
-
-  let chunks = [];
-  // Start recording.
-  recorder.start();
+  recorder.start(dataManager.chunkTimeout);
   recorder.addEventListener("dataavailable", async (event) => {
-    // Write chunks to the file.
-    //await writable.write(event.data);
-    chunks.push(event.data);
-    if (recorder.state === "inactive") {
-      // Close the file when the recording stops.
-      //await writable.close();
-      let t = outputCtl.mimeType.split(";")[0];
-      saveFile(new Blob(chunks, { type: t }), suggestedName, t);
-    }
+    dataManager.add(event.data);
+    if (recorder.state === "inactive")
+      dataManager.save();
   });
-
-  // Start the timer
   timer.start();
-  //timerInterval = setInterval(updateTimer, 1000);
+  
 }
 
 stopRecording = async() => {
   // Stop the recording.
   recorder.stop();
   timer.stop();
-  //timerInterval = clearInterval(timerInterval);
   if (lock != null){
     await lock.release();
     lock = null;
   }
+  inputCtl.setDisabled(false);
+  outputCtl.setDisabled(false);
 }
+
+let stream;
+let recorder;
+let lock;
+
+rmic();
+inputCtl.init();
+outputCtl.init();
+
+
 
 
 /*
 
 var txt = document.getElementById('log');
 const { createFFmpeg } = FFmpeg;
-const ffmpeg = createFFmpeg({ log: true, logger: ({ message }) => { txt.value += "\n" + message; } });
+const ffmpeg = createFFmpeg({ log, logger: ({ message }) => { txt.value += "\n" + message; } });
 const transcode = async ({ target: { files } }) => {
   const message = document.getElementById('message');
   const { name } = files[0];

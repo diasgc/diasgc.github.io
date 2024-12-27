@@ -1,3 +1,12 @@
+Number.prototype.strSI = function(unit, fixed=2, mul=1024){
+  const sfx = ['', 'K', 'M', 'G', 'T'];
+  let i = 0;
+  let v = this;
+  while (v >= mul && i++ < 4)
+    v /= 1024;
+  return `${v.toFixed(fixed)} ${sfx[i]}${unit}`;
+}
+
 const divMain = document.getElementById('div-main');
 const startStopButton = document.getElementById('startStop');
 const { createFFmpeg, fetchFile } = FFmpeg;
@@ -26,6 +35,8 @@ const timer = {
   update: function(){
     const elapsedTime = Date.now() - this.startTime;
     this.id.innerText = new Date(elapsedTime).toISOString().slice(11, 19);
+    if (elapsedTime > outputCtl.timeout)
+      document.getElementById('startStop').click();
   },
   stop: function(){
     this.timerInterval = clearInterval(timer.timerInterval);
@@ -130,20 +141,35 @@ const inputCtl = {
     });
     return ret;
   },
+
   toggleView: function(){
     if (inputCtl.fsi.style.display === 'none'){
-      inputCtl.summary.style.display = 'none';
-      inputCtl.fsi.style.display = 'inline';
+      inputCtl.expand();
     } else {
-      inputCtl.summary.innerHTML = inputCtl.getSummary();
-      inputCtl.summary.style.display = 'block';
-      inputCtl.fsi.style.display = 'none';
+      inputCtl.collapse();
     }
   },
+
+  collapse: function(){
+    inputCtl.summary.innerHTML = outputCtl.getSummary();
+    inputCtl.summary.style.display = 'block';
+    inputCtl.fsi.style.display = 'none';
+  },
+
+  expand: function(){
+    inputCtl.summary.style.display = 'none';
+    inputCtl.fsi.style.display = 'inline';
+  },
+
+  setDisabled: function(state){
+    document.getElementById('fsi').disabled = state;
+  },
+
   labelForValue: function(field, val){
     let ret = Object.keys(field).find(key => field[key] === val) || val;
     return ret.replace('*','');
   },
+
   init: function(){
     let fs = document.getElementById('fsi');
     fs.onclick = this.toggleView;
@@ -165,7 +191,7 @@ const inputCtl = {
           if (this[constraint] && JSON.stringify(this[constraint].entries).length > 8 )
             this.fsi.appendChild(fsBuilder.build("radio", this[constraint], this.options, constraint));
         });
-        this.toggleView();
+        this.collapse();
       });
   },
   getOptions: function(){
@@ -186,9 +212,11 @@ const outputCtl = {
   audioBitrateMode:   { name: "mode",    entries: { "cbr": "constant", "vbr*": "variable" } },
   cnt: { name: "extension", entries: { "webm": "webm", "mp4*": "mp4" } },
   cod: { name: "codec", entries: { "pcm": "pcm", "opus*": "opus" } },
+  timer: { name: "timer", entries: { "off": "0", "1m": "60000", "3m": "180000", "5m*": "300000", "10m": "600000", "20m": "1200000" } },
 
   mimeType: "audio/mp4",
   transcode: false,
+  timeout: 300000,
 
   options: {
     audioBitsPerSecond : "256000",
@@ -196,17 +224,30 @@ const outputCtl = {
     mimeType: "audio/mp4;codecs=opus",
     container: 'mp4',
     codec: 'opus',
+    timer: "300000"
+  },
+
+  setDisabled: function(state){
+    document.getElementById('fso').disabled = state;
   },
 
   toggleView: function(){
     if (outputCtl.fsi.style.display === 'none'){
-      outputCtl.summary.style.display = 'none';
-      outputCtl.fsi.style.display = 'inline';
+      outputCtl.expand();
     } else {
-      outputCtl.summary.innerHTML = outputCtl.getSummary();
-      outputCtl.summary.style.display = 'block';
-      outputCtl.fsi.style.display = 'none';
+      outputCtl.collapse();
     }
+  },
+
+  collapse: function(){
+    outputCtl.summary.innerHTML = outputCtl.getSummary();
+    outputCtl.summary.style.display = 'block';
+    outputCtl.fsi.style.display = 'none';
+  },
+
+  expand: function(){
+    outputCtl.summary.style.display = 'none';
+    outputCtl.fsi.style.display = 'inline';
   },
 
   registerEncoder(container, codec){
@@ -228,11 +269,13 @@ const outputCtl = {
     this.fsi.appendChild(fsBuilder.build("radio", this.audioBitrateMode, this.options, "audioBitrateMode"));
     this.fsi.appendChild(fsBuilder.build("radio", this.cnt, this.options, "container"));
     this.fsi.appendChild(fsBuilder.build("radio", this.cod, this.options, "codec"));
-    this.toggleView();
+    this.fsi.appendChild(fsBuilder.build("radio", this.timer, this.options, "timer"));
+    this.collapse();
   },
-  
+
   getOptions: function(){
     let opts = JSON.parse(JSON.stringify(this.options));
+    this.timeout = parseInt(opts.timer);
     this.mimeType = `audio/${opts.container}`;
     if (this.builtInContainers.indexOf(opts.container) < 0){
       opts.mimeType = "audio/webm;codecs=pcm";
@@ -242,6 +285,7 @@ const outputCtl = {
     }
     delete opts.container;
     delete opts.codec;
+    delete opts.timer;
     return opts;
   }
 }
@@ -256,7 +300,7 @@ const dataManager = {
   add: function(data){
     this.chunks.push(data);
     logger.addSize(data.size);
-    logger.log(`size: ${logger.dataSize} bytes`);
+    logger.log(`size: ${logger.dataSize.strSI('B')}`);
   },
   getTimestampFilename() {
     return "rec-" + new Date(Date.now())
@@ -301,6 +345,10 @@ function startStop(){
 }
 
 startRecording = async() => {
+  inputCtl.collapse();
+  inputCtl.setDisabled(true);
+  outputCtl.collapse();
+  outputCtl.setDisabled(true);
   session.audio = inputCtl.getOptions();
   stream = await navigator.mediaDevices.getUserMedia(session);
   lock = await navigator.wakeLock.request('screen');
@@ -323,6 +371,8 @@ stopRecording = async() => {
     await lock.release();
     lock = null;
   }
+  inputCtl.setDisabled(false);
+  outputCtl.setDisabled(false);
 }
 
 let stream;

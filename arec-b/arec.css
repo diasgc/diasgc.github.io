@@ -75,7 +75,7 @@ pre {
 #fs-output-summary {
   font-size: 13px;
   font-weight: 600;
-  color: var(--main-fg);
+  color: var(--accent);
   padding: 12px;
 }
 
@@ -90,10 +90,20 @@ pre {
   color: var(--accent);
   margin: 4px;
   text-align: center;
+  transition: 1s;
+}
+
+.fs-main:disabled {
+  border: none;
+  color: #8884
 }
 
 .fs-main {
   width: calc(100% - 24px);
+}
+
+.fs-setup {
+  color: var(--main-fg);
 }
 
 .fs-mic {
@@ -101,6 +111,7 @@ pre {
   top: 24px;
   width: 42px;
   border: none;
+  color: var(--main-fg);
 }
 
 .fs-mic input[type="radio"],
