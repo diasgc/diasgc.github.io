@@ -31,11 +31,11 @@ const logger = {
 
 const graph = {
   container: document.getElementById('graph'),
-  fftSize: 128,
+  fftSize: 256,
   scene: new THREE.Scene(),
   camera: new THREE.OrthographicCamera( - 1, 1, 1, - 1, 0, 1 ),
   geometry: new THREE.PlaneGeometry( 2, 2 ),
-  listener: new THREE.AudioListener(),
+  listener: '',
   audio: '',
   context: '',
   analyser: '',
@@ -47,11 +47,9 @@ const graph = {
   mesh: '',
   init: function(){
     this.container.replaceChildren();
-    this.audio = new THREE.Audio( this.listener );
-    this.context = this.listener.context;
     let backColor = new THREE.Color(parseInt(document.body.style.backgroundColor.replace('#','0x')));
     this.material.uniforms = {
-      iChannel0: { value: new THREE.DataTexture( this.analyser.data, this.fftSize / 2, 1, THREE.RedFormat ) },
+      iChannel0: '',
       iTime: { value: 0.0 },
       backgroundColor: { value: backColor }
     };
@@ -67,9 +65,13 @@ const graph = {
   },
   start: function(s){
     this.renderer.domElement.style.display = 'block';
+    this.listener = new THREE.AudioListener();
+    this.audio = new THREE.Audio( this.listener );
+    this.context = this.listener.context;
     let source = this.context.createMediaStreamSource( s );
     this.audio.setNodeSource( source );
     this.analyser = new THREE.AudioAnalyser( this.audio, this.fftSize );
+    this.material.uniforms.iChannel0 = { value: new THREE.DataTexture( this.analyser.data, this.fftSize / 2, 1, THREE.RedFormat ) },
     this.renderer.setAnimationLoop( this.animate );
   },
   stop: function(){

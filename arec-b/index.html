@@ -29,7 +29,7 @@
     uniform vec3 backgroundColor;
     uniform float iTime;
     uniform sampler2D iChannel0;
-    uniform float freq; // 128.0
+    uniform float freq; // 256.0
     
     float getAmp(float f) { return texture(iChannel0, vec2(f / freq, 0)).x; }
     float getWeight(float f) { return (getAmp(f - 2.0) + getAmp(f - 1.0) + getAmp(f + 1.0) + getAmp(f + 2.0) + getAmp(f)) / 5.0; }
