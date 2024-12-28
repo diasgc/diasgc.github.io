@@ -1,4 +1,4 @@
-import * as threeJs from 'https://esm.run/three-js';
+import * as THREE from 'three';
 
 Number.prototype.strSI = function(unit, fixed=2, mul=1024){
   const sfx = ['', 'K', 'M', 'G', 'T'];
