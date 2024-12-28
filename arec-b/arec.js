@@ -273,7 +273,7 @@ const outputCtl = {
   fsi: document.getElementById('fs-output'),
   isCollapsed: true,
   summary: document.getElementById('fs-output-summary'),
-  builtInContainers: [ "webm", "mp4" ],
+  builtInContainers: [ "webm", "mp4", "ogg" ],
   builtInCodecs: [ "opus", "pcm" ],
   graph: { name: "graph", entries: { "off": "false", "on*": "true"} },
   audioBitsPerSecond: { name: "bitrate", entries: { "32k": "32000", "56k": "56000", "128k": "128000", "192k": "192000", "256k*": "256000", "320k": "320000", "512k": "512000" } },
@@ -332,11 +332,13 @@ const outputCtl = {
     return { container: a, codec: b[1] };
   },
 
-  setDefault: function(obj, val){
+  setDefault: function(obj, val, callback){
     if (obj[val])
-      return JSON.parse(JSON.stringify(obj).replace(val+"\":", val+"\*\":"));
+      callback(JSON.parse(JSON.stringify(obj).replace(val+"\":", val+"\*\":")), val);
+    else if (Object.entries(obj)[0])
+      this.setDefault(obj, Object.keys(obj)[0], callback);
     else
-      return Object.entries(obj)[0] ? this.setDefault(obj, Object.keys(obj)[0]) : obj;
+      callback(obj, val);
   },
 
   init: function(){
@@ -375,8 +377,14 @@ const outputCtl = {
     });
     // set defaults
     let def = this.readType(this.options.mimeType);
-    this.cnt.entries = this.setDefault(this.cnt.entries, def.container);
-    this.cod.entries = this.setDefault(this.cod.entries, def.codec);
+    this.setDefault(this.cnt.entries, def.container, (entries, defVal) => {
+      this.cnt.entries = entries;
+      this.options.mimeType = "audio/" + defVal;
+    });
+    this.setDefault(this.cod.entries, def.codec, (entries, defVal) => {
+      this.cod.entries = entries;
+      this.options.mimeType += ";codecs=" + defVal;
+    });
     console.log(this.supportedTypes);
   },
 
@@ -384,11 +392,10 @@ const outputCtl = {
     let opts = JSON.parse(JSON.stringify(this.options));
     this.timeout = parseInt(opts.timer);
     this.mimeType = `audio/${opts.container}`;
+    opts.mimeType = `${this.mimeType};codecs=${opts.codec}`;
     if (this.builtInContainers.indexOf(opts.container) < 0){
-      opts.mimeType = "audio/webm;codecs=pcm";
+      //opts.mimeType = "audio/webm;codecs=pcm";
       this.transcode = true;
-    } else {
-      opts.mimeType = `${this.mimeType};codecs=${opts.codec}`;
     }
     delete opts.container;
     delete opts.codec;
