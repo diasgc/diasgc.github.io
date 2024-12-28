@@ -94,15 +94,12 @@ const graph2 = {
   src: '',
   analyser: '',
   init: function(){
-    let canvas = document.createElement("canvas");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight * 0.18;
+    let canvas = document.getElementById('canvas')
     this.ctx = canvas.getContext("2d");
     const body = window.getComputedStyle(document.body, null);
     this.ctx.fillStyle = body.backgroundColor;
-    this.ctx.strokeStyle = body.color;
+    this.ctx.strokeStyle = body.getPropertyValue('--accent');
     this.ctx.lineCap = "round";
-    this.container.appendChild(canvas);
   },
   start: function(stream){
     this.audioContext = new(window.AudioContext || window.webkitAudioContext);
