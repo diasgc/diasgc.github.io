@@ -37,7 +37,7 @@ const graph2 = {
   centered: true,
   ctx: '',
   audioContext: '',
-  src: '',
+  source: '',
   analyser: '',
   init: function(){
     let canvas = document.getElementById('canvas');
@@ -51,9 +51,9 @@ const graph2 = {
   start: function(stream){
     this.container.style.display = 'flex';
     this.audioContext = new(window.AudioContext || window.webkitAudioContext);
-    const source = this.audioContext.createMediaStreamSource(stream);
+    this.source = this.audioContext.createMediaStreamSource(stream);
     this.analyser = this.audioContext.createAnalyser();
-    source.connect(this.analyser);
+    this.source.connect(this.analyser);
     this.analyser.fftSize = this.fftSize;
     this.buffLen = this.analyser.frequencyBinCount;
     this.dataArray = new Uint8Array(this.buffLen);
@@ -65,6 +65,9 @@ const graph2 = {
   stop: function(){
     this.isEnabled = false;
     this.container.style.display = 'none';
+    this.audioContext.close;
+    this.source.disconnect;
+    
   },
   draw: function(){
     graph2.ctx.fillRect(0, 0, graph2.canvasSize.width, graph2.canvasSize.height);
@@ -133,7 +136,11 @@ function rmic(){
     divMain.style.opacity = 0.1;
     startStopButton.disabled = true;
     if (stream && stream.getTracks())
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach(track => {
+        track.stop();
+        track.enabled = false;
+      }
+    );
   }
   
 }
@@ -329,7 +336,7 @@ const outputCtl = {
     if (obj[val])
       return JSON.parse(JSON.stringify(obj).replace(val+"\":", val+"\*\":"));
     else
-      return this.setDefault(obj, obj[0]);
+      return Object.entries(obj)[0] ? this.setDefault(obj, Object.keys(obj)[0]) : obj;
   },
 
   init: function(){
@@ -348,8 +355,8 @@ const outputCtl = {
     this.collapse();
   },
   
-  containersTest: [ 'webm', 'mp4', 'ogg' ],
-  codecsTest: [ 'opus', 'pcm', 'm4a' ],
+  containersTest: [ 'webm', 'mp4', 'ogg' ], // extended: 'webm', 'mp3', 'mp4', 'x-matroska', 'ogg', 'wav'
+  codecsTest: [ 'opus', 'pcm', 'm4a' ], // extended: 'opus', 'vorbis', 'aac', 'mpeg', 'mp4a', 'pcm'
   loadSupportedTypes: function(){
     this.supportedTypes = [];
     this.cnt.entries = {};
