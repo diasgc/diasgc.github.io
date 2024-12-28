@@ -62,9 +62,11 @@ const graph = {
     // Square it!
     this.renderer.setPixelRatio( 1 );
     this.renderer.setSize( window.innerWidth, window.innerHeight * 0.15 );
+    this.renderer.domElement.style.display = 'none';
     this.container.appendChild( this.renderer.domElement );
   },
   start: function(s){
+    this.renderer.domElement.style.display = 'block';
     let source = this.context.createMediaStreamSource( s );
     this.audio.setNodeSource( source );
     this.analyser = new THREE.AudioAnalyser( this.audio, this.fftSize );
@@ -72,6 +74,7 @@ const graph = {
   },
   stop: function(){
     this.renderer.setAnimationLoop( null );
+    this.renderer.domElement.style.display = 'none';
   },
   animate: function(){
     graph.analyser.getFrequencyData();
