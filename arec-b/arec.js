@@ -257,7 +257,7 @@ const outputCtl = {
   summary: document.getElementById('fs-output-summary'),
   builtInContainers: [ "webm", "mp4" ],
   builtInCodecs: [ "opus", "pcm" ],
-
+  graph: { name: "graph", entries: { "off*": "false", "on": "true"} },
   audioBitsPerSecond: { name: "bitrate", entries: { "32k": "32000", "56k": "56000", "128k": "128000", "192k": "192000", "256k*": "256000", "320k": "320000", "512k": "512000" } },
   audioBitrateMode:   { name: "mode",    entries: { "cbr": "constant", "vbr*": "variable" } },
   cnt: { name: "extension", entries: { "webm": "webm", "mp4*": "mp4" } },
@@ -274,7 +274,8 @@ const outputCtl = {
     mimeType: "audio/mp4;codecs=opus",
     container: 'mp4',
     codec: 'opus',
-    timer: "300000"
+    timer: "300000",
+    graph: "false"
   },
 
   setDisabled: function(state){
@@ -318,6 +319,7 @@ const outputCtl = {
     this.fsi.appendChild(fsBuilder.build("radio", this.cnt, this.options, "container"));
     this.fsi.appendChild(fsBuilder.build("radio", this.cod, this.options, "codec"));
     this.fsi.appendChild(fsBuilder.build("radio", this.timer, this.options, "timer"));
+    this.fsi.appendChild(fsBuilder.build("radio", this.graph, this.options, "graph"));
     this.collapse();
   },
 
@@ -334,6 +336,7 @@ const outputCtl = {
     delete opts.container;
     delete opts.codec;
     delete opts.timer;
+    delete opts.graph;
     return opts;
   }
 }
@@ -403,7 +406,8 @@ async function startRecording(){
   
   recorder = new MediaRecorder(stream, outputCtl.getOptions());
   recorder.start(dataManager.chunkTimeout);
-  graph.start(stream);
+  if (outputCtl.options.graph === 'true')
+    graph.start(stream);
   recorder.addEventListener("dataavailable", async (event) => {
     dataManager.add(event.data);
     if (recorder.state === "inactive")
@@ -423,7 +427,8 @@ async function stopRecording(){
   }
   inputCtl.setDisabled(false);
   outputCtl.setDisabled(false);
-  graph.stop();
+  if (outputCtl.options.graph === 'true')
+    graph.stop();
 }
 
 let stream;
