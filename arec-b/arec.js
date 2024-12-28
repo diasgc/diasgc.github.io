@@ -11,9 +11,14 @@ Number.prototype.strSI = function(unit, fixed=2, mul=1024){
 
 const divMain = document.getElementById('div-main');
 const startStopButton = document.getElementById('startStop');
+const micButton = document.getElementById('startStop');
 const { createFFmpeg, fetchFile } = FFmpeg;
 const urlParams = new URLSearchParams(window.location.search);
 const useFFmpeg = urlParams.get('ffmpeg') !== null;
+
+startStopButton.onchange = startStop;
+document.getElementById('rec-mc0').onchange = rmic;
+document.getElementById('rec-mc1').onchange = rmic;
 
 const logger = {
   id: document.getElementById('log-stat'),
@@ -410,6 +415,7 @@ stopRecording = async() => {
 let stream;
 let recorder;
 let lock;
+
 
 rmic();
 inputCtl.init();
