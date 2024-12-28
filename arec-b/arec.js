@@ -49,6 +49,7 @@ const graph2 = {
     this.ctx.lineCap = "round";
   },
   start: function(stream){
+    this.container.style.display = 'flex';
     this.audioContext = new(window.AudioContext || window.webkitAudioContext);
     const source = this.audioContext.createMediaStreamSource(stream);
     this.analyser = this.audioContext.createAnalyser();
@@ -62,7 +63,8 @@ const graph2 = {
     this.draw();
   },
   stop: function(){
-    graph2.isEnabled = false;
+    this.isEnabled = false;
+    this.container.style.display = 'none';
   },
   draw: function(){
     graph2.ctx.fillRect(0, 0, graph2.canvasSize.width, graph2.canvasSize.height);
@@ -130,9 +132,8 @@ function rmic(){
     divMain.disabled = true;
     divMain.style.opacity = 0.1;
     startStopButton.disabled = true;
-    if (stream)
+    if (stream && stream.getTracks())
       stream.getTracks().forEach(track => track.stop());
-
   }
   
 }
@@ -318,7 +319,21 @@ const outputCtl = {
     this.cod.entries[codec] = codec;
   },
 
+  readType: function(type){
+    let b = type.split(';codecs=');
+    let a = b[0].replace('audio/','');
+    return { container: a, codec: b[1] };
+  },
+
+  setDefault: function(obj, val){
+    if (obj[val])
+      return JSON.parse(JSON.stringify(obj).replace(val+"\":", val+"\*\":"));
+    else
+      return this.setDefault(obj, obj[0]);
+  },
+
   init: function(){
+    this.loadSupportedTypes();
     this.fsi.replaceChildren();
     if (useFFmpeg)
       this.registerEncoder("flac","flac");
@@ -331,6 +346,31 @@ const outputCtl = {
     this.fsi.appendChild(fsBuilder.build("radio", this.timer, this.options, "timer"));
     this.fsi.appendChild(fsBuilder.build("radio", this.graph, this.options, "graph"));
     this.collapse();
+  },
+  
+  containersTest: [ 'webm', 'mp4', 'ogg' ],
+  codecsTest: [ 'opus', 'pcm', 'm4a' ],
+  loadSupportedTypes: function(){
+    this.supportedTypes = [];
+    this.cnt.entries = {};
+    this.cod.entries = {};
+    var t;
+    this.containersTest.forEach((type) => {
+      this.codecsTest.forEach((codec) => {
+        if (MediaRecorder.isTypeSupported(t = `audio/${type};codecs=${codec}`)){
+          this.supportedTypes.push(t);
+          if (this.cnt.entries[String(type)] === undefined)
+            this.cnt.entries[String(type)] = type;
+          if (this.cod.entries[String(codec)] === undefined)
+            this.cod.entries[String(codec)] = codec;
+        }
+      });
+    });
+    // set defaults
+    let def = this.readType(this.options.mimeType);
+    this.cnt.entries = this.setDefault(this.cnt.entries, def.container);
+    this.cod.entries = this.setDefault(this.cod.entries, def.codec);
+    console.log(this.supportedTypes);
   },
 
   getOptions: function(){

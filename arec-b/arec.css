@@ -43,10 +43,12 @@ body {
 }
 
 #graph {
+  display: none;
   height: 12dvh;
   margin: 12px;
   align-items: center;
   text-align: center;
+  transition: 1s;
 }
 
 #log-stat {
