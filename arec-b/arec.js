@@ -7,6 +7,7 @@ Number.prototype.strSI = function(unit, fixed=2, mul=1024){
   return `${v.toFixed(fixed)} ${sfx[i]}${unit}`;
 }
 
+const touchEvent = 'click'; //'ontouchstart' in window ? 'touchstart' : 'click';
 const divMain = document.getElementById('div-main');
 const startStopButton = document.getElementById('startStop');
 const micButton = document.getElementById('startStop');
@@ -29,76 +30,22 @@ const logger = {
   }
 }
 
-const graph = {
-  container: document.getElementById('graph'),
-  fftSize: 256,
-  scene: new THREE.Scene(),
-  camera: new THREE.OrthographicCamera( - 1, 1, 1, - 1, 0, 1 ),
-  geometry: new THREE.PlaneGeometry( 2, 2 ),
-  listener: '',
-  audio: '',
-  context: '',
-  analyser: '',
-  material: new THREE.ShaderMaterial( {
-    uniforms: '',
-    vertexShader: document.getElementById( 'vertexShader' ).textContent,
-    fragmentShader: document.getElementById( 'fragmentShader' ).textContent
-  }),
-  mesh: '',
-  init: function(){
-    this.container.replaceChildren();
-    let backColor = new THREE.Color(parseInt(document.body.style.backgroundColor.replace('#','0x')));
-    this.material.uniforms = {
-      iChannel0: '',
-      iTime: { value: 0.0 },
-      backgroundColor: { value: backColor }
-    };
-    this.mesh = new THREE.Mesh( this.geometry, this.material );
-    this.scene.add( this.mesh );
-    this.renderer = new THREE.WebGLRenderer( { antialias: true } );
-    //renderer.setPixelRatio( window.devicePixelRatio );
-    // Square it!
-    this.renderer.setPixelRatio( 1 );
-    this.renderer.setSize( window.innerWidth, window.innerHeight * 0.15 );
-    this.renderer.domElement.style.display = 'none';
-    this.container.appendChild( this.renderer.domElement );
-  },
-  start: function(s){
-    this.renderer.domElement.style.display = 'block';
-    this.listener = new THREE.AudioListener();
-    this.audio = new THREE.Audio( this.listener );
-    this.context = this.listener.context;
-    let source = this.context.createMediaStreamSource( s );
-    this.audio.setNodeSource( source );
-    this.analyser = new THREE.AudioAnalyser( this.audio, this.fftSize );
-    this.material.uniforms.iChannel0 = { value: new THREE.DataTexture( this.analyser.data, this.fftSize / 2, 1, THREE.RedFormat ) },
-    this.renderer.setAnimationLoop( this.animate );
-  },
-  stop: function(){
-    this.renderer.setAnimationLoop( null );
-    this.renderer.domElement.style.display = 'none';
-  },
-  animate: function(){
-    graph.analyser.getFrequencyData();
-    graph.material.uniforms.iChannel0.value.needsUpdate = true;
-    graph.material.uniforms.iTime.value += 0.005;
-    graph.renderer.render( graph.scene, graph.camera );
-  }
-}
-
 const graph2 = {
   container: document.getElementById('graph'),
+  canvasSize: '',
   fftSize: 256,
+  centered: true,
   ctx: '',
   audioContext: '',
   src: '',
   analyser: '',
   init: function(){
-    let canvas = document.getElementById('canvas')
+    let canvas = document.getElementById('canvas');
+    this.canvasSize = { width: canvas.width, height: canvas.height}
     this.ctx = canvas.getContext("2d");
     const body = window.getComputedStyle(document.body, null);
     this.ctx.fillStyle = body.backgroundColor;
-    this.ctx.strokeStyle = body.getPropertyValue('--accent');
+    this.ctx.strokeStyle = body.accentColor;
     this.ctx.lineCap = "round";
   },
   start: function(stream){
@@ -106,7 +53,7 @@ const graph2 = {
     const source = this.audioContext.createMediaStreamSource(stream);
     this.analyser = this.audioContext.createAnalyser();
     source.connect(this.analyser);
-    this.analyser.fftSize = 256;
+    this.analyser.fftSize = this.fftSize;
     this.buffLen = this.analyser.frequencyBinCount;
     this.dataArray = new Uint8Array(this.buffLen);
     this.barWidth = (500 - 2 * this.buffLen - 4) / this.buffLen * 2.5;
@@ -118,16 +65,33 @@ const graph2 = {
     graph2.isEnabled = false;
   },
   draw: function(){
-    graph2.ctx.fillRect(0, 0, 500, 180);
-    graph2.analyser.getByteFrequencyData(graph2.dataArray);
-    for (var i = 0; i < graph2.buffLen; i++) {
-      graph2.ctx.beginPath();
-      graph2.ctx.moveTo(4 + 2 * i * graph2.barWidth + graph2.barWidth / 2, 178 - graph2.barWidth / 2);
-      graph2.ctx.lineTo(4 + 2 * i * graph2.barWidth + graph2.barWidth / 2, 178 - graph2.dataArray[i] * 0.65 - graph2.barWidth / 2);
-      graph2.ctx.stroke();
-    }
-    if (graph2.isEnabled)
+    graph2.ctx.fillRect(0, 0, graph2.canvasSize.width, graph2.canvasSize.height);
+    if (graph2.isEnabled){
+      graph2.analyser.getByteFrequencyData(graph2.dataArray);
+      const ay = graph2.canvasSize.height - graph2.barWidth / 2;
+      if (graph2.centered){
+        var kx, ky = ay / 2, dy;
+        for (var i = 0; i < graph2.buffLen; i++) {
+          kx = 4 + 2 * i * graph2.barWidth + graph2.barWidth / 2;
+          dy = graph2.dataArray[i] * 0.25;
+          graph2.ctx.beginPath();
+          graph2.ctx.moveTo(kx, ky + dy);
+          graph2.ctx.lineTo(kx, ky - dy);
+          graph2.ctx.stroke();
+        }
+      } else {
+        var kx, ky = ay, dy;
+        for (var i = 0; i < graph2.buffLen; i++) {
+          kx = 4 + 2 * i * graph2.barWidth + graph2.barWidth / 2;
+          dy = graph2.dataArray[i] * 0.5;
+          graph2.ctx.beginPath();
+          graph2.ctx.moveTo(kx, ky);
+          graph2.ctx.lineTo(kx, ky - dy);
+          graph2.ctx.stroke();
+        }
+      }
       requestAnimationFrame(graph2.draw);
+    }
   }
 
 }
@@ -192,9 +156,9 @@ const fsBuilder = {
       input.id = id;
       input.name = fs.name;
       input.value = val;
-      input.onchange = function(){
+      input.addEventListener('change', function(){
         options[opt] = val;
-      };
+      });
       let label = document.createElement('label');
       label.setAttribute("for", id);
       label.innerText = key;
@@ -267,7 +231,7 @@ const inputCtl = {
 
   init: function(){
     let fs = document.getElementById('fsi');
-    fs.onclick = this.toggleView;
+    fs.addEventListener(touchEvent, this.toggleView);
     this.fsi.replaceChildren();
     this.supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
     Object.keys(this.supportedConstraints).forEach((key) => {
@@ -303,7 +267,7 @@ const outputCtl = {
   summary: document.getElementById('fs-output-summary'),
   builtInContainers: [ "webm", "mp4" ],
   builtInCodecs: [ "opus", "pcm" ],
-  graph: { name: "graph", entries: { "off*": "false", "on": "true"} },
+  graph: { name: "graph", entries: { "off": "false", "on*": "true"} },
   audioBitsPerSecond: { name: "bitrate", entries: { "32k": "32000", "56k": "56000", "128k": "128000", "192k": "192000", "256k*": "256000", "320k": "320000", "512k": "512000" } },
   audioBitrateMode:   { name: "mode",    entries: { "cbr": "constant", "vbr*": "variable" } },
   cnt: { name: "extension", entries: { "webm": "webm", "mp4*": "mp4" } },
@@ -321,7 +285,7 @@ const outputCtl = {
     container: 'mp4',
     codec: 'opus',
     timer: "300000",
-    graph: "false"
+    graph: "true"
   },
 
   setDisabled: function(state){
@@ -359,7 +323,7 @@ const outputCtl = {
     if (useFFmpeg)
       this.registerEncoder("flac","flac");
     let fs = document.getElementById('fso');
-    fs.onclick = this.toggleView;
+    fs.addEventListener(touchEvent, this.toggleView);
     this.fsi.appendChild(fsBuilder.build("radio", this.audioBitsPerSecond, this.options, "audioBitsPerSecond"));
     this.fsi.appendChild(fsBuilder.build("radio", this.audioBitrateMode, this.options, "audioBitrateMode"));
     this.fsi.appendChild(fsBuilder.build("radio", this.cnt, this.options, "container"));
