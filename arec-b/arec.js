@@ -1,5 +1,3 @@
-import * as THREE from 'three';
-
 Number.prototype.strSI = function(unit, fixed=2, mul=1024){
   const sfx = ['', 'K', 'M', 'G', 'T'];
   let i = 0;
@@ -48,29 +46,33 @@ const graph = {
   }),
   mesh: '',
   init: function(stream){
+    this.container.replaceChildren();
     this.audio = new THREE.Audio( this.listener );
     this.context = this.listener.context;
     const source = this.context.createMediaStreamSource( stream );
     this.audio.setNodeSource( source );
     this.analyser = new THREE.AudioAnalyser( this.audio, this.fftSize );
+    let backColor = new THREE.Color(parseInt(document.body.style.backgroundColor.replace('#','0x')));
     this.material.uniforms = {
       iChannel0: { value: new THREE.DataTexture( this.analyser.data, this.fftSize / 2, 1, THREE.RedFormat ) },
       iTime: { value: 0.0 },
+      backgroundColor: { value: backColor }
     };
+    this.mesh = new THREE.Mesh( this.geometry, this.material );
     this.scene.add( this.mesh );
     this.renderer = new THREE.WebGLRenderer( { antialias: true } );
     //renderer.setPixelRatio( window.devicePixelRatio );
     // Square it!
     this.renderer.setPixelRatio( 1 );
-    this.renderer.setSize( this.container.innerWidth, this.container.innerHeight );
+    this.renderer.setSize( window.innerWidth, window.innerHeight * 0.15 );
     this.renderer.setAnimationLoop( this.animate );
     this.container.appendChild( this.renderer.domElement );
   },
   animate: function(){
-    this.analyser.getFrequencyData();
-    this.uniforms.iChannel0.value.needsUpdate = true;
-    this.uniforms.iTime.value += 0.005;
-    this.renderer.render( this.scene, this.camera );
+    graph.analyser.getFrequencyData();
+    graph.material.uniforms.iChannel0.value.needsUpdate = true;
+    graph.material.uniforms.iTime.value += 0.005;
+    graph.renderer.render( graph.scene, graph.camera );
   }
 }
 
@@ -380,7 +382,7 @@ function startStop(){
     stopRecording();
 }
 
-startRecording = async() => {
+async function startRecording(){
   inputCtl.collapse();
   inputCtl.setDisabled(true);
   outputCtl.collapse();
@@ -400,7 +402,7 @@ startRecording = async() => {
   
 }
 
-stopRecording = async() => {
+async function stopRecording(){
   // Stop the recording.
   recorder.stop();
   timer.stop();
@@ -410,6 +412,7 @@ stopRecording = async() => {
   }
   inputCtl.setDisabled(false);
   outputCtl.setDisabled(false);
+  graph.renderer.setAnimationLoop( null );
 }
 
 let stream;

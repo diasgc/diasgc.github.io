@@ -26,8 +26,9 @@
   <script id="fragmentShader" type="x-shader/x-fragment">
     			
     varying vec2 vUv;
+    uniform vec3 backgroundColor;
     uniform float iTime;
-    uniform float opacity;
+    uniform sampler2D iChannel0;
     uniform float freq; // 4000.0
     
     float getAmp(float f) { return texture(iChannel0, vec2(f / freq, 0)).x; }
@@ -40,11 +41,11 @@
       //vec2 uv = -1.0 + 2.0 * uvTrue;
       float lineIntensity;
       float glowWidth;
-      vec3 color = vec3(0.0);
+      vec3 color = backgroundColor;
         
       for(float i = 0.0; i < 5.0; i++) {
         uv.y += (0.05 * sin(uv.x + i/2.0 - iTime * 0.1));
-        float Y = uv.y*0.8 + getWeight(squared(i) * 8.0) * (texture(iChannel0, vec2(uvTrue.x, 1)).x - 0.5);
+        float Y = uv.y*0.8 + getWeight(pow(i, 2.0) * 8.0) * (texture(iChannel0, vec2(uvTrue.x, 1)).x - 0.5);
         lineIntensity = 0.1 + pow(1.6 * abs(mod(uvTrue.x + i / 1.3 + iTime,2.0) - 1.0), 2.0);
         glowWidth = abs(lineIntensity / (250.0 * Y));
         color += vec3(
@@ -53,9 +54,8 @@
           glowWidth * (2.0 + cos(iTime * 0.17))
         );
       }   
-      gl_FragColor = vec4(color, opacity);
+      gl_FragColor = vec4(color, 1.0);
     }
-  }
   </script>
 </head>
 <body>
@@ -81,14 +81,7 @@
       <span class="start-button"></span>
     </label>
   </div>
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.min.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.171.0/examples/jsm/"
-      }
-    }
-  </script>
-  <script type="module" src="arec.js?v=2412242300"></script>
+  <script src="three.min.js"></script>
+  <script src="arec.js?v=2412242300"></script>
 </body>
 </html>
