@@ -45,13 +45,10 @@ const graph = {
     fragmentShader: document.getElementById( 'fragmentShader' ).textContent
   }),
   mesh: '',
-  init: function(stream){
+  init: function(){
     this.container.replaceChildren();
     this.audio = new THREE.Audio( this.listener );
     this.context = this.listener.context;
-    const source = this.context.createMediaStreamSource( stream );
-    this.audio.setNodeSource( source );
-    this.analyser = new THREE.AudioAnalyser( this.audio, this.fftSize );
     let backColor = new THREE.Color(parseInt(document.body.style.backgroundColor.replace('#','0x')));
     this.material.uniforms = {
       iChannel0: { value: new THREE.DataTexture( this.analyser.data, this.fftSize / 2, 1, THREE.RedFormat ) },
@@ -65,8 +62,16 @@ const graph = {
     // Square it!
     this.renderer.setPixelRatio( 1 );
     this.renderer.setSize( window.innerWidth, window.innerHeight * 0.15 );
-    this.renderer.setAnimationLoop( this.animate );
     this.container.appendChild( this.renderer.domElement );
+  },
+  start: function(s){
+    let source = this.context.createMediaStreamSource( s );
+    this.audio.setNodeSource( source );
+    this.analyser = new THREE.AudioAnalyser( this.audio, this.fftSize );
+    this.renderer.setAnimationLoop( this.animate );
+  },
+  stop: function(){
+    this.renderer.setAnimationLoop( null );
   },
   animate: function(){
     graph.analyser.getFrequencyData();
@@ -390,9 +395,10 @@ async function startRecording(){
   session.audio = inputCtl.getOptions();
   stream = await navigator.mediaDevices.getUserMedia(session);
   lock = await navigator.wakeLock.request('screen');
-  graph.init(stream);
+  
   recorder = new MediaRecorder(stream, outputCtl.getOptions());
   recorder.start(dataManager.chunkTimeout);
+  graph.start(stream);
   recorder.addEventListener("dataavailable", async (event) => {
     dataManager.add(event.data);
     if (recorder.state === "inactive")
@@ -412,7 +418,7 @@ async function stopRecording(){
   }
   inputCtl.setDisabled(false);
   outputCtl.setDisabled(false);
-  graph.renderer.setAnimationLoop( null );
+  graph.stop();
 }
 
 let stream;
@@ -423,7 +429,7 @@ let lock;
 rmic();
 inputCtl.init();
 outputCtl.init();
-
+graph.init();
 
 
 
