@@ -86,6 +86,55 @@ const graph = {
   }
 }
 
+const graph2 = {
+  container: document.getElementById('graph'),
+  fftSize: 256,
+  ctx: '',
+  audioContext: '',
+  src: '',
+  analyser: '',
+  init: function(){
+    let canvas = document.createElement("canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight * 0.18;
+    this.ctx = canvas.getContext("2d");
+    const body = window.getComputedStyle(document.body, null);
+    this.ctx.fillStyle = body.backgroundColor;
+    this.ctx.strokeStyle = body.color;
+    this.ctx.lineCap = "round";
+    this.container.appendChild(canvas);
+  },
+  start: function(stream){
+    this.audioContext = new(window.AudioContext || window.webkitAudioContext);
+    const source = this.audioContext.createMediaStreamSource(stream);
+    this.analyser = this.audioContext.createAnalyser();
+    source.connect(this.analyser);
+    this.analyser.fftSize = 256;
+    this.buffLen = this.analyser.frequencyBinCount;
+    this.dataArray = new Uint8Array(this.buffLen);
+    this.barWidth = (500 - 2 * this.buffLen - 4) / this.buffLen * 2.5;
+    this.ctx.lineWidth = graph2.barWidth;
+    this.isEnabled = true;
+    this.draw();
+  },
+  stop: function(){
+    graph2.isEnabled = false;
+  },
+  draw: function(){
+    graph2.ctx.fillRect(0, 0, 500, 180);
+    graph2.analyser.getByteFrequencyData(graph2.dataArray);
+    for (var i = 0; i < graph2.buffLen; i++) {
+      graph2.ctx.beginPath();
+      graph2.ctx.moveTo(4 + 2 * i * graph2.barWidth + graph2.barWidth / 2, 178 - graph2.barWidth / 2);
+      graph2.ctx.lineTo(4 + 2 * i * graph2.barWidth + graph2.barWidth / 2, 178 - graph2.dataArray[i] * 0.65 - graph2.barWidth / 2);
+      graph2.ctx.stroke();
+    }
+    if (graph2.isEnabled)
+      requestAnimationFrame(graph2.draw);
+  }
+
+}
+
 const timer = {
   id: document.getElementById('timer'),
   startTime: 0,
@@ -407,7 +456,7 @@ async function startRecording(){
   recorder = new MediaRecorder(stream, outputCtl.getOptions());
   recorder.start(dataManager.chunkTimeout);
   if (outputCtl.options.graph === 'true')
-    graph.start(stream);
+    graph2.start(stream);
   recorder.addEventListener("dataavailable", async (event) => {
     dataManager.add(event.data);
     if (recorder.state === "inactive")
@@ -428,7 +477,7 @@ async function stopRecording(){
   inputCtl.setDisabled(false);
   outputCtl.setDisabled(false);
   if (outputCtl.options.graph === 'true')
-    graph.stop();
+    graph2.stop();
 }
 
 let stream;
@@ -439,7 +488,7 @@ let lock;
 rmic();
 inputCtl.init();
 outputCtl.init();
-graph.init();
+graph2.init();
 
 
 
