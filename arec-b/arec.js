@@ -1,3 +1,5 @@
+import * as threeJs from 'https://esm.run/three-js';
+
 Number.prototype.strSI = function(unit, fixed=2, mul=1024){
   const sfx = ['', 'K', 'M', 'G', 'T'];
   let i = 0;
@@ -21,6 +23,49 @@ const logger = {
   },
   addSize: function(size){
     this.dataSize += size;
+  }
+}
+
+const graph = {
+  container: document.getElementById('graph'),
+  fftSize: 128,
+  scene: new THREE.Scene(),
+  camera: new THREE.OrthographicCamera( - 1, 1, 1, - 1, 0, 1 ),
+  geometry: new THREE.PlaneGeometry( 2, 2 ),
+  listener: new THREE.AudioListener(),
+  audio: '',
+  context: '',
+  analyser: '',
+  material: new THREE.ShaderMaterial( {
+    uniforms: '',
+    vertexShader: document.getElementById( 'vertexShader' ).textContent,
+    fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+  }),
+  mesh: '',
+  init: function(stream){
+    this.audio = new THREE.Audio( this.listener );
+    this.context = this.listener.context;
+    const source = this.context.createMediaStreamSource( stream );
+    this.audio.setNodeSource( source );
+    this.analyser = new THREE.AudioAnalyser( this.audio, this.fftSize );
+    this.material.uniforms = {
+      iChannel0: { value: new THREE.DataTexture( this.analyser.data, this.fftSize / 2, 1, THREE.RedFormat ) },
+      iTime: { value: 0.0 },
+    };
+    this.scene.add( this.mesh );
+    this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+    //renderer.setPixelRatio( window.devicePixelRatio );
+    // Square it!
+    this.renderer.setPixelRatio( 1 );
+    this.renderer.setSize( this.container.innerWidth, this.container.innerHeight );
+    this.renderer.setAnimationLoop( this.animate );
+    this.container.appendChild( this.renderer.domElement );
+  },
+  animate: function(){
+    this.analyser.getFrequencyData();
+    this.uniforms.iChannel0.value.needsUpdate = true;
+    this.uniforms.iTime.value += 0.005;
+    this.renderer.render( this.scene, this.camera );
   }
 }
 
@@ -338,6 +383,7 @@ startRecording = async() => {
   session.audio = inputCtl.getOptions();
   stream = await navigator.mediaDevices.getUserMedia(session);
   lock = await navigator.wakeLock.request('screen');
+  graph.init(stream);
   recorder = new MediaRecorder(stream, outputCtl.getOptions());
   recorder.start(dataManager.chunkTimeout);
   recorder.addEventListener("dataavailable", async (event) => {

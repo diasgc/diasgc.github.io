@@ -27,9 +27,15 @@ body {
 }
 
 #timer {
-  height: 28dvh;
+  height: 18dvh;
   font-size: 4rem;
   font-weight: 100;
+  align-items: flex-end;
+  text-align: center;
+}
+
+#graph {
+  height: 18dvh;
   align-items: center;
   text-align: center;
 }
@@ -76,7 +82,7 @@ pre {
   font-size: 13px;
   font-weight: 600;
   color: var(--accent);
-  padding: 12px;
+  padding: 4px;
 }
 
 .fs-mic,
@@ -86,7 +92,7 @@ pre {
   display: inline;
   border: 1px solid #8884;
   border-radius: 12px;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--accent);
   margin: 4px;
@@ -130,17 +136,19 @@ pre {
   padding: 4px 5px;
   margin: 8;
   font-size: 13px;
-  font-weight: 00;
+  font-weight: 600;
 }
 
 .fs-setup-d {
   border: none;
   font-size: 8px;
+  padding: 2px;
+  margin: 0;
 }
 
 .fs-setup-d label{
   display: none;
-  padding: 4px 0px;
+  padding: 0;
   margin: 0;
 }
 
@@ -154,8 +162,6 @@ pre {
   display: inline-block;
   margin: 0;
   color: var(--accent);
-  font-size: 12px;
-  font-weight: 400;
 }
 
 .fs-mic input[type="radio"]:checked + label {
