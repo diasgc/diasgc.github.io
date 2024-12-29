@@ -29,17 +29,19 @@ class GlCanvas {
     return this.loadCode(vertexCode, fragmentCode);
   }
 
-  fromAssets(vertexPath, fragmentPath){
+  loadAssets(vertexPath, fragmentPath, callback){
     let vertexCode;
     if (vertexPath === null){
       vertexCode = this.defaultVertex; //"attribute vec2 position;\nvoid main() {\n gl_Position = vec4(position, 0.0, 1.0);\n}";
       this.loadAsset(fragmentPath, fragmentCode => {
         this.loadCode(vertexCode, fragmentCode);
+        callback(this);
       });
     } else {
       this.loadAsset(vertexPath, vertexCode => {
         this.loadAsset(fragmentPath, fragmentCode => {
           this.loadCode(vertexCode, fragmentCode);
+          callback(this);
         })
       });
     }
@@ -171,7 +173,6 @@ function squareit(i){
 let webGl;
 
 function startup() {
-  webGl = new GlCanvas('gl-canvas')
-    .fromAssets(null,'toy-MddGWN.frag');
-  webGl.start();
+  webGl = new GlCanvas('gl-canvas');
+  webGl.loadAssets(null,'toy-MddGWN.frag', gl => gl.start());
 }
