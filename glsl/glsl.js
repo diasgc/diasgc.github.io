@@ -4,10 +4,16 @@ class GlCanvas {
     this.options = options || {
       square: false
     };
+    this.defaultVertex = `
+      attribute vec2 position;
+      void main() {
+        gl_Position = vec4(position, 0.0, 1.0);
+      }
+    `;
     this.glCanvas = id ? document.getElementById(id) : document.createElement('canvas');
     this.gl = this.glCanvas.getContext("webgl");
     this.glCanvas.addEventListener('mousemove', (e) => {
-      this.mousepos = [ e.offsetX/this.glCanvas.width, e.offsetY/this.glCanvas.height, 0];
+      this.mousepos = [ e.offsetX/this.glCanvas.width, e.offsetY/this.glCanvas.height, e.button];
     });
     //this.glCanvas.addEventListener('touchmove', (e) => {
     //  this.mousepos = [ e.offsetX/this.glCanvas.width, e.offsetY/this.glCanvas.height, 0];
@@ -21,6 +27,30 @@ class GlCanvas {
     let vertexCode = vertexId ? document.getElementById(vertexId).firstChild.nodeValue : null;
     let fragmentCode = document.getElementById(fragmentId).firstChild.nodeValue;
     return this.loadCode(vertexCode, fragmentCode);
+  }
+
+  fromAssets(vertexPath, fragmentPath){
+    let vertexCode;
+    if (vertexPath === null){
+      vertexCode = this.defaultVertex; //"attribute vec2 position;\nvoid main() {\n gl_Position = vec4(position, 0.0, 1.0);\n}";
+      this.loadAsset(fragmentPath, fragmentCode => {
+        this.loadCode(vertexCode, fragmentCode);
+      });
+    } else {
+      this.loadAsset(vertexPath, vertexCode => {
+        this.loadAsset(fragmentPath, fragmentCode => {
+          this.loadCode(vertexCode, fragmentCode);
+        })
+      });
+    }
+  }
+
+  loadAsset(path, callback){
+    if (!path.match("shaders/"))
+      path = "./shaders/" + path;
+    fetch(path)
+      .then((response) => response.text())
+      .then((text) => callback(text));
   }
 
   loadCode(vertexCode, fragmentCode){
@@ -141,13 +171,7 @@ function squareit(i){
 let webGl;
 
 function startup() {
-  webGl = new GlCanvas('gl-canvas');
-  fetch("./shaders/toy-MddGWN.frag")
-    .then((response) => response.text())
-    .then((text) => {
-      webGl.loadCode(null, text);
-      webGl.start();
-    });
-  //.loadByIds(null, 'f2');
-  
+  webGl = new GlCanvas('gl-canvas')
+    .fromAssets(null,'toy-MddGWN.frag');
+  webGl.start();
 }
