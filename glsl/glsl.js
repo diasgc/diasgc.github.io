@@ -143,11 +143,11 @@ let webGl;
 function startup() {
   webGl = new GlCanvas('gl-canvas');
   fetch("./shaders/toy-MddGWN.frag")
-    .then(response => {
-      webGl.loadCode(null, response);
+    .then((response) => response.text())
+    .then((text) => {
+      webGl.loadCode(null, text);
       webGl.start();
     });
-  
   //.loadByIds(null, 'f2');
   
 }
