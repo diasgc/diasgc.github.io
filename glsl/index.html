@@ -14,21 +14,6 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎙️</text></svg>"/>
   <link rel="stylesheet" href="glsl.css">
   
-  <script id="vertexShader" type="x-shader/x-vertex">
-    /*
-    varying vec2 vUv;
-    void main() {
-      vUv = uv;
-      gl_Position = vec4( position, 1.0 );
-    }
-    */
-    
-    attribute vec2 position;
-
-    void main() {
-        gl_Position = vec4(position, 0.0, 1.0);
-    }
-  </script>
   <script id="fragmentShader" type="x-shader/x-fragment">
     #ifdef GL_ES
       precision highp float;
@@ -50,7 +35,10 @@
   </script>
 </head>
 <body>
-  <canvas id="gl-canvas" width="600" height="460"></canvas>  
+  <canvas id="gl-canvas" width="600" height="460"></canvas>
+  <div id="fs">
+    <input id="square" type="checkbox" onchange="squareit(this)"><label for="square">square</label>
+  </div>
   <script src="glsl.js?v=2412291200"></script>
 </body>
 </html>

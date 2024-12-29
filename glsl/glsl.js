@@ -1,12 +1,27 @@
 class GlCanvas {
 
-  constructor(id, vertexId, fragmentId){
-    
+  constructor(id, options){
+    this.options = options || {
+      square: false
+    };
     this.glCanvas = id ? document.getElementById(id) : document.createElement('canvas');
     this.gl = this.glCanvas.getContext("webgl");
     this.bufObj = {};
     this.mousepos = [0,0];
-    this.loadProgram(vertexId, fragmentId, program => this.init(program));
+    return this;
+  }
+
+  loadByIds(vertexId, fragmentId){
+    let vertexCode = vertexId ? document.getElementById(vertexId).firstChild.nodeValue : null;
+    let fragmentCode = document.getElementById(fragmentId).firstChild.nodeValue;
+    return this.loadCode(vertexCode, fragmentCode);
+  }
+
+  loadCode(vertexCode, fragmentCode){
+    if (vertexCode === null)
+      vertexCode = "attribute vec2 position;\nvoid main() {\n gl_Position = vec4(position, 0.0, 1.0);\n}";
+    this.loadProgram(vertexCode, fragmentCode, program => this.init(program));
+    return this;
   }
 
   init(program){
@@ -19,7 +34,7 @@ class GlCanvas {
 
     var pos = [ -1, -1, 1, -1, 1, 1, -1, 1 ];
     var inx = [ 0, 1, 2, 0, 2, 3 ];
-    
+
     let bufObj = {};
     bufObj.pos = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, bufObj.pos );
@@ -69,15 +84,23 @@ class GlCanvas {
   }
 
   resize(){
-    this.glCanvas.width = window.innerWidth;
-    this.glCanvas.height = window.innerHeight;
+    let w, h;
+    if (this.options.square){
+      w = Math.min(window.innerWidth, window.innerHeight);
+      h = w;
+    } else {
+      w = window.innerWidth;
+      h = window.innerHeight;
+    }
+    this.glCanvas.width = w;
+    this.glCanvas.height = h;
   }
 
-  loadProgram(vertexId, fragmentId, callback){
+  loadProgram(vertexCode, fragmentCode, callback){
     const program = this.gl.createProgram();
-    if (this.compileShader(vertexId, this.gl.VERTEX_SHADER,
+    if (this.compileShader(this.gl.VERTEX_SHADER, vertexCode,
         shader => this.gl.attachShader(program, shader))
-      && this.compileShader(fragmentId, this.gl.FRAGMENT_SHADER,
+      && this.compileShader(this.gl.FRAGMENT_SHADER, fragmentCode,
         shader => this.gl.attachShader(program, shader))){
           this.gl.linkProgram(program);
           if (this.gl.getProgramParameter(program, this.gl.LINK_STATUS)) {
@@ -89,13 +112,10 @@ class GlCanvas {
     return false;
   }
 
-  compileShader(id, type, callback){
-    const code = document.getElementById(id).firstChild.nodeValue;
+  compileShader(type, code, callback){
     const shader = this.gl.createShader(type);
-  
     this.gl.shaderSource(shader, code);
     this.gl.compileShader(shader);
-  
     if (this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
       callback(shader);
       return true;
@@ -107,8 +127,14 @@ class GlCanvas {
 
 window.addEventListener("load", startup, false);
 
+function squareit(i){
+  webGl.options.square = i.checked;
+  webGl.resize();
+}
+
+let webGl;
 
 function startup() {
-  const webGl = new GlCanvas('gl-canvas', 'vertexShader', 'fragmentShader');
+  webGl = new GlCanvas('gl-canvas').loadByIds(null, 'fragmentShader');
   webGl.start();
 }

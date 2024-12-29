@@ -21,3 +21,29 @@ body {
   color: var(--main-fg);
   accent-color: var(--accent);
 }
+
+canvas {
+  z-index: 0;
+}
+
+#fs input[type="checkbox"] {
+  display: none;
+}
+
+#fs label {
+  position: absolute;
+  display: inline;
+  top: 12px;
+  margin: 12px;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  background: #8882;
+  z-index: 1;
+}
+
+#fs input[type="checkbox"]:checked + label {
+  background: #0b08;
+}
