@@ -30,6 +30,17 @@ let currentAngle;
 let previousTime = 0.0;
 let degreesPerSecond = 90.0;
 
+class GlCanvas {
+
+  constructor(id, vertexId, fragmentId){
+    this.glCanvas = id ? document.getElementById(id) : document.createElement('canvas');
+    this.gl = glCanvas.getContext("webgl");
+    this.shaderSet = [
+        { type: gl.VERTEX_SHADER,   id: vertexId },
+        { type: gl.FRAGMENT_SHADER, id: fragmentId },
+      ];
+    }
+  }
 
 window.addEventListener("load", startup, false);
 
@@ -42,7 +53,7 @@ function startup() {
       type: gl.VERTEX_SHADER,
       id: "vertexShader",
     },
-    {
+    { 
       type: gl.FRAGMENT_SHADER,
       id: "fragmentShader",
     },
