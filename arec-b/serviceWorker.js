@@ -1,9 +1,9 @@
 const staticAudioRecorder = "static-audiorecorder2"
 const assets = [
-  "/",
-  "/index.html",
-  "/arec.css",
-  "/arec.js"
+  "/arec-b/",
+  "/arec-b/index.html",
+  "/arec-b/arec.css",
+  "/arec-b/arec.js"
 ]
 
 self.addEventListener("install", installEvent => {
