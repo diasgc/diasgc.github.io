@@ -120,6 +120,13 @@ const DataReader = {
   getIntBits: function(bits, offset=this.offset, le=this.le){
     return this.getIntBytes((bits/8) & 0xff, offset, le);
   },
+  getBits: function(from, to, offset=this.offset, le=this.le){
+    let bits = to - from;
+    let byteFrom = (from / 8) & 0xff;
+    let byteTo = (to / 8) & 0xff; 
+    let v = this.getUIntBytes(byteTo - byteFrom + 1, offset + byteFrom, le);
+    return (v >> (from % 8)) & (Math.pow(2, bits) - 1);
+  },
   getFP80: function(offset=this.offset, le=this.le){
     // todo: implement this
     // as in https://moocaholic.medium.com/fp64-fp32-fp16-bfloat16-tf32-and-other-members-of-the-zoo-a1ca7897d407
