@@ -61,12 +61,14 @@ const DataReader = {
   },
   getUInt24: function(offset=this.offset, le=this.le){
     //return this.getUIntBytes(3, offset, le);
+    offset = parseInt(offset);
     return le
     ? (this.source.getUint8(offset + 2) << 16) | (this.source.getUint16(offset,true))
     : (this.source.getUint8(offset) << 16) | (this.source.getUint16(offset + 1,false));
   },
   getInt24: function(offset=this.offset, le=this.le){
     //return this.getIntBytes(3, offset, le);
+    offset = parseInt(offset);
     return le
       ? (this.source.getInt8(offset + 2) << 16) | (this.source.getUint16(offset,true))
       : (this.source.getInt8(offset) << 16) | (this.source.getUint16(offset + 1,false));
