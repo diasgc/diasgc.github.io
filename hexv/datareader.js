@@ -60,10 +60,16 @@ const DataReader = {
     return this.source.getInt16(offset, le);
   },
   getUInt24: function(offset=this.offset, le=this.le){
-    return this.getUIntBytes(3, offset, le);
+    //return this.getUIntBytes(3, offset, le);
+    return le
+    ? (this.source.getUint8(offset + 2) << 16) | (this.source.getUint16(offset,true))
+    : (this.source.getUint8(offset) << 16) | (this.source.getUint16(offset + 1,false));
   },
   getInt24: function(offset=this.offset, le=this.le){
-    return this.getIntBytes(3, offset, le);
+    //return this.getIntBytes(3, offset, le);
+    return le
+      ? (this.source.getInt8(offset + 2) << 16) | (this.source.getUint16(offset,true))
+      : (this.source.getInt8(offset) << 16) | (this.source.getUint16(offset + 1,false));
   },
   getUInt32: function(offset=this.offset, le=this.le){
     return this.source.getUint32(offset, le);
