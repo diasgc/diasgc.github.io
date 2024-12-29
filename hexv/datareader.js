@@ -61,6 +61,8 @@ const DataReader = {
   },
   getUInt24: function(offset=this.offset, le=this.le){
     //return this.getUIntBytes(3, offset, le);
+    let o1 = offset + (le ? 2 : 0), o2 = offset + (le ? 0 : 1);
+    return (this.source.getUint8(o1) << 16) | this.source.getUint16(o2,true);
     return le
     ? (this.source.getUint8((offset + 2)) << 16) | (this.source.getUint16(offset,true))
     : (this.source.getUint8(offset) << 16) | (this.source.getUint16((offset + 1),false));
