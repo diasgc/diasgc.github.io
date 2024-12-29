@@ -165,8 +165,8 @@ const hexv_info = {
       len = 3;
       isRgb = true;
       val = this.optU.checked
-        ? hex_data.getUInt24(parseInt(hex_selected), this.optLE.checked)
-        : hex_data.getInt24(parseInt(hex_selected), this.optLE.checked);
+        ? hex_data.getUInt24(hex_selected, this.optLE.checked)
+        : hex_data.getInt24(hex_selected, this.optLE.checked);
     } else if (this.opt32b.checked){
       len = 4;
       isRgb = true;
