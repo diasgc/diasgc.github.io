@@ -6,8 +6,14 @@ class GlCanvas {
     };
     this.glCanvas = id ? document.getElementById(id) : document.createElement('canvas');
     this.gl = this.glCanvas.getContext("webgl");
+    this.glCanvas.addEventListener('mousemove', (e) => {
+      this.mousepos = [ e.offsetX/this.glCanvas.width, e.offsetY/this.glCanvas.height, 0];
+    });
+    //this.glCanvas.addEventListener('touchmove', (e) => {
+    //  this.mousepos = [ e.offsetX/this.glCanvas.width, e.offsetY/this.glCanvas.height, 0];
+    //});
     this.bufObj = {};
-    this.mousepos = [0,0];
+    this.mousepos = [0,0,0];
     return this;
   }
 
@@ -67,7 +73,7 @@ class GlCanvas {
     const program = this.program;
     const bufObj = this.bufObj;
     const startTime = this.startTime;
-    const mousepos = [0,0];
+    const mousepos = this.mousepos;
     
     function frame(){
       gl.viewport( 0, 0, glCanvas.width, glCanvas.height );
@@ -75,7 +81,7 @@ class GlCanvas {
      
       gl.uniform1f(program.iTime, (Date.now() - startTime)/1000.0);
       gl.uniform2f(program.iResolution, glCanvas.width, glCanvas.height);
-      gl.uniform2f(program.iMouse, mousepos[0], mousepos[1]);
+      gl.uniform3f(program.iMouse, mousepos[0], mousepos[1], mousepos[2]);
       gl.drawElements( gl.TRIANGLES, bufObj.inx.len, gl.UNSIGNED_SHORT, 0 );
       requestAnimationFrame(frame);
     }
@@ -120,7 +126,7 @@ class GlCanvas {
       callback(shader);
       return true;
     }
-    console.log(`error compiling ${id}: ${this.gl.getShaderInfoLog(shader)}`);
+    console.log(`error compiling ${type}: ${this.gl.getShaderInfoLog(shader)}`);
     return false;
   }
 }
@@ -135,6 +141,13 @@ function squareit(i){
 let webGl;
 
 function startup() {
-  webGl = new GlCanvas('gl-canvas').loadByIds(null, 'fragmentShader');
-  webGl.start();
+  webGl = new GlCanvas('gl-canvas');
+  fetch("./shaders/toy-MddGWN.frag")
+    .then(response => {
+      webGl.loadCode(null, response);
+      webGl.start();
+    });
+  
+  //.loadByIds(null, 'f2');
+  
 }
