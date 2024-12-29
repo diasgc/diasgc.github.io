@@ -23,19 +23,10 @@
     }
     */
     
-    attribute vec2 aVertexPosition;
-    uniform vec2 uScalingFactor;
-    uniform vec2 uRotationVector;
-  
+    attribute vec2 position;
+
     void main() {
-      vec2 rotatedPosition = vec2(
-        aVertexPosition.x * uRotationVector.y +
-              aVertexPosition.y * uRotationVector.x,
-        aVertexPosition.y * uRotationVector.y -
-              aVertexPosition.x * uRotationVector.x
-      );
-  
-      gl_Position = vec4(rotatedPosition * uScalingFactor, 0.0, 1.0);
+        gl_Position = vec4(position, 0.0, 1.0);
     }
   </script>
   <script id="fragmentShader" type="x-shader/x-fragment">
@@ -43,10 +34,18 @@
       precision highp float;
     #endif
 
-    uniform vec4 uGlobalColor;
+    uniform vec2 iResolution;
+    uniform vec2 iMouse;
+    uniform float iTime;
+
+    // shaderToy style:
+    void mainImage(out vec4 fragColor, in vec2 fragCoord){
+        vec2 uv = fragCoord.xy / iResolution.xy;
+        fragColor = vec4(uv.x * cos(iTime), uv.y * sin(iTime), uv.x * uv.y, 1.0);
+    }
 
     void main() {
-      gl_FragColor = uGlobalColor;
+        mainImage( gl_FragColor, gl_FragCoord.xy );
     }
   </script>
 </head>
