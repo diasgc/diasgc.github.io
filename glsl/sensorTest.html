@@ -17,6 +17,10 @@
 <body>
   <div id='support' class='info'></div>
   <script>
+    let key = 'gyroscope';
+    window.addEventListener("devicemotion", function(event){
+      console.log(`alpha: ${event.rotationRate.alpha}, beta: ${event.rotationRate.beta}, gamma: ${event.rotationRate.gamma}`);
+    });
     let d = document.getElementById('support');
     d.innerText = `accelerometer: ${window.accelerometer}, gyroscope: ${window.gyroscope}, magnetometer: ${window.magnetometer}`;
   </script>

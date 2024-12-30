@@ -111,9 +111,9 @@ class GlCanvas {
     if (this.fragmentCode.match('iGyroscope')){
       this.requestPermission('gyroscope', () => {
         program.iGyroscope = gl.getUniformLocation(program, "iGyroscope");
-        this.gyroscope = new Gyroscope({ frequency: 60 });
-        this.gyroscope.addEventListener("reading", (e) => {
-          this.gyroscope.data = [ this.gyroscope.x, this.gyroscope.y, this.gyroscope.z ];
+        this.gyroscope = {};
+        window.addEventListener("devicemotion", function(event){
+          this.gyroscope.data = [ event.rotationRate.alpha / 360.0, (180.0 + event.rotationRate.beta) / 360.0, (90.0 + event.rotationRate.gamma)/ 180.0 ];
         });
       });
     }
@@ -157,9 +157,9 @@ class GlCanvas {
 
   start(){
     this.startTime = Date.now();
-    if (this.accelerometer) this.accelerometer.start();
-    if (this.gyroscope) this.gyroscope.start();
-    if (this.magnetometer) this.magnetometer.start();
+    //if (this.accelerometer) this.accelerometer.start();
+    //if (this.gyroscope) this.gyroscope.start();
+    //if (this.magnetometer) this.magnetometer.start();
     this.loop = true;
     this.render();
   }
@@ -247,6 +247,6 @@ let webGl;
 
 function startup() {
   webGl = new GlCanvas('gl-canvas');
-  webGl.loadAssets(null,'toy-MddGWN.frag', gl => gl.start());
-  //webGl.loadAssets(null,'toy-gyro.frag', gl => gl.start());
+  //webGl.loadAssets(null,'toy-MddGWN.frag', gl => gl.start());
+  webGl.loadAssets(null,'toy-gyro.frag', gl => gl.start());
 }
