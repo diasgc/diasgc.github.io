@@ -13,18 +13,18 @@ uniform float iTime;
 uniform vec3  iGyroscope;
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
-  float t = iTime + 5.;
+  float t = iTime+5.;
   float z = 6.;
 
   const int n = 100; // particle count
     
-  vec3 startColor = vec3(0,0.64,0.2);
+  vec3 startColor = iGyroscope;
   vec3 endColor = vec3(0.06,0.35,0.85);
     
-  float startRadius = 0.84 * iGyroscope.x;
-  float endRadius = 1.6 * iGyroscope.y;
+  float startRadius = 0.84;
+  float endRadius = 1.6;
     
-  float power = 0.51 * iGyroscope.z;
+  float power = 0.51;
   float duration = 4.;
     
   vec2 s = iResolution.xy;
