@@ -19,12 +19,12 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
   const int n = 100; // particle count
     
   vec3 startColor = iOrientation;
-  vec3 endColor = vec3(0.06,0.35,0.85);
+  vec3 endColor = vec3(0.06,0.35,0.85) * iAccelerometer;
     
   float startRadius = 0.84;
   float endRadius = 1.6;
     
-  float power = 0.51 + iAccelerometer.x * 0.05;
+  float power = 0.51;
   float duration = 10.;
     
   vec2 s = iResolution.xy;
@@ -39,7 +39,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
   // duration = iMouse.x * 10.;
   
   vec3 col = vec3(0.);
-  vec2 pm = v.yx * iAccelerometer.xy;
+  vec2 pm = v.yx * 2.8;
   float dMax = duration;
   float evo = (sin(iTime*.01 + 400.) * .5 + .5) * 99. + 1.;
   float mb = 0.;
