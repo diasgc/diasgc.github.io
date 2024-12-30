@@ -8,54 +8,43 @@
   <style>
     body {
       font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      height:100%; 
+      min-height: 100%;
     }
-    .info {
-      border: 0;
-      border-radius: 12px;
-      background: #8884;
-      margin: 12px;
-      padding: 12px;
-    }
-    #fs-sensor {
-      font-size: 10px;
-      border-radius: 12px;
-      border: 1px solid #8882;
-      margin: 8px;
-      padding: 8px;
-      text-align: center;
-    }
-
-    #fs-sensor input[type='submit'] {
-      display: none;
-    }
-
-    #fs-sensor label {
-      font-size: 14px;
+    #fragCode {
+      position: absolute;
+      display: block;
+      width: calc(100dvw - 36px);
+      height: calc(100dvh - 36px);
+      font-family: monospace;
       font-weight: 600;
-      background: #8864;
+      font-size: 16px;
+      padding: 12px;
+      margin: 12px;
+      border: 1px solid #8888;
+      background: #8882;
+      border-radius: 12px;
+      resize: none;
     }
 
   </style>
 </head>
 <body>
-  <fieldset id="fs-sensor"><legend>Sensor</legend>
-    <input type="submit" id="isensor" name="isensor"/><label for="isensor"></label>
-    <select id="isensor-select">
-      <option value="Accelerometer">Accelerometer</option>
-      <option value="Gyroscope">Gyroscope</option>
-      <option value="Magnetometer">Magnetometer</option>
-    </select>
-  </fieldset>
-  <div id='support' class='info'></div>
-  <script>
-    let d = document.getElementById('support');
-    if ( 'Gyroscope' in window ) {
-      let sensor = new Gyroscope();
-      sensor.addEventListener('reading', function(e) {
-        d.innerHTML = 'x: ' + e.target.x.fixed(4) + ' y: ' + e.target.y.fixed(4) + ' z: ' + e.target.z.fixed(4);
-      });
-      sensor.start();
+  <textarea id="fragCode">
+    #ifdef GL_ES
+      precision highp float;
+    #endif
+
+    uniform vec2  iResolution;
+    uniform vec3  iAccelerometer;
+    uniform float iTime;
+    uniform vec3  iOrientation;
+
+    void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
+      vec3 col = (0.0, 0.0, 0.0);
+      fragColor = vec4(col,1.0);
     }
-  </script>
+  </textarea>
 </body>
 </html>

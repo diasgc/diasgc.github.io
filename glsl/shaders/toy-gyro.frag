@@ -29,15 +29,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     
   vec2 s = iResolution.xy;
   vec2 v = z*(2.*fragCoord.xy-s)/s.y;
-  
-  // Mouse axis y => zoom
-  // v *= iAccelerometer.y * 20.;
-  // v *= iMouse.y * 20.;
-  
-  // Mouse axis x => duration
-  // duration = iAccelerometer.x * 10.;
-  // duration = iMouse.x * 10.;
-  
+    
   vec3 col = vec3(0.);
   vec2 pm = v.yx * 2.8;
   float dMax = duration;
