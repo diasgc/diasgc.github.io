@@ -184,7 +184,7 @@ class GlCanvas {
       gl.uniform2f(program.iResolution, glCanvas.width, glCanvas.height);
       gl.uniform3f(program.iMouse, mousepos[0], mousepos[1], mousepos[2]);
       if (accl) gl.uniform3f(program.iAccelerometer, accl.data[0], accl.data[1], accl.data[2]);
-      if (gyro) gl.uniform3f(program.iGyroscope, program.gyro.data[0], program.gyro.data[1], program.gyro.data[2]);
+      if (program.gyro) gl.uniform3f(program.iGyroscope, program.gyro.data[0], program.gyro.data[1], program.gyro.data[2]);
       if (magn) gl.uniform3f(program.iMagnetometer, magn.data[0], magn.data[1], magn.data[2]);
       gl.drawElements( gl.TRIANGLES, bufObj.inx.len, gl.UNSIGNED_SHORT, 0 );
       if (keepRunning)
