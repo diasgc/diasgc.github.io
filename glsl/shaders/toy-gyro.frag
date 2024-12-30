@@ -24,8 +24,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
   float startRadius = 0.84;
   float endRadius = 1.6;
     
-  float power = 0.51 + iAccelerometer.x / 2.0;
-  float duration = 4.;
+  float power = 0.51 + iAccelerometer.x * 0.05;
+  float duration = 10.;
     
   vec2 s = iResolution.xy;
   vec2 v = z*(2.*fragCoord.xy-s)/s.y;
@@ -39,9 +39,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
   // duration = iMouse.x * 10.;
   
   vec3 col = vec3(0.);
-  vec2 pm = v.yx*2.8;
+  vec2 pm = v.yx * iAccelerometer.xy;
   float dMax = duration;
-  float evo = (sin(iTime*.01+400.)*.5+.5)*99.+1.;
+  float evo = (sin(iTime*.01 + 400.) * .5 + .5) * 99. + 1.;
   float mb = 0.;
   float mbRadius = 0.;
   float sum = 0.;
