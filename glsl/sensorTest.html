@@ -16,11 +16,21 @@
   </style>
 </head>
 <body>
+  <label for="sensorChoice">Choose a Sensor:</label>
+  <input list="sensor-list" id="sensor-input" name="sensor-input" />
+
+  <datalist id="sensor-list">
+    <option value="Accelerometer"></option>
+    <option value="Gyroscope"></option>
+    <option value="Magnetometer"></option>
+    <option value="Strawberry"></option>
+    <option value="Vanilla"></option>
+  </datalist>
   <div id='support' class='info'></div>
   <script>
     let d = document.getElementById('support');
-    if ( 'Gyroscope' in window ) {
-      let sensor = new Gyroscope();
+    if ( 'Magnetometer' in window ) {
+      let sensor = new Magnetometer();
       sensor.addEventListener('reading', function(e) {
         d.innerHTML = 'x: ' + e.target.x + ' y: ' + e.target.y + ' z: ' + e.target.z;
       });

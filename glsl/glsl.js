@@ -108,11 +108,18 @@ class GlCanvas {
       });
     }
 
+    if (this.fragmentCode.match('iGyroscopeOld')){
+        program.iGyroscopeOld = gl.getUniformLocation(program, "iGyroscope");
+        program.gyroDataOld = [0,0,0];
+        window.addEventListener("devicemotion", function(event){
+          program.gyroDataOld = [ event.rotationRate.alpha / 360.0, (180.0 + event.rotationRate.beta) / 360.0, (90.0 + event.rotationRate.gamma)/ 180.0 ];
+        });
+    }
     if (this.fragmentCode.match('iGyroscope')){
-      program.iGyroscope = gl.getUniformLocation(program, "iGyroscope");
-      program.gyroData = [0,0,0];
-      window.addEventListener("devicemotion", function(event){
-        program.gyroData = [ event.rotationRate.alpha / 360.0, (180.0 + event.rotationRate.beta) / 360.0, (90.0 + event.rotationRate.gamma)/ 180.0 ];
+      program.gyroscope = new Gyroscope();
+      program.gyroscope.data = [ 0, 0, 0 ];
+      program.gyroscope.addEventListener('reading', function(e) {
+        program.gyroscope.data = [ e.target.x, e.target.y, e.target.z ];
       });
     }
 
@@ -156,7 +163,7 @@ class GlCanvas {
   start(){
     this.startTime = Date.now();
     //if (this.accelerometer) this.accelerometer.start();
-    //if (this.gyroscope) this.gyroscope.start();
+    if (this.gyroscope) this.gyroscope.start();
     //if (this.magnetometer) this.magnetometer.start();
     this.loop = true;
     this.render();
@@ -180,7 +187,8 @@ class GlCanvas {
       gl.uniform1f(program.iTime, (Date.now() - startTime)/1000.0);
       gl.uniform2f(program.iResolution, glCanvas.width, glCanvas.height);
       gl.uniform3f(program.iMouse, mousepos[0], mousepos[1], mousepos[2]);
-      if (program.gyro) gl.uniform3f(program.iGyroscope, program.gyro.data[0], program.gyro.data[1], program.gyro.data[2]);
+      //if (program.gyro) gl.uniform3f(program.iGyroscope, program.gyro.data[0], program.gyro.data[1], program.gyro.data[2]);
+      if (program.gyroscope) gl.uniform3f(program.iGyroscope, program.gyroscope.data[0], program.gyroscope.data[1], program.gyroscope.data[2]);
       gl.drawElements( gl.TRIANGLES, bufObj.inx.len, gl.UNSIGNED_SHORT, 0 );
       if (keepRunning)
         requestAnimationFrame(frame);
