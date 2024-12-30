@@ -170,6 +170,7 @@ class GlCanvas {
   start(){
     this.startTime = Date.now();
     if (this.program.accelerometer) this.program.accelerometer.start();
+    if (this.program.orientation) this.program.orientation.start();
     if (this.program.gyroscope) this.program.gyroscope.start();
     if (this.program.magnetometer) this.program.magnetometer.start();
     this.loop = true;
@@ -179,6 +180,7 @@ class GlCanvas {
   stop(){
     this.loop = false;
     if (this.program.accelerometer) this.program.accelerometer.stop();
+    if (this.program.orientation) this.program.orientation.stop();
     if (this.program.gyroscope) this.program.gyroscope.stop();
     if (this.program.magnetometer) this.program.magnetometer.stop();
   }
