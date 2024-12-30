@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <style>
+    .info {
+      border: 0;
+      border-radius: 12px;
+      background: #8884;
+      margin: 12px;
+      padding: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div id='support' class='info'></div>
+  <script>
+    let d = document.getElementById('support');
+    d.innerText = `accelerometer: ${window.accelerometer}, gyroscope: ${window.gyroscope}, magnetometer: ${window.magnetometer}`;
+  </script>
+</body>
+</html>

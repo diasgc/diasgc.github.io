@@ -17,6 +17,12 @@ class GlCanvas {
     this.options = options || {
       square: false
     };
+    this.sensorSupport = {
+      accelerometer: window.accelerometer,
+      gyroscope: window.gyroscope,
+      magnetometer: window.magnetometer,
+      AmbientLightSensor: window.AmbientLightSensor
+    };
     this.defaultVertex = `
       attribute vec2 position;
       void main() {
@@ -30,6 +36,7 @@ class GlCanvas {
 
     this.bufObj = {};
     this.mousepos = [0,0,0];
+    this.loop = false;
     return this;
   }
 
@@ -68,8 +75,20 @@ class GlCanvas {
   loadCode(vertexCode, fragmentCode){
     if (vertexCode === null)
       vertexCode = "attribute vec2 position;\nvoid main() {\n gl_Position = vec4(position, 0.0, 1.0);\n}";
+    this.vertexCode = vertexCode;
+    this.fragmentCode = fragmentCode;
     this.loadProgram(vertexCode, fragmentCode, program => this.init(program));
     return this;
+  }
+
+  requestPermission(key, callback){
+    navigator.permissions.query({ name: key }).then((result) => {
+      if (result.state === "denied") {
+        console.log(`Permission to use ${key} is denied.`);
+      } else {
+        callback()
+      }
+    });
   }
 
   init(program){
@@ -78,6 +97,38 @@ class GlCanvas {
     program.iTime = gl.getUniformLocation(program, "iTime");
     program.iMouse = gl.getUniformLocation(program, "iMouse");
     program.iResolution = gl.getUniformLocation(program, "iResolution");
+    
+    if (this.fragmentCode.match('iAccelerometer')){
+      this.requestPermission('accelerometer', () => {
+        program.iAccelerometer = gl.getUniformLocation(program, "iAccelerometer");
+        this.accelerometer = new Accelerometer({ frequency: 60 });
+        this.accelerometer.addEventListener("reading", (e) => {
+          this.accelerometer.data = [ this.accelerometer.x, this.accelerometer.y, this.accelerometer.z ];
+        });
+      });
+    }
+
+    if (this.fragmentCode.match('iGyroscope')){
+      this.requestPermission('gyroscope', () => {
+        program.iGyroscope = gl.getUniformLocation(program, "iGyroscope");
+        this.gyroscope = new Gyroscope({ frequency: 60 });
+        this.gyroscope.addEventListener("reading", (e) => {
+          this.gyroscope.data = [ this.gyroscope.x, this.gyroscope.y, this.gyroscope.z ];
+        });
+      });
+    }
+
+    if (this.fragmentCode.match('iMagnetometer')){
+      this.requestPermission('magnetometer', () => {
+        program.iMagnetometer = gl.getUniformLocation(program, "iMagnetometer");
+        this.magnetometer = new Magnetometer({ frequency: 60 });
+        this.magnetometer.addEventListener("reading", (e) => {
+          this.magnetometer.data = [ this.magnetometer.x, this.magnetometer.y, this.magnetometer.z ];
+        });
+      });
+    }
+    
+
     gl.useProgram(program);
 
     var pos = [ -1, -1, 1, -1, 1, 1, -1, 1 ];
@@ -106,6 +157,10 @@ class GlCanvas {
 
   start(){
     this.startTime = Date.now();
+    if (this.accelerometer) this.accelerometer.start();
+    if (this.gyroscope) this.gyroscope.start();
+    if (this.magnetometer) this.magnetometer.start();
+    this.loop = true;
     this.render();
   }
 
@@ -116,6 +171,10 @@ class GlCanvas {
     const bufObj = this.bufObj;
     const startTime = this.startTime;
     const mousepos = this.mousepos;
+    const accl = this.accelerometer;
+    const gyro = this.gyroscope;
+    const magn = this.magnetometer;
+    const keepRunning = this.loop;
     
     function frame(){
       gl.viewport( 0, 0, glCanvas.width, glCanvas.height );
@@ -124,8 +183,12 @@ class GlCanvas {
       gl.uniform1f(program.iTime, (Date.now() - startTime)/1000.0);
       gl.uniform2f(program.iResolution, glCanvas.width, glCanvas.height);
       gl.uniform3f(program.iMouse, mousepos[0], mousepos[1], mousepos[2]);
+      if (accl) gl.uniform3f(program.iAccelerometer, accl.data[0], accl.data[1], accl.data[2]);
+      if (gyro) gl.uniform3f(program.iGyroscope, gyro.data[0], gyro.data[1], gyro.data[2]);
+      if (magn) gl.uniform3f(program.iMagnetometer, magn.data[0], magn.data[1], magn.data[2]);
       gl.drawElements( gl.TRIANGLES, bufObj.inx.len, gl.UNSIGNED_SHORT, 0 );
-      requestAnimationFrame(frame);
+      if (keepRunning)
+        requestAnimationFrame(frame);
     }
 
     window.requestAnimationFrame(frame);
@@ -184,5 +247,6 @@ let webGl;
 
 function startup() {
   webGl = new GlCanvas('gl-canvas');
-  webGl.loadAssets(null,'toy-MddGWN.frag', gl => gl.start());
+  //webGl.loadAssets(null,'toy-MddGWN.frag', gl => gl.start());
+  webGl.loadAssets(null,'toy-gyro.frag', gl => gl.start());
 }
