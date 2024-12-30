@@ -247,6 +247,6 @@ let webGl;
 
 function startup() {
   webGl = new GlCanvas('gl-canvas');
-  //webGl.loadAssets(null,'toy-MddGWN.frag', gl => gl.start());
-  webGl.loadAssets(null,'toy-gyro.frag', gl => gl.start());
+  webGl.loadAssets(null,'toy-MddGWN.frag', gl => gl.start());
+  //webGl.loadAssets(null,'toy-gyro.frag', gl => gl.start());
 }
