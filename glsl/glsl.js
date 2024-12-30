@@ -111,7 +111,7 @@ class GlCanvas {
     if (this.fragmentCode.match('iGyroscope')){
       this.requestPermission('gyroscope', () => {
         program.iGyroscope = gl.getUniformLocation(program, "iGyroscope");
-        program.gyro = { data: [] };
+        program.gyro = { data: [0,0.5,0.5] };
         window.addEventListener("devicemotion", function(event){
           program.gyro.data = [ event.rotationRate.alpha / 360.0, (180.0 + event.rotationRate.beta) / 360.0, (90.0 + event.rotationRate.gamma)/ 180.0 ];
         });
@@ -172,7 +172,6 @@ class GlCanvas {
     const startTime = this.startTime;
     const mousepos = this.mousepos;
     const accl = this.accelerometer;
-    const gyro = this.gyroscope;
     const magn = this.magnetometer;
     const keepRunning = this.loop;
     
@@ -183,9 +182,7 @@ class GlCanvas {
       gl.uniform1f(program.iTime, (Date.now() - startTime)/1000.0);
       gl.uniform2f(program.iResolution, glCanvas.width, glCanvas.height);
       gl.uniform3f(program.iMouse, mousepos[0], mousepos[1], mousepos[2]);
-      if (accl) gl.uniform3f(program.iAccelerometer, accl.data[0], accl.data[1], accl.data[2]);
       if (program.gyro) gl.uniform3f(program.iGyroscope, program.gyro.data[0], program.gyro.data[1], program.gyro.data[2]);
-      if (magn) gl.uniform3f(program.iMagnetometer, magn.data[0], magn.data[1], magn.data[2]);
       gl.drawElements( gl.TRIANGLES, bufObj.inx.len, gl.UNSIGNED_SHORT, 0 );
       if (keepRunning)
         requestAnimationFrame(frame);
