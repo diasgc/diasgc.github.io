@@ -8,9 +8,9 @@
 #endif
 
 uniform vec2  iResolution;
-uniform vec3  iMouse;
+uniform vec3  iAccelerometer;
 uniform float iTime;
-uniform vec3  iGyroscope;
+uniform vec3  iOrientation;
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
   float t = iTime+5.;
@@ -18,7 +18,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
 
   const int n = 100; // particle count
     
-  vec3 startColor = iGyroscope;
+  vec3 startColor = iOrientation;
   vec3 endColor = vec3(0.06,0.35,0.85);
     
   float startRadius = 0.84;
@@ -31,11 +31,11 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
   vec2 v = z*(2.*fragCoord.xy-s)/s.y;
   
   // Mouse axis y => zoom
-  if(iMouse.z>0.) v *= iMouse.y * 20.;
+  v *= iAccelerometer.y * 20.;
   // v *= iMouse.y * 20.;
   
   // Mouse axis x => duration
-  if(iMouse.z>0.) duration = iMouse.x * 10.;
+  duration = iAccelerometer.x * 10.;
   // duration = iMouse.x * 10.;
   
   vec3 col = vec3(0.);

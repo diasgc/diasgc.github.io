@@ -6,6 +6,9 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta http-equiv="refresh" content="5" />
   <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+    }
     .info {
       border: 0;
       border-radius: 12px;
@@ -13,20 +16,40 @@
       margin: 12px;
       padding: 12px;
     }
+    #fs-sensor {
+      font-size: 10px;
+      border-radius: 12px;
+      border: 1px solid #8882;
+      margin: 8px;
+      padding: 8px;
+      text-align: center;
+    }
+
+    #fs-sensor input[type='submit'] {
+      display: none;
+    }
+
+    #fs-sensor label {
+      font-size: 14px;
+      font-weight: 600;
+      background: #8864;
+    }
+
   </style>
 </head>
 <body>
-  <label for="sensorChoice">Choose a Sensor:</label>
-  <input list="sensor-list" id="sensorChoice" name="sensorChoice" />
-  <datalist id="sensor-list">
-    <option value="Accelerometer"></option>
-    <option value="Gyroscope"></option>
-    <option value="Magnetometer"></option>
-  </datalist>
+  <fieldset id="fs-sensor"><legend>Sensor</legend>
+    <input type="submit" id="isensor" name="isensor"/><label for="isensor"></label>
+    <select id="isensor-select">
+      <option value="Accelerometer">Accelerometer</option>
+      <option value="Gyroscope">Gyroscope</option>
+      <option value="Magnetometer">Magnetometer</option>
+    </select>
+  </fieldset>
   <div id='support' class='info'></div>
   <script>
     let d = document.getElementById('support');
-    if ( 'Magnetometer' in window ) {
+    if ( 'Gyroscope' in window ) {
       let sensor = new Gyroscope();
       sensor.addEventListener('reading', function(e) {
         d.innerHTML = 'x: ' + e.target.x.fixed(4) + ' y: ' + e.target.y.fixed(4) + ' z: ' + e.target.z.fixed(4);

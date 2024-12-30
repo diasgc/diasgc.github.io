@@ -99,23 +99,31 @@ class GlCanvas {
     program.iResolution = gl.getUniformLocation(program, "iResolution");
     
     if (this.fragmentCode.match('iAccelerometer')){
-      this.requestPermission('accelerometer', () => {
-        program.iAccelerometer = gl.getUniformLocation(program, "iAccelerometer");
-        this.accelerometer = new Accelerometer({ frequency: 60 });
-        this.accelerometer.addEventListener("reading", (e) => {
-          this.accelerometer.data = [ this.accelerometer.x, this.accelerometer.y, this.accelerometer.z ];
-        });
+      program.iAccelerometer = gl.getUniformLocation(program, "iAccelerometer");
+      program.accelerometer = new Accelerometer();
+      program.accelerometer.data = [ 0, 0, 0 ];
+      program.accelerometer.addEventListener("reading", (e) => {
+        program.accelerometer.data = [ e.target.x, e.target.y, e.target.z ];
       });
     }
 
-    if (this.fragmentCode.match('iGyroscopeOld')){
-        program.iGyroscopeOld = gl.getUniformLocation(program, "iGyroscope");
-        program.gyroDataOld = [0,0,0];
-        window.addEventListener("devicemotion", function(event){
-          program.gyroDataOld = [ event.rotationRate.alpha / 360.0, (180.0 + event.rotationRate.beta) / 360.0, (90.0 + event.rotationRate.gamma)/ 180.0 ];
-        });
+    if (this.fragmentCode.match('iOrientation')){
+        program.iOrientation = gl.getUniformLocation(program, "iOrientation");
+        program.orientation = { 
+          data: [0,0,0],
+          start: function(){
+            window.addEventListener("deviceorientation", function(event){
+              program.orientation.data = [ event.alpha / 360.0, (180.0 + event.beta) / 360.0, (90.0 + event.gamma)/ 180.0 ];
+            });
+          },
+          stop: function(){
+            window.addEventListener("deviceorientation", null);
+          }
+        }
     }
+
     if (this.fragmentCode.match('iGyroscope')){
+      program.iGyroscope = gl.getUniformLocation(program, "iGyroscope");
       program.gyroscope = new Gyroscope();
       program.gyroscope.data = [ 0, 0, 0 ];
       program.gyroscope.addEventListener('reading', function(e) {
@@ -124,12 +132,11 @@ class GlCanvas {
     }
 
     if (this.fragmentCode.match('iMagnetometer')){
-      this.requestPermission('magnetometer', () => {
-        program.iMagnetometer = gl.getUniformLocation(program, "iMagnetometer");
-        this.magnetometer = new Magnetometer({ frequency: 60 });
-        this.magnetometer.addEventListener("reading", (e) => {
-          this.magnetometer.data = [ this.magnetometer.x, this.magnetometer.y, this.magnetometer.z ];
-        });
+      program.iMagnetometer = gl.getUniformLocation(program, "iMagnetometer");
+      program.magnetometer = new Magnetometer();
+      program.magnetometer.data = [ 0, 0, 0 ];
+      program.magnetometer.addEventListener('reading', function(e) {
+        program.magnetometer.data = [ e.target.x, e.target.y, e.target.z ];
       });
     }
     
@@ -162,11 +169,18 @@ class GlCanvas {
 
   start(){
     this.startTime = Date.now();
-    //if (this.accelerometer) this.accelerometer.start();
-    if (this.gyroscope) this.gyroscope.start();
-    //if (this.magnetometer) this.magnetometer.start();
+    if (this.program.accelerometer) this.program.accelerometer.start();
+    if (this.program.gyroscope) this.program.gyroscope.start();
+    if (this.program.magnetometer) this.program.magnetometer.start();
     this.loop = true;
     this.render();
+  }
+
+  stop(){
+    this.loop = false;
+    if (this.program.accelerometer) this.program.accelerometer.stop();
+    if (this.program.gyroscope) this.program.gyroscope.stop();
+    if (this.program.magnetometer) this.program.magnetometer.stop();
   }
 
   render(){
@@ -176,8 +190,6 @@ class GlCanvas {
     const bufObj = this.bufObj;
     const startTime = this.startTime;
     const mousepos = this.mousepos;
-    const accl = this.accelerometer;
-    const magn = this.magnetometer;
     const keepRunning = this.loop;
     
     function frame(){
@@ -188,7 +200,9 @@ class GlCanvas {
       gl.uniform2f(program.iResolution, glCanvas.width, glCanvas.height);
       gl.uniform3f(program.iMouse, mousepos[0], mousepos[1], mousepos[2]);
       //if (program.gyro) gl.uniform3f(program.iGyroscope, program.gyro.data[0], program.gyro.data[1], program.gyro.data[2]);
+      if (program.accelerometer) gl.uniform3f(program.iAccelerometer, program.accelerometer.data[0], program.accelerometer.data[1], program.accelerometer.data[2]);
       if (program.gyroscope) gl.uniform3f(program.iGyroscope, program.gyroscope.data[0], program.gyroscope.data[1], program.gyroscope.data[2]);
+      if (program.magnetometer) gl.uniform3f(program.iMagnetometer, program.magnetometer.data[0], program.magnetometer.data[1], program.magnetometer.data[2]);
       gl.drawElements( gl.TRIANGLES, bufObj.inx.len, gl.UNSIGNED_SHORT, 0 );
       if (keepRunning)
         requestAnimationFrame(frame);
