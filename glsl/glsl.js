@@ -109,12 +109,10 @@ class GlCanvas {
     }
 
     if (this.fragmentCode.match('iGyroscope')){
-      this.requestPermission('gyroscope', () => {
-        program.iGyroscope = gl.getUniformLocation(program, "iGyroscope");
-        program.gyro = { data: [0,0.5,0.5] };
-        window.addEventListener("devicemotion", function(event){
-          program.gyro.data = [ event.rotationRate.alpha / 360.0, (180.0 + event.rotationRate.beta) / 360.0, (90.0 + event.rotationRate.gamma)/ 180.0 ];
-        });
+      program.iGyroscope = gl.getUniformLocation(program, "iGyroscope");
+      program.gyroData = [0,0,0];
+      window.addEventListener("devicemotion", function(event){
+        program.gyroData = [ event.rotationRate.alpha / 360.0, (180.0 + event.rotationRate.beta) / 360.0, (90.0 + event.rotationRate.gamma)/ 180.0 ];
       });
     }
 
