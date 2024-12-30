@@ -1,3 +1,16 @@
+// todo: add input from:
+// audio (iAudio)
+// camera (iCamera)
+// sensors:
+//  AbsoluteOrientationSensor	'accelerometer', 'gyroscope', and 'magnetometer'
+//  Accelerometer	'accelerometer'
+//  AmbientLightSensor	'ambient-light-sensor'
+//  GravitySensor	'accelerometer'
+//  Gyroscope	'gyroscope'
+//  LinearAccelerationSensor	'accelerometer'
+//  Magnetometer	'magnetometer'
+//  RelativeOrientationSensor	'accelerometer', and 'gyroscope'
+
 class GlCanvas {
 
   constructor(id, options){
@@ -8,16 +21,13 @@ class GlCanvas {
       attribute vec2 position;
       void main() {
         gl_Position = vec4(position, 0.0, 1.0);
-      }
-    `;
+      }`;
     this.glCanvas = id ? document.getElementById(id) : document.createElement('canvas');
     this.gl = this.glCanvas.getContext("webgl");
     this.glCanvas.addEventListener('mousemove', (e) => {
       this.mousepos = [ e.offsetX/this.glCanvas.width, e.offsetY/this.glCanvas.height, e.button];
     });
-    //this.glCanvas.addEventListener('touchmove', (e) => {
-    //  this.mousepos = [ e.offsetX/this.glCanvas.width, e.offsetY/this.glCanvas.height, 0];
-    //});
+
     this.bufObj = {};
     this.mousepos = [0,0,0];
     return this;
@@ -32,7 +42,7 @@ class GlCanvas {
   loadAssets(vertexPath, fragmentPath, callback){
     let vertexCode;
     if (vertexPath === null){
-      vertexCode = this.defaultVertex; //"attribute vec2 position;\nvoid main() {\n gl_Position = vec4(position, 0.0, 1.0);\n}";
+      vertexCode = this.defaultVertex;
       this.loadAsset(fragmentPath, fragmentCode => {
         this.loadCode(vertexCode, fragmentCode);
         callback(this);
