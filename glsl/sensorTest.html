@@ -27,7 +27,7 @@
   <script>
     let d = document.getElementById('support');
     if ( 'Magnetometer' in window ) {
-      let sensor = new Accelerometer();
+      let sensor = new Gyroscope();
       sensor.addEventListener('reading', function(e) {
         d.innerHTML = 'x: ' + e.target.x.fixed(4) + ' y: ' + e.target.y.fixed(4) + ' z: ' + e.target.z.fixed(4);
       });
