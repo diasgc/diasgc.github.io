@@ -12,7 +12,8 @@ function startup() {
   let urlParams = new URLSearchParams(window.location.search);
   const frag = urlParams.get('frag');
   if (frag !== null){
-    webGl.loadCode(null, atob(frag), gl => gl.start());
+    webGl.loadCode(null, atob(frag));
+    webGl.start();
   } else {
     webGl.loadAssets(null,'toy-gyro.frag', gl => gl.start());
   }
