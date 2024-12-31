@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta http-equiv="expires" content="0">
+  <link  rel="stylesheet"
+    href="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/default.min.css"
+  />
+  <script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/highlight.min.js"></script>
+  <!-- and it's easy to individually load additional languages -->
+  <script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/languages/glsl.min.js"></script>
+  </script>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+    }
+    #fragCode {
+      position: absolute;
+      top: 12px;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      font-family: monospace;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 12px;
+      border: 1px solid #8888;
+      background: #8882;
+      border-radius: 12px;
+      resize: none;
+    }
+    [contenteditable="true"].single-line {
+        white-space: nowrap;
+        width:200px;
+        overflow: hidden;
+    } 
+    [contenteditable="true"].single-line br {
+        display:none;
+
+    }
+    [contenteditable="true"].single-line * {
+        display:inline;
+        white-space:nowrap;
+    }
+    .fs-table {
+      position: absolute;
+      border-radius: 12px;
+      left: 24px;
+      bottom: 24px;
+      right: 24px;
+      top: auto;
+      padding: 8px;
+      margin: 2px;
+      font-size: 10px;
+      text-align: center;
+    }
+    table {
+      table-layout: fixed;
+      width: 100%;
+    }
+    td {
+      margin: 8px;
+      padding: 0;
+    }
+    .fs-table button {
+      width: 100%;
+      border-radius: 4px;
+      background: #222a;
+      font-size: 20px;
+      font-weight: 800;
+      color: white;
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<pre><code id="fragCode" class="language-glsl" contenteditable="true">
+#ifdef GL_ES
+  precision highp float;
+#endif
+
+uniform vec2  iResolution;
+uniform vec3  iAccelerometer;
+uniform float iTime;
+uniform vec3  iOrientation;
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
+  vec3 col = (0.0, 0.0, 0.0);
+  fragColor = vec4(col,1.0);
+}
+</code></pre>
+<fieldset class="fs-table"><legend>tools</legend>
+  <table>
+    <tr id="symbs"></tr>
+  </table>
+</fieldset>
+<script>
+  function insertTextAtCaret(toInsert) {
+    var selection = document.getSelection();
+    var cursorPos = selection.anchorOffset;
+    var oldContent = selection.anchorNode.nodeValue;
+    var newContent = oldContent.substring(0, cursorPos) + toInsert + oldContent.substring(cursorPos);
+    selection.anchorNode.nodeValue = newContent;
+    selection.anchorOffset++;
+  }
+  hljs.highlightElement(document.getElementById('fragCode'));
+  let tr = document.getElementById('symbs');
+  let symbs = [ ';', ':', '{', '}', '(', ')', '/','+','*','-' ];
+  symbs.forEach(s => {
+    let td = document.createElement('td');
+    td.width = 100/symbs.length + "%";
+    let b = document.createElement('button');
+    b.innerText = s;
+    b.onclick = function(e){
+      insertTextAtCaret(e.currentTarget.innerText);
+    }
+    td.appendChild(b);
+    tr.appendChild(td);
+  });
+</script>
+</body>
+</html>
