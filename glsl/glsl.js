@@ -12,7 +12,6 @@ function loadFragment(i){
     webGl.loadCode(null, fileReader.result, gl => gl.start());
   }
   fileReader.readAsText(i.files[0]);
-  
 }
 
 function loadAsset(i){
@@ -24,5 +23,11 @@ let webGl;
 
 function startup() {
   webGl = new GlCanvas('gl-canvas');
-  webGl.loadAssets(null,'toy-gyro.frag', gl => gl.start());
+  let urlParams = new URLSearchParams(window.location.search);
+  const frag = urlParams.get('frag');
+  if (frag !== null){
+    webGl.loadCode(null, atob(frag), gl => gl.start());
+  } else {
+    webGl.loadAssets(null,'toy-gyro.frag', gl => gl.start());
+  }
 }

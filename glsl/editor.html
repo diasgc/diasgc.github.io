@@ -152,7 +152,7 @@
   fragCode.innerHTML = defCode;
   hljs.highlightElement(fragCode);
   
-  let opts = [ 'clear', 'load', 'save', 'compile' ];
+  let opts = [ 'clear', 'load', 'save', 'run' ];
   opts.forEach(s => {
     let td = document.createElement('td');
     td.width = 100/opts.length + "%";
@@ -198,6 +198,10 @@
     document.body.appendChild(load);
     load.click();
     document.body.removeChild(load);
+  }
+  function run(){
+    window.location.href = '/index.html?frag=' + btoa(fragCode.innerText);
+    //window.open("https://www.youraddress.com","_self")
   }
 </script>
 </body>

@@ -47,3 +47,15 @@ canvas {
 #fs input[type="checkbox"]:checked + label {
   background: #0b08;
 }
+
+#debug {
+  position: absolute;
+  bottom: 24px;
+  left: 12px;
+  right: 12px;
+  height: 20dvh;
+  font-family: monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0b0;
+}
