@@ -194,6 +194,22 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     table.style.display = 'block';
     fname.style.display = 'none';
   }
+  function load(){
+    let load = document.createElement('input');
+    load.type = 'file';
+    load.accept = '.frag';
+    load.onchange = function(e){
+      var fileReader=new FileReader();
+      fileReader.onload=function(){
+        fragCode.innerHTML=fileReader.result;
+        hljs.highlightElement(fragCode);
+      }
+      fileReader.readAsText(this.files[0]);
+    }
+    document.body.appendChild(load);
+    load.click();
+    document.body.removeChild(load);
+  }
 </script>
 </body>
 </html>
