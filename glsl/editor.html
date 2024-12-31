@@ -13,8 +13,18 @@
   <script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/languages/glsl.min.js"></script>
   </script>
   <style>
+    :root {
+      color-scheme: dark light;
+      --accent:  light-dark(#0bf,#fb0);
+      --main-bg: light-dark(#eee,#111);
+      --main-fg: light-dark(#111,#eee);
+      --swsz: 20px;
+    }
     body {
       font-family: Arial, Helvetica, sans-serif;
+      background: var(--main-bg);
+      color: var(--main-fg);
+      accent-color: var(--accent);
       margin: 0;
     }
     #fragCode {
@@ -67,18 +77,71 @@
     }
     .fs-table button {
       width: 100%;
+      outline: none;
+      border: none;
       border-radius: 4px;
       background: #222a;
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 800;
       color: white;
       padding: 8px;
       text-align: center;
     }
+    #fname {
+      display: none;
+      outline: none;
+      border: none;
+      
+      padding: 8px;
+      text-align: center;
+    }
+    #fname label {
+      font-size: 14px;
+      font-weight: 800;
+      padding: 8px 18px;
+      border-radius: 12px;
+      background: #8882;
+    }
+    #submit {
+      border: none;
+      margin: 8px;
+      padding: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      background: transparent;
+      color: black
+    }
+    input[type="text"] {
+      border: none;
+      border-radius: 12px;
+      margin: 8px;
+      padding: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      background: #8882;
+    }
   </style>
+  <link  rel="stylesheet"
+    href="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/github.min.css"
+    media="screen and (prefers-color-scheme: light)" />
+  <link  rel="stylesheet"
+    href="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/github-dark-dimmed.min.css"
+    media="screen and (prefers-color-scheme: dark)" />
 </head>
 <body>
 <pre><code id="fragCode" class="language-glsl" contenteditable="true">
+</code></pre>
+<fieldset class="fs-table"><legend>menu</legend>
+  <div id="fname">
+    <input type="text" id="sname" name="saveAs" value="MyFragment.frag">
+    <label for="sname" onclick="saveAs()">save</button>
+  </div>
+  <table id="table">
+    <tr id="opts"></tr>
+  </table>
+</fieldset>
+<script>
+  let defCode = `
 #ifdef GL_ES
   precision highp float;
 #endif
@@ -90,37 +153,47 @@ uniform vec3  iOrientation;
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
   vec3 col = (0.0, 0.0, 0.0);
-  fragColor = vec4(col,1.0);
-}
-</code></pre>
-<fieldset class="fs-table"><legend>tools</legend>
-  <table>
-    <tr id="symbs"></tr>
-  </table>
-</fieldset>
-<script>
-  function insertTextAtCaret(toInsert) {
-    var selection = document.getSelection();
-    var cursorPos = selection.anchorOffset;
-    var oldContent = selection.anchorNode.nodeValue;
-    var newContent = oldContent.substring(0, cursorPos) + toInsert + oldContent.substring(cursorPos);
-    selection.anchorNode.nodeValue = newContent;
-    selection.anchorOffset++;
-  }
-  hljs.highlightElement(document.getElementById('fragCode'));
-  let tr = document.getElementById('symbs');
-  let symbs = [ ';', ':', '{', '}', '(', ')', '/','+','*','-' ];
-  symbs.forEach(s => {
+  fragColor = vec4(col, 1.0);
+}`;
+  let fragCode = document.getElementById('fragCode');
+  let fname = document.getElementById('fname');
+  let tr = document.getElementById('opts');
+  let table = document.getElementById('table');
+  let sname = document.getElementById('sname');
+  fragCode.innerHTML = defCode;
+  hljs.highlightElement(fragCode);
+  
+  let opts = [ 'clear', 'load', 'save', 'compile' ];
+  opts.forEach(s => {
     let td = document.createElement('td');
-    td.width = 100/symbs.length + "%";
+    td.width = 100/opts.length + "%";
     let b = document.createElement('button');
     b.innerText = s;
     b.onclick = function(e){
-      insertTextAtCaret(e.currentTarget.innerText);
+      if (window[e.currentTarget.innerText])
+        window[e.currentTarget.innerText]();
     }
     td.appendChild(b);
     tr.appendChild(td);
   });
+  function clear(){
+    fragCode.innerText = '';
+  }
+  function save(){
+    table.style.display = 'none';
+    fname.style.display = 'inline';
+  }
+  function saveAs(){
+    let fname = sname.value;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob( [fragCode.innerText], { type : "text/plain;charset=utf-8"	}));
+    a.download = fname;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    table.style.display = 'block';
+    fname.style.display = 'none';
+  }
 </script>
 </body>
 </html>
