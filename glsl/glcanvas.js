@@ -41,14 +41,16 @@ class GlCanvas {
     this.logger = {
       id: null,
       set: function(id){
-        this.id = id || document.getElementById(id);
-        if (id && this.id.style.display === 'none')
-          this.id.style.display = 'block';
+        this.id = document.getElementById(id) || null;
       },
       log: function(msg){
         if (this.id)
-          id.innerText += `${msg}\n`;
+          this.id.innerText += `${msg}\n`;
         console.log(msg);
+      },
+      show: function(){
+        if (this.id && this.id.style.display === 'none')
+          this.id.style.display = 'block';
       }
     }
     return this;
@@ -105,6 +107,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       vertexCode = "attribute vec2 position;\nvoid main() {\n gl_Position = vec4(position, 0.0, 1.0);\n}";
     this.vertexCode = vertexCode;
     fragmentCode = this.checkCode(fragmentCode);
+    this.fragmentCode = fragmentCode;
     this.loadProgram(vertexCode, fragmentCode, program => this.init(program));
     return this;
   }
@@ -292,6 +295,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
           this.gl.linkProgram(program);
           if (this.gl.getProgramParameter(program, this.gl.LINK_STATUS)) {
             callback(program);
+            this.logger.log(`linking program successfully: ${this.gl.getProgramInfoLog(program)}`); 
             return true;  
           }
           this.logger.log(`Error linking program: ${this.gl.getProgramInfoLog(program)}`);
@@ -305,9 +309,10 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
     this.gl.compileShader(shader);
     if (this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
       callback(shader);
+      this.logger.log(`compiling successfully ${type}: ${this.gl.getShaderInfoLog(shader)}`);
       return true;
     }
-    console.log(`error compiling ${type}: ${this.gl.getShaderInfoLog(shader)}`);
+    this.logger.log(`error compiling ${type}: ${this.gl.getShaderInfoLog(shader)}`);
     return false;
   }
 }

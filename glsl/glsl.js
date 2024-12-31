@@ -4,6 +4,25 @@ function squareit(i){
   webGl.options.square = i.checked;
   webGl.resize();
 }
+function toggleDebug(i){
+  if (i.checked){
+    document.getElementById('debug').style.display = 'block';
+    webGl.debug('debug');
+  } else {
+    document.getElementById('debug').style.display = 'none';
+    webGl.debug(null);
+  }
+  
+}
+function toggleCode(i){
+  let code = document.getElementById('code');
+  if (i.checked){
+    code.style.display = 'block';
+    code.innerText = webGl.fragmentCode;
+  } else {
+    code.style.display = 'none';
+  }
+}
 
 let webGl;
 

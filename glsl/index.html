@@ -36,10 +36,14 @@ void main() {
 <body>
   <canvas id="gl-canvas"></canvas>
   <div id="fs">
-    <input id="square" type="checkbox" onchange="squareit(this)"><label for="square">square</label>
+    <input id="isquare" type="checkbox" onchange="squareit(this)"><label for="isquare">square</label>
+    <input id="idebug" type="checkbox" onchange="toggleDebug(this)"><label for="idebug">debug</label>
+    <input id="icode" type="checkbox" onchange="toggleCode(this)"><label for="icode">code</label>
   </div>
+  <div id="code"></div>
+  <div id="debug"></div>
   <script src="glcanvas.js?v=2412311200"></script>
   <script src="glsl.js?v=2412311200"></script>
-  <pre><code id="debug"></code></pre>
+  
 </body>
 </html>
