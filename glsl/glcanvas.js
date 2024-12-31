@@ -42,6 +42,8 @@ class GlCanvas {
       id: null,
       set: function(id){
         this.id = id || document.getElementById(id);
+        if (id && this.id.style.display === 'none')
+          this.id.style.display = 'block';
       },
       log: function(msg){
         if (this.id)
