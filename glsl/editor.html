@@ -143,14 +143,12 @@
   </table>
 </fieldset>
 <script>
-  let defCode = document.getElementById('defaultFragment').firstChild.nodeValue;;
+  let defCode; // = document.getElementById('defaultFragment').firstChild.nodeValue;;
   let fragCode = document.getElementById('fragCode');
   let fname = document.getElementById('fname');
   let tr = document.getElementById('opts');
   let table = document.getElementById('table');
   let sname = document.getElementById('sname');
-  fragCode.innerHTML = defCode;
-  hljs.highlightElement(fragCode);
   
   let opts = [ 'clear', 'load', 'save', 'run' ];
   opts.forEach(s => {
@@ -165,6 +163,15 @@
     td.appendChild(b);
     tr.appendChild(td);
   });
+
+  fetch('./shaders/def.frag')
+    .then((response) => response.text())
+    .then((text) => loadCode(text));
+
+  function loadCode(code){
+    fragCode.innerHTML = code;
+    hljs.highlightElement(fragCode);
+  }
   function clear(){
     fragCode.innerText = '';
   }
@@ -190,8 +197,7 @@
     load.onchange = function(e){
       var fileReader=new FileReader();
       fileReader.onload=function(){
-        fragCode.innerHTML=fileReader.result;
-        hljs.highlightElement(fragCode);
+        loadCode(fileReader.result);
       }
       fileReader.readAsText(this.files[0]);
     }
