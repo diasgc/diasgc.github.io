@@ -37,7 +37,23 @@ class GlCanvas {
     this.bufObj = {};
     this.mousepos = [0,0,0];
     this.loop = false;
+
+    this.logger = {
+      id: null,
+      set: function(id){
+        this.id = id || document.getElementById(id);
+      },
+      log: function(msg){
+        if (this.id)
+          id.innerText += `${msg}\n`;
+        console.log(msg);
+      }
+    }
     return this;
+  }
+
+  debug(elId){
+    this.logger.set(elId);
   }
 
   loadByIds(vertexId, fragmentId){
@@ -76,21 +92,43 @@ class GlCanvas {
     if (vertexCode === null)
       vertexCode = "attribute vec2 position;\nvoid main() {\n gl_Position = vec4(position, 0.0, 1.0);\n}";
     this.vertexCode = vertexCode;
-    this.fragmentCode = fragmentCode;
+    this.fragmentCode = this.checkCode(fragmentCode);
     this.loadProgram(vertexCode, fragmentCode, program => this.init(program));
     return this;
+  }
+
+  checkVar(code, varName, boolName){
+    window[boolName] = this.testU(this.fragmentCode, 'vec3', varName);
+    if (!window[boolName] && code.match("varName")){
+      code =`uniform vec3 ${varName}\n${code}` ;
+      window[boolName] = true;
+    }
+  }
+
+  checkCode(code){
+    this.checkVar(code, 'iAccelerometer', 'useAccel');
+    this.checkVar(code, 'iOrientation',   'useOrien');
+    this.checkVar(code, 'iGyroscope',     'useGyros');
+    this.checkVar(code, 'iMagnetometer',  'useMagne');
+
+    if (!code.match(/\#ifdef GL_ES/))
+      code = "#ifdef GL_ES\n precision highp float;\n#endif\n\n" + code;
+    if (!code.match(/\nvoid main\(\)/))
+      code = code + "\n\nvoid main() {\n  mainImage( gl_FragColor, gl_FragCoord.xy );\n}";
   }
 
   requestPermission(key, callback){
     navigator.permissions.query({ name: key }).then((result) => {
       if (result.state === "denied") {
-        console.log(`Permission to use ${key} is denied.`);
+        this.logger.log(`Permission to use ${key} is denied.`);
       } else {
         callback()
       }
     });
   }
-
+  testU(str, t, n){
+    return str.match(`\nuniform[ ]+${t}[ ]+${n}`)
+  }
   init(program){
     const gl = this.gl;
     program.position = gl.getAttribLocation(program, "position");
@@ -98,7 +136,8 @@ class GlCanvas {
     program.iMouse = gl.getUniformLocation(program, "iMouse");
     program.iResolution = gl.getUniformLocation(program, "iResolution");
     
-    if (this.fragmentCode.match('iAccelerometer')){
+    if (this.useAccel){
+      this.logger.log("Using iAccelerometer");
       program.iAccelerometer = gl.getUniformLocation(program, "iAccelerometer");
       program.accelerometer = new Accelerometer();
       program.accelerometer.data = [ 0, 0, 0 ];
@@ -107,22 +146,24 @@ class GlCanvas {
       });
     }
 
-    if (this.fragmentCode.match('iOrientation')){
-        program.iOrientation = gl.getUniformLocation(program, "iOrientation");
-        program.orientation = { 
-          data: [0,0,0],
-          start: function(){
-            window.addEventListener("deviceorientation", function(event){
-              program.orientation.data = [ event.alpha / 360.0, (180.0 + event.beta) / 360.0, (90.0 + event.gamma)/ 180.0 ];
-            });
-          },
-          stop: function(){
-            window.addEventListener("deviceorientation", null);
-          }
+    if (this.useOrien){
+      this.logger.log("Using iOrientation");
+      program.iOrientation = gl.getUniformLocation(program, "iOrientation");
+      program.orientation = { 
+        data: [0,0,0],
+        start: function(){
+          window.addEventListener("deviceorientation", function(event){
+            program.orientation.data = [ event.alpha / 360.0, (180.0 + event.beta) / 360.0, (90.0 + event.gamma)/ 180.0 ];
+          });
+        },
+        stop: function(){
+          window.addEventListener("deviceorientation", null);
         }
+      }
     }
 
-    if (this.fragmentCode.match('iGyroscope')){
+    if (this.useGyros){
+      this.logger.log("Using iGyroscope");
       program.iGyroscope = gl.getUniformLocation(program, "iGyroscope");
       program.gyroscope = new Gyroscope();
       program.gyroscope.data = [ 0, 0, 0 ];
@@ -131,7 +172,8 @@ class GlCanvas {
       });
     }
 
-    if (this.fragmentCode.match('iMagnetometer')){
+    if (this.useMagne){
+      this.logger.log("Using iMagnetometer");
       program.iMagnetometer = gl.getUniformLocation(program, "iMagnetometer");
       program.magnetometer = new Magnetometer();
       program.magnetometer.data = [ 0, 0, 0 ];
@@ -169,20 +211,20 @@ class GlCanvas {
 
   start(){
     this.startTime = Date.now();
-    if (this.program.accelerometer) this.program.accelerometer.start();
-    if (this.program.orientation) this.program.orientation.start();
-    if (this.program.gyroscope) this.program.gyroscope.start();
-    if (this.program.magnetometer) this.program.magnetometer.start();
+    if (this.useAccel) this.program.accelerometer.start();
+    if (this.useOrien) this.program.orientation.start();
+    if (this.useGyros) this.program.gyroscope.start();
+    if (this.useMagne) this.program.magnetometer.start();
     this.loop = true;
     this.render();
   }
 
   stop(){
     this.loop = false;
-    if (this.program.accelerometer) this.program.accelerometer.stop();
-    if (this.program.orientation) this.program.orientation.stop();
-    if (this.program.gyroscope) this.program.gyroscope.stop();
-    if (this.program.magnetometer) this.program.magnetometer.stop();
+    if (this.useAccel) this.program.accelerometer.stop();
+    if (this.useOrien) this.program.orientation.stop();
+    if (this.useGyros) this.program.gyroscope.stop();
+    if (this.useMagne) this.program.magnetometer.stop();
   }
 
   render(){
@@ -239,7 +281,7 @@ class GlCanvas {
             callback(program);
             return true;  
           }
-          console.log(`Error linking program: ${this.gl.getProgramInfoLog(program)}`);
+          this.logger.log(`Error linking program: ${this.gl.getProgramInfoLog(program)}`);
       };
     return false;
   }
