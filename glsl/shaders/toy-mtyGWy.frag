@@ -5,6 +5,14 @@
   Video URL: https://youtu.be/f4s1h2YETNY
 */
 
+#ifdef GL_ES
+  precision highp float;
+#endif
+
+uniform vec2  iResolution;
+uniform vec3  iMouse;
+uniform float iTime;
+
 //https://iquilezles.org/articles/palettes/
 vec3 palette( float t ) {
     vec3 a = vec3(0.5, 0.5, 0.5);
@@ -37,4 +45,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     }
         
     fragColor = vec4(finalColor, 1.0);
+}
+
+void main() {
+  mainImage( gl_FragColor, gl_FragCoord.xy );
 }

@@ -128,6 +128,7 @@
   <link  rel="stylesheet"
     href="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/github-dark-dimmed.min.css"
     media="screen and (prefers-color-scheme: dark)" />
+  <script id="defaultFragment" type="x-shader/x-fragment" src="./shaders/def.frag"></script>
 </head>
 <body>
 <pre><code id="fragCode" class="language-glsl" contenteditable="true" spellcheck="false">
@@ -142,20 +143,7 @@
   </table>
 </fieldset>
 <script>
-  let defCode = `
-#ifdef GL_ES
-  precision highp float;
-#endif
-
-uniform vec2  iResolution;
-uniform vec3  iAccelerometer;
-uniform float iTime;
-uniform vec3  iOrientation;
-
-void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
-  vec3 col = (0.0, 0.0, 0.0);
-  fragColor = vec4(col, 1.0);
-}`;
+  let defCode = document.getElementById('defaultFragment').firstChild.nodeValue;;
   let fragCode = document.getElementById('fragCode');
   let fname = document.getElementById('fname');
   let tr = document.getElementById('opts');
@@ -187,7 +175,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
   function saveAs(){
     let fname = sname.value;
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob( [fragCode.innerText], { type : "text/plain;charset=utf-8"	}));
+    a.href = URL.createObjectURL(new Blob( [fragCode.innerText], { type : "x-shader/x-fragment;charset=utf-8"	}));
     a.download = fname;
     document.body.appendChild(a);
     a.click();
