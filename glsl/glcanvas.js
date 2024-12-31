@@ -83,6 +83,16 @@ class GlCanvas {
   loadAsset(path, callback){
     if (!path.match("shaders/"))
       path = "./shaders/" + path;
+    callback(`uniform vec2 iResolution;
+uniform vec2 iMouse;
+uniform float iTime;
+
+// shaderToy style:
+void mainImage(out vec4 fragColor, in vec2 fragCoord){
+    vec2 uv = fragCoord.xy / iResolution.xy;
+    fragColor = vec4(uv.x * cos(iTime), uv.y * sin(iTime), uv.x * uv.y, 1.0);
+}`);
+  return;
     fetch(path)
       .then((response) => response.text())
       .then((text) => callback(text));
@@ -92,7 +102,7 @@ class GlCanvas {
     if (vertexCode === null)
       vertexCode = "attribute vec2 position;\nvoid main() {\n gl_Position = vec4(position, 0.0, 1.0);\n}";
     this.vertexCode = vertexCode;
-    this.fragmentCode = this.checkCode(fragmentCode);
+    fragmentCode = this.checkCode(fragmentCode);
     this.loadProgram(vertexCode, fragmentCode, program => this.init(program));
     return this;
   }
@@ -115,6 +125,7 @@ class GlCanvas {
       code = "#ifdef GL_ES\n precision highp float;\n#endif\n\n" + code;
     if (code.match(/\nvoid main\(\)/) === null)
       code = code + "\n\nvoid main() {\n  mainImage( gl_FragColor, gl_FragCoord.xy );\n}";
+    return code;
   }
 
   requestPermission(key, callback){
