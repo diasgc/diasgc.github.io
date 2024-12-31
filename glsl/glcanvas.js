@@ -111,9 +111,9 @@ class GlCanvas {
     this.checkVar(code, 'iGyroscope',     'useGyros');
     this.checkVar(code, 'iMagnetometer',  'useMagne');
 
-    if (!code.match(/\#ifdef GL_ES/))
+    if (code.match(/\#ifdef GL_ES/) === null)
       code = "#ifdef GL_ES\n precision highp float;\n#endif\n\n" + code;
-    if (!code.match(/\nvoid main\(\)/))
+    if (code.match(/\nvoid main\(\)/) === null)
       code = code + "\n\nvoid main() {\n  mainImage( gl_FragColor, gl_FragCoord.xy );\n}";
   }
 
