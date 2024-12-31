@@ -128,7 +128,25 @@
   <link  rel="stylesheet"
     href="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/github-dark-dimmed.min.css"
     media="screen and (prefers-color-scheme: dark)" />
-  <script id="defaultFragment" type="x-shader/x-fragment" src="./shaders/def.frag"></script>
+  <script id="defaultFragment" type="x-shader/x-fragment">
+#ifdef GL_ES
+  precision highp float;
+#endif
+
+uniform vec2 iResolution;
+uniform vec2 iMouse;
+uniform float iTime;
+
+// shaderToy style:
+void mainImage(out vec4 fragColor, in vec2 fragCoord){
+    vec2 uv = fragCoord.xy / iResolution.xy;
+    fragColor = vec4(uv.x * cos(iTime), uv.y * sin(iTime), uv.x * uv.y, 1.0);
+}
+
+void main() {
+    mainImage( gl_FragColor, gl_FragCoord.xy );
+}
+  </script>
 </head>
 <body>
 <pre><code id="fragCode" class="language-glsl" contenteditable="true" spellcheck="false">
@@ -143,7 +161,7 @@
   </table>
 </fieldset>
 <script>
-  let defCode; // = document.getElementById('defaultFragment').firstChild.nodeValue;;
+  let defCode = document.getElementById('defaultFragment').firstChild.nodeValue;;
   let fragCode = document.getElementById('fragCode');
   let fname = document.getElementById('fname');
   let tr = document.getElementById('opts');
@@ -164,10 +182,12 @@
     tr.appendChild(td);
   });
 
+  loadCode(defCode);
+  /*
   fetch('./shaders/def.frag')
     .then((response) => response.text())
     .then((text) => loadCode(text));
-
+  */
   function loadCode(code){
     fragCode.innerHTML = code;
     hljs.highlightElement(fragCode);
