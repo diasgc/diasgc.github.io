@@ -98,7 +98,7 @@ class GlCanvas {
   }
 
   checkVar(code, varName, boolName){
-    window[boolName] = this.testU(this.fragmentCode, 'vec3', varName);
+    window[boolName] = this.testU(code, 'vec3', varName);
     if (!window[boolName] && code.match("varName")){
       code =`uniform vec3 ${varName}\n${code}` ;
       window[boolName] = true;
