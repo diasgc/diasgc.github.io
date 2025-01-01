@@ -13,81 +13,26 @@
 
 class GlCanvas {
 
-  constructor(id, options){
-    this.options = options || {
-      square: false
-    };
-    this.sensorSupport = {
-      accelerometer: window.accelerometer,
-      gyroscope: window.gyroscope,
-      magnetometer: window.magnetometer,
-      AmbientLightSensor: window.AmbientLightSensor
-    };
-    this.defaultVertex = `
-      attribute vec2 position;
-      void main() {
-        gl_Position = vec4(position, 0.0, 1.0);
-      }`;
-    this.glCanvas = id ? document.getElementById(id) : document.createElement('canvas');
-    this.gl = this.glCanvas.getContext("webgl");
-    this.glCanvas.addEventListener('mousemove', (e) => {
-      this.mousepos = [ e.offsetX/this.glCanvas.width, e.offsetY/this.glCanvas.height, e.button];
-    });
-
-    this.bufObj = {};
-    this.mousepos = [0,0,0];
-    this.loop = false;
-
-    this.logger = {
-      id: null,
-      set: function(id){
-        this.id = document.getElementById(id) || null;
-      },
-      log: function(msg){
-        if (this.id)
-          this.id.innerText += `${msg}\n`;
-        console.log(msg);
-      },
-      show: function(){
-        if (this.id && this.id.style.display === 'none')
-          this.id.style.display = 'block';
-      }
-    }
-    return this;
+  defOptions = {
+    square: false
   }
+  options;
 
-  debug(elId){
-    this.logger.set(elId);
-  }
+  sensorSupport = {
+    accelerometer: window.accelerometer,
+    gyroscope: window.gyroscope,
+    magnetometer: window.magnetometer,
+    AmbientLightSensor: window.AmbientLightSensor
+  };
 
-  loadByIds(vertexId, fragmentId){
-    let vertexCode = vertexId ? document.getElementById(vertexId).firstChild.nodeValue : null;
-    let fragmentCode = document.getElementById(fragmentId).firstChild.nodeValue;
-    return this.loadCode(vertexCode, fragmentCode);
-  }
+  defaultVertex =
+`attribute vec2 position;
+void main() {
+  gl_Position = vec4(position, 0.0, 1.0);
+}`;
 
-  loadAssets(vertexPath, fragmentPath, callback){
-    let vertexCode;
-    if (vertexPath === null){
-      vertexCode = this.defaultVertex;
-      this.loadAsset(fragmentPath, fragmentCode => {
-        this.loadCode(vertexCode, fragmentCode);
-        callback(this);
-      });
-    } else {
-      this.loadAsset(vertexPath, vertexCode => {
-        this.loadAsset(fragmentPath, fragmentCode => {
-          this.loadCode(vertexCode, fragmentCode);
-          callback(this);
-        })
-      });
-    }
-  }
-
-  loadAsset(path, callback){
-    if (!path.match("shaders/"))
-      path = "./shaders/" + path;
-    callback(`uniform vec2 iResolution;
+  defaultFragment = 
+`uniform vec2 iResolution;
 uniform vec2 iMouse;
 uniform float iTime;
 
@@ -95,21 +40,90 @@ uniform float iTime;
 void mainImage(out vec4 fragColor, in vec2 fragCoord){
     vec2 uv = fragCoord.xy / iResolution.xy;
     fragColor = vec4(uv.x * cos(iTime), uv.y * sin(iTime), uv.x * uv.y, 1.0);
-}`);
-  return;
+}`;
+
+  bufObj = {};
+  mousepos = [0,0,0];
+  loop = false;
+
+  logger = {
+    id: null,
+    set: function(id){
+      this.id = document.getElementById(id) || null;
+    },
+    log: function(msg){
+      if (this.id)
+        this.id.innerText += `${msg}\n`;
+      console.log(msg);
+    },
+    show: function(){
+      if (this.id && this.id.style.display === 'none')
+        this.id.style.display = 'block';
+    }
+  }
+
+  constructor(id, options){
+    this.options = options || this.defOptions;
+    this.glCanvas = id ? document.getElementById(id) : document.createElement('canvas');
+    this.gl = this.glCanvas.getContext("webgl");
+    this.glCanvas.addEventListener('mousemove', (e) => {
+      this.mousepos = [ e.offsetX/this.glCanvas.width, e.offsetY/this.glCanvas.height, e.button];
+    });
+
+    return this;
+  }
+
+  debug(elId){
+    this.logger.set(elId);
+  }
+
+  load(opts, callback){
+    let isLoaded = false;
+    this.vertexCode = this.defaultVertex;
+    this.fragmentCode = this.defaultFragment;
+    if (opts.vertexId)
+      this.vertexCode = document.getElementById(opts.vertexId).firstChild.nodeValue;
+    if (opts.fragmentId)
+      this.fragmentCode = document.getElementById(opts.fragmentId).firstChild.nodeValue;
+    if (opts.vertexAsset){
+      this.vertexCode = null;
+      this.loadAsset(opts.vertexAsset, vertexCode => {
+        this.vertexCode = vertexCode;
+        isLoaded = this.checkCodeCallback(callback);
+      });
+    }
+    if (opts.fragmentAsset){
+      this.fragmentCode = null;
+      this.loadAsset(opts.fragmentAsset, fragmentCode => {
+        this.fragmentCode = fragmentCode;
+        isLoaded = this.checkLoadingState(callback);
+      });
+    }
+    if (opts.vertexCode)
+      this.vertexCode = opts.vertexCode;
+    if (opts.fragmentCode)  
+      this.fragmentCode = opts.fragmentCode;
+    if (opts.vertexCode === null)
+      this.vertexCode = this.defaultVertex;
+    if (opts.fragmentCode === null)
+      this.fragmentCode = this.defaultFragment;
+    if (!isLoaded)
+      this.checkLoadingState(callback);
+  }
+
+  checkLoadingState(callback){
+    let state = this.vertexCode && this.fragmentCode;
+    if (state)
+      this.loadProgram(program => this.init(program, callback));
+    return state;
+  }
+
+  loadAsset(path, callback){
+    if (!path.match("shaders/"))
+      path = "./shaders/" + path;
     fetch(path)
       .then((response) => response.text())
       .then((text) => callback(text));
-  }
-
-  loadCode(vertexCode, fragmentCode){
-    if (vertexCode === null)
-      vertexCode = "attribute vec2 position;\nvoid main() {\n gl_Position = vec4(position, 0.0, 1.0);\n}";
-    this.vertexCode = vertexCode;
-    fragmentCode = this.checkCode(fragmentCode);
-    this.fragmentCode = fragmentCode;
-    this.loadProgram(vertexCode, fragmentCode, program => this.init(program));
-    return this;
   }
 
   checkVar(code, varName, boolName){
@@ -130,22 +144,15 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       code = "#ifdef GL_ES\n precision highp float;\n#endif\n\n" + code;
     if (code.match(/\nvoid main\(\)/) === null)
       code = code + "\n\nvoid main() {\n  mainImage( gl_FragColor, gl_FragCoord.xy );\n}";
+    // give some space to special characters
+    code = code.replace(/\<|\>|\=|\*|\+|\-|\/|\?|\:\)|\(/gi, (m) => ` ${m} `).replaceAll('  ',' ');
     return code;
   }
 
-  requestPermission(key, callback){
-    navigator.permissions.query({ name: key }).then((result) => {
-      if (result.state === "denied") {
-        this.logger.log(`Permission to use ${key} is denied.`);
-      } else {
-        callback()
-      }
-    });
-  }
   testU(str, t, n){
     return str.match(`\nuniform[ ]+${t}[ ]+${n}`)
   }
-  init(program){
+  init(program, callback){
     const gl = this.gl;
     program.position = gl.getAttribLocation(program, "position");
     program.iTime = gl.getUniformLocation(program, "iTime");
@@ -223,6 +230,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
     this.gl = gl;
     this.program = program;
     this.bufObj = bufObj;
+    callback(this);
   }
 
   start(){
@@ -286,11 +294,11 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
     this.glCanvas.height = h;
   }
 
-  loadProgram(vertexCode, fragmentCode, callback){
+  loadProgram(callback){
     const program = this.gl.createProgram();
-    if (this.compileShader(this.gl.VERTEX_SHADER, vertexCode,
+    if (this.compileShader(this.gl.VERTEX_SHADER, this.vertexCode,
         shader => this.gl.attachShader(program, shader))
-      && this.compileShader(this.gl.FRAGMENT_SHADER, fragmentCode,
+      && this.compileShader(this.gl.FRAGMENT_SHADER, this.fragmentCode,
         shader => this.gl.attachShader(program, shader))){
           this.gl.linkProgram(program);
           if (this.gl.getProgramParameter(program, this.gl.LINK_STATUS)) {
@@ -305,14 +313,15 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
 
   compileShader(type, code, callback){
     const shader = this.gl.createShader(type);
+    const typeName = type === this.gl.VERTEX_SHADER ? "vertex" : "fragment";
     this.gl.shaderSource(shader, code);
     this.gl.compileShader(shader);
     if (this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
       callback(shader);
-      this.logger.log(`compiling successfully ${type}: ${this.gl.getShaderInfoLog(shader)}`);
+      this.logger.log(`compiling successfully ${typeName}: ${this.gl.getShaderInfoLog(shader)}`);
       return true;
     }
-    this.logger.log(`error compiling ${type}: ${this.gl.getShaderInfoLog(shader)}`);
+    this.logger.log(`error compiling ${typeName}: ${this.gl.getShaderInfoLog(shader)}`);
     return false;
   }
 }

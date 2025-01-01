@@ -1,27 +1,19 @@
 window.addEventListener("load", startup, false);
 
+const debug = document.getElementById('debug');
+const code = document.getElementById('code');
+
 function squareit(i){
   webGl.options.square = i.checked;
   webGl.resize();
 }
 function toggleDebug(i){
-  if (i.checked){
-    document.getElementById('debug').style.display = 'block';
-    webGl.debug('debug');
-  } else {
-    document.getElementById('debug').style.display = 'none';
-    webGl.debug(null);
-  }
-  
+  debug.style.display = i.checked ? 'block' : 'none';
+  webGl.debug( i.checked ? 'debug' : null);
 }
 function toggleCode(i){
-  let code = document.getElementById('code');
-  if (i.checked){
-    code.style.display = 'block';
-    code.innerText = webGl.fragmentCode;
-  } else {
-    code.style.display = 'none';
-  }
+  code.style.display = i.checked ? 'block' : 'none';
+  code.innerText = webGl.fragmentCode;
 }
 
 let webGl;
@@ -32,9 +24,8 @@ function startup() {
   let urlParams = new URLSearchParams(window.location.search);
   const frag = urlParams.get('frag');
   if (frag !== null){
-    webGl.loadCode(null, atob(frag));
-    webGl.start();
+    webGl.load({ fragmentCode: atob(frag) }, gl => gl.start());
   } else {
-    webGl.loadAssets(null,'def-test.frag', gl => gl.start());
+    webGl.load({ fragmentId: 'defaultFragment' }, gl => gl.start());
   }
 }
