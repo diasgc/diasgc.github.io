@@ -66,6 +66,7 @@ function irun(i){
   if (i.checked){
     glcanvas.style.display = 'block';
     if (webGl === null){
+      webGl = new GlCanvas('gl-canvas');
       webGl.debug('edebug');
       webGl.load({ fragmentCode: fragCode.innerText }, gl => gl.start());
       incode.checked = false;
