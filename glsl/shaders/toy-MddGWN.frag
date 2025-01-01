@@ -29,13 +29,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
   vec2 s = iResolution.xy;
   vec2 v = z*(2.*fragCoord.xy-s)/s.y;
   
-  // Mouse axis y => zoom
-  if(iMouse.z>0.) v *= iMouse.y * 20.;
-  // v *= iMouse.y * 20.;
-  
-  // Mouse axis x => duration
-  if(iMouse.z>0.) duration = iMouse.x * 10.;
-  // duration = iMouse.x * 10.;
+  if(iMouse.z > 0.) v *= iMouse.y * 20.;
+  if(iMouse.z > 0.) duration = iMouse.x * 10.;
   
   vec3 col = vec3(0.);
   vec2 pm = v.yx*2.8;
@@ -44,10 +39,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
   float mb = 0.;
   float mbRadius = 0.;
   float sum = 0.;
-  for(int i=0;i<n;i++){
-    float d = fract(t*power+48934.4238*sin(float(i/int(evo))*692.7398));
+  for(int i = 0; i < n; i++){
+    float d = fract(t * power + 48934.4238 * sin(float(i/int(evo)) * 692.7398));
     float tt = 0.;
-    float a = 6.28*float(i)/float(n);
+    float a = 6.28 * float(i)/float(n);
     float x = d*cos(a)*duration;
     float y = d*sin(a)*duration;
     float distRatio = d/dMax;
