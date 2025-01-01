@@ -295,6 +295,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
   }
 
   loadProgram(callback){
+    this.fragmentCode = this.checkCode(this.fragmentCode)
     const program = this.gl.createProgram();
     if (this.compileShader(this.gl.VERTEX_SHADER, this.vertexCode,
         shader => this.gl.attachShader(program, shader))

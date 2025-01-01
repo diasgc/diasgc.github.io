@@ -6,123 +6,12 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta http-equiv="expires" content="0">
   <link rel="manifest" href="editor.webmanifest">
-  <link  rel="stylesheet"
-    href="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/default.min.css"
-  />
+  
   <script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/highlight.min.js"></script>
-  <!-- and it's easy to individually load additional languages -->
   <script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/languages/glsl.min.js"></script>
-  </script>
-  <style>
-    :root {
-      color-scheme: dark light;
-      --accent:  light-dark(#0bf,#fb0);
-      --main-bg: light-dark(#eee,#111);
-      --main-fg: light-dark(#111,#eee);
-      --swsz: 20px;
-    }
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--main-bg);
-      color: var(--main-fg);
-      accent-color: var(--accent);
-      margin: 0;
-    }
-    #fragCode {
-      position: absolute;
-      top: 12px;
-      bottom: 12px;
-      left: 12px;
-      right: 12px;
-      font-family: monospace;
-      font-weight: 600;
-      font-size: 14px;
-      padding: 12px;
-      border: 1px solid #8888;
-      background: #8882;
-      border-radius: 12px;
-      resize: none;
-    }
-    [contenteditable="true"].single-line {
-        white-space: nowrap;
-        width:200px;
-        overflow: hidden;
-    } 
-    [contenteditable="true"].single-line br {
-        display:none;
 
-    }
-    [contenteditable="true"].single-line * {
-        display:inline;
-        white-space:nowrap;
-    }
-    .fs-table {
-      position: absolute;
-      border-radius: 12px;
-      left: 24px;
-      bottom: 24px;
-      right: 24px;
-      top: auto;
-      padding: 8px;
-      margin: 2px;
-      font-size: 10px;
-      text-align: center;
-    }
-    table {
-      table-layout: fixed;
-      width: 100%;
-    }
-    td {
-      margin: 8px;
-      padding: 0;
-    }
-    .fs-table button {
-      width: 100%;
-      outline: none;
-      border: none;
-      border-radius: 4px;
-      background: #222a;
-      font-size: 16px;
-      font-weight: 800;
-      color: white;
-      padding: 8px;
-      text-align: center;
-    }
-    #fname {
-      display: none;
-      outline: none;
-      border: none;
-      
-      padding: 8px;
-      text-align: center;
-    }
-    #fname label {
-      font-size: 14px;
-      font-weight: 800;
-      padding: 8px 18px;
-      border-radius: 12px;
-      background: #8882;
-    }
-    #submit {
-      border: none;
-      margin: 8px;
-      padding: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      background: transparent;
-      color: black
-    }
-    .selOpts,
-    input[type="text"] {
-      border: none;
-      border-radius: 12px;
-      margin: 8px;
-      padding: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      background: #8882;
-    }
-  </style>
+  <link  rel="stylesheet"href="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/default.min.css"/>
+  <link rel="stylesheet" href="editor.css">
   <link  rel="stylesheet"
     href="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/github.min.css"
     media="screen and (prefers-color-scheme: light)" />
@@ -130,135 +19,26 @@
     href="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/github-dark-dimmed.min.css"
     media="screen and (prefers-color-scheme: dark)" />
   <script id="defaultFragment" type="x-shader/x-fragment">
-#ifdef GL_ES
-  precision highp float;
-#endif
-
 uniform vec2 iResolution;
-uniform vec2 iMouse;
 uniform float iTime;
 
-// shaderToy style:
 void mainImage(out vec4 fragColor, in vec2 fragCoord){
     vec2 uv = fragCoord.xy / iResolution.xy;
     fragColor = vec4(uv.x * cos(iTime), uv.y * sin(iTime), uv.x * uv.y, 1.0);
 }
-
-void main() {
-    mainImage( gl_FragColor, gl_FragCoord.xy );
-}
   </script>
 </head>
 <body>
-<pre><code id="fragCode" class="language-glsl" contenteditable="true" spellcheck="false">
-</code></pre>
-<fieldset class="fs-table"><legend>menu</legend>
-  <div id="fname"></div>
-  <table id="table"><tr id="opts"></tr></table>
-</fieldset>
-<script>
-  let assetList = ['def-test.frag','def.frag','toy-gyro.frag','toy-MddGWN.frag','toy-mtyGWy.frag'];
-  let defCode = document.getElementById('defaultFragment').firstChild.nodeValue;;
-  let fragCode = document.getElementById('fragCode');
-  let fname = document.getElementById('fname');
-  let tr = document.getElementById('opts');
-  let table = document.getElementById('table');
-  let sname = document.getElementById('sname');
-  
-  let opts = [ 'clear', 'load', 'save', 'run', 'ex' ];
-  opts.forEach(s => {
-    let td = document.createElement('td');
-    td.width = 100/opts.length + "%";
-    let b = document.createElement('button');
-    b.innerText = s;
-    b.onclick = function(e){
-      if (window[e.currentTarget.innerText])
-        window[e.currentTarget.innerText]();
-    }
-    td.appendChild(b);
-    tr.appendChild(td);
-  });
-
-  loadCode(defCode);
-  
-  function loadAsset(name){
-    fetch(`./shaders/${name}`)
-      .then((response) => response.text())
-      .then((text) => loadCode(text));
-  }
-  function ex(){
-    fname.style.display = 'block';
-    let sel = document.createElement('select');
-    sel.className = 'selOpts';
-    let opts = "";
-    assetList.forEach(item => opts+=`<option value='${item}'>${item}</option>`);
-    sel.innerHTML = opts;
-    sel.onchange = function(){
-      loadAsset(sel.value)
-      fname.removeChild(sel);
-      fname.style.display = 'none';
-    }
-    fname.appendChild(sel);
-  }
-  function loadCode(code){
-    fragCode.innerHTML = code;
-    hljs.highlightElement(fragCode);
-  }
-  function clear(){
-    loadCode(defCode);
-  }
-  function createTextInput(defVal, labelText, callback){
-    let div = document.createElement('div');
-    let input = document.createElement('input');
-    input.type = 'text';
-    input.id = "inputid";
-    input.name = input.id;
-    input.value = defVal;
-    div.appendChild(input);
-    let label = document.createElement('label');
-    label.setAttribute('for',input.id);
-    label.onclick = function(){
-      callback(input.value);
-    };
-    label.innerHTML = labelText;
-    div.appendChild(label);
-    return div;
-  }
-
-  function save(){
-    fname.style.display = 'inline';
-    let div = createTextInput("MyFragment.frag","save", filename => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob( [fragCode.innerText], { type : "x-shader/x-fragment;charset=utf-8"	}));
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      fname.removeChild(div);
-      fname.style.display = 'none';
-    })
-    fname.appendChild(div);
-  }
-
-  function load(){
-    let load = document.createElement('input');
-    load.type = 'file';
-    load.accept = '.frag';
-    load.onchange = function(e){
-      var fileReader=new FileReader();
-      fileReader.onload=function(){
-        loadCode(fileReader.result);
-      }
-      fileReader.readAsText(this.files[0]);
-    }
-    document.body.appendChild(load);
-    load.click();
-    document.body.removeChild(load);
-  }
-  function run(){
-    window.location.href = '/glsl/index.html?frag=' + btoa(fragCode.innerText);
-    //window.open("https://www.youraddress.com","_self")
-  }
-</script>
+  <canvas id="gl-canvas" style="z-index: 0;"></canvas>
+  <div id="ecode">
+    <pre><code id="fragCode" class="language-glsl" contenteditable="true" spellcheck="false"></code></pre>
+    <div id="edebug"></div>
+  </div>
+  <fieldset class="fs-table"><legend>menu</legend>
+    <div id="fname"></div>
+    <table id="table"><tr id="opts"></tr></table>
+  </fieldset>
+  <script src="glcanvas.js?v=2412311200"></script>
+  <script src="editor.js?v=2412311200"></script>
 </body>
 </html>

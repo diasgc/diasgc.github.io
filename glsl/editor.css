@@ -1,0 +1,148 @@
+:root {
+  color-scheme: dark light;
+  --accent:  light-dark(#0bf,#fb0);
+  --main-bg: light-dark(#eee,#111);
+  --main-fg: light-dark(#111,#eee);
+  --swsz: 20px;
+}
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--main-bg);
+  color: var(--main-fg);
+  accent-color: var(--accent);
+  margin: 0;
+}
+#fragCode {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  font-family: monospace;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px;
+  border: 1px solid #8888;
+  background: #8882;
+  border-radius: 12px;
+  resize: none;
+}
+[contenteditable="true"].single-line {
+    white-space: nowrap;
+    width:200px;
+    overflow: hidden;
+} 
+[contenteditable="true"].single-line br {
+    display:none;
+
+}
+[contenteditable="true"].single-line * {
+    display:inline;
+    white-space:nowrap;
+}
+
+#fname {
+  display: none;
+  outline: none;
+  border: none;
+  
+  padding: 8px;
+  text-align: center;
+}
+
+#fname label {
+  font-size: 14px;
+  font-weight: 800;
+  padding: 8px 18px;
+  border-radius: 12px;
+  background: #8882;
+}
+
+#submit {
+  border: none;
+  margin: 8px;
+  padding: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  background: transparent;
+  color: black
+}
+
+.selOpts,
+input[type="text"] {
+  border: none;
+  border-radius: 12px;
+  margin: 8px;
+  padding: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  background: #8882;
+}
+
+.fs-table {
+  position: absolute;
+  border-radius: 12px;
+  left: 24px;
+  bottom: 24px;
+  right: 24px;
+  top: auto;
+  padding: 8px;
+  margin: 2px;
+  font-size: 10px;
+  text-align: center;
+}
+
+table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.fs-table td {
+  margin: 2px;
+  padding: 0;
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  background: #222a;
+  font-size: 13px;
+  font-weight: 800;
+  color: white;
+  padding: 8px;
+  text-align: center;
+}
+
+.fs-table button {
+  outline: none;
+  border: none;
+  background: none;
+  font-size: 13px;
+  color: white;
+  text-align: center;
+}
+
+input[type="checkbox"] {
+  display: none;
+}
+
+.fs-table input[type="checkbox"]:checked + label {
+  color: #0b08;
+}
+
+#ecode {
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+}
+#edebug {
+  position: absolute;
+  bottom: 80px;
+  left: 0px;
+  right: 0px;
+  height: 20dvh;
+  font-family: monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0b0;
+}
