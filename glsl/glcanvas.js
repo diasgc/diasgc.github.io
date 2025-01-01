@@ -145,7 +145,11 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
     if (code.match(/\nvoid main\(\)/) === null)
       code = code + "\n\nvoid main() {\n  mainImage( gl_FragColor, gl_FragCoord.xy );\n}";
     // give some space to special characters
-    code = code.replace(/\<|\>|\=|\*|\+|\-|\/|\?|\:\)|\(/gi, (m) => ` ${m} `).replaceAll('  ',' ');
+    code = code.replace(/\<|\>|\=|\*|\+|\-|\/|\?|\:\)|\(/gi, (m) => ` ${m} `)
+      .replaceAll('  ',' ')
+      .replaceAll(' / /','//')
+      .replaceAll(' / *','/*')
+      .replaceAll(' * /','*/');
     return code;
   }
 
