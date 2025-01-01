@@ -52,7 +52,7 @@ function ex(){
 }
 
 function loadCode(code){
-  code = GlCanvas.checkCode(code);
+  code = GlCanvas.formatCode(code);
   fragCode.innerHTML = code;
   hljs.highlightElement(fragCode);
 }
