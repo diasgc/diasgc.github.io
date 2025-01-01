@@ -7,7 +7,7 @@ let fname = document.getElementById('fname');
 let tr = document.getElementById('opts');
 let table = document.getElementById('table');
 let sname = document.getElementById('sname');
-let webGl = null;
+let webGl = new GlCanvas('gl-canvas');
 let glcanvas = document.getElementById('gl-canvas');
 
 let opts = [ 'b-clear', 'b-load', 'b-save', 'i-run', 'i-code', 'i-debug','b-ex' ];
@@ -52,6 +52,7 @@ function ex(){
 }
 
 function loadCode(code){
+  code = webGl.checkCode(code);
   fragCode.innerHTML = code;
   hljs.highlightElement(fragCode);
 }
@@ -65,7 +66,6 @@ function irun(i){
   if (i.checked){
     glcanvas.style.display = 'block';
     if (webGl === null){
-      webGl = new GlCanvas('gl-canvas');
       webGl.debug('edebug');
       webGl.load({ fragmentCode: fragCode.innerText }, gl => gl.start());
       incode.checked = false;
