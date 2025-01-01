@@ -7,7 +7,7 @@ let fname = document.getElementById('fname');
 let tr = document.getElementById('opts');
 let table = document.getElementById('table');
 let sname = document.getElementById('sname');
-let webGl = new GlCanvas('gl-canvas');
+let webGl = null;
 let glcanvas = document.getElementById('gl-canvas');
 
 let opts = [ 'b-clear', 'b-load', 'b-save', 'i-run', 'i-code', 'i-debug','b-ex' ];
