@@ -134,6 +134,11 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
     }
   }
 
+  static formatCode(code){
+    return code.replace(/\/\/|\/\*|\*\/|\/\=|\*\=|\+\=|\-\=|\+\+|\-\-|\<|\>|\=|\*|\+|\-|\/|\?|\:\)|\(/gi, (m) => m.lenght === 2 ? m :` ${m} `)
+      .replaceAll('  ',' ');
+  }
+  
   checkCode(code){
     this.checkVar(code, 'iAccelerometer', 'useAccel');
     this.checkVar(code, 'iOrientation',   'useOrien');
@@ -145,8 +150,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
     if (code.match(/\nvoid main\(\)/) === null)
       code = code + "\n\nvoid main() {\n  mainImage( gl_FragColor, gl_FragCoord.xy );\n}";
     // give some space to special characters
-    code = code.replace(/\/\/|\/\*|\*\/|\/\=|\*\=|\+\=|\-\=|\+\+|\-\-|\<|\>|\=|\*|\+|\-|\/|\?|\:\)|\(/gi, (m) => m.lenght === 2 ? m :` ${m} `)
-          .replaceAll('  ',' ');
+    code = this.formatCode(code);
     return code;
   }
 
