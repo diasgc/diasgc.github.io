@@ -103,10 +103,6 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       this.vertexCode = opts.vertexCode;
     if (opts.fragmentCode)  
       this.fragmentCode = opts.fragmentCode;
-    if (opts.vertexCode === null)
-      this.vertexCode = this.defaultVertex;
-    if (opts.fragmentCode === null)
-      this.fragmentCode = this.defaultFragment;
     if (!isLoaded)
       this.checkLoadingState(callback);
   }
