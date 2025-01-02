@@ -131,7 +131,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
   }
 
   static formatCode(code){
-    return code.replace(/(\w+)([+=*/<>?:()])(\w)/g,"$1 $2 $3");
+    return code.replace(/(\w+)([+=*/<>?:])(\w)/g,"$1 $2 $3");
     //return code.replace(/\<|\>/gi, (m) => ` ${m} `);
     //return code.replace(/\/\/|\/\*|\*\/|\/\=|\*\=|\+\=|\-\=|\+\+|\-\-|\<|\>|\=|\*|\+|\-|\/|\?|\:\)|\(/gi, (m) => m.lenght === 2 ? m :` ${m} `).replaceAll('  ',' ');
   }
