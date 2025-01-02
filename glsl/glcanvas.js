@@ -135,6 +135,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
   }
 
   static formatCode(code){
+    //code = code.replace(/(\w+)([+=*/<>?:()])(\w)/g,"$1 $2 $3");
     return code.replace(/\<|\>/gi, (m) => ` ${m} `); //code.replace(/\/\/|\/\*|\*\/|\/\=|\*\=|\+\=|\-\=|\+\+|\-\-|\<|\>|\=|\*|\+|\-|\/|\?|\:\)|\(/gi, (m) => m.lenght === 2 ? m :` ${m} `).replaceAll('  ',' ');
   }
 
@@ -149,7 +150,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
     if (code.match(/\nvoid main\(\)/) === null)
       code = code + "\n\nvoid main() {\n  mainImage( gl_FragColor, gl_FragCoord.xy );\n}";
     // give some space to special characters
-    code = this.formatCode(code);
+    code = GlCanvas.formatCode(code);
     return code;
   }
 
