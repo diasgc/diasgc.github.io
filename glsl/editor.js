@@ -37,8 +37,11 @@ function loadAsset(name){
     .then((text) => loadCode(text));
 }
 function ex(){
+  if (document.getElementById('selOpts') !== null)
+    return;
   fname.style.display = 'block';
   let sel = document.createElement('select');
+  sel.id = 'selOpts';
   sel.className = 'selOpts';
   let opts = "";
   assetList.forEach(item => opts+=`<option value='${item}'>${item}</option>`);
@@ -63,7 +66,6 @@ function clear(){
 }
 
 function irun(i){
-  let incode = document.getElementById('incode');
   if (i.checked){
     glcanvas.style.display = 'block';
     if (webGl === null){
