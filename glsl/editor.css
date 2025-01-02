@@ -27,6 +27,22 @@ body {
   border-radius: 12px;
   resize: none;
 }
+td.hljs-ln-numbers {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  font-size: 9px;
+  border-right: 4px solid transparent;
+  text-align: left;
+  color: #8888;
+  vertical-align: center;
+  padding-right: 2px;
+  margin-right: 8px;
+  width: 12px;
+}
 [contenteditable="true"].single-line {
     white-space: nowrap;
     width:200px;
@@ -140,7 +156,7 @@ input[type="checkbox"] {
   bottom: 80px;
   left: 0px;
   right: 0px;
-  height: 20dvh;
+  height: 10dvh;
   font-family: monospace;
   font-size: 12px;
   font-weight: 600;
