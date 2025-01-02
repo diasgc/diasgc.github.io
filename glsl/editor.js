@@ -58,7 +58,7 @@ function loadCode(code){
   code = GlCanvas.formatCode(code);
   fragCode.innerHTML = code;
   hljs.highlightElement(fragCode);
-  hljs.lineNumbersBlock(fragCode);
+  hljs.lineNumbersBlock(fragCode,{ singleLine: true });
 }
 
 function clear(){
