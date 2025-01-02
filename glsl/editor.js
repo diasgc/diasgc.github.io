@@ -69,7 +69,7 @@ function irun(i){
       webGl = new GlCanvas('gl-canvas');
       webGl.debug('edebug');
       webGl.load({ fragmentCode: fragCode.innerText }, gl => gl.start());
-      incode.checked = false;
+      i.change();
     }
   } else {
     glcanvas.style.display = 'none';
@@ -77,7 +77,7 @@ function irun(i){
       webGl.destroy();
       webGl = null;
     }
-    incode.checked = true;
+    i.change();
   }
 }
 
