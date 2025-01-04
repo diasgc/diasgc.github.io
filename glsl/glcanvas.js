@@ -33,10 +33,8 @@ void main() {
 
   defaultFragment = 
 `uniform vec2 iResolution;
-uniform vec2 iMouse;
 uniform float iTime;
 
-// shaderToy style:
 void mainImage(out vec4 fragColor, in vec2 fragCoord){
     vec2 uv = fragCoord.xy / iResolution.xy;
     fragColor = vec4(uv.x * cos(iTime), uv.y * sin(iTime), uv.x * uv.y, 1.0);
@@ -62,14 +60,237 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
     }
   }
 
+  uniforms = {
+    sensorList: [
+      'accelerometer', 'gyroscope', 'magnetometer', 'ambientLightSensor', 'gravitySensor',
+      'linearAccelerationSensor', 'relativeOrientationSensor', 'absoluteOrientationSensor',
+      'mouse', 'time', 'random1', 'random2'
+    ],
+    accelerometer: {
+      isEnabled: false,
+      name: 'iAccelerometer',
+      type: 'vec3',
+      data: [0,0,0],
+      start: function(){
+        this.sensor = new Accelerometer();
+        this.sensor.addEventListener("reading", (e) => this.data = [ e.target.x, e.target.y, e.target.z ]);
+      },
+      stop: function(){
+        this.sensor.addEventListener("reading", null);
+      },
+      update: function(gl, program){
+        gl.uniform3f(program[this.name], this.data[0], this.data[1], this.data[2]);
+      }
+    },
+    gyroscope: {
+      isEnabled: false,
+      name: 'iGyroscope',
+      type: 'vec3',
+      data: [0,0,0],
+      start: function(){
+        this.sensor = new Gyroscope();
+        this.sensor.addEventListener('reading', (e) => this.data = [ e.target.x, e.target.y, e.target.z ]);
+      },
+      stop: function(){
+        this.sensor.addEventListener("reading", null);
+      },
+      update: function(gl, program){
+        gl.uniform3f(program[this.name], this.data[0], this.data[1], this.data[2]);
+      }
+    },
+    magnetometer: {
+      isEnabled: false,
+      name: 'iMagnetometer',
+      type: 'vec3',
+      data: [0,0,0],
+      start: function(){
+        this.sensor = new Magnetometer();
+        this.sensor.addEventListener('reading', (e) => this.data = [ e.target.x, e.target.y, e.target.z ]);
+      },
+      stop: function(){
+        this.sensor.addEventListener("reading", null);
+      },
+      update: function(gl, program){
+        gl.uniform3f(program[this.name], this.data[0], this.data[1], this.data[2]);
+      }
+    },
+    ambientLightSensor: {
+      isEnabled: false,
+      name: 'iAmbientLight',
+      type: 'float',
+      data: 0,
+      start: function(){
+        this.sensor = new AmbientLightSensor();
+        this.sensor.addEventListener('reading', (e) => this.data = e.target.illuminance);
+      },
+      stop: function(){
+        this.sensor.addEventListener("reading", null);
+      },
+      update: function(gl, program){
+        gl.uniform3f(program[this.name], this.data[0], this.data[1], this.data[2]);
+      }
+    },
+    gravitySensor: {
+      isEnabled: false,
+      name: 'iGravity',
+      type: 'vec3',
+      data: [0,0,0],
+      start: function(){
+        this.sensor = new GravitySensor();
+        this.sensor.addEventListener('reading', (e) => this.data = [ e.target.x, e.target.y, e.target.z ]);
+      },
+      stop: function(){
+        this.sensor.addEventListener("reading", null);
+      },
+      update: function(gl, program){
+        gl.uniform3f(program[this.name], this.data[0], this.data[1], this.data[2]);
+      }
+    },
+    linearAccelerationSensor: {
+      isEnabled: false,
+      name: 'iLinearAcceleration',
+      type: 'vec3',
+      data: [0,0,0],
+      start: function(){
+        this.sensor = new LinearAccelerationSensor();
+        this.sensor.addEventListener('reading', (e) => this.data = [ e.target.x, e.target.y, e.target.z ]);
+      },
+      stop: function(){
+        this.sensor.addEventListener("reading", null);
+      },
+      update: function(gl, program){
+        gl.uniform3f(program[this.name], this.data[0], this.data[1], this.data[2]);
+      }
+    },
+    relativeOrientationSensor: {
+      isEnabled: false,
+      name: 'iRelativeOrientation',
+      type: 'vec3',
+      data: [0,0,0],
+      start: function(){
+        this.sensor = new RelativeOrientationSensor();
+        this.sensor.addEventListener('reading', (e) => this.data = [ e.target.x, e.target.y, e.target.z ]);
+      },
+      stop: function(){
+        this.sensor.addEventListener("reading", null);
+      },
+      update: function(gl, program){
+        gl.uniform3f(program[this.name], this.data[0], this.data[1], this.data[2]);
+      }
+    },
+    absoluteOrientationSensor: {
+      isEnabled: false,
+      name: 'iAbsoluteOrientation',
+      type: 'vec3',
+      data: [0,0,0],
+      start: function(){
+        this.sensor = new AbsoluteOrientationSensor();
+        this.sensor.addEventListener('reading', (e) => this.data = [ e.target.x, e.target.y, e.target.z ]);
+      },
+      stop: function(){
+        this.sensor.addEventListener("reading", null);
+      },
+      update: function(gl, program){
+        gl.uniform3f(program[this.name], this.data[0], this.data[1], this.data[2]);
+      }
+    },
+    mouse: {
+      isEnabled: false,
+      name: 'iMouse',
+      type: 'vec3',
+      data: [0,0,0],
+      checkCode: function(code){ this.isEnabled = code.match(/\s+^uniform vec[23] iMouse/g) ? true : false; },
+      start: function(){
+        window.addEventListener("mousemove", (event) => this.data = [ event.clientX, event.clientY, event.button ]);
+      },
+      stop: function(){
+        this.sensor.addEventListener("reading", null);
+      },
+      update: function(gl, program){
+        gl.uniform3f(program[this.name], this.data[0], this.data[1], this.data[2]);
+      }
+    },
+    time: {
+      isEnabled: false,
+      name: 'iTime',
+      type: 'float',
+      data: 0,
+      checkCode: function(code){ this.isEnabled = uniforms.chkDecl(code, 'float', 'iTime'); },
+      start: function(){
+        this.data = Date.now();
+      },
+      stop: function(){
+        this.data = 0;
+      },
+      update: function(gl, program){
+        gl.uniform1f(program[this.name], (Date.now() - this.data)/1000.0);
+      }
+    },
+    random1: {
+      isEnabled: false,
+      name: 'iRandom',
+      type: 'float',
+      data: 0,
+      start: function(){
+        this.data = Math.random();
+      },
+      stop: function(){
+        this.data = 0;
+      },
+      update: function(gl, program){
+        gl.uniform1f(program[this.name], Math.random());
+      }
+    },
+    random2: {
+      isEnabled: false,
+      name: 'iRandom2D',
+      type: 'vec2',
+      data: [0, 0],
+      start: function(){
+        this.data = [Math.random(), Math.random()];
+      },
+      stop: function(){
+        this.data = 0;
+      },
+      update: function(gl, program){
+        gl.uniform2f(program[this.name], Math.random(), Math.random());
+      }
+    },
+
+    inspectCode: function(code){
+      this.sensorList.forEach(sensor => {
+        let regex = new RegExp(`[\n\\s]+uniform\\s+${this[sensor].type}\\s+${this[sensor].name}`,'g');
+        this[sensor].isEnabled = code.match(regex) ? true : false;
+      });
+    },
+
+    init: function(gl, program){
+      this.sensorList.forEach(sensor => {
+        if (this[sensor].isEnabled)
+          program[this[sensor].name] = gl.getUniformLocation(program, this[sensor].name);
+      });
+      return program;
+    },
+
+    start: function(){
+      this.sensorList.forEach(sensor => {
+        if (this[sensor].isEnabled)
+          this[sensor].start();
+      });
+    },
+
+    update: function(gl, program){
+      this.sensorList.forEach(sensor => {
+        if (this[sensor].isEnabled)
+          this[sensor].update(gl, program);
+      });
+    }
+  }
+
   constructor(id, options){
     this.options = options || this.defOptions;
     this.glCanvas = id ? document.getElementById(id) : document.createElement('canvas');
     this.gl = this.glCanvas.getContext("webgl");
-    this.glCanvas.addEventListener('mousemove', (e) => {
-      this.mousepos = [ e.offsetX/this.glCanvas.width, e.offsetY/this.glCanvas.height, e.button];
-    });
-
     return this;
   }
 
@@ -122,14 +343,6 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       .then((text) => callback(text));
   }
 
-  checkVar(code, varName, boolName){
-    window[boolName] = this.testU(code, 'vec3', varName);
-    if (!window[boolName] && code.match("varName")){
-      code =`uniform vec3 ${varName}\n${code}` ;
-      window[boolName] = true;
-    }
-  }
-
   static formatCode(code){
     return code.replace(/(\w+)([+=*/<>?:])(\w)/g,"$1 $2 $3");
     //return code.replace(/\<|\>/gi, (m) => ` ${m} `);
@@ -137,11 +350,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
   }
 
   checkCode(code){
-    this.checkVar(code, 'iAccelerometer', 'useAccel');
-    this.checkVar(code, 'iOrientation',   'useOrien');
-    this.checkVar(code, 'iGyroscope',     'useGyros');
-    this.checkVar(code, 'iMagnetometer',  'useMagne');
-
+    this.uniforms.inspectCode(code);
     if (code.match(/\#ifdef GL_ES/) === null)
       code = "#ifdef GL_ES\n precision highp float;\n#endif\n\n" + code;
     if (code.match(/\nvoid main\(\)/) === null)
@@ -151,63 +360,12 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
     return code;
   }
 
-  testU(str, t, n){
-    return str.match(`\nuniform[ ]+${t}[ ]+${n}`)
-  }
   init(program, callback){
     const gl = this.gl;
     program.position = gl.getAttribLocation(program, "position");
-    program.iTime = gl.getUniformLocation(program, "iTime");
-    program.iMouse = gl.getUniformLocation(program, "iMouse");
     program.iResolution = gl.getUniformLocation(program, "iResolution");
     
-    if (this.useAccel){
-      this.logger.log("Using iAccelerometer");
-      program.iAccelerometer = gl.getUniformLocation(program, "iAccelerometer");
-      program.accelerometer = new Accelerometer();
-      program.accelerometer.data = [ 0, 0, 0 ];
-      program.accelerometer.addEventListener("reading", (e) => {
-        program.accelerometer.data = [ e.target.x, e.target.y, e.target.z ];
-      });
-    }
-
-    if (this.useOrien){
-      this.logger.log("Using iOrientation");
-      program.iOrientation = gl.getUniformLocation(program, "iOrientation");
-      program.orientation = { 
-        data: [0,0,0],
-        start: function(){
-          window.addEventListener("deviceorientation", function(event){
-            program.orientation.data = [ event.alpha / 360.0, (180.0 + event.beta) / 360.0, (90.0 + event.gamma)/ 180.0 ];
-          });
-        },
-        stop: function(){
-          window.addEventListener("deviceorientation", null);
-        }
-      }
-    }
-
-    if (this.useGyros){
-      this.logger.log("Using iGyroscope");
-      program.iGyroscope = gl.getUniformLocation(program, "iGyroscope");
-      program.gyroscope = new Gyroscope();
-      program.gyroscope.data = [ 0, 0, 0 ];
-      program.gyroscope.addEventListener('reading', function(e) {
-        program.gyroscope.data = [ e.target.x, e.target.y, e.target.z ];
-      });
-    }
-
-    if (this.useMagne){
-      this.logger.log("Using iMagnetometer");
-      program.iMagnetometer = gl.getUniformLocation(program, "iMagnetometer");
-      program.magnetometer = new Magnetometer();
-      program.magnetometer.data = [ 0, 0, 0 ];
-      program.magnetometer.addEventListener('reading', function(e) {
-        program.magnetometer.data = [ e.target.x, e.target.y, e.target.z ];
-      });
-    }
-    
-
+    program = this.uniforms.init(gl, program);
     gl.useProgram(program);
 
     var pos = [ -1, -1, 1, -1, 1, 1, -1, 1 ];
@@ -236,45 +394,31 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
   }
 
   start(){
-    this.startTime = Date.now();
-    if (this.useAccel) this.program.accelerometer.start();
-    if (this.useOrien) this.program.orientation.start();
-    if (this.useGyros) this.program.gyroscope.start();
-    if (this.useMagne) this.program.magnetometer.start();
+    this.uniforms.start();
     this.loop = true;
     this.render();
   }
 
   stop(){
     this.loop = false;
-    if (this.useAccel) this.program.accelerometer.stop();
-    if (this.useOrien) this.program.orientation.stop();
-    if (this.useGyros) this.program.gyroscope.stop();
-    if (this.useMagne) this.program.magnetometer.stop();
+    this.uniforms.stop();
   }
 
   render(){
     const gl = this.gl;
+    const u = this.uniforms;
     const glCanvas = this.glCanvas;
     const program = this.program;
     const bufObj = this.bufObj;
-    const startTime = this.startTime;
-    const mousepos = this.mousepos;
     const keepRunning = this.loop;
     
     function frame(){
       gl.viewport( 0, 0, glCanvas.width, glCanvas.height );
       gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
      
-      gl.uniform1f(program.iTime, (Date.now() - startTime)/1000.0);
       gl.uniform2f(program.iResolution, glCanvas.width, glCanvas.height);
-      gl.uniform3f(program.iMouse, mousepos[0], mousepos[1], mousepos[2]);
-      if (program.accelerometer)
-        gl.uniform3f(program.iAccelerometer, program.accelerometer.data[0], program.accelerometer.data[1], program.accelerometer.data[2]);
-      if (program.gyroscope)
-        gl.uniform3f(program.iGyroscope, program.gyroscope.data[0], program.gyroscope.data[1], program.gyroscope.data[2]);
-      if (program.magnetometer)
-        gl.uniform3f(program.iMagnetometer, program.magnetometer.data[0], program.magnetometer.data[1], program.magnetometer.data[2]);
+      u.update(gl, program);
+
       gl.drawElements( gl.TRIANGLES, bufObj.inx.len, gl.UNSIGNED_SHORT, 0 );
       if (keepRunning)
         requestAnimationFrame(frame);

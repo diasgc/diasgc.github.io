@@ -123,3 +123,12 @@ function _fmtSize(val, thresh, dp=1) {
 
   return val.toFixed(dp) + ' ' + _siUnits[u];
 }
+
+Number.prototype.strSI = function(unit, fixed=2, mul=1024){
+  const sfx = ['', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
+  let i = 0;
+  let v = this;
+  while (v >= mul && i++ < 4)
+    v /= 1024;
+  return `${v.toFixed(fixed)} ${sfx[i]}${unit}`;
+}

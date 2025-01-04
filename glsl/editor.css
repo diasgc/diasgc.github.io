@@ -12,21 +12,7 @@ body {
   accent-color: var(--accent);
   margin: 0;
 }
-#fragCode {
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-  font-family: monospace;
-  font-weight: 600;
-  font-size: 14px;
-  padding: 12px;
-  border: 1px solid #8888;
-  background: #8882;
-  border-radius: 12px;
-  resize: none;
-}
+
 td.hljs-ln-numbers {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -150,12 +136,28 @@ input[type="checkbox"] {
   bottom: 12px;
   left: 12px;
   right: 12px;
+  border: 1px solid #8888;
+  background: #8882;
+  border-radius: 12px;
+}
+#fragCode {
+  position: absolute;
+  top: 0px;
+  bottom: 120px;
+  left: 0px;
+  right: 0px;
+  font-family: monospace;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px;
+  background: transparent;
+  resize: none;
 }
 #edebug {
   position: absolute;
   bottom: 80px;
-  left: 0px;
-  right: 0px;
+  left: 24px;
+  right: 24px;
   height: 10dvh;
   font-family: monospace;
   font-size: 12px;

@@ -36,6 +36,7 @@ function loadAsset(name){
     .then((response) => response.text())
     .then((text) => loadCode(text));
 }
+
 function ex(){
   if (document.getElementById('selOpts') !== null)
     return;
@@ -72,15 +73,13 @@ function irun(i){
       webGl = new GlCanvas('gl-canvas');
       webGl.debug('edebug');
       webGl.load({ fragmentCode: fragCode.innerText }, gl => gl.start());
-      i.change();
     }
   } else {
     glcanvas.style.display = 'none';
     if (webGl !== null){
-      webGl.destroy();
+      webGl.stop();
       webGl = null;
     }
-    i.change();
   }
 }
 
