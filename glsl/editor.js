@@ -29,6 +29,15 @@ opts.forEach(s => {
   tr.appendChild(td);
 });
 
+/* https://stackoverflow.com/questions/77818222/how-how-to-add-line-numbers-next-to-highlihte-js-code-area
+fragCode.addEventListener("keypress", function(event) {
+  if (event.key === "Enter"){
+    loadCode(fragCode.innerText.replace(/\n[\n\s]+/g,'\n'));
+  }
+    
+}); 
+*/
+
 loadCode(defCode);
 
 function loadAsset(name){
