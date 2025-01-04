@@ -2,10 +2,13 @@ var level = 3;
 const useIcons = true;
 const container = document.getElementById('container');
 
+/*
 fetch("data.json")
   .then(response => response.json())
   .then(json => populate(json));
+*/
 
+populate(data);
 
 function addArray(array){
   array.forEach((entry) => {
