@@ -19,6 +19,14 @@ body {
   font-size: 13px;
   background: var(--main-bg);
   color: var(--main-fg);
+  accent-color: var(--accent);
+}
+
+#canvas {
+  width: 100%;
+  height: 100%;
+  background: var(--main-bg);
+  color: var(--accent);
 }
 
 .div-center {
@@ -27,11 +35,20 @@ body {
 }
 
 #timer {
-  height: 28dvh;
+  height: 18dvh;
   font-size: 4rem;
   font-weight: 100;
+  align-items: flex-end;
+  text-align: center;
+}
+
+#graph {
+  display: none;
+  height: 12dvh;
+  margin: 12px;
   align-items: center;
   text-align: center;
+  transition: 1s;
 }
 
 #log-stat {
@@ -47,8 +64,6 @@ body {
   width: 100%;
   display: flex;
   justify-content: center;
-  
-  
   align-items: center;
 }
 
@@ -76,16 +91,17 @@ pre {
   font-size: 13px;
   font-weight: 600;
   color: var(--accent);
-  padding: 12px;
+  padding: 4px;
 }
 
 .fs-mic,
 .fs-main,
-.fs-setup {
+.fs-setup,
+.fs-setup-d {
   display: inline;
   border: 1px solid #8884;
   border-radius: 12px;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--accent);
   margin: 4px;
@@ -102,6 +118,7 @@ pre {
   width: calc(100% - 24px);
 }
 
+.fs-setup-d,
 .fs-setup {
   color: var(--main-fg);
 }
@@ -115,18 +132,45 @@ pre {
 }
 
 .fs-mic input[type="radio"],
-.fs-setup input[type="radio"] {
+.fs-setup input[type="radio"],
+.fs-setup-d input[type="radio"] {
   display: none;
 }
 
 .fs-mic label,
-.fs-setup label {
+.fs-setup label,
+.fs-setup-d label {
   display: inline-block;
   color: #8888;
   padding: 4px 5px;
   margin: 8;
   font-size: 13px;
-  font-weight: 00;
+  font-weight: 600;
+}
+
+.fs-setup-d {
+  border: none;
+  font-size: 8px;
+  padding: 2px;
+  margin: 0;
+}
+
+.fs-setup-d label{
+  display: none;
+  padding: 0;
+  margin: 0;
+}
+
+.fs-setup input[type="radio"]:checked + label {
+  margin: 0;
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+}
+
+.fs-setup-d input[type="radio"]:checked + label {
+  display: inline-block;
+  margin: 0;
+  color: var(--accent);
 }
 
 .fs-mic input[type="radio"]:checked + label {
@@ -140,13 +184,6 @@ pre {
   color: #f00;
   border-bottom: 2px solid  #f00;
 }
-
-.fs-setup input[type="radio"]:checked + label {
-  margin: 0;
-  color: var(--accent);
-  border-bottom: 2px solid var(--accent);
-}
-
 
 
 

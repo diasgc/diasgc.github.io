@@ -1,8 +1,6 @@
+@import url("../daynight.css");
+
 :root {
-  color-scheme: dark light;
-  --accent:  light-dark(#07b,#0b0);
-  --main-bg: light-dark(#eee,#111);
-  --main-fg: light-dark(#111,#eee);
   --font-sans: "Inter", sans-serif;
   --font-mono: monospace;
   --swsz: 20px;

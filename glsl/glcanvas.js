@@ -64,7 +64,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
     sensorList: [
       'accelerometer', 'gyroscope', 'magnetometer', 'ambientLightSensor', 'gravitySensor',
       'linearAccelerationSensor', 'relativeOrientationSensor', 'absoluteOrientationSensor',
-      'mouse', 'time', 'random1', 'random2'
+      'mouse', 'time', 'random1', 'random2', 'noise24b256', 'noise8b256'
     ],
     accelerometer: {
       isEnabled: false,
@@ -256,6 +256,66 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
         gl.uniform2f(program[this.name], Math.random(), Math.random());
       }
     },
+    noise8b256: {
+      isEnabled: false,
+      name: 'iNoise8b256',
+      type: 'sampler2D',
+      data: null,
+      rnd256: function(){
+        return (Math.random() * 255) & 0xFF;
+      },
+      init: function(gl, program){
+        const texture = gl.createTexture();
+        gl.activeTexture(gl.TEXTURE0); 
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        const level = 0;
+        const internalFormat = gl.LUMINANCE;
+        const width = 256;
+        const height = 256;
+        const border = 0;
+        const srcFormat = gl.LUMINANCE;
+        const srcType = gl.UNSIGNED_BYTE;
+        let data = [];
+        for (let i = 0; i < 256 * 256; i++)
+          data.push(this.rnd256());
+        const pixels = new Uint8Array(data);
+        gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border, srcFormat, srcType, pixels);
+        gl.uniform1i(program.noise24b256, 0);
+      },
+      start: function(){},
+      stop: function(){},
+      update: function(){}
+    },
+    noise24b256: {
+      isEnabled: false,
+      name: 'iNoise24b256',
+      type: 'sampler2D',
+      data: null,
+      rnd256: function(){
+        return (Math.random() * 255) & 0xFF;
+      },
+      init: function(gl, program){
+        const texture = gl.createTexture();
+        gl.activeTexture(gl.TEXTURE0); 
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        const level = 0;
+        const internalFormat = gl.RGBA;
+        const width = 256;
+        const height = 256;
+        const border = 0;
+        const srcFormat = gl.RGBA;
+        const srcType = gl.UNSIGNED_BYTE;
+        let data = [];
+        for (let i = 0; i < 256 * 256; i++)
+          data.push(this.rnd256() , this.rnd256(), this.rnd256(), 255);
+        const pixels = new Uint8Array(data);
+        gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border, srcFormat, srcType, pixels);
+        gl.uniform1i(program.noise24b256, 0);
+      },
+      start: function(){},
+      stop: function(){},
+      update: function(){}
+    },
 
     inspectCode: function(code){
       this.sensorList.forEach(sensor => {
@@ -266,8 +326,11 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
 
     init: function(gl, program){
       this.sensorList.forEach(sensor => {
-        if (this[sensor].isEnabled)
+        if (this[sensor].isEnabled){
           program[this[sensor].name] = gl.getUniformLocation(program, this[sensor].name);
+          if (this[sensor].init)
+            this[sensor].init(gl, program);
+        }
       });
       return program;
     },

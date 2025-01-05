@@ -1,3 +1,13 @@
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker
+      .register("/glsl/serviceWorker.js")
+      .then(res => console.log("service worker registered"))
+      .catch(err => console.log("service worker not registered", err))
+  })
+}
+
+
 let assetList = ['def-test.frag','def.frag','toy-gyro.frag','toy-MddGWN.frag','toy-mtyGWy.frag'];
 let defCode = document.getElementById('defaultFragment').firstChild.nodeValue;;
 let fragCode = document.getElementById('fragCode');
