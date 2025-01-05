@@ -64,6 +64,7 @@ const video = {
     width: window.innerWidth,
     aspectRatio: 1.0,
     facingMode: {ideal:"environment"},
+    exposureMode: "manual"
   },
   load: function(s){
     this.stream = s;
@@ -78,47 +79,105 @@ const tableCaps = {
   id: document.getElementById('table-caps'),
   th: document.getElementById('thead'),
   td: document.getElementById('tdata'),
-  abr: {
-    "aspectRatio": "ar",
-    "brightness": "bri",
-    "colorTemperature": "tK",
-    "contrast": "ctr",
-    "displaySurface": "surf",
-    "exposureCompensation": "expC",
-    "exposureMode": "expM",
-    "exposureTime": "exp",
-    "facingMode": "cam",
-    "focusDistance": "focus",
-    "focusMode": "focM",
-    "frameRate": "fRate",
-    "iso": "iso",
-    "resizeMode": "rsz",
-    "saturation": "sat",
-    "sharpness": "shrp",
-    "tilt": "tilt",
-    "torch": "torch",
-    "whiteBalanceMode": "wb",
-    "zoom": "zoom"
-  },
+  aspectRatio: {
+    abr: "ar",
+    def: "1",
+    fmt: (c) => parseFloat(c).toFixed(1) },
+  brightness: {
+    abr: "bri",
+    def: "0" },
+  colorTemperature: {
+    abr: "TKº",
+    def: "5000",
+    fmt: (c) => c+"ºK" },
+  contrast: { 
+    abr: "ctr",
+    def: "0" },
+  exposureCompensation: { 
+    abr: "expC",
+    def: "0",
+    fmt: (c) => parseFloat(c).toFixed(1) },
+  exposureMode: { 
+    abr: "expM",
+    def: "manual",
+    fmt: (c) => c.substring(0,3) },
+  exposureTime: {
+    abr: "expT",
+    def: "500",
+    fmt: (c) => c+"ms" },
+  facingMode: { 
+    abr: "cam",
+    def: "environment",
+    fmt: (c) => c.substring(0,3) },
+  focusDistance: { 
+    abr: "foc",
+    def: "max",
+    fmt: (c) => parseFloat(c).toFixed(1) },
+  focusMode: { 
+    abr: "focM",
+    def: "manual",
+    fmt: (c) => c.substring(0,3) },
+  frameRate: { 
+    abr: "fps",
+    def: "0",
+    fmt: (c) => parseFloat(c).toFixed(1) },
+  iso: { 
+    abr: "iso",
+    def: "100" },
+  resizeMode: { 
+    abr: "rm",
+    def: "none",
+    fmt: (c) => c === 'none' ? '-' : 'crop' },
+  saturation: { 
+    abr: "sat",
+    def: "0" },
+  sharpness: { 
+    abr: "shp",
+    def: "0" },
+  tilt: {
+    abr: "tilt",
+    def: "0"},
+  torch: {
+    abr: "flsh",
+    def: "false",
+    fmt: (c) => c === 'false' ? 'off' : 'on' },
+  whiteBalanceMode: { 
+    abr: "wb",
+    def: "manual",
+    fmt: (c) => c.substring(0,3) },
+  zoom: { 
+    abr: "zoom",
+    def: "1",
+    fmt: (c) => c+"x" },
   load: function(caps){
     this.th.replaceChildren();
     this.td.replaceChildren();
     let th = document.createElement('tr');
     let tb = document.createElement('tr');
     Object.keys(caps).forEach(key => {
-      let abr = this.abr[key];
-      if (abr){
+      if (this[key]){
         let h = document.createElement('th');
         h.id = key;
-        h.innerHTML = abr;
+        h.innerHTML = this[key].abr;
         th.appendChild(h);
         let d = document.createElement('td');
-        d.innerHTML = 'val';
+        d.innerHTML = this.getVal(caps,key);
         tb.appendChild(d);
       }
     });
     this.th.appendChild(th);
     this.td.appendChild(tb);
+  },
+  getVal: function(caps, key){
+    if (this[key]){
+      let def = this[key].def;
+      if (def === 'max')
+        def = caps[key].max;
+      else if (def === 'min')
+        def = caps[key].min;
+      return this[key].fmt ? this[key].fmt(def) : def;
+    }
+    return "-";
   }
 }
 

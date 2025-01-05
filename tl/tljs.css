@@ -1,7 +1,11 @@
 @import url("../daynight.css");
+:root {
+  --btn-sz: 64px;
+  --fsz-tb: 13px;
+}
 
 body {
-  font-family: "Inter", sans-serif;
+  font-family: sans-serif;
   scrollbar-color: transparent transparent;
 }
 
@@ -26,10 +30,10 @@ body {
 #record-btn-div {
   position: absolute;
   bottom: 24px;
-  width: 52px;
-  height: 52px;
-  right: calc(100dvw/2 + 26px);
-  left: calc(100dvw/2 - 26px);
+  width: var(--btn-sz);
+  height: var(--btn-sz);
+  right: calc(100dvw/2 + var(--btn-sz)/2);
+  left: calc(100dvw/2 - var(--btn-sz)/2);
   border-radius: 50%;
   border: 1px solid #0002;
   background: #fff;
@@ -41,13 +45,21 @@ body {
 }
 
 #record-btn-div label {
-  margin: 4px;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: calc(100% - 16px);
+  height: calc(100% - 16px);
   background: #b00;
   border-radius: 50%;
+  transition: 0.5s;
 }
 
 #record-btn-div input[type="checkbox"]:checked + label {
-  margin: 12px;
+  top: 20px;
+  left: 20px;
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
   background: #b00;
   border-radius: 25%;
 }
@@ -79,13 +91,14 @@ body {
   grid-template-columns: repeat(1, minmax(0, 1fr));
   overflow-x: auto;
   white-space: nowrap;
-  top: 8px;
+  top: 12px;
   left: 0;
   right: 0;
 }
 
 #table-caps {
   display: table;
+  table-layout:fixed;
   width: auto;
   overflow-x: auto;
   min-width: 100%;
@@ -97,8 +110,8 @@ body {
 }
 
 #table-caps th {
-  font-weight: 800;
-  font-size: 12px;
+  font-weight: 600;
+  font-size: var(--fsz-tb);
   color: var(--accent);
   white-space:nowrap;
   margin-bottom: 0;
@@ -106,8 +119,8 @@ body {
 
 #table-caps tr {
   margin-top: 0;
-  font-weight: 800;
-  font-size: 12px;
+  font-weight: 600;
+  font-size: var(--fsz-tb);
   color: var(--main-fg);
   white-space:nowrap;
 }
