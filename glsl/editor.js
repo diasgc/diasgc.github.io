@@ -8,7 +8,7 @@ if ("serviceWorker" in navigator) {
 }
 
 
-let assetList = ['def-test.frag','def.frag','toy-gyro.frag','toy-MddGWN.frag','toy-mtyGWy.frag'];
+let assetList = ['def.frag','stoy-plasmaball.frag','toy-gyro.frag','toy-MddGWN.frag','toy-mtyGWy.frag'];
 let defCode = document.getElementById('defaultFragment').firstChild.nodeValue;;
 let fragCode = document.getElementById('fragCode');
 let ecode = document.getElementById('ecode');
