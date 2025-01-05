@@ -22,8 +22,21 @@
   position: absolute;
   bottom: 24px;
   width: 52px;
+  height: 52px;
   right: calc(100dvw/2 + 26px);
   left: calc(100dvw/2 - 26px);
   border-radius: 50%;
   border: 2px solid #b00;
+}
+
+#log {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  left: 12px;
+  bottom: 12px;
+  font-family: monospace;
+  font-size: 12px;
+  color: #0b0;
+  z-index: 2;
 }
