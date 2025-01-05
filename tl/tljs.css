@@ -1,0 +1,19 @@
+@import url("../daynight.css");
+
+#tl-canvas {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+#record-btn-div {
+  position: absolute;
+  bottom: 24px;
+  width: 52px;
+  right: calc(100dvw/2 + 26px);
+  left: calc(100dvw/2 - 26px);
+  border-radius: 50%;
+  border: 2px solid #b00;
+}

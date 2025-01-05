@@ -1,0 +1,12 @@
+:root {
+  color-scheme: dark light;
+  --accent:  light-dark(#0bf,#fb0);
+  --main-bg: light-dark(#eee,#111);
+  --main-fg: light-dark(#111,#eee);
+}
+
+body {
+  background: var(--main-bg);
+  color: var(--main-fg);
+  accent-color: var(--accent);
+}
