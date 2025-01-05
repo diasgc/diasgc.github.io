@@ -2,6 +2,9 @@
 :root {
   --btn-sz: 64px;
   --fsz-tb: 13px;
+  --accent:  #fb0;
+  --main-bg: #111;
+  --main-fg: #eee;
 }
 
 body {
