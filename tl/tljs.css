@@ -2,6 +2,7 @@
 
 body {
   font-family: "Inter", sans-serif;
+  scrollbar-color: transparent transparent;
 }
 
 #tl-canvas {
@@ -30,8 +31,27 @@ body {
   right: calc(100dvw/2 + 26px);
   left: calc(100dvw/2 - 26px);
   border-radius: 50%;
-  border: 2px solid #b00;
+  border: 1px solid #0002;
+  background: #fff;
+  align-items: center;
 }
+
+#record-btn-div input[type="checkbox"] {
+  display: none;
+}
+
+#record-btn-div label {
+  margin: 4px;
+  background: #b00;
+  border-radius: 50%;
+}
+
+#record-btn-div input[type="checkbox"]:checked + label {
+  margin: 12px;
+  background: #b00;
+  border-radius: 25%;
+}
+
 
 #log {
   position: absolute;
@@ -55,31 +75,43 @@ body {
 }
 
 #div-table {
-  position: absolute;
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  overflow-x: auto;
+  white-space: nowrap;
   top: 8px;
   left: 0;
   right: 0;
 }
+
 #table-caps {
+  display: table;
   width: auto;
   overflow-x: auto;
   min-width: 100%;
   border-collapse: collapse;
   align-items: center;
 }
+#table-caps thead tbody {
+  display: table;
+}
 
 #table-caps th {
   font-weight: 800;
   font-size: 12px;
   color: var(--accent);
+  white-space:nowrap;
+  margin-bottom: 0;
 }
 
 #table-caps tr {
+  margin-top: 0;
   font-weight: 800;
   font-size: 12px;
   color: var(--main-fg);
+  white-space:nowrap;
 }
 
 #table-caps td {
-  padding: 4px 12px;
+  padding: 0 12px;
 }

@@ -61,8 +61,8 @@ const video = {
   track: null,
   caps: null,
   opts: {
-    width: screen.width,
-    height: screen.height,
+    width: window.innerWidth,
+    aspectRatio: 1.0,
     facingMode: {ideal:"environment"},
   },
   load: function(s){
@@ -80,21 +80,21 @@ const tableCaps = {
   td: document.getElementById('tdata'),
   abr: {
     "aspectRatio": "ar",
-    "brightness": "brgt",
-    "colorTemperature": "tempK",
-    "contrast": "contr",
+    "brightness": "bri",
+    "colorTemperature": "tK",
+    "contrast": "ctr",
     "displaySurface": "surf",
-    "exposureCompensation": "expCmp",
-    "exposureMode": "expMode",
+    "exposureCompensation": "expC",
+    "exposureMode": "expM",
     "exposureTime": "exp",
     "facingMode": "cam",
-    "focusDistance": "focDist",
-    "focusMode": "focMode",
-    "frameRate": "frate",
+    "focusDistance": "focus",
+    "focusMode": "focM",
+    "frameRate": "fRate",
     "iso": "iso",
     "resizeMode": "rsz",
     "saturation": "sat",
-    "sharpness": "sharp",
+    "sharpness": "shrp",
     "tilt": "tilt",
     "torch": "torch",
     "whiteBalanceMode": "wb",
@@ -134,6 +134,82 @@ navigator.mediaDevices
 
 function init(stream) {
   video.load(stream);
-  log.innerText = JSON.stringify(video.caps, null, 2);
+  //log.innerText = JSON.stringify(video.caps, null, 2);
   tableCaps.load(video.caps);
 }
+
+
+
+/* Xiaomi
+{
+"aspectRatio": {
+"max": 4000,
+"min": 0.0003333333333333333
+},
+"colorTemperature": {
+"max": 7000,
+"min": 2850,
+"step": 50
+},
+"deviceId": "e1a3fb554171efcc3893c6605137c8251c0fcd748cc60c93ed95153d169ae88d",
+"exposureCompensation": {
+"max": 4,
+"min": -4,
+"step": 0.1666666716337204
+},
+"exposureMode": [
+"continuous",
+"manual"
+],
+"exposureTime": {
+"max": 10000,
+"min": 0.56,
+"step": 0.1
+},
+"facingMode": [
+"environment"
+],
+"focusDistance": {
+"max": 14.498610496520996,
+"min": 0.10000000149011612,
+"step": 0.009999999776482582
+},
+"focusMode": [
+"manual",
+"single-shot",
+"continuous"
+],
+"frameRate": {
+"max": 30,
+"min": 0
+},
+"groupId": "ca703f8129f2a224c1430464a1441e51cd5684d34dbed09c27df4a16a1fe9ffe",
+"height": {
+"max": 3000,
+"min": 1
+},
+"iso": {
+"max": 2000,
+"min": 50,
+"step": 1
+},
+"resizeMode": [
+"none",
+"crop-and-scale"
+],
+"torch": true,
+"whiteBalanceMode": [
+"continuous",
+"manual"
+],
+"width": {
+"max": 4000,
+"min": 1
+},
+"zoom": {
+"max": 10,
+"min": 1,
+"step": 0.1
+}
+}
+*/
