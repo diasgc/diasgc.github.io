@@ -1,5 +1,9 @@
 @import url("../daynight.css");
 
+body {
+  font-family: "Inter", sans-serif;
+}
+
 #tl-canvas {
   position: absolute;
   top: 0;
@@ -34,9 +38,48 @@
   top: 12px;
   right: 12px;
   left: 12px;
-  bottom: 12px;
+  height: 20dvh;
   font-family: monospace;
   font-size: 12px;
   color: #0b0;
   z-index: 2;
+}
+
+#panel-bottom {
+  position: absolute;
+  bottom: 0;
+  height: 20dvh;
+  right: 0;
+  left: 0;
+  background: #0002;
+}
+
+#div-table {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  right: 0;
+}
+#table-caps {
+  width: auto;
+  overflow-x: auto;
+  min-width: 100%;
+  border-collapse: collapse;
+  align-items: center;
+}
+
+#table-caps th {
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--accent);
+}
+
+#table-caps tr {
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--main-fg);
+}
+
+#table-caps td {
+  padding: 4px 12px;
 }
