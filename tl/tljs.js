@@ -127,14 +127,13 @@ let stream;
 
 navigator.mediaDevices
   .getUserMedia({ video: video.opts, audio: false })
-  .then((stream) => init(stream));
+  .then((stream) => init(stream))
+  .catch((err) => {
+    log.innerText = `An error occurred: ${err}`;
+  });
 
 function init(stream) {
   video.load(stream);
   log.innerText = JSON.stringify(video.caps, null, 2);
   tableCaps.load(video.caps);
-}
-
-function buildOpts(){
-
 }
