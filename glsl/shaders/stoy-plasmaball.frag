@@ -15,6 +15,7 @@
 
 uniform float iTime;
 uniform vec2  iResolution;
+uniform vec2  iMouse;
 uniform sampler2D iNoise24b256;
 
 mat2 mm2(in float a){
@@ -23,7 +24,7 @@ mat2 mm2(in float a){
 }
 
 float noise( in float x ){
-  return texture2D(iNoise24b256, vec2(x*.01,1.),0.0).x;
+  return texture2D(iNoise24b256, vec2(x * 0.01, 1.0), 0.0).x;
 }
 
 float hash( float n ){
@@ -35,8 +36,8 @@ float noise(in vec3 p){
   vec3 fp = fract(p);
 	fp = fp * fp * (3.0 - 2.0 * fp);
 	
-	vec2 tap = (ip.xy+vec2(37.0,17.0)*ip.z) + fp.xy;
-	vec2 rg = texture2D( iNoise24b256, (tap + 0.5)/256.0, 0.0 ).yx;
+	vec2 tap = (ip.xy + vec2(37.0, 17.0) * ip.z) + fp.xy;
+	vec2 rg = texture2D(iNoise24b256, (tap + 0.5) / 256.0, 0.0).yx;
 	return mix(rg.x, rg.y, fp.z);
 }
 

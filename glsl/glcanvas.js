@@ -61,6 +61,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
   }
 
   uniforms = {
+    isTouchDevice: 'ontouchstart' in window || navigator.msMaxTouchPoints,
     sensorList: [
       'accelerometer', 'gyroscope', 'magnetometer', 'ambientLightSensor', 'gravitySensor',
       'linearAccelerationSensor', 'relativeOrientationSensor', 'absoluteOrientationSensor',
@@ -201,7 +202,10 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       data: [0,0,0],
       checkCode: function(code){ this.isEnabled = code.match(/\s+^uniform vec[23] iMouse/g) ? true : false; },
       start: function(){
-        window.addEventListener("mousemove", (event) => this.data = [ event.clientX, event.clientY, event.button ]);
+        if (this.isTouchDevice)
+          window.addEventListener("touchmove", (event) => this.data = [ event.touches[0].clientX, event.touches[0].clientY, event.button ]);
+        else
+          window.addEventListener("mousemove", (event) => this.data = [ event.clientX, event.clientY, event.button ]);
       },
       stop: function(){
         this.sensor.addEventListener("reading", null);
