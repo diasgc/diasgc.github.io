@@ -6,6 +6,7 @@ const assets = [
   "/glsl/editor.js",
   "/glsl/shaders/",
   "/glsl/shaders/def.frag",
+  "/glsl/shaders/stoy-plasmaball.frag",
   "/glsl/shaders/toy-gyro.frag",
   "/glsl/shaders/toy-MddGWN.frag",
   "/glsl/shaders/toy-mtyGWy.frag",
