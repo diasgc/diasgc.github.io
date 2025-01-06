@@ -1,4 +1,5 @@
-if ("serviceWorker" in navigator) {
+
+if (false && "serviceWorker" in navigator) {
   window.addEventListener("load", function() {
     navigator.serviceWorker
       .register("/tl/serviceWorker.js")
@@ -53,19 +54,14 @@ width
 zoom
 */
 
-screen.orientation.addEventListener("change", (event) => {
-  const type = event.target.type;
-  const angle = event.target.angle;
-  log.i(`ScreenOrientation change: ${type}, ${angle} degrees.`);
-});
-
 const log = {
   id: document.getElementById('log'),
-  i: (msg) => {
+  i: function(msg){
     console.log(msg);
-    this.id.innerText += `i: ${msg}\n`;
+    if (this.id)
+      this.id.innerText += `i: ${msg}\n`;
   },
-  clear: () => {
+  clear: function() {
     this.id.innerText = '';
   }
 }
@@ -76,12 +72,12 @@ const video = {
   track: null,
   caps: null,
   opts: {
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth,
+    height: window.innerWidth > window.innerHeight ? window.innerWidth : window.innerHeight,
     aspectRatio: 1.0,
     facingMode: {ideal:"environment"},
     exposureMode: "manual",
-    resizeMode: "crop-and-scale",
+    resizeMode: "-and-scale",
   },
   load: function(s){
     this.stream = s;
@@ -214,6 +210,17 @@ function init(stream) {
   tableCaps.load(video.caps);
 }
 
+screen.orientation.addEventListener("change", (event) => {
+  const type = event.target.type;
+  const angle = event.target.angle;
+  log.i(`ScreenOrientation change: ${type}, ${angle} degrees.`);
+});
+
+window.addEventListener("orientationchange", () => {
+  log.i(`window orientation: ${window.orientation}`);
+});
+
+log.i(`window orientation: ${window.orientation}`);
 
 
 /* Xiaomi
