@@ -41,6 +41,7 @@ body {
   border: 1px solid #0002;
   background: #fff;
   align-items: center;
+  z-index: 3;
 }
 
 #record-btn-div input[type="checkbox"] {
@@ -86,7 +87,8 @@ body {
   height: 20dvh;
   right: 0;
   left: 0;
-  background: #0002;
+  background: #0008;
+  z-index: 2;
 }
 
 #div-table {
