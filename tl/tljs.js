@@ -97,6 +97,9 @@ const video = {
     this.track.applyConstraints(this.opts);
     this.id.srcObject = this.stream;
     this.id.play();
+  },
+  apply: function(){
+
   }
 }
 
@@ -152,7 +155,16 @@ const tableCaps = {
   resizeMode: { 
     abr: "rm",
     def: "none",
+    idx: 0,
     fmt: (c) => c === 'none' ? '-' : 'crop' },
+    btn: function(){
+      let rm = video.caps.resizeMode;
+      this.idx = (this.idx + 1) % rm.length;
+      this.val = video.caps.resizeMode[this.idx];
+      video.opts.resizeMode = this.val;
+      video.track.apply(video.opts);
+      this.td.innerText = this.fmt(this.val);
+    },
   saturation: { 
     abr: "sat",
     def: "0" },
@@ -187,29 +199,27 @@ const tableCaps = {
     let tb = document.createElement('tr');
     Object.keys(caps).forEach(key => {
       if (this[key]){
-        this.setItem(th, key, tb, this.getVal(caps,key));
-        //let h = document.createElement('th');
-        //h.id = key;
-        //h.innerHTML = this[key].abr;
-        //let d = document.createElement('td');
-        //d.innerHTML = this.getVal(caps,key);
-        
+        let { h, d } = this.getItem(key, this.getVal(caps,key));
+        this[key].td = d;
+        th.appendChild(h);
+        tb.appendChild(d);
       }
     });
-    this.setItem(th, 'debug', tb, true);
+    let { h, d } = this.setItem(th, 'debug', tb, true);
+    th.appendChild(h);
+    tb.appendChild(d);
     this.th.appendChild(th);
     this.td.appendChild(tb);
   },
-  setItem: function(th, key, tb, val){
+  getItem: function(key, val){
     let h = document.createElement('th');
-    h.id = key;
     h.innerHTML = this[key].abr;
-    th.appendChild(h);
     let d = document.createElement('td');
+    d.id = "td-" + key;
     d.innerHTML = val;
     if (this[key].btn)
       d.addEventListener('click', this[key].btn);
-    tb.appendChild(d);
+    return {h, d};
   },
   getVal: function(caps, key){
     if (this[key]){
