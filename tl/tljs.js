@@ -76,7 +76,7 @@ const video = {
   track: null,
   caps: null,
   opts: {
-    //width: window.innerWidth,
+    width: window.innerWidth,
     height: window.innerHeight,
     aspectRatio: 1.0,
     facingMode: {ideal:"environment"},
