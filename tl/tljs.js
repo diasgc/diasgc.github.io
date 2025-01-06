@@ -63,6 +63,9 @@ const log = {
   },
   clear: function() {
     this.id.innerText = '';
+  },
+  toggle: function() {
+    this.id.style.display = this.id.style.display == 'none' ? 'block' : 'none';
   }
 }
 
@@ -74,15 +77,16 @@ const video = {
   opts: {
     width: window.innerWidth,
     height: window.innerHeight,
-    aspectRatio: 1.0,
     facingMode: {ideal:"environment"},
-    exposureMode: "manual",
     resizeMode: "crop-and-scale",
   },
   load: function(s){
     this.stream = s;
     this.track = s.getVideoTracks()[0]
     this.caps = this.track.getCapabilities();
+    this.opts.width = this.caps.width.max;
+    this.opts.height = this.caps.height.max;
+    this.track.applyConstraints(this.opts);
     this.id.srcObject = this.stream;
     this.id.play();
   }
@@ -162,6 +166,12 @@ const tableCaps = {
     abr: "zoom",
     def: "1",
     fmt: (c) => c+"x" },
+  debug: {
+    abr: "dbg",
+    def: false,
+    fmt: (c) => c+"x",
+    btn: () => log.toggle()
+  },
   load: function(caps){
     this.th.replaceChildren();
     this.td.replaceChildren();
@@ -169,17 +179,29 @@ const tableCaps = {
     let tb = document.createElement('tr');
     Object.keys(caps).forEach(key => {
       if (this[key]){
-        let h = document.createElement('th');
-        h.id = key;
-        h.innerHTML = this[key].abr;
-        th.appendChild(h);
-        let d = document.createElement('td');
-        d.innerHTML = this.getVal(caps,key);
-        tb.appendChild(d);
+        this.setItem(th, key, tb, this.getVal(caps,key));
+        //let h = document.createElement('th');
+        //h.id = key;
+        //h.innerHTML = this[key].abr;
+        //let d = document.createElement('td');
+        //d.innerHTML = this.getVal(caps,key);
+        
       }
     });
+    this.setItem(th, 'debug', tb, true);
     this.th.appendChild(th);
     this.td.appendChild(tb);
+  },
+  setItem: function(th, key, tb, val){
+    let h = document.createElement('th');
+    h.id = key;
+    h.innerHTML = this[key].abr;
+    th.appendChild(h);
+    let d = document.createElement('td');
+    d.innerHTML = val;
+    if (this[key].btn)
+      d.addEventListener('click', this[key].btn);
+    tb.appendChild(d);
   },
   getVal: function(caps, key){
     if (this[key]){
