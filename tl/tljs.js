@@ -53,7 +53,22 @@ width
 zoom
 */
 
-const log = document.getElementById('log');
+screen.orientation.addEventListener("change", (event) => {
+  const type = event.target.type;
+  const angle = event.target.angle;
+  log.i(`ScreenOrientation change: ${type}, ${angle} degrees.`);
+});
+
+const log = {
+  id: document.getElementById('log'),
+  i: (msg) => {
+    console.log(msg);
+    id.innerText += `i: ${msg}\n`;
+  },
+  clear: () => {
+    id.innerText = '';
+  }
+}
 
 const video = {
   id: document.getElementById('tl-video'),
