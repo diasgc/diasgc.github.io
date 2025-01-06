@@ -63,10 +63,10 @@ const log = {
   id: document.getElementById('log'),
   i: (msg) => {
     console.log(msg);
-    id.innerText += `i: ${msg}\n`;
+    this.id.innerText += `i: ${msg}\n`;
   },
   clear: () => {
-    id.innerText = '';
+    this.id.innerText = '';
   }
 }
 
