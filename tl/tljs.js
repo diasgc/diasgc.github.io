@@ -72,12 +72,12 @@ const video = {
   track: null,
   caps: null,
   opts: {
-    width: window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth,
-    height: window.innerWidth > window.innerHeight ? window.innerWidth : window.innerHeight,
+    width: window.innerWidth,
+    height: window.innerHeight,
     aspectRatio: 1.0,
     facingMode: {ideal:"environment"},
     exposureMode: "manual",
-    resizeMode: "-and-scale",
+    resizeMode: "crop-and-scale",
   },
   load: function(s){
     this.stream = s;
@@ -216,8 +216,11 @@ screen.orientation.addEventListener("change", (event) => {
   log.i(`ScreenOrientation change: ${type}, ${angle} degrees.`);
 });
 
+var lastOrientation;
 window.addEventListener("deviceorientation", function(e){
-  log.i(Math.abs(e.beta) > Math.abs(e.gamma) ? "portrait" : "landscape");
+  let newOrientation = Math.abs(e.gamma) ? "portrait" : "landscape";
+  if (newOrientation !== lastOrientation)
+    log.i((lastOrientation = newOrientation));
 });
 
 
