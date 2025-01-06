@@ -81,8 +81,6 @@ const video = {
   track: null,
   caps: null,
   opts: {
-    width: window.innerWidth,
-    height: window.innerHeight,
     facingMode: {ideal:"environment"},
     resizeMode: "crop-and-scale",
   },
@@ -90,8 +88,12 @@ const video = {
     this.stream = s;
     this.track = s.getVideoTracks()[0]
     this.caps = this.track.getCapabilities();
-    this.opts.width = this.caps.width.max;
-    this.opts.height = this.caps.height.max;
+    let isPortrait = window.orientation % 180 === 0;
+    this.opts.width = {};
+    this.opts.width.ideal = isPortrait ? this.caps.height.max : this.caps.width.max;
+    this.opts.height = {};
+    this.opts.height.ideal = isPortrait ? this.caps.width.max : this.caps.height.max;
+    this.opts.aspectRatio = this.opts.height.ideal / this.opts.width.ideal;
     this.track.applyConstraints(this.opts);
     this.id.srcObject = this.stream;
     this.id.play();
