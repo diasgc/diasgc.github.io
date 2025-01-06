@@ -25,6 +25,7 @@ body {
   position: absolute;
   width: 100dvw;
   height: 100dvh;
+  object-fit: contain;
   top: 0;
   bottom: 0;
   left: 0;
