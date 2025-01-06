@@ -216,11 +216,9 @@ screen.orientation.addEventListener("change", (event) => {
   log.i(`ScreenOrientation change: ${type}, ${angle} degrees.`);
 });
 
-window.addEventListener("orientationchange", () => {
-  log.i(`window orientation: ${window.orientation}`);
+window.addEventListener("deviceorientation", function(e){
+  log.i(Math.abs(e.beta) > Math.abs(e.gamma) ? "portrait" : "landscape");
 });
-
-log.i(`window orientation: ${window.orientation}`);
 
 
 /* Xiaomi
