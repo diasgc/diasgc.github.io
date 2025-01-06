@@ -99,7 +99,7 @@ const video = {
     this.id.play();
   },
   apply: function(){
-
+    this.track.applyConstraints(this.opts);
   }
 }
 
@@ -108,78 +108,79 @@ const tableCaps = {
   th: document.getElementById('thead'),
   td: document.getElementById('tdata'),
   aspectRatio: {
-    abr: "ar",
+    abr: "AR",
     def: "1",
     fmt: (c) => parseFloat(c).toFixed(1) },
   brightness: {
-    abr: "bri",
+    abr: "Br",
     def: "0" },
   colorTemperature: {
     abr: "TKº",
     def: "5000",
     fmt: (c) => c+"ºK" },
   contrast: { 
-    abr: "ctr",
+    abr: "Cnt",
     def: "0" },
   exposureCompensation: { 
-    abr: "expC",
+    abr: "E&#8314;&#8725;&#8331;",
     def: "0",
     fmt: (c) => parseFloat(c).toFixed(1) },
   exposureMode: { 
-    abr: "expM",
+    abr: "EM",
     def: "manual",
     fmt: (c) => c.substring(0,3) },
   exposureTime: {
-    abr: "expT",
+    abr: "Exp",
     def: "500",
     fmt: (c) => c+"ms" },
   facingMode: { 
-    abr: "cam",
+    abr: "CAM",
     def: "environment",
     fmt: (c) => c.substring(0,3) },
   focusDistance: { 
-    abr: "foc",
+    abr: "FOC",
     def: "max",
     fmt: (c) => parseFloat(c).toFixed(1) },
   focusMode: { 
-    abr: "focM",
+    abr: "FocM",
     def: "manual",
     fmt: (c) => c.substring(0,3) },
   frameRate: { 
-    abr: "fps",
+    abr: "FPS",
     def: "0",
     fmt: (c) => parseFloat(c).toFixed(1) },
   iso: { 
-    abr: "iso",
+    abr: "ISO",
     def: "100" },
   resizeMode: { 
-    abr: "rm",
+    abr: "Crop",
     def: "none",
     idx: 0,
-    fmt: (c) => c === 'none' ? '-' : 'crop' },
+    fmt: (c) => c === 'none' ? '-' : 'crop',
     btn: function(){
       let rm = video.caps.resizeMode;
-      this.idx = (this.idx + 1) % rm.length;
-      this.val = video.caps.resizeMode[this.idx];
-      video.opts.resizeMode = this.val;
-      video.track.apply(video.opts);
-      this.td.innerText = this.fmt(this.val);
-    },
+      tableCaps.resizeMode.idx = (tableCaps.resizeMode.idx + 1) % rm.length;
+      tableCaps.resizeMode.val = video.caps.resizeMode[tableCaps.resizeMode.idx];
+      video.opts.resizeMode = tableCaps.resizeMode.val;
+      video.apply();
+      tableCaps.resizeMode.td.innerText = tableCaps.resizeMode.fmt(tableCaps.resizeMode.val);
+    }
+  },
   saturation: { 
-    abr: "sat",
+    abr: "SAT",
     def: "0" },
   sharpness: { 
-    abr: "shp",
+    abr: "SHRP",
     def: "0" },
   tilt: {
-    abr: "tilt",
+    abr: "TILT",
     def: "0"},
   torch: {
-    abr: "flsh",
+    abr: "FLSH",
     def: "false",
     fmt: (c) => c === 'false' ? 'off' : 'on' },
   whiteBalanceMode: { 
-    abr: "wb",
+    abr: "WB",
     def: "manual",
     fmt: (c) => c.substring(0,3) },
   zoom: { 
@@ -198,20 +199,13 @@ const tableCaps = {
     let th = document.createElement('tr');
     let tb = document.createElement('tr');
     Object.keys(caps).forEach(key => {
-      if (this[key]){
-        let { h, d } = this.getItem(key, this.getVal(caps,key));
-        this[key].td = d;
-        th.appendChild(h);
-        tb.appendChild(d);
-      }
+      if (this[key]) this.setItem(th, key, tb, this.getVal(caps,key));
     });
-    let { h, d } = this.setItem(th, 'debug', tb, true);
-    th.appendChild(h);
-    tb.appendChild(d);
+    this.setItem(th, 'debug', tb, true);
     this.th.appendChild(th);
     this.td.appendChild(tb);
   },
-  getItem: function(key, val){
+  setItem: function(th, key, tb, val){
     let h = document.createElement('th');
     h.innerHTML = this[key].abr;
     let d = document.createElement('td');
@@ -219,18 +213,17 @@ const tableCaps = {
     d.innerHTML = val;
     if (this[key].btn)
       d.addEventListener('click', this[key].btn);
-    return {h, d};
+    this[key].td = d;
+    th.appendChild(h);
+    tb.appendChild(d);
   },
   getVal: function(caps, key){
-    if (this[key]){
-      let def = this[key].def;
-      if (def === 'max')
-        def = caps[key].max;
-      else if (def === 'min')
-        def = caps[key].min;
-      return this[key].fmt ? this[key].fmt(def) : def;
-    }
-    return "-";
+    let def = this[key].def;
+    if (def === 'max')
+      def = caps[key].max;
+    else if (def === 'min')
+      def = caps[key].min;
+    return this[key].fmt ? this[key].fmt(def) : def;
   }
 }
 
