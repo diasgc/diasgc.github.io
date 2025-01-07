@@ -130,6 +130,12 @@ const video = {
   },
   apply: function(){
     this.track.applyConstraints(this.opts);
+  },
+  restart: function(){
+    navigator.mediaDevices
+      .getUserMedia({ video: video.opts, audio: false })
+      .then((stream) => video.load(stream))
+      .catch((err) => log.innerText = `An error occurred: ${err}`);
   }
 }
 
@@ -150,11 +156,12 @@ const tableCaps = {
     def: "5000",
     fmt: (c) => c+"°K",
     btn: () => {
-      let self = tableCaps.colorTemperature;
+      let c = tableCaps.colorTemperature;
       input.load(video.caps.colorTemperature, (v) => {
-      video.opts.colorTemperature = self.calc(v);
-      video.apply();
-      tableCaps.colorTemperature.td.innerText = self.fmt(video.opts.colorTemperature);
+        c.val = c.calc(v);
+        video.opts.colorTemperature = c.val;
+        video.apply();
+        c.td.innerText = c.fmt(c.val);
       })
     },
     calc: function(v){
