@@ -75,6 +75,26 @@ const log = {
   }
 }
 
+const input = {
+  id: document.getElementById('v-input'),
+  dl: document.getElementById('steplist'),
+  load: function(data){
+    let listSize;
+    if (data && data.min && data.max && data.step){
+      let max = parseFloat(data.max);
+      let min = parseFloat(data.min);
+      let step = parseFloat(data.step);
+      listSize = (max - min) / step) & 0xffff;
+      this.dl.replaceChildren();
+      for (let i = 0 ; i < listSize; i++){
+        let o = document.createElement('option');
+        o.innerHTML = (min + step * i).toFixed(1);
+      }
+    }
+     =
+  }
+}
+
 const video = {
   id: document.getElementById('tl-video'),
   stream: null,
