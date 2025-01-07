@@ -84,7 +84,7 @@ const input = {
       let max = parseFloat(data.max);
       let min = parseFloat(data.min);
       let step = parseFloat(data.step);
-      listSize = (max - min) / step) & 0xffff;
+      listSize = ((max - min) / step) & 0xffff;
       this.dl.replaceChildren();
       for (let i = 0 ; i < listSize; i++){
         let o = document.createElement('option');
