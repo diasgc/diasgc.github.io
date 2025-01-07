@@ -92,18 +92,39 @@ body {
   height: 20dvh;
   right: 0;
   left: 0;
-  background: #0008;
+  background: #b008;
   z-index: 2;
 }
 
+#div-input {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+}
+
+#div-input input {
+  -webkit-appearance: none;
+  background: none;
+  appearance: none;
+  cursor: pointer;
+  width: calc(100dvw - 8px);
+  padding: 0 8px;
+  box-sizing: border-box;
+}
+
 #div-table {
+  position: absolute;
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
   overflow-x: auto;
   white-space: nowrap;
-  top: 12px;
+  top: 40px;
+  padding: 8px 0;
   left: 0;
   right: 0;
+  background: #0b02;
 }
 
 #table-caps {
@@ -139,11 +160,3 @@ body {
   padding: 0 12px;
 }
 
-#div-input {
-  position: absolute;
-  top: 50%;
-  bottom: 50%;
-  width: 100%;
-  left: 48px;
-  right: 48px;
-}

@@ -95,10 +95,10 @@ const input = {
         o.innerHTML = (min + step * i).toFixed(1);
         this.lst.appendChild(o);
       }
-      this.inp.onchange = function(){
+      this.inp.onchange = function(e){
         //this.div.style.display = 'none';
-        log.i(`selected ${this.inp.value}`);
-        //callback(this.inp.value);
+        log.i(`selected ${e.currentTarget.value}`);
+        callback(e.currentTarget.value);
       }
       this.div.style.display = 'block';
     }
@@ -146,10 +146,21 @@ const tableCaps = {
     def: "0"
   },
   colorTemperature: {
-    abr: "TK&deg;",
+    abr: "T°K;",
     def: "5000",
-    fmt: (c) => c+"&deg;K",
-    btn: () => input.load(video.caps.colorTemperature)
+    fmt: (c) => c+"°K",
+    btn: () => {
+      let self = tableCaps.colorTemperature;
+      input.load(video.caps.colorTemperature, (v) => {
+      video.opts.colorTemperature = self.calc(v);
+      video.apply();
+      tableCaps.colorTemperature.td.innerText = self.fmt(video.opts.colorTemperature);
+      })
+    },
+    calc: function(v){
+      let c = video.caps.colorTemperature;
+      return c.min + parseInt(v);
+    }
   },
   contrast: { 
     abr: "Cnt",
@@ -158,7 +169,12 @@ const tableCaps = {
     abr: "E&pm;",
     def: "0",
     fmt: (c) => parseFloat(c).toFixed(1),
-    btn: () => input.load(video.caps.exposureCompensation)
+    btn: () => input.load(video.caps.exposureCompensation, (v) => {
+      video.opts.exposureCompensation = v;
+      video.apply();
+      tableCaps.exposureCompensation.td.innerText = tableCaps.exposureCompensation.fmt(v);
+    }),
+
   },
   exposureMode: { 
     abr: "EM",
