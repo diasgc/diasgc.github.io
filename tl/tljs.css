@@ -138,3 +138,12 @@ body {
 #table-caps td {
   padding: 0 12px;
 }
+
+#div-input {
+  position: absolute;
+  top: 50%;
+  bottom: 50%;
+  width: 100%;
+  left: 48px;
+  right: 48px;
+}

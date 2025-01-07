@@ -86,7 +86,7 @@ const input = {
       let min = parseFloat(data.min);
       let step = parseFloat(data.step);
       listSize = ((max - min) / step) & 0xffff;
-      this.dl.replaceChildren();
+      this.lst.replaceChildren();
       this.inp.max = listSize;
       this.inp.min = 0;
       this.inp.step = 1;
