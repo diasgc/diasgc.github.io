@@ -160,7 +160,7 @@ const tableCaps = {
       input.load(video.caps.colorTemperature, (v) => {
         c.val = c.calc(v);
         video.opts.colorTemperature = c.val;
-        video.apply();
+        video.restart();
         c.td.innerText = c.fmt(c.val);
       })
     },
