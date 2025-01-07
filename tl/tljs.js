@@ -89,9 +89,9 @@ const input = {
       for (let i = 0 ; i < listSize; i++){
         let o = document.createElement('option');
         o.innerHTML = (min + step * i).toFixed(1);
+        this.dl.appendChild(o);
       }
     }
-     =
   }
 }
 
@@ -133,18 +133,23 @@ const tableCaps = {
     fmt: (c) => parseFloat(c).toFixed(1) },
   brightness: {
     abr: "Br",
-    def: "0" },
+    def: "0"
+  },
   colorTemperature: {
     abr: "TKº",
     def: "5000",
-    fmt: (c) => c+"ºK" },
+    fmt: (c) => c+"ºK",
+    btn: () => input.load(video.caps.colorTemperature)
+  },
   contrast: { 
     abr: "Cnt",
     def: "0" },
   exposureCompensation: { 
     abr: "E&#8314;&#8725;&#8331;",
     def: "0",
-    fmt: (c) => parseFloat(c).toFixed(1) },
+    fmt: (c) => parseFloat(c).toFixed(1),
+    btn: () => input.load(video.caps.exposureCompensation)
+  },
   exposureMode: { 
     abr: "EM",
     def: "manual",
