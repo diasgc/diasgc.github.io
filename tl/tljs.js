@@ -79,6 +79,38 @@ const input = {
   div: document.getElementById('div-input'),
   inp: document.getElementById('v-input'),
   lst: document.getElementById('steplist'),
+  show: function(cap, onchange){
+    let c = video.caps[cap];
+    this.lst.replaceChildren();
+    if (typeof c === 'array'){
+      this.inp.min = 0;
+      this.inp.max = c.length;
+      this.inp.step = 1;
+      this.fillDataList(c);
+      this.inp.onchange = (e) => onchange(e.currentTarget.value);
+      this.div.style.display = 'block';
+    } else if (tableCaps[cap].lst){
+      this.inp.min = c.min;
+      this.inp.max = c.max;
+      this.inp.step = c.step;
+      this.fillDataList(tableCaps[cap].lst);
+      this.inp.onchange = (e) => onchange(e.currentTarget.value);
+    } else {
+      this.inp.min = c.min || 0;
+      this.inp.max = c.max || 100;
+      this.inp.step = c.step || 1;
+      this.inp.onchange = (e) => onchange(e.currentTarget.value);
+    }
+  },
+  fillDataList: function(arr){
+    this.lst.replaceChildren();
+    arr.forEach(a => {
+      let o = document.createElement('option');
+      o.value = a;
+      o.label = a;
+      this.lst.appendChild(o)
+    })
+  },
   load: function(data, callback){
     let listSize;
     if (data && data.min && data.max && data.step){
@@ -154,13 +186,13 @@ const tableCaps = {
   colorTemperature: {
     abr: "T°K;",
     def: "5000",
-    fmt: (c) => c+"°K",
+    fmt: (c) => c + "°K",
     btn: () => {
       let c = tableCaps.colorTemperature;
       input.load(video.caps.colorTemperature, (v) => {
         c.val = c.calc(v);
         video.opts.colorTemperature = c.val;
-        video.restart();
+        video.apply();
         c.td.innerText = c.fmt(c.val);
       })
     },
@@ -181,7 +213,6 @@ const tableCaps = {
       video.apply();
       tableCaps.exposureCompensation.td.innerText = tableCaps.exposureCompensation.fmt(v);
     }),
-
   },
   exposureMode: { 
     abr: "EM",
@@ -190,7 +221,8 @@ const tableCaps = {
   exposureTime: {
     abr: "Exp",
     def: "500",
-    fmt: (c) => c+"ms" },
+    fmt: (c) => c + "ms"
+  },
   facingMode: { 
     abr: "CAM",
     def: "environment",
@@ -209,7 +241,17 @@ const tableCaps = {
     fmt: (c) => parseFloat(c).toFixed(1) },
   iso: { 
     abr: "ISO",
-    def: "100" },
+    def: "100",
+    lst: [ '50', '100', '200', '400', '800', '1200', '1600', '2000', '2400', '2800', '3200', '3600', '4000' ],
+    btn: () => {
+      let c = tableCaps.iso;
+      input.show('iso', (v) => {
+        video.opts.iso = parseInt(v);
+        video.apply();
+        c.td.innerText = v;
+      });
+    }
+  },
   resizeMode: { 
     abr: "Crop",
     def: "none",
@@ -300,19 +342,6 @@ function init(stream) {
   //log.innerText = JSON.stringify(video.caps, null, 2);
   tableCaps.load(video.caps);
 }
-
-screen.orientation.addEventListener("change", (event) => {
-  const type = event.target.type;
-  const angle = event.target.angle;
-  log.i(`ScreenOrientation change: ${type}, ${angle} degrees.`);
-});
-
-var lastOrientation;
-window.addEventListener("deviceorientation", function(e){
-  let newOrientation = Math.abs(e.gamma) ? "portrait" : "landscape";
-  if (newOrientation !== lastOrientation)
-    log.i((lastOrientation = newOrientation));
-});
 
 
 /* Xiaomi

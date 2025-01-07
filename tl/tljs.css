@@ -121,23 +121,18 @@ body {
   overflow-x: auto;
   white-space: nowrap;
   top: 40px;
-  padding: 8px 0;
+  padding: 0 0;
   left: 0;
   right: 0;
 }
 
 #table-caps {
   display: table;
-  table-layout:fixed;
-  width: auto;
   overflow-x: auto;
-  min-width: 100%;
-  border-collapse: collapse;
   align-items: center;
+  text-align: center;
 }
-#table-caps thead tbody {
-  display: table;
-}
+
 
 #table-caps th {
   font-weight: 600;
@@ -157,5 +152,5 @@ body {
 
 #table-caps td {
   padding: 0 12px;
+  min-width: 32px;
 }
-
