@@ -91,6 +91,9 @@ const input = {
         o.innerHTML = (min + step * i).toFixed(1);
         this.dl.appendChild(o);
       }
+      this.id.style.display = 'block';
+    } else {
+      this.id.style.display = 'none';
     }
   }
 }
@@ -136,16 +139,16 @@ const tableCaps = {
     def: "0"
   },
   colorTemperature: {
-    abr: "TKº",
+    abr: "TK&deg;",
     def: "5000",
-    fmt: (c) => c+"ºK",
+    fmt: (c) => c+"&deg;K",
     btn: () => input.load(video.caps.colorTemperature)
   },
   contrast: { 
     abr: "Cnt",
     def: "0" },
   exposureCompensation: { 
-    abr: "E&#8314;&#8725;&#8331;",
+    abr: "E&pm;",
     def: "0",
     fmt: (c) => parseFloat(c).toFixed(1),
     btn: () => input.load(video.caps.exposureCompensation)
