@@ -76,9 +76,10 @@ const log = {
 }
 
 const input = {
-  id: document.getElementById('v-input'),
-  dl: document.getElementById('steplist'),
-  load: function(data){
+  div: document.getElementById('div-input'),
+  inp: document.getElementById('v-input'),
+  lst: document.getElementById('steplist'),
+  load: function(data, callback){
     let listSize;
     if (data && data.min && data.max && data.step){
       let max = parseFloat(data.max);
@@ -86,14 +87,20 @@ const input = {
       let step = parseFloat(data.step);
       listSize = ((max - min) / step) & 0xffff;
       this.dl.replaceChildren();
+      this.inp.max = listSize;
+      this.inp.min = 0;
+      this.inp.step = 1;
       for (let i = 0 ; i < listSize; i++){
         let o = document.createElement('option');
         o.innerHTML = (min + step * i).toFixed(1);
-        this.dl.appendChild(o);
+        this.lst.appendChild(o);
       }
-      this.id.style.display = 'block';
-    } else {
-      this.id.style.display = 'none';
+      this.inp.onchange = function(){
+        //this.div.style.display = 'none';
+        log.i(`selected ${this.inp.value}`);
+        //callback(this.inp.value);
+      }
+      this.div.style.display = 'block';
     }
   }
 }
