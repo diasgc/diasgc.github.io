@@ -295,11 +295,7 @@ const tableCaps = {
   apply: function(cap, val){
     if (this[cap]){
       video.opts[cap] = val;
-      try {
-        video.apply();
-      } catch(e){
-        video.restart();
-      }
+      video.restart();
       this[cap].td.innerText = this[cap].fmt ? this[cap].fmt(val) : val;
     }
   },
