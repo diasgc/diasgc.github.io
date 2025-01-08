@@ -190,7 +190,7 @@ const tableCaps = {
     abr: "T°K;",
     def: "5000",
     fmt: (c) => c + "°K",
-    btn: () => input.show("colorTemperature", (v) => tableCaps.apply('exposureCompensation', v))
+    btn: () => input.show("colorTemperature", (v) => tableCaps.apply('colorTemperature', v))
   },
   contrast: { 
     abr: "Cnt",
@@ -293,7 +293,7 @@ const tableCaps = {
     btn: () => log.toggle()
   },
   apply: function(cap, val){
-    if (this[cap] && this[cap].td && video.opts[cap]){
+    if (this[cap]){
       video.opts[cap] = val;
       video.apply();
       this[cap].td.innerText = this[cap].fmt ? this[cap].fmt(val) : val;
@@ -319,7 +319,7 @@ const tableCaps = {
     d.innerHTML = val;
     if (this[key].btn)
       d.addEventListener('click', this[key].btn);
-    this[key].td = d;
+    tableCaps[key].td = d;
     th.appendChild(h);
     tb.appendChild(d);
   },
