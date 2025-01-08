@@ -189,11 +189,12 @@ const tableCaps = {
     fmt: (c) => c + "°K",
     btn: () => {
       let c = tableCaps.colorTemperature;
-      input.load(video.caps.colorTemperature, (v) => {
-        c.val = c.calc(v);
-        video.opts.colorTemperature = c.val;
-        video.apply();
-        c.td.innerText = c.fmt(c.val);
+      input.show("colorTemperature", (v) => {
+        let cv = video.caps.colorTemperature;
+        let v2 = cv.min + (cv.max - cv.min) / 100 * v;
+        video.opts.colorTemperature = v2;
+        video.restart();
+        c.td.innerText = c.fmt(v2);
       })
     },
     calc: function(v){
@@ -247,7 +248,7 @@ const tableCaps = {
       let c = tableCaps.iso;
       input.show('iso', (v) => {
         video.opts.iso = parseInt(v);
-        video.apply();
+        video.restart();
         c.td.innerText = v;
       });
     }
