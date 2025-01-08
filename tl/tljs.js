@@ -178,86 +178,77 @@ const tableCaps = {
   aspectRatio: {
     abr: "AR",
     def: "1",
-    fmt: (c) => parseFloat(c).toFixed(1) },
+    fmt: (c) => parseFloat(c).toFixed(1),
+    btn: () => input.show("aspectRatio", (v) => tableCaps.apply('aspectRatio', v))
+  },
   brightness: {
     abr: "Br",
-    def: "0"
+    def: "0",
+    btn: () => input.show("brightness", (v) => tableCaps.apply('brightness', v))
   },
   colorTemperature: {
     abr: "T°K;",
     def: "5000",
     fmt: (c) => c + "°K",
-    btn: () => {
-      let c = tableCaps.colorTemperature;
-      input.show("colorTemperature", (v) => {
-        //let cv = video.caps.colorTemperature;
-        //let v2 = cv.min + (cv.max - cv.min) / 100 * v;
-        video.opts.colorTemperature = v;
-        video.restart();
-        c.td.innerText = c.fmt(v);
-      })
-    },
-    calc: function(v){
-      let c = video.caps.colorTemperature;
-      return c.min + parseInt(v);
-    }
+    btn: () => input.show("colorTemperature", (v) => tableCaps.apply('exposureCompensation', v))
   },
   contrast: { 
     abr: "Cnt",
-    def: "0" },
+    def: "0",
+    btn: () => input.show("contrast", (v) => tableCaps.apply('contrast', v))
+  },
   exposureCompensation: { 
     abr: "E&pm;",
     def: "0",
     fmt: (c) => parseFloat(c).toFixed(1),
-    btn: () => input.load(video.caps.exposureCompensation, (v) => {
-      video.opts.exposureCompensation = v;
-      video.apply();
-      tableCaps.exposureCompensation.td.innerText = tableCaps.exposureCompensation.fmt(v);
-    }),
+    btn: () => input.show('exposureCompensation', (v) => tableCaps.apply('exposureCompensation', v))
   },
   exposureMode: { 
     abr: "EM",
     def: "manual",
-    fmt: (c) => c.substring(0,3) },
+    fmt: (c) => c.substring(0,3),
+    btn: () => input.show("exposureMode", (v) => tableCaps.apply('exposureMode', v))
+  },
   exposureTime: {
     abr: "Exp",
     def: "500",
-    fmt: (c) => c + "ms"
+    fmt: (c) => c > 1000 ? c/1000 + "s" : c + "ms",
+    btn: () => input.show("exposureTime", (v) => tableCaps.apply('exposureTime', v))
   },
   facingMode: { 
     abr: "CAM",
     def: "environment",
-    fmt: (c) => c.substring(0,3) },
+    fmt: (c) => c.substring(0,3),
+    btn: () => input.show("facingMode", (v) => tableCaps.apply('facingMode', v))
+  },
   focusDistance: { 
     abr: "FOC",
     def: "max",
-    fmt: (c) => parseFloat(c).toFixed(1) },
+    fmt: (c) => parseFloat(c).toFixed(1),
+    btn: () => input.show("focusDistance", (v) => tableCaps.apply('focusDistance', v))
+  },
   focusMode: { 
     abr: "FocM",
     def: "manual",
-    fmt: (c) => c.substring(0,3) },
+    fmt: (c) => c.substring(0,3),
+    btn: () => input.show("focusMode", (v) => tableCaps.apply('focusMode', v))
+  },
   frameRate: { 
     abr: "FPS",
     def: "0",
-    fmt: (c) => parseFloat(c).toFixed(1) },
+    fmt: (c) => parseFloat(c).toFixed(1),
+    btn: () => input.show("frameRate", (v) => tableCaps.apply('frameRate', v))
+  },
   iso: { 
     abr: "ISO",
     def: "100",
-    lst: [ '50', '100', '200', '400', '800', '1200', '1600', '2000', '2400', '2800', '3200', '3600', '4000' ],
-    btn: () => {
-      let c = tableCaps.iso;
-      input.show('iso', (v) => {
-        video.opts.iso = parseInt(v);
-        video.restart();
-        c.td.innerText = v;
-      });
-    }
+    btn: () => input.show("iso", (v) => tableCaps.apply('iso', v))
   },
   resizeMode: { 
     abr: "Crop",
     def: "none",
     idx: 0,
-    fmt: (c) => c === 'none' ? '-' : 'crop',
+    fmt: (c) => c === 'none' ? 'def' : 'crop',
     btn: function(){
       let rm = video.caps.resizeMode;
       tableCaps.resizeMode.idx = (tableCaps.resizeMode.idx + 1) % rm.length;
@@ -269,10 +260,13 @@ const tableCaps = {
   },
   saturation: { 
     abr: "SAT",
-    def: "0" },
+    def: "0",
+    btn: () => input.show("saturation", (v) => tableCaps.apply('saturation', v))
+  },
   sharpness: { 
     abr: "SHRP",
-    def: "0" },
+    def: "0",
+    btn: () => input.show("sharpness", (v) => tableCaps.apply('sharpness', v))},
   tilt: {
     abr: "TILT",
     def: "0"},
@@ -283,16 +277,27 @@ const tableCaps = {
   whiteBalanceMode: { 
     abr: "WB",
     def: "manual",
-    fmt: (c) => c.substring(0,3) },
+    fmt: (c) => c.substring(0,3),
+    btn: () => input.show("whiteBalanceMode", (v) => tableCaps.apply('whiteBalanceMode', v))
+  },
   zoom: { 
     abr: "zoom",
     def: "1",
-    fmt: (c) => c+"x" },
+    fmt: (c) => c+"x",
+    btn: () => input.show("zoom", (v) => tableCaps.apply('zoom', v))
+  },
   debug: {
     abr: "dbg",
     def: false,
     fmt: (c) => c+"x",
     btn: () => log.toggle()
+  },
+  apply: function(cap, val){
+    if (this[cap] && this[cap].td && video.opts[cap]){
+      video.opts[cap] = val;
+      video.apply();
+      this[cap].td.innerText = this[cap].fmt ? this[cap].fmt(val) : val;
+    }
   },
   load: function(caps){
     this.th.replaceChildren();
