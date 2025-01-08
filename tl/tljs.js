@@ -190,11 +190,11 @@ const tableCaps = {
     btn: () => {
       let c = tableCaps.colorTemperature;
       input.show("colorTemperature", (v) => {
-        let cv = video.caps.colorTemperature;
-        let v2 = cv.min + (cv.max - cv.min) / 100 * v;
-        video.opts.colorTemperature = v2;
+        //let cv = video.caps.colorTemperature;
+        //let v2 = cv.min + (cv.max - cv.min) / 100 * v;
+        video.opts.colorTemperature = v;
         video.restart();
-        c.td.innerText = c.fmt(v2);
+        c.td.innerText = c.fmt(v);
       })
     },
     calc: function(v){
