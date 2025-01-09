@@ -212,7 +212,7 @@ const tableCaps = {
   exposureTime: {
     abr: "Exp",
     def: "500",
-    fmt: (c) => c > 1000 ? c/1000 + "s" : c + "ms",
+    fmt: (c) => c > 1000 ? (c/1000).toFixed(1) + "s" : c.toFixed(1) + "ms",
     btn: () => input.show("exposureTime", (v) => tableCaps.apply('exposureTime', v))
   },
   facingMode: { 
@@ -295,8 +295,7 @@ const tableCaps = {
   apply: function(cap, val){
     if (this[cap]){
       video.opts[cap] = val;
-      try { video.apply(); }
-      catch(e) { video.restart(); }
+      video.restart();
       this[cap].td.innerText = this[cap].fmt ? this[cap].fmt(val) : val;
     }
   },
