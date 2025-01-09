@@ -143,7 +143,7 @@ const video = {
   track: null,
   caps: null,
   opts: {
-    facingMode: {ideal:"environment"},
+    facingMode: {ideal: "environment"},
     resizeMode: "crop-and-scale",
   },
   load: function(s){
@@ -295,7 +295,8 @@ const tableCaps = {
   apply: function(cap, val){
     if (this[cap]){
       video.opts[cap] = val;
-      video.restart();
+      try { video.apply(); }
+      catch(e) { video.restart(); }
       this[cap].td.innerText = this[cap].fmt ? this[cap].fmt(val) : val;
     }
   },
