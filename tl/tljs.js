@@ -82,7 +82,7 @@ const input = {
   show: function(cap, onchange){
     let c = video.caps[cap];
     this.lst.replaceChildren();
-    if (typeof c === 'array'){
+    if (Array.isArray(c)){
       this.inp.min = 0;
       this.inp.max = c.length;
       this.inp.step = 1;
