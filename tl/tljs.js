@@ -159,9 +159,15 @@ const video = {
     this.track.applyConstraints(this.opts);
     this.id.srcObject = this.stream;
     this.id.play();
+    //delete this.opts.width;
+    //delete this.opts.height;
   },
   apply: function(){
-    this.track.applyConstraints(this.opts);
+    try {
+     this.track.applyConstraints(this.opts);
+    } catch (err){
+      this.restart();
+    }
   },
   restart: function(){
     navigator.mediaDevices
@@ -212,7 +218,7 @@ const tableCaps = {
   exposureTime: {
     abr: "Exp",
     def: "500",
-    fmt: (c) => c > 1000 ? (c/1000).toFixed(1) + "s" : c.toFixed(1) + "ms",
+    fmt: (c) => c > 1000 ? parseFloat(c/1000).toFixed(1) + "s" : parseFloat(c).toFixed(1) + "ms",
     btn: () => input.show("exposureTime", (v) => tableCaps.apply('exposureTime', v))
   },
   facingMode: { 
