@@ -87,7 +87,7 @@ const input = {
       this.inp.max = c.length;
       this.inp.step = 1;
       this.fillDataList(c);
-      this.inp.onchange = (e) => onchange(e.currentTarget.value);
+      this.inp.onchange = (e) => onchange(c[parseInt(e.currentTarget.value)]);
       this.div.style.display = 'block';
     } else if (tableCaps[cap].lst){
       this.inp.min = c.min;
