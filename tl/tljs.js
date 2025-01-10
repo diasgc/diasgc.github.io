@@ -339,8 +339,48 @@ const tableCaps = {
   }
 }
 
-let track;
-let stream;
+const recorder = {
+  rec: null,
+  fps: 30.0,
+  speed: 90,
+  data: [],
+  opts: {
+    mimeType: "video/mp4",
+    videoBitsPerSecond:  2500000,
+  },
+  isRunning: false,
+  start: function(){
+    this.opts.videoKeyFrameIntervalDuration = 1000/this.fps*this.speed;
+    this.rec = new MediaRecorder(video.stream, this.opts);
+    this.rec.start();
+    this.isRunning = true;
+    this.rec.ondataavailable = function(e){ recorder.data.push(e.data) };
+  },
+  stop: function(){
+    if (this.isRunning && this.rec !== null){
+      this.rec.stop();
+      this.isRunning = false;
+      this.save();
+    }
+  },
+  getTimestampFilename() {
+    return "tl-" + new Date(Date.now())
+      .toISOString()
+      .slice(0, 19)
+      .replace(/-|:/g,'')
+      .replace(/T/g,'-');
+  },
+  save: function() {
+    let blob = new Blob(this.data, { type: this.opts.mimeType });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = this.getTimestampFilename();
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  },
+}
+
 
 navigator.mediaDevices
   .getUserMedia({ video: video.opts, audio: false })
@@ -355,7 +395,13 @@ function init(stream) {
   tableCaps.load(video.caps);
 }
 
+function startStop(){
+  if (input.inp.checked){
 
+  } else {
+
+  }
+}
 /* Xiaomi
 {
 "aspectRatio": {
