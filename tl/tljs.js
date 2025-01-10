@@ -1,3 +1,11 @@
+Number.prototype.strSI = function(unit, fixed=2, mul=1024){
+  const sfx = ['', 'K', 'M', 'G', 'T'];
+  let i = 0;
+  let v = this;
+  while (v >= mul && i++ < 4)
+    v /= 1024;
+  return `${v.toFixed(fixed)} ${sfx[i]}${unit}`;
+}
 
 if (false && "serviceWorker" in navigator) {
   window.addEventListener("load", function() {
@@ -300,6 +308,8 @@ const tableCaps = {
 }
 
 const recorder = {
+  timerId: document.getElementById('timer'),
+  statsId: document.getElementById('timer-info'),
   rec: null,
   fps: 30.0,
   speed: 90,
@@ -307,34 +317,44 @@ const recorder = {
   opts: {
     mimeType: "video/webm; codecs=vp9"
   },
+  dataSize: 0,
   startTime: 0,
   isRunning: false,
   start: function(){
     if (!this.isRunning){
-      this.opts.videoKeyFrameIntervalDuration = 1000/this.fps;
+      //this.opts.videoKeyFrameIntervalDuration = 1000/this.fps;
+      var fcount = 0;
       video.opts.frameRate = this.fps/30/this.speed;
       navigator.mediaDevices
         .getUserMedia({ video: video.opts, audio: false })
         .then((stream) => {
           video.load(stream);
-          this.rec = new MediaRecorder(stream, this.opts);
-          this.isRunning = true;
-          this.startTime = Date.now();
-          this.rec.ondataavailable = event => {
+          recorder.rec = new MediaRecorder(stream, recorder.opts);
+          recorder.isRunning = true;
+          recorder.dataSize = 0;
+          recorder.timerId.style.opacity = 1.0;
+          recorder.startTime = Date.now();
+          const t = setInterval(function(){
             let elapsed = Date.now() - recorder.startTime;
+            recorder.timerId.innerHTML = new Date(elapsed).toISOString().slice(11, 19);
+          },1000);
+          recorder.rec.ondataavailable = event => {
             if (event.data.size > 0){
-              log.v(`${elapsed}: chunk len ${event.data.size}`);
-              recorder.data.push(event.data)
-            } else {
-              log.v(`${elapsed}: chunk no data`);
+              fcount++;
+              recorder.dataSize += event.data.size;
+              recorder.statsId.innerHTML = `video: ${recorder.dataSize.strSI('B')} frame: ${event.data.size.strSI('B')} frames: ${fcount}`;
+              recorder.data.push(event.data);
             }
           };
           this.rec.onstop = () => {
             this.isRunning = false;
+            clearInterval(t);
+            recorder.timerId.style.opacity = 0.015625;
+            recorder.timerId.innerText="00:00:00";
             if (recorder.data !== null && recorder.data.length > 0)
               recorder.save();
           }
-          this.rec.start(3000);
+          this.rec.start(2000);
     });
     }
   },
@@ -351,13 +371,16 @@ const recorder = {
       .replace(/T/g,'-');
   },
   save: function() {
-    let blob = new Blob(this.data, { type: this.opts.mimeType });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = this.getTimestampFilename();
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    timelapse(this.data, this.fps, function(blob){
+      //let blob = new Blob(data, { type: recorder.opts.mimeType });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = recorder.getTimestampFilename();
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+   });
+    
   },
 }
 

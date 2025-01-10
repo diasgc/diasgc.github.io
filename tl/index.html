@@ -17,7 +17,12 @@
 <body>
   <canvas id="tl-canvas"></canvas>
   <video id="tl-video"></video>
-  <div id='log'></div>
+  <div id='log'>
+    <div class="stats">
+      <div id="timer">00:00:00</div>
+      <div id="timer-info">paused</div>
+    </div>
+  </div>
   <div id='panel-bottom'>
     <div id="div-input" width="100%">
       <input id="v-input" type="range" min="0" max="48" step="1" list="steplist"><datalist id="steplist"></datalist>
@@ -32,6 +37,7 @@
   <div id="record-btn-div" onclick="startStop()">
     <input id="startStop" type="checkbox"/><label for="startStop"></label>
   </div>
+  <script src="timelapse.min.js"></script>
   <script src="tljs.js?v=2412242300"></script>
 </body>
 </html>

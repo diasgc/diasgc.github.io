@@ -86,6 +86,24 @@ body {
   z-index: 2;
 }
 
+.stats {
+  height: 100%;
+  align-items: center;
+  text-align: center;
+  font-family: sans-serif;
+  color: #fff;
+}
+
+#timer {  
+  font-weight: 100;
+  font-size: 5em;
+  opacity: 0.0625;
+}
+
+#timer-info {
+  font-size: 0.8em;
+}
+
 #panel-bottom {
   position: absolute;
   bottom: 0;
