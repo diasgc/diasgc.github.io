@@ -311,7 +311,7 @@ const recorder = {
   isRunning: false,
   start: function(){
     if (!this.isRunning){
-      //this.opts.videoKeyFrameIntervalDuration = 1000/this.fps*this.speed;
+      this.opts.videoKeyFrameIntervalDuration = 1000/this.fps;
       video.opts.frameRate = this.fps/30/this.speed;
       navigator.mediaDevices
         .getUserMedia({ video: video.opts, audio: false })
