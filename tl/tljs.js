@@ -67,6 +67,11 @@ const log = {
     if (this.id)
       this.id.innerText += `i: ${msg}\n`;
   },
+  v: function(msg){
+    console.log(msg);
+    if (this.id)
+      this.id.innerText = `v: ${msg}\n`;
+  },
   clear: function() {
     this.id.innerText = '';
   },
@@ -344,23 +349,35 @@ const recorder = {
   fps: 30.0,
   speed: 90,
   data: [],
-  opts: {
-    mimeType: "video/mp4",
-    videoBitsPerSecond:  2500000,
-  },
+  opts: {},
+  startTime: 0,
   isRunning: false,
-  start: function(){
-    this.opts.videoKeyFrameIntervalDuration = 1000/this.fps*this.speed;
-    this.rec = new MediaRecorder(video.stream, this.opts);
-    this.rec.start();
-    this.isRunning = true;
-    this.rec.ondataavailable = function(e){ recorder.data.push(e.data) };
+  start: function(stream){
+    if (!this.isRunning){
+      this.opts.videoKeyFrameIntervalDuration = 1000/this.fps*this.speed;
+      this.rec = new MediaRecorder(stream, this.opts);
+      this.isRunning = true;
+      this.startTime = Date.now();
+      this.rec.ondataavailable = event => {
+        let elapsed = Date.now() - recorder.startTime;
+        if (event.data !== null && event.data.length > 0){
+          log.v(`${elapsed}: chunk len ${event.data.length}`);
+          recorder.data.push(event.data)
+        } else {
+          log.v(`${elapsed}: chunk no data`);
+        }
+      };
+      this.rec.onstop = () => {
+        this.isRunning = false;
+        if (recorder.data !== null && recorder.data.length > 0)
+          recorder.save();
+      }
+      this.rec.start(this.opts.videoKeyFrameIntervalDuration);
+    }
   },
   stop: function(){
     if (this.isRunning && this.rec !== null){
       this.rec.stop();
-      this.isRunning = false;
-      this.save();
     }
   },
   getTimestampFilename() {
@@ -396,10 +413,10 @@ function init(stream) {
 }
 
 function startStop(){
-  if (input.inp.checked){
-
+  if (document.getElementById('startStop').checked){
+    recorder.start(video.stream);    
   } else {
-
+    recorder.stop();
   }
 }
 /* Xiaomi
