@@ -14,51 +14,6 @@ if (!document.fullscreenElement) {
   document.exitFullscreen();
 }
 
-/*
-
-{ 
-  "aspectRatio": { "max": 1280, "min": 0.001388888888888889 },
-  "brightness": { "max": 255, "min": 0, "step": 1 },
-  "colorTemperature": { "max": 6500, "min": 2800, "step": 1 },
-  "contrast": { "max": 255, "min": 0, "step": 1 },
-  "deviceId": "97999776491fff5a18c4cde42a1a8329775eee6c8a4bd74b7ccb68e711a247c4",
-  "exposureMode": [ "manual", "continuous" ],
-  "exposureTime": { "max": 2500, "min": 10, "step": 1 },
-  "facingMode": [], "frameRate": { "max": 30, "min": 0 },
-  "groupId": "ed5ea88c24482a6c231c12db068a292529549198648fab2a333e0c2dffc302f6",
-  "height": { "max": 720, "min": 1 },
-  "resizeMode": [ "none", "crop-and-scale" ],
-  "saturation": { "max": 100, "min": 0, "step": 1 },
-  "sharpness": { "max": 7, "min": 0, "step": 1 },
-  "whiteBalanceMode": [ "manual", "continuous" ],
-  "width": { "max": 1280, "min": 1 }
-}
-*/
-/*
-aspectRatio
-brightness
-colorTemperature
-contrast
-displaySurface
-exposureCompensation
-exposureMode
-exposureTime
-facingMode
-focusDistance
-focusMode
-frameRate
-height
-iso
-pointsOfInterest
-resizeMode
-saturation
-sharpness
-tilt
-torch
-whiteBalanceMode
-width
-zoom
-*/
 
 const log = {
   id: document.getElementById('log'),
@@ -354,27 +309,33 @@ const recorder = {
   },
   startTime: 0,
   isRunning: false,
-  start: function(stream){
+  start: function(){
     if (!this.isRunning){
-      this.opts.videoKeyFrameIntervalDuration = 1000/this.fps*this.speed;
-      this.rec = new MediaRecorder(stream, this.opts);
-      this.isRunning = true;
-      this.startTime = Date.now();
-      this.rec.ondataavailable = event => {
-        let elapsed = Date.now() - recorder.startTime;
-        if (event.data.size > 0){
-          log.v(`${elapsed}: chunk len ${event.data.size}`);
-          recorder.data.push(event.data)
-        } else {
-          log.v(`${elapsed}: chunk no data`);
-        }
-      };
-      this.rec.onstop = () => {
-        this.isRunning = false;
-        if (recorder.data !== null && recorder.data.length > 0)
-          recorder.save();
-      }
-      this.rec.start(this.opts.videoKeyFrameIntervalDuration);
+      //this.opts.videoKeyFrameIntervalDuration = 1000/this.fps*this.speed;
+      video.opts.frameRate = this.fps/30/this.speed;
+      navigator.mediaDevices
+        .getUserMedia({ video: video.opts, audio: false })
+        .then((stream) => {
+          video.load(stream);
+          this.rec = new MediaRecorder(stream, this.opts);
+          this.isRunning = true;
+          this.startTime = Date.now();
+          this.rec.ondataavailable = event => {
+            let elapsed = Date.now() - recorder.startTime;
+            if (event.data.size > 0){
+              log.v(`${elapsed}: chunk len ${event.data.size}`);
+              recorder.data.push(event.data)
+            } else {
+              log.v(`${elapsed}: chunk no data`);
+            }
+          };
+          this.rec.onstop = () => {
+            this.isRunning = false;
+            if (recorder.data !== null && recorder.data.length > 0)
+              recorder.save();
+          }
+          this.rec.start(3000);
+    });
     }
   },
   stop: function(){
@@ -416,81 +377,57 @@ function init(stream) {
 
 function startStop(){
   if (document.getElementById('startStop').checked){
-    recorder.start(video.stream);    
+    recorder.start();    
   } else {
     recorder.stop();
   }
 }
-/* Xiaomi
+
+
+/* Xiaomi:
 {
-"aspectRatio": {
-"max": 4000,
-"min": 0.0003333333333333333
-},
-"colorTemperature": {
-"max": 7000,
-"min": 2850,
-"step": 50
-},
+"aspectRatio": { "max": 4000, "min": 0.0003333333333333333 },
+"colorTemperature": { "max": 7000, "min": 2850, "step": 50 },
 "deviceId": "e1a3fb554171efcc3893c6605137c8251c0fcd748cc60c93ed95153d169ae88d",
-"exposureCompensation": {
-"max": 4,
-"min": -4,
-"step": 0.1666666716337204
-},
-"exposureMode": [
-"continuous",
-"manual"
-],
-"exposureTime": {
-"max": 10000,
-"min": 0.56,
-"step": 0.1
-},
-"facingMode": [
-"environment"
-],
-"focusDistance": {
-"max": 14.498610496520996,
-"min": 0.10000000149011612,
-"step": 0.009999999776482582
-},
-"focusMode": [
-"manual",
-"single-shot",
-"continuous"
-],
-"frameRate": {
-"max": 30,
-"min": 0
-},
+"exposureCompensation": { "max": 4, "min": -4, "step": 0.1666666716337204 },
+"exposureMode": [ "continuous", "manual" ],
+"exposureTime": { "max": 10000, "min": 0.56, "step": 0.1 },
+"facingMode": [ "environment" ],
+"focusDistance": { "max": 14.498610496520996, "min": 0.10000000149011612, "step": 0.009999999776482582 },
+"focusMode": [ "manual", "single-shot", "continuous" ],
+"frameRate": { "max": 30, "min": 0 },
 "groupId": "ca703f8129f2a224c1430464a1441e51cd5684d34dbed09c27df4a16a1fe9ffe",
-"height": {
-"max": 3000,
-"min": 1
-},
-"iso": {
-"max": 2000,
-"min": 50,
-"step": 1
-},
-"resizeMode": [
-"none",
-"crop-and-scale"
-],
+"height": { "max": 3000, "min": 1 },
+"iso": { "max": 2000, "min": 50, "step": 1 },
+"resizeMode": [ "none", "crop-and-scale" ],
 "torch": true,
-"whiteBalanceMode": [
-"continuous",
-"manual"
-],
-"width": {
-"max": 4000,
-"min": 1
-},
-"zoom": {
-"max": 10,
-"min": 1,
-"step": 0.1
+"whiteBalanceMode": [ "continuous", "manual" ],
+"width": { "max": 4000, "min": 1 },
+"zoom": { "max": 10, "min": 1, "step": 0.1 }
 }
+*/
+/* webcam:
+{ 
+  "aspectRatio": { "max": 1280, "min": 0.001388888888888889 },
+  "brightness": { "max": 255, "min": 0, "step": 1 },
+  "colorTemperature": { "max": 6500, "min": 2800, "step": 1 },
+  "contrast": { "max": 255, "min": 0, "step": 1 },
+  "deviceId": "97999776491fff5a18c4cde42a1a8329775eee6c8a4bd74b7ccb68e711a247c4",
+  "exposureMode": [ "manual", "continuous" ],
+  "exposureTime": { "max": 2500, "min": 10, "step": 1 },
+  "facingMode": [], "frameRate": { "max": 30, "min": 0 },
+  "groupId": "ed5ea88c24482a6c231c12db068a292529549198648fab2a333e0c2dffc302f6",
+  "height": { "max": 720, "min": 1 },
+  "resizeMode": [ "none", "crop-and-scale" ],
+  "saturation": { "max": 100, "min": 0, "step": 1 },
+  "sharpness": { "max": 7, "min": 0, "step": 1 },
+  "whiteBalanceMode": [ "manual", "continuous" ],
+  "width": { "max": 1280, "min": 1 }
 }
+*/
+
+/* available caps: 
+aspectRatio, brightness, colorTemperature, contrast, displaySurface, exposureCompensation
+exposureMode, exposureTime, facingMode, focusDistance, focusMode, frameRate, height, iso
+pointsOfInterest, resizeMode, saturation, sharpness, tilt, torch, whiteBalanceMode, width, zoom
 */
