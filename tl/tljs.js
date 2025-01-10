@@ -349,7 +349,9 @@ const recorder = {
   fps: 30.0,
   speed: 90,
   data: [],
-  opts: {},
+  opts: {
+    mimeType: "video/webm; codecs=vp9"
+  },
   startTime: 0,
   isRunning: false,
   start: function(stream){
@@ -360,8 +362,8 @@ const recorder = {
       this.startTime = Date.now();
       this.rec.ondataavailable = event => {
         let elapsed = Date.now() - recorder.startTime;
-        if (event.data !== null && event.data.length > 0){
-          log.v(`${elapsed}: chunk len ${event.data.length}`);
+        if (event.data.size > 0){
+          log.v(`${elapsed}: chunk len ${event.data.size}`);
           recorder.data.push(event.data)
         } else {
           log.v(`${elapsed}: chunk no data`);
