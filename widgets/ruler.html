@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <style>
+    body {
+      font-family: sans-serif;
+      scrollbar-color: transparent transparent;
+      margin: 0;
+    }
+    #ruler-label {
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="div-input" width="100%">
+    <div id="ruler-label" width="100%">0</div>
+  </div>
+  <script src="ruler.js"></script>
+  <script>
+    let d = document.getElementById('div-input');
+    let l = document.getElementById('ruler-label');
+    createRuler(d, (e) => l.innerText= e.toFixed(0), {
+      min: -60,
+      max: 60
+    });
+  </script>
+</body>
+</html>
