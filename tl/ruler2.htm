@@ -1,16 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ruler Picker</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
   <style>
+    body {
+      font-family: sans-serif;
+      scrollbar-color: transparent transparent;
+    }
 
+    #panel-bottom {
+      position: absolute;
+      bottom: 0;
+      height: 20dvh;
+      right: 0;
+      left: 0;
+      background: #0008;
+      z-index: 2;
+    }
+
+    #div-input {
+      position: absolute;
+      top: 8px;
+      bottom: 8px;
+      left: 0;
+      right: 0;
+    }
+
+    #div-input input {
+      -webkit-appearance: none;
+      background: none;
+      appearance: none;
+      cursor: pointer;
+      width: calc(100dvw - 8px);
+      padding: 0 8px;
+      box-sizing: border-box;
+    }
+
+    #div-table {
+      position: absolute;
+      display: grid;
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+      overflow-x: auto;
+      white-space: nowrap;
+      top: 40px;
+      padding: 0 0;
+      left: 0;
+      right: 0;
+    }
+
+    #table-caps {
+      display: table;
+      overflow-x: auto;
+      align-items: center;
+      text-align: center;
+    }
+
+    #div-ruler {
+      position: absolute;
+      width: 100dvw;
+      overflow-x: auto;
+    }
+    #table-caps th {
+      font-weight: 600;
+      font-size: var(--fsz-tb);
+      color: var(--accent);
+      white-space:nowrap;
+      margin-bottom: 0;
+    }
+    #ruler {
+      padding-left: 50dvw;
+      padding-right: 50dvw;
+    }
+    #table-caps tr {
+      margin-top: 0;
+      font-weight: 600;
+      font-size: var(--fsz-tb);
+      color: var(--main-fg);
+      white-space:nowrap;
+    }
+
+    #table-caps td {
+      padding: 0 12px;
+      min-width: 32px;
+    }
   </style>
 </head>
 <body>
+  <div id='panel-bottom'>
+    <div id="div-input" width="100%">
+      <div id="div-ruler"><canvas id='ruler' ontouchmove="getTouchPos(event)" onmousemove="getMousePos(event)"></canvas></div>
+      <input id="v-input" type="range" min="0" max="48" step="1" list="steplist"><datalist id="steplist"></datalist>
+    </div>
+    <div id='div-table'>
+      <table id='table-caps'>
+        <thead id="thead"></thead>
+        <tbody id='tdata'"></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="record-btn-div" onclick="startStop()">
+    <input id="startStop" type="checkbox"/><label for="startStop"></label>
+  </div>
+  <script>
+    let d = document.getElementById('div-input');
+    let canvas = document.getElementById('ruler');
+    canvas.width = window.innerWidth * 2;
+    canvas.height = 50;
+    canvas.onscrollsnapchange = (e) => {
+      console.log(e);
+    }
+    const ctx = canvas.getContext('2d');
 
-<script>
+    function getMousePos(event){
+      console.log(canvas.offsetLeft);
+    }
+
+    function getTouchPos(event){
+      console.log(event.targetTouches[0].screenX);
+    }
+    // Function to draw the ruler
+    function drawRuler(ctx, width, height) {
+      const t1 = 20, t2 = 18, t3 = 14;
+      const tickHeight = [ t1, t3, t3, t3, t3, t2, t3, t3, t3, t3 ];
+      const tickSpacing = 5; // pixels between ticks
+
+      ctx.clearRect(0, 0, width, height);
+      ctx.beginPath();
+
+      // Draw the base line of the ruler
+      ctx.moveTo(0, 5);
+      ctx.lineTo(width, 5);
+      ctx.stroke();
+
+      // Draw the ticks and numbers
+      var j = 0;
+      ctx.fillText(0, 5, t1 + 15);
+      for (let i = 0; i <= width; i += tickSpacing) {
+        let th = tickHeight[j % 10];
+        ctx.moveTo(i, 5);
+        ctx.lineTo(i, 5 + th);
+        ctx.stroke();
+        if (th === t1)
+          ctx.fillText(j, i - 5, th + 15);
+        j++;
+      }
+    }
+    drawRuler(ctx, canvas.width, canvas.height);
   </script>
 </body>
 </html>
