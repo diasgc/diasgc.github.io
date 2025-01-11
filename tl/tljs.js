@@ -16,12 +16,27 @@ if (false && "serviceWorker" in navigator) {
   })
 }
 
-if (!document.fullscreenElement) {
-  document.documentElement.requestFullscreen();
-} else if (document.exitFullscreen) {
-  document.exitFullscreen();
+function enterFullscreen(){
+  if (document.body.requestFullscreen){
+    document.body.onclick = () => {
+      document.body.requestFullscreen();
+      document.body.onclick = null;
+    }
+    document.body.click();
+  } else if (document.body.webkitRequestFullscreen){
+    document.body.onclick = () => {
+      document.body.webkitRequestFullscreen();
+      document.body.onclick = null;
+    }
+    document.body.click();
+  } else if (document.body.msRequesFullscreen){
+    document.body.onclick = () => {
+      document.body.msRequestFullscreen();
+      document.body.onclick = null;
+    }
+    document.body.click();
+  }
 }
-
 
 const log = {
   id: document.getElementById('log'),
@@ -320,9 +335,9 @@ const recorder = {
   dataSize: 0,
   startTime: 0,
   isRunning: false,
+  filename: null,
   start: function(){
     if (!this.isRunning){
-      //this.opts.videoKeyFrameIntervalDuration = 1000/this.fps;
       var fcount = 0;
       video.opts.frameRate = this.fps/30/this.speed;
       navigator.mediaDevices
@@ -330,6 +345,7 @@ const recorder = {
         .then((stream) => {
           video.load(stream);
           recorder.rec = new MediaRecorder(stream, recorder.opts);
+          recorder.filename =recorder.getTimestampFilename();
           recorder.isRunning = true;
           recorder.dataSize = 0;
           recorder.timerId.style.opacity = 1.0;
@@ -375,7 +391,7 @@ const recorder = {
       //let blob = new Blob(data, { type: recorder.opts.mimeType });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = recorder.getTimestampFilename();
+      a.download = recorder.filename;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -384,6 +400,8 @@ const recorder = {
   },
 }
 
+
+enterFullscreen();
 
 navigator.mediaDevices
   .getUserMedia({ video: video.opts, audio: false })
