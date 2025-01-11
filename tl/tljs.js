@@ -17,12 +17,12 @@ if (false && "serviceWorker" in navigator) {
 }
 
 function enterFullscreen(){
-  if (document.body.requestFullscreen){
-    document.body.onclick = () => {
-      document.body.requestFullscreen();
-      document.body.onclick = null;
+  if (video.id.requestFullscreen){
+    video.id.onclick = () => {
+      video.id.requestFullscreen();
+      video.id.onclick = null;
     }
-    document.body.click();
+    video.id.click();
   } else if (document.body.webkitRequestFullscreen){
     document.body.onclick = () => {
       document.body.webkitRequestFullscreen();
