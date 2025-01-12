@@ -46,8 +46,8 @@ img {
 
 .icon-wrap {
   display: inline-block;
-  background: rgba(255,255,255,0.875);
-  box-shadow: 0 0 12px 0 black; 
+  background: #fff1;
+  box-shadow: 0 0 8px 0 #0008;
   border-radius: 16px;
   text-align: center;
   padding: 8px;
@@ -58,19 +58,14 @@ img {
 
 .icon-wrap > div {
   position: absolute;
-  /*background-color: red;*/
   height: 52px;
   width: 52px;
   display: block;
   border-radius: 30px;
-  background: rgb(247, 247, 247);
-  background: -moz-linear-gradient(top, rgba(247, 247, 247, 1) 0%, rgba(229, 229, 229, 1) 100%);
-  background: -webkit-linear-gradient(top, rgba(247, 247, 247, 1) 0%, rgba(229, 229, 229, 1) 100%);
-  background: linear-gradient(to bottom, rgba(247, 247, 247, 1) 0%, rgba(229, 229, 229, 1) 100%);
-  filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#f7f7f7', endColorstr='#e5e5e5', GradientType=0);
+  background: #eee;
 }
 
 .icon-wrap > p {
   font-size: 12px;
-  padding-top: 8px;
+  padding: 0 8px;
 }
