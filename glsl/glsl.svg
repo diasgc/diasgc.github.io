@@ -1,5 +1,12 @@
 <svg version="1.1" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
- <g fill-rule="evenodd" stroke-linecap="square">
+ <defs>
+  <linearGradient id="linearGradient15" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#fafafa" offset="0"/>
+   <stop stop-color="#c8ccd0" offset="1"/>
+  </linearGradient>
+ </defs>
+ <rect width="256" height="256" ry="32" fill="url(#linearGradient15)"/>
+ <g transform="translate(0,9)" fill-rule="evenodd" stroke-linecap="square">
   <path d="m41 63 118 48 54-81-94-25z" points="159.24529,111.06508 213.51686,30.176817 119.44611,5.5213399 41.351418,63.013622 " fill="#4d4d9f"/>
   <path d="m159 111v122l54-118v-85z" points="159.24529,233.30014 213.51686,115.30512 213.51686,30.176817 159.24529,111.06508 " fill="#d7d7ff"/>
   <path d="m41 63 118 48v122l-118-70z" points="159.24529,111.06508 159.24529,233.30014 41.351418,163.20551 41.351418,63.013622 " fill="#8686bf"/>
