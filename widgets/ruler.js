@@ -45,6 +45,7 @@ function createRuler(container, callback, options){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.strokeStyle = opts.color;
   ctx.fillStyle = opts.color;
+  ctx.translate(0.5, 0.5);
   ctx.beginPath();
 
   //base line
@@ -64,6 +65,7 @@ function createRuler(container, callback, options){
       ctx.fillText(j, i - (j === opts.max ? dmax : 5), th + 15);
     j++;
   }
+  ctx.translate(-0.5, -0.5);
   divRuler.appendChild(canvas);
   let m = document.createElement('div');
   m.style.position = 'absolute';
