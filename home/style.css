@@ -1,9 +1,13 @@
 /* Light mode */
 @media (prefers-color-scheme: light) {
   :root {
-      --body-bg: #ECEFF1;
+      --body-bg: #E0E0E0;
       --body-color: #263238;
       --border-fg: rgba(0,0,0,0.0625);
+      --bg-stripes: repeating-linear-gradient(
+        -45deg,
+        #E0E0E0, #E0E0E0 3px,
+        #0001 3px, #0001 4px)
   }
 }
 
@@ -11,13 +15,17 @@
 @media (prefers-color-scheme: dark) {
   :root {
       --body-bg: #263238;
-      --body-color: #ECEFF1;
+      --body-color: #E0E0E0;
       --border-fg: rgba(255,255,255,0.0625);
+      --bg-stripes: repeating-linear-gradient(
+        -45deg,
+        #263238, #263238 3px,
+        #102220 3px, #102220 4px)
   }
 }
 
 body {
-    background: var(--body-bg);
+    background: var(--bg-stripes);
     color: var(--body-color);
     margin: 8px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
@@ -46,8 +54,8 @@ img {
 
 .icon-wrap {
   display: inline-block;
-  background: #fff1;
-  box-shadow: 0 0 8px 0 #0008;
+  background: white;
+  box-shadow: 0 0 8px 0 #0003;
   border-radius: 16px;
   text-align: center;
   padding: 8px;
@@ -66,10 +74,12 @@ img {
 }
 
 .icon-wrap > p {
+  width: 100%;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
   display: inherit;
   font-size: 12px;
-  padding: 0 2px 8px 2px;
+  padding: 8px 0;
+  margin: 0 ;
 }

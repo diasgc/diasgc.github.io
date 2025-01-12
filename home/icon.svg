@@ -1,0 +1,21 @@
+<svg version="1.1" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="linearGradient15" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#fafafa" offset="0"/>
+   <stop stop-color="#c8ccd0" offset="1"/>
+  </linearGradient>
+ </defs>
+ <rect width="256" height="256" ry="32" fill="url(#linearGradient15)"/>
+ <rect x="10" y="10" width="236" height="236" ry="35" fill="none" stroke="#000" stroke-linecap="round" stroke-width="4.3"/>
+ <g transform="translate(0,-12)">
+  <rect x="96" y="40" width="64" height="64" ry="17" fill="#afafdf"/>
+  <rect x="28" y="40" width="64" height="64" ry="17" fill="#afdfaf"/>
+  <rect x="164" y="40" width="64" height="64" ry="17" fill="#afdfaf"/>
+  <rect x="96" y="108" width="64" height="64" ry="17" fill="#dfafaf"/>
+  <rect x="28" y="108" width="64" height="64" ry="17" fill="#dfdfaf"/>
+  <rect x="164" y="108" width="64" height="64" ry="17" fill="#c7dfaf"/>
+  <rect x="96" y="176" width="64" height="64" ry="17" fill="#afdfaf"/>
+  <rect x="28" y="176" width="64" height="64" ry="17" fill="#dfafdf"/>
+  <rect x="164" y="176" width="64" height="64" ry="17" fill="#afdfdf"/>
+ </g>
+</svg>
