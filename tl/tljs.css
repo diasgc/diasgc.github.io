@@ -7,6 +7,32 @@
   --main-fg: #eee;
 }
 
+@media only screen and (-moz-min-device-pixel-ratio: 2), 
+       only screen and (-o-min-device-pixel-ratio: 2/1),
+       only screen and (-webkit-min-device-pixel-ratio: 2),
+       only screen and (min-device-pixel-ratio: 2) {
+  :root {
+    --p2:  1px;
+    --p4:  2px;
+    --p8:  4px;
+    --p12: 6px;
+    --p24: 12px;
+  }
+}
+
+@media only screen and (-moz-min-device-pixel-ratio: 2), 
+       only screen and (-o-min-device-pixel-ratio: 2/1),
+       only screen and (-webkit-min-device-pixel-ratio: 2),
+       only screen and (min-device-pixel-ratio: 2) {
+  :root {
+    --p2:  2px;
+    --p4:  4px;
+    --p8:  8px;
+    --p12: 12px;
+    --p24: 24px;
+  }
+}
+
 body {
   font-family: sans-serif;
   scrollbar-color: transparent transparent;
@@ -35,7 +61,7 @@ body {
 
 #record-btn-div {
   position: absolute;
-  bottom: 24px;
+  bottom: var(--p24);
   width: var(--btn-sz);
   height: var(--btn-sz);
   right: calc(100dvw/2 + var(--btn-sz)/2);
@@ -53,10 +79,10 @@ body {
 
 #record-btn-div label {
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: calc(100% - 4px);
-  height: calc(100% - 4px);
+  top: var(--p2);
+  left: var(--p2);
+  width: calc(100% - var(--p4));
+  height: calc(100% - var(--p4));
   background: #b00;
   border-radius: 50%;
   transition: 0.25s;
@@ -74,15 +100,15 @@ body {
 
 #log {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  left: 12px;
+  top: var(--p12);
+  right: var(--p12);
+  left: var(--p12);
   height: 20dvh;
   font-family: monospace;
-  font-size: 12px;
+  font-size: var(--p12);
   color: #0b0;
   background: #8882;
-  border-radius: 2px;
+  border-radius: var(--p2);
   z-index: 2;
 }
 
@@ -94,8 +120,8 @@ body {
   height: 10dvh;
   background: #000c;
   color: var(--accent);
-  border-radius: 12px;
-  padding: 8px;
+  border-radius: var(--p12);
+  padding: var(--p8);
   text-align: center;
 }
 
@@ -129,8 +155,8 @@ body {
 
 #div-input {
   position: absolute;
-  top: 8px;
-  bottom: 8px;
+  top: var(--p8);
+  bottom: var(--p8);
   left: 0;
   right: 0;
 }
@@ -140,8 +166,8 @@ body {
   background: none;
   appearance: none;
   cursor: pointer;
-  width: calc(100dvw - 8px);
-  padding: 0 8px;
+  width: calc(100dvw - var(--p8));
+  padding: 0 var(--p8);
   box-sizing: border-box;
 }
 
@@ -182,6 +208,6 @@ body {
 }
 
 #table-caps td {
-  padding: 0 12px;
+  padding: 0 var(--p12);
   min-width: 32px;
 }
