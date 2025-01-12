@@ -401,7 +401,7 @@ const recorder = {
 }
 
 
-enterFullscreen();
+//enterFullscreen();
 
 navigator.mediaDevices
   .getUserMedia({ video: video.opts, audio: false })
