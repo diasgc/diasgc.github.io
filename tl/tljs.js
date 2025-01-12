@@ -425,6 +425,13 @@ function startStop(){
 }
 
 
+let ival = document.getElementById('ival');
+createRuler(document.getElementById('p-input'),(v) => {
+  ival.innerText = v.toFixed(0);
+},{
+  color: '#fff',
+  max: 300
+})
 /* Xiaomi:
 {
 "aspectRatio": { "max": 4000, "min": 0.0003333333333333333 },

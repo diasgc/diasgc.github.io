@@ -5,24 +5,30 @@ function createRuler(container, callback, options){
     min: options.min || 0,
     max: options.max || 100,
     tickSpacing: options.tickSpacing || 5,
-    lineWidth: options.lineWidth || 0.5,
+    lineWidth: options.lineWidth || 1,
     topMargin: options.topMargin || 5,
     scaleUnits: options.scaleUnits || 10,
-    tickHeightArray: options.tickHeightArray || [20,18,14]
+    tickHeightArray: options.tickHeightArray || [20,18,14],
+    color: options.color || window.getComputedStyle(container).color
   }
+  const padL = window.getComputedStyle(container, null).getPropertyValue('padding-left');
+  const padR = window.getComputedStyle(container, null).getPropertyValue('padding-right');
 
   const divRuler = document.createElement('div');
   divRuler.style.position = 'absolute';
-  divRuler.style.width = '100dvw';
+  divRuler.style.setProperty('width',`calc(100% - ${padL} - ${padR})`);
   divRuler.style.overflowX = 'auto';
+  divRuler.style.padding = 0;
   container.appendChild(divRuler);
   
   opts.w = opts.max - opts.min;
   const canvas = document.createElement('canvas');
   const width = opts.w * opts.tickSpacing;
+  
+  
   canvas.width = width;
   canvas.height = divRuler.clientHeight || 50;
-  canvas.style.padding = '0 50dvw';
+  canvas.style.setProperty('padding', `0 50%`);
 
   divRuler.onscroll = (e) => callback(opts.min + opts.w * e.currentTarget.scrollLeft / width);
   
@@ -32,8 +38,11 @@ function createRuler(container, callback, options){
   tickHeight[opts.scaleUnits/2] = opts.tickHeightArray[1];
 
   const ctx = canvas.getContext('2d');
+  ctx.scale(1,1);
   ctx.lineWidth = opts.lineWidth;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = opts.color;
+  ctx.fillStyle = opts.color;
   ctx.beginPath();
 
   //base line

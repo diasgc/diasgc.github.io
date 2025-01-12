@@ -86,6 +86,19 @@ body {
   z-index: 2;
 }
 
+#p-input {
+  position: absolute;
+  top: 60%;
+  left: 10%;
+  right: 10%;
+  height: 10dvh;
+  background: #000c;
+  color: var(--accent);
+  border-radius: 12px;
+  padding: 8px;
+  text-align: center;
+}
+
 .stats {
   height: 100%;
   align-items: center;
