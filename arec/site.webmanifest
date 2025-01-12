@@ -1,6 +1,6 @@
 {
-    "name": "AudioRecorderB",
-    "short_name": "AudioRecB",
+    "name": "AudioRecorder",
+    "short_name": "AudioRec",
     "icons": [
       {
           "src": "icon.svg",
