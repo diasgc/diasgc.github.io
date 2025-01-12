@@ -1,3 +1,5 @@
+// SVG ruler: https://github.com/amitonline/true-ruler
+
 function createRuler(container, callback, options){
 
   options = options || {};
