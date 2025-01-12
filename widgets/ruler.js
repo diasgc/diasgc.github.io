@@ -46,6 +46,7 @@ function createRuler(container, callback, options){
   ctx.strokeStyle = opts.color;
   ctx.fillStyle = opts.color;
   ctx.translate(0.5, 0.5);
+  ctx.textAlign = 'left';
   ctx.beginPath();
 
   //base line
@@ -61,8 +62,11 @@ function createRuler(container, callback, options){
     ctx.moveTo(i, opts.topMargin);
     ctx.lineTo(i, opts.topMargin + th);
     ctx.stroke();
-    if (th === tickHeight[0])
-      ctx.fillText(j, i - (j === opts.max ? dmax : 5), th + 15);
+    if (th === tickHeight[0]){
+      ctx.textAlign = j > opts.min 
+         ? j < opts.max ? 'center' : 'right' : 'left';
+      ctx.fillText(j, i, th + 15);
+    }
     j++;
   }
   ctx.translate(-0.5, -0.5);
