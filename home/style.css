@@ -66,6 +66,10 @@ img {
 }
 
 .icon-wrap > p {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: inherit;
   font-size: 12px;
-  padding: 0 8px;
+  padding: 0 2px 8px 2px;
 }
