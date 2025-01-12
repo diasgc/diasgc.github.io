@@ -55,8 +55,6 @@ function createRuler(container, callback, options){
   ctx.stroke();
   
   var j = Math.round(opts.min);
-  let dmax = opts.max.toString().length * opts.tickSpacing;
-  ctx.fillText(opts.min, 2, tickHeight[0] + 15);
   for (let i = 0; i <= width; i += opts.tickSpacing) {
     let th = tickHeight[Math.abs(j % 10)];
     ctx.moveTo(i, opts.topMargin);
