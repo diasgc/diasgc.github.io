@@ -3,6 +3,7 @@ const canvas = document.getElementById('tl-canvas');
 const elapsed = document.getElementById('elapsed');
 
 var filename;
+var rec;
 var timer;
 var ctx;
 var t0;
@@ -13,6 +14,7 @@ const videoOpts = {
 }
 
 function capture(){
+  rec.step();
   //ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   let e = Date.now() - t0;
   elapsed.innerHTML = new Date(e).toISOString().slice(11, 19);
@@ -28,8 +30,11 @@ function startStop(){
     canvas.height = video.videoHeight;
     ctx = canvas.getContext('2d');
     timer = setInterval(capture, 1000);
-    recordFrames((blob) => saveBlob(blob), canvas, 1);
+    rec = recordFrames((blob) => saveBlob(blob), canvas, 1);
+    rec.init();
+
   } else {
+    rec.stop();
     clearInterval(timer);
     video.style.display = 'block';
     canvas.style.display = 'none'
