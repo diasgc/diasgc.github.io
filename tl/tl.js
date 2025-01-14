@@ -2,6 +2,7 @@ const video = document.getElementById('tl-video');
 const canvas = document.getElementById('tl-canvas');
 const elapsed = document.getElementById('elapsed');
 
+var filename;
 var timer;
 var ctx;
 var t0;
@@ -19,6 +20,7 @@ function capture(){
 
 function startStop(){
   if (video.style.display !== 'none'){
+    filename = getTimestampFilename()+".webm";
     video.style.display = 'none';
     canvas.style.display = 'block'
     t0 = Date.now();
@@ -45,7 +47,7 @@ function getTimestampFilename(){
 function saveBlob(blob){
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = recorder.filename;
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
