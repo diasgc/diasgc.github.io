@@ -58,48 +58,6 @@
     </div>
   </div>
   </div>
-  <script>
-    const video = document.getElementById('tl-video');
-    const canvas = document.getElementById('tl-canvas');
-    const elapsed = document.getElementById('elapsed');
-    
-    var timer;
-    var ctx;
-    var t0;
-
-    function capture(){
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      let e = Date.now() - t0;
-      elapsed.innerHTML = new Date(e).toISOString().slice(11, 19);
-    }
-
-    function startStop(){
-      if (video.style.display !== 'none'){
-        video.style.display = 'none';
-        canvas.style.display = 'block'
-        t0 = Date.now();
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx = canvas.getContext('2d');
-        timer = setInterval(capture, 1000);
-      } else {
-        clearInterval(timer);
-        video.style.display = 'block';
-        canvas.style.display = 'none'
-      }
-    }
-
-    function init(stream){
-      video.srcObject = stream;
-      video.play();
-    }
-
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: false })
-      .then((stream) => init(stream))
-      .catch((err) => {
-        log.innerText = `An error occurred: ${err}`;
-      });
-  </script>
+  <script src="tl.js?v=250113"></script>
 </body>
 </html>
