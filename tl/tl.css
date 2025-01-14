@@ -1,0 +1,188 @@
+@import url("../daynight.css");
+:root {
+  --fsz-tb: 13px;
+  --accent:  #fb0;
+  --main-bg: #111;
+  --main-fg: #eee;
+  --rec-bg:  #b00;
+}
+
+@media only screen and (-moz-min-device-pixel-ratio: 2), 
+       only screen and (-o-min-device-pixel-ratio: 2/1),
+       only screen and (-webkit-min-device-pixel-ratio: 2),
+       only screen and (min-device-pixel-ratio: 2) {
+  :root {
+    --p2:  2px;
+    --p4:  4px;
+    --p8:  6px;
+    --p12: 10px;
+    --p24: 18px;
+    --tbl-sz: 36px;
+    --btn-sz: 64px;
+  }
+}
+
+@media only screen and (-moz-min-device-pixel-ratio: 3), 
+       only screen and (-o-min-device-pixel-ratio: 3/1),
+       only screen and (-webkit-min-device-pixel-ratio: 3),
+       only screen and (min-device-pixel-ratio: 3) {
+  :root {
+    --p2:  2px;
+    --p4:  4px;
+    --p8:  8px;
+    --p12: 12px;
+    --p24: 24px;
+    --tbl-sz: 40px;
+    --btn-sz: 64px;
+  }
+}
+
+body {
+  position: relative;
+  width: 100dvw;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  scrollbar-color: transparent transparent;
+  background: var(--main-bg);
+}
+
+#tl-canvas {
+  position: absolute;
+  width: 100dvw;
+  height: 100dvh;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -2;
+}
+
+#tl-video {
+  position: absolute;
+  width: 100dvw;
+  height: 100dvh;
+  object-fit: contain;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+}
+
+#panel-top {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  background: #0008;
+  z-index: 2;
+}
+
+#panel-bottom {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background: #0008;
+  z-index: 2;
+}
+
+.fset {
+  font-size: 10px;
+  border: 1px solid #8881;
+  border-radius: 12px;
+  margin: var(--p24);;
+  text-align: center;
+}
+
+#elapsed, #timer {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 100;
+}
+
+#timer {
+  font-size: 72px;
+}
+
+#record-btn-div {
+  margin-top: var(--p12);
+  margin-bottom: var(--p24);
+  width: var(--btn-sz);
+  height: var(--btn-sz);
+  border-radius: 50%;
+  border: 1px solid #0002;
+  background: #fff;
+  align-items: center;
+  z-index: 3;
+}
+
+#record-btn-div input[type="checkbox"] {
+  display: none;
+}
+
+#record-btn-div label {
+  display: block;
+  aspect-ratio: 1;
+  margin: var(--p4);
+  background: var(--rec-bg);
+  border-radius: 50%;
+  transition: 0.25s;
+  animation: none;
+}
+
+#record-btn-div input[type="checkbox"]:checked + label {
+  margin: 20px;
+  background: var(--rec-bg);
+  border-radius: 25%;
+  animation: pulse 1000ms infinite;
+}
+
+@keyframes pulse {
+  0%   { background-color: var(--rec-bg); }
+  50%  { background-color: #fff; }
+  100% { background-color: var(--rec-bg); }
+}
+
+
+
+#div-table {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: var(--p8) 0;
+  left: 0;
+  right: 0;
+}
+
+#table-caps {
+  display: table;
+  overflow-x: auto;
+  align-items: center;
+  text-align: center;
+}
+
+
+#table-caps th {
+  font-weight: 600;
+  font-size: var(--fsz-tb);
+  color: var(--accent);
+  white-space:nowrap;
+  margin-bottom: 0;
+}
+
+#table-caps tr {
+  margin-top: 0;
+  font-weight: 600;
+  font-size: var(--fsz-tb);
+  color: var(--main-fg);
+  white-space:nowrap;
+}
+
+#table-caps td {
+  padding: 0 var(--p12);
+  min-width: 32px;
+}

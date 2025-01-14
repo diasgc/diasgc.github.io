@@ -1,6 +1,5 @@
 @import url("../daynight.css");
 :root {
-  --btn-sz: 64px;
   --fsz-tb: 13px;
   --accent:  #fb0;
   --main-bg: #111;
@@ -17,6 +16,8 @@
     --p8:  4px;
     --p12: 6px;
     --p24: 12px;
+    --tbl-sz: 20px;
+    --btn-sz: 32px;
   }
 }
 
@@ -30,13 +31,15 @@
     --p8:  8px;
     --p12: 12px;
     --p24: 24px;
+    --tbl-sz: 40px;
+    --btn-sz: 64px;
   }
 }
 
 body {
   font-family: sans-serif;
   scrollbar-color: transparent transparent;
-}
+}clea
 
 #tl-canvas {
   position: absolute;
@@ -146,7 +149,7 @@ body {
 #panel-bottom {
   position: absolute;
   bottom: 0;
-  height: 20dvh;
+  height: calc(var(--tbl-sz) + var(--btn-sz));
   right: 0;
   left: 0;
   background: #0008;
@@ -177,7 +180,7 @@ body {
   grid-template-columns: repeat(1, minmax(0, 1fr));
   overflow-x: auto;
   white-space: nowrap;
-  top: 40px;
+  top: var(--tbl-sz);
   padding: 0 0;
   left: 0;
   right: 0;
