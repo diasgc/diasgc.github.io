@@ -15,9 +15,9 @@ const videoOpts = {
 
 function capture(){
   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  rec.step();
   let e = Date.now() - t0;
   elapsed.innerHTML = new Date(e).toISOString().slice(11, 19);
+  rec.step(capture);
 }
 
 function startStop(){
@@ -29,10 +29,10 @@ function startStop(){
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     ctx = canvas.getContext('2d');
-    timer = setInterval(capture, 1000);
+    //timer = setInterval(capture, 1000);
     rec = recordFrames((blob) => saveBlob(blob), canvas, 1);
     rec.init();
-
+    capture();
   } else {
     rec.stop();
     clearInterval(timer);
