@@ -14,8 +14,8 @@ const videoOpts = {
 }
 
 function capture(){
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   rec.step();
-  //ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   let e = Date.now() - t0;
   elapsed.innerHTML = new Date(e).toISOString().slice(11, 19);
 }
