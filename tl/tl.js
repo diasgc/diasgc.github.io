@@ -8,36 +8,221 @@ var timer;
 var ctx;
 var t0;
 
+const log = {
+  id: document.getElementById('log'),
+  msg: function(msg){
+    this.id.innerText += `${msg}\n`;
+  }
+}
+
 const videoOpts = {
   facingMode: {ideal: "environment"},
   resizeMode: "crop-and-scale"
 }
 
-function capture(){
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  let e = Date.now() - t0;
-  elapsed.innerHTML = new Date(e).toISOString().slice(11, 19);
-  rec.step(capture);
+const recorder = {
+  mediaRecorder: null,
+  filename: null,
+
+}
+
+const stream = {
+  stream: null,
+  track: null,
+  caps: null,
+  init: function(stream){
+    this.stream = stream;
+    this.track = stream.getVideoTracks()[0];
+    this.caps = this.track.getCapabilities();
+    settings.init(this.caps);
+  }
+}
+
+const input = {
+  panel: document.getElementById('panel-input'),
+  title: document.getElementById('input-title'),
+  value: document.getElementById('input-value'),
+  ruler: document.getElementById('input-ruler'),
+  show: function(key){
+    this.panel.style.display = 'inline';
+    let cap = stream.caps[key];
+    this.title.innerText = key;
+    this.value.innerText = "0";
+    if (Array.isArray(cap)){
+
+    } else if (cap.max !== 'null' && cap.min !== 'null' && cap.step !== 'null'){
+      this.ruler.replaceChildren();
+      createRuler(this.ruler,(v) => {
+        this.value.innerText = v.toFixed(0);
+      },{
+        color: '#fff',
+        min: cap.min,
+        max: cap.max
+      })
+    }
+  },
+  hide: function(){
+    this.panel.style.display = 'none';
+  }
+}
+
+const settings = {
+  id: document.getElementById('table-caps'),
+  th: document.getElementById('thead'),
+  td: document.getElementById('tdata'),
+  aspectRatio: {
+    abr: "AR",
+    def: "1",
+    type: "float",
+    fmt: (c) => parseFloat(c).toFixed(1),
+    btn: () => input.show("aspectRatio", (v) => settings.apply('aspectRatio', v))
+  },
+  brightness: {
+    abr: "Br",
+    def: "0",
+    type: "int",
+    btn: () => input.show("brightness", (v) => settings.apply('brightness', v))
+  },
+  colorTemperature: {
+    abr: "T°K;",
+    def: "5000",
+    type: "int",
+    fmt: (c) => c + "°K",
+    btn: () => input.show("colorTemperature", (v) => settings.apply('colorTemperature', v))
+  },
+  contrast: { 
+    abr: "Cnt",
+    def: "0",
+    type: "int",
+    btn: () => input.show("contrast", (v) => settings.apply('contrast', v))
+  },
+  exposureCompensation: { 
+    abr: "E&pm;",
+    def: "0",
+    type: "float",
+    fmt: (c) => parseFloat(c).toFixed(1),
+    btn: () => input.show('exposureCompensation', (v) => settings.apply('exposureCompensation', v))
+  },
+  exposureMode: { 
+    abr: "EM",
+    def: "manual",
+    type: "str",
+    fmt: (c) => c.substring(0,3),
+    btn: () => input.show("exposureMode", (v) => settings.apply('exposureMode', v))
+  },
+  exposureTime: {
+    abr: "Exp",
+    def: "500",
+    type: "long",
+    fmt: (c) => c > 1000 ? parseFloat(c/1000).toFixed(1) + "s" : parseFloat(c).toFixed(1) + "ms",
+    btn: () => input.show("exposureTime", (v) => settings.apply('exposureTime', v))
+  },
+  facingMode: { 
+    abr: "CAM",
+    def: "environment",
+    type: "str",
+    fmt: (c) => c.substring(0,3),
+    btn: () => input.show("facingMode", (v) => settings.apply('facingMode', v))
+  },
+  focusDistance: { 
+    abr: "FOC",
+    def: "max",
+    type: "float",
+    fmt: (c) => parseFloat(c).toFixed(1),
+    btn: () => input.show("focusDistance", (v) => settings.apply('focusDistance', v))
+  },
+  focusMode: { 
+    abr: "FocM",
+    def: "manual",
+    type: "str",
+    fmt: (c) => c.substring(0,3),
+    btn: () => input.show("focusMode", (v) => settings.apply('focusMode', v))
+  },
+  frameRate: { 
+    abr: "FPS",
+    def: "0",
+    type: "float",
+    fmt: (c) => parseFloat(c).toFixed(1),
+    btn: () => input.show("frameRate", (v) => settings.apply('frameRate', v))
+  },
+  iso: { 
+    abr: "ISO",
+    def: "100",
+    type: "int",
+    btn: () => input.show("iso", (v) => settings.apply('iso', v))
+  },
+  resizeMode: { 
+    abr: "Crop",
+    def: "none",
+    type: "str",
+    idx: 0,
+    fmt: (c) => c === 'none' ? 'def' : 'crop',
+  },
+  saturation: { 
+    abr: "SAT",
+    def: "0",
+    btn: () => input.show("saturation", (v) => settings.apply('saturation', v))
+  },
+  sharpness: { 
+    abr: "SHRP",
+    def: "0",
+    type: "int",
+    btn: () => input.show("sharpness", (v) => settings.apply('sharpness', v))},
+  tilt: {
+    abr: "TILT",
+    def: "0"},
+  torch: {
+    abr: "FLSH",
+    def: "false",
+    fmt: (c) => c === 'false' ? 'off' : 'on' },
+  whiteBalanceMode: { 
+    abr: "WB",
+    def: "manual",
+    type: "str",
+    fmt: (c) => c.substring(0,3),
+    btn: () => input.show("whiteBalanceMode", (v) => settings.apply('whiteBalanceMode', v))
+  },
+  zoom: { 
+    abr: "zoom",
+    def: "1",
+    type: "int",
+    fmt: (c) => c+"x",
+    btn: () => input.show("zoom", (v) => settings.apply('zoom', v))
+  },
+  debug: {
+    abr: "dbg",
+    def: false,
+    type: "bool",
+    fmt: (c) => c+"x",
+    btn: () => log.toggle()
+  },
+  init: function(caps){
+    this.th.replaceChildren();
+    this.td.replaceChildren();
+    Object.keys(caps).forEach(key => {
+      if (this[key]) this.insertCap(key);
+    });
+    //this.setItem(th, 'debug', tb, true);
+  },
+  insertCap: function(key){
+    let h = document.createElement('th');
+    h.innerHTML = this[key].abr;
+    let d = document.createElement('td');
+    d.id = "td-" + key;
+    d.innerHTML = "def";
+    d.onclick = (e) => input.show(key);
+    this.th.appendChild(h);
+    this.td.appendChild(d);
+  }
 }
 
 function startStop(){
   if (video.style.display !== 'none'){
     filename = getTimestampFilename()+".webm";
-    video.style.display = 'none';
-    canvas.style.display = 'block'
     t0 = Date.now();
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    ctx = canvas.getContext('2d');
-    //timer = setInterval(capture, 1000);
-    rec = recordFrames((blob) => saveBlob(blob), canvas, 1);
-    rec.init();
-    capture();
+    //timer = setInterval(capture, 1000)
   } else {
-    rec.stop();
     clearInterval(timer);
-    video.style.display = 'block';
-    canvas.style.display = 'none'
   }
 }
 
@@ -58,51 +243,20 @@ function saveBlob(blob){
   document.body.removeChild(a);
 }
 
-const recordFrames = (onstop, canvas, fps=30) => {
-  const chunks = [];
-
-  // get Firefox to initialise the canvas
-  canvas.getContext('2d').fillRect(0, 0, 0, 0);
-
-  const stream = canvas.captureStream();
-  const recorder = new MediaRecorder(stream);
-
-  recorder.addEventListener('dataavailable', ({data}) => chunks.push(data));
-  recorder.addEventListener('stop', () => onstop(new Blob(chunks)));
-
-  const frameDuration = 1000 / fps;
-  
-  const frame = (next, start) => {
-      recorder.pause();
-      api.error += Date.now() - start - frameDuration;
-      setTimeout(next, 0); // helps Firefox record the right frame duration
-  };
-
-  const api = {
-      error: 0,
-      init() { 
-          recorder.start(); 
-          recorder.pause();
-      },
-      step(next) {
-          recorder.resume();
-          setTimeout(frame, frameDuration, next, Date.now());
-      }, 
-      stop: () => recorder.stop()
-  };
-
-  return api;
-}
-
-function init(stream){
-  window.stream = stream;
-  video.srcObject = stream;
+function init(s){
+  window.stream = s;
+  video.srcObject = s;
   video.play();
+  stream.init(s);
 }
+
+input.hide();
 
 navigator.mediaDevices
-  .getUserMedia({ video: true, audio: false })
-  .then((stream) => init(stream))
-  .catch((err) => {
-    log.innerText = `An error occurred: ${err}`;
-  });
+  .getUserMedia({ video: videoOpts, audio: false })
+  .then((stream) => init(stream));
+
+window.onclick = function(event) {
+  if (event.target === input.panel)
+    input.hide();
+}

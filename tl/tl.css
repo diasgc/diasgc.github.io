@@ -107,6 +107,18 @@ body {
   font-size: 72px;
 }
 
+#stats {
+  font-size: 12px;
+}
+
+#log {
+  font-size: 10px;
+  text-align: start;
+  font-family: monospace;
+  color: #0b0;
+  padding: 12px;
+}
+
 #record-btn-div {
   margin-top: var(--p12);
   margin-bottom: var(--p24);
@@ -185,4 +197,41 @@ body {
 #table-caps td {
   padding: 0 var(--p12);
   min-width: 32px;
+}
+
+
+#panel-input {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -moz-transform: translate(-50%, -50%); /* Firefox */
+  -ms-transform: translate(-50%, -50%);  /* IE 9 */
+  -webkit-transform: translate(-50%, -50%); /* Safari and Chrome*/
+  -o-transform: translate(-50%, -50%); /* Opera */
+  transform: translate(-50%, -50%);
+
+  /* optional size in px or %: */
+  width: 80%;
+  padding: var(--p12) 0;
+  border-radius: var(--p12);
+  background: #b008;
+}
+
+#input-title{
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  padding: var(--p8);
+}
+
+#input-value{
+  font-size: 12px;
+  font-weight: 200;
+  text-align: center;
+  padding: var(--p8);
+}
+
+#input-ruler{
+  width: 100%;
+  height: 50px;
 }

@@ -23,7 +23,14 @@
     </fieldset>
     <fieldset class="fset"><legend>recorded</legend>
       <div id="timer">00:00</div>
+      <div id="stats">idle</div>
+      <div id="log"></div>
     </fieldset>
+  </div>
+  <div id="panel-input">
+    <div id="input-title">title</div>
+    <div id="input-value">value</div>
+    <div id="input-ruler"></div>
   </div>
   <div id="panel-bottom">
     <div id='div-table'>
@@ -53,11 +60,13 @@
       </table>
     </div>
     <div style="display: flex; align-items: center; justify-content: center;">
-    <div id="record-btn-div">
-      <input id="startStop" type="checkbox" onclick="startStop()"/><label for="startStop"></label>
+      <div id="record-btn-div">
+        <input id="startStop" type="checkbox" onclick="startStop()"/><label for="startStop"></label>
+      </div>
     </div>
   </div>
-  </div>
+  <script src="../widgets/ruler.js"></script>
+  <script src="timelapse.min.js"></script>
   <script src="tl.js?v=250113"></script>
 </body>
 </html>
