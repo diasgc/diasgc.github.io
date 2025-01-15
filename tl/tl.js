@@ -1,6 +1,13 @@
+Number.prototype.strSI = function(unit, fixed=2, mul=1024){
+  const sfx = ['', 'K', 'M', 'G', 'T'];
+  let i = 0;
+  let v = this;
+  while (v >= mul && i++ < 4)
+    v /= 1024;
+  return `${v.toFixed(fixed)} ${sfx[i]}${unit}`;
+}
+
 const video = document.getElementById('tl-video');
-const canvas = document.getElementById('tl-canvas');
-const elapsed = document.getElementById('elapsed');
 
 var filename;
 var rec;
@@ -21,9 +28,40 @@ const videoOpts = {
 }
 
 const recorder = {
+  timerId: document.getElementById('timer'),
+  elapsId: document.getElementById('elapsed'),
+  statsId: document.getElementById('stats'),
   mediaRecorder: null,
   filename: null,
-
+  data: [],
+  dataSize: 0,
+  startTime: 0,
+  fps: 30.0,
+  speed: 90,
+  opts: {
+    mimeType: "video/webm; codecs=vp9"
+  },
+  start: function(){
+    this.mediaRecorder = new MediaRecorder(stream.stream, this.opts);
+    this.startTime = Date.now();
+    this.mediaRecorder.ondataavailable = event => {
+      if (event.data.size > 0){
+        fcount++;
+        recorder.dataSize += event.data.size;
+        recorder.statsId.innerHTML = `video: ${recorder.dataSize.strSI('B')} frame: ${event.data.size.strSI('B')} frames: ${fcount}`;
+        recorder.data.push(event.data);
+      }
+    };
+    this.mediaRecorder.onstop = () => {
+      this.isRunning = false;
+      clearInterval(t);
+      recorder.timerId.style.opacity = 0.015625;
+      recorder.timerId.innerText="00:00:00";
+      if (recorder.data !== null && recorder.data.length > 0)
+        recorder.save();
+    }
+    this.mediaRecorder.start(2000);
+  }
 }
 
 const stream = {
@@ -35,6 +73,14 @@ const stream = {
     this.track = stream.getVideoTracks()[0];
     this.caps = this.track.getCapabilities();
     settings.init(this.caps);
+  },
+  reset: function(callback){
+    navigator.mediaDevices
+      .getUserMedia({ video: videoOpts, audio: false })
+      .then((s) => {
+        stream.init(s);
+        callback(s);
+      });
   }
 }
 
@@ -48,7 +94,7 @@ const input = {
   show: function(key, callback){
     input.callback = callback;
     this.panel.style.display = 'inline';
-    let cap = stream.caps[key];
+    const cap = stream.caps[key];
     this.title.innerText = key;
     this.value.innerText = "0";
     if (Array.isArray(cap)){
@@ -65,7 +111,12 @@ const input = {
       })
     }
   },
-  hide: function(){
+  dismiss: function(){
+    if (this.callback !== null && this.tgVal !== null){
+      this.callback(this.tgVal);
+      this.callback = null;
+      this.tgVal = null;
+    }
     this.panel.style.display = 'none';
   }
 }
@@ -79,81 +130,69 @@ const settings = {
     def: "1",
     type: "float",
     fmt: (c) => parseFloat(c).toFixed(1),
-    btn: () => input.show("aspectRatio", (v) => settings.apply('aspectRatio', v))
   },
   brightness: {
     abr: "Br",
     def: "0",
     type: "int",
-    btn: () => input.show("brightness", (v) => settings.apply('brightness', v))
   },
   colorTemperature: {
     abr: "T°K;",
     def: "5000",
     type: "int",
     fmt: (c) => c + "°K",
-    btn: () => input.show("colorTemperature", (v) => settings.apply('colorTemperature', v))
   },
   contrast: { 
     abr: "Cnt",
     def: "0",
     type: "int",
-    btn: () => input.show("contrast", (v) => settings.apply('contrast', v))
   },
   exposureCompensation: { 
     abr: "E&pm;",
     def: "0",
     type: "float",
     fmt: (c) => parseFloat(c).toFixed(1),
-    btn: () => input.show('exposureCompensation', (v) => settings.apply('exposureCompensation', v))
   },
   exposureMode: { 
     abr: "EM",
     def: "manual",
     type: "str",
     fmt: (c) => c.substring(0,3),
-    btn: () => input.show("exposureMode", (v) => settings.apply('exposureMode', v))
   },
   exposureTime: {
     abr: "Exp",
     def: "500",
     type: "long",
     fmt: (c) => c > 1000 ? parseFloat(c/1000).toFixed(1) + "s" : parseFloat(c).toFixed(1) + "ms",
-    btn: () => input.show("exposureTime", (v) => settings.apply('exposureTime', v))
   },
   facingMode: { 
     abr: "CAM",
     def: "environment",
     type: "str",
     fmt: (c) => c.substring(0,3),
-    btn: () => input.show("facingMode", (v) => settings.apply('facingMode', v))
   },
   focusDistance: { 
     abr: "FOC",
     def: "max",
     type: "float",
     fmt: (c) => parseFloat(c).toFixed(1),
-    btn: () => input.show("focusDistance", (v) => settings.apply('focusDistance', v))
   },
   focusMode: { 
     abr: "FocM",
     def: "manual",
     type: "str",
     fmt: (c) => c.substring(0,3),
-    btn: () => input.show("focusMode", (v) => settings.apply('focusMode', v))
   },
   frameRate: { 
     abr: "FPS",
     def: "0",
     type: "float",
     fmt: (c) => parseFloat(c).toFixed(1),
-    btn: () => input.show("frameRate", (v) => settings.apply('frameRate', v))
   },
   iso: { 
     abr: "ISO",
     def: "100",
     type: "int",
-    btn: () => input.show("iso", (v) => settings.apply('iso', v))
   },
   resizeMode: { 
     abr: "Crop",
@@ -165,13 +204,12 @@ const settings = {
   saturation: { 
     abr: "SAT",
     def: "0",
-    btn: () => input.show("saturation", (v) => settings.apply('saturation', v))
   },
   sharpness: { 
     abr: "SHRP",
     def: "0",
     type: "int",
-    btn: () => input.show("sharpness", (v) => settings.apply('sharpness', v))},
+  },
   tilt: {
     abr: "TILT",
     def: "0"},
@@ -184,14 +222,12 @@ const settings = {
     def: "manual",
     type: "str",
     fmt: (c) => c.substring(0,3),
-    btn: () => input.show("whiteBalanceMode", (v) => settings.apply('whiteBalanceMode', v))
   },
   zoom: { 
     abr: "zoom",
     def: "1",
     type: "int",
     fmt: (c) => c+"x",
-    btn: () => input.show("zoom", (v) => settings.apply('zoom', v))
   },
   debug: {
     abr: "dbg",
@@ -216,6 +252,8 @@ const settings = {
     d.innerHTML = "def";
     d.onclick = (e) => input.show(key, v => {
       d.innerHTML = settings[key].fmt ? settings[key].fmt(v) : v;
+      if (stream[key])
+        videoOpts[key] = v;
     });
     this.th.appendChild(h);
     this.td.appendChild(d);
@@ -250,24 +288,17 @@ function saveBlob(blob){
 }
 
 function init(s){
-  window.stream = s;
+  //window.stream = s;
   video.srcObject = s;
   video.play();
-  stream.init(s);
+  //stream.init(s);
 }
 
-input.hide();
-
-navigator.mediaDevices
-  .getUserMedia({ video: videoOpts, audio: false })
-  .then((stream) => init(stream));
+stream.reset(stream => init(stream));
 
 window.onclick = function(event) {
   if (event.target === input.panel){
-    if (input.callback !== null && input.tgVal !== null){
-      input.callback(input.tgVal);
-    }
-    input.hide();
+    input.dismiss();
   }
     
 }

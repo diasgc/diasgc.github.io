@@ -431,7 +431,8 @@ createRuler(document.getElementById('p-input'),(v) => {
 },{
   color: '#fff',
   max: 300
-})
+});
+
 /* Xiaomi:
 {
 "aspectRatio": { "max": 4000, "min": 0.0003333333333333333 },
