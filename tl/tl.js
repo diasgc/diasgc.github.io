@@ -39,7 +39,7 @@ const stream = {
 }
 
 const input = {
-  panel: document.getElementById('panel-input'),
+  panel: document.getElementById('panel-set'),
   title: document.getElementById('input-title'),
   value: document.getElementById('input-value'),
   ruler: document.getElementById('input-ruler'),
