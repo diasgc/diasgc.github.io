@@ -209,6 +209,8 @@ body {
   height: 100%;
   margin: 0;
   background: #0001;
+  backdrop-filter: blur(10px);
+  transition: all 0.75s cubic-bezier(.71,0,.33,1.56) 0ms;
 }
 
 #panel-input {

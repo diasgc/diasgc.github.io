@@ -43,7 +43,10 @@ const input = {
   title: document.getElementById('input-title'),
   value: document.getElementById('input-value'),
   ruler: document.getElementById('input-ruler'),
-  show: function(key){
+  tgVal: null,
+  callback: null,
+  show: function(key, callback){
+    input.callback = callback;
     this.panel.style.display = 'inline';
     let cap = stream.caps[key];
     this.title.innerText = key;
@@ -54,6 +57,7 @@ const input = {
       this.ruler.replaceChildren();
       createRuler(this.ruler,(v) => {
         this.value.innerText = v.toFixed(0);
+        input.tgVal = v;
       },{
         color: '#fff',
         min: cap.min,
@@ -207,10 +211,12 @@ const settings = {
   insertCap: function(key){
     let h = document.createElement('th');
     h.innerHTML = this[key].abr;
-    let d = document.createElement('td');
+    const d = document.createElement('td');
     d.id = "td-" + key;
     d.innerHTML = "def";
-    d.onclick = (e) => input.show(key);
+    d.onclick = (e) => input.show(key, v => {
+      d.innerHTML = settings[key].fmt ? settings[key].fmt(v) : v;
+    });
     this.th.appendChild(h);
     this.td.appendChild(d);
   }
@@ -257,6 +263,11 @@ navigator.mediaDevices
   .then((stream) => init(stream));
 
 window.onclick = function(event) {
-  if (event.target === input.panel)
+  if (event.target === input.panel){
+    if (input.callback !== null && input.tgVal !== null){
+      input.callback(input.tgVal);
+    }
     input.hide();
+  }
+    
 }
