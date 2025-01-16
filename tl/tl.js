@@ -73,13 +73,14 @@ const stream = {
     this.track = stream.getVideoTracks()[0];
     this.caps = this.track.getCapabilities();
     settings.init(this.caps);
+
   },
-  reset: function(callback){
+  reset: function(onStream){
     navigator.mediaDevices
       .getUserMedia({ video: videoOpts, audio: false })
       .then((s) => {
-        stream.init(s);
-        callback(s);
+        stream.init(s, video);
+        onStream(s);
       });
   }
 }
@@ -95,6 +96,7 @@ const input = {
     input.callback = callback;
     this.panel.style.display = 'inline';
     const cap = stream.caps[key];
+    const scap = settings[key];
     this.title.innerText = key;
     this.value.innerText = "0";
     if (Array.isArray(cap)){
@@ -107,7 +109,8 @@ const input = {
       },{
         color: '#fff',
         min: cap.min,
-        max: cap.max
+        max: cap.max,
+        step: scap.step || cap.step
       })
     }
   },
@@ -162,6 +165,7 @@ const settings = {
   exposureTime: {
     abr: "Exp",
     def: "500",
+    step: 10,
     type: "long",
     fmt: (c) => c > 1000 ? parseFloat(c/1000).toFixed(1) + "s" : parseFloat(c).toFixed(1) + "ms",
   },
@@ -287,14 +291,10 @@ function saveBlob(blob){
   document.body.removeChild(a);
 }
 
-function init(s){
-  //window.stream = s;
-  video.srcObject = s;
+stream.reset(stream => {
+  video.srcObject = stream;
   video.play();
-  //stream.init(s);
-}
-
-stream.reset(stream => init(stream));
+});
 
 window.onclick = function(event) {
   if (event.target === input.panel){

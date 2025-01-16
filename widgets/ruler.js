@@ -6,6 +6,7 @@ function createRuler(container, callback, options){
   let opts = {
     min: options.min || 0,
     max: options.max || 100,
+    step: options.step || 1,
     tickSpacing: options.tickSpacing || 5,
     lineWidth: options.lineWidth || 1,
     topMargin: options.topMargin || 5,
@@ -23,7 +24,7 @@ function createRuler(container, callback, options){
   divRuler.style.padding = 0;
   container.appendChild(divRuler);
   
-  opts.w = opts.max - opts.min;
+  opts.w = (opts.max - opts.min)/opts.step;
   const canvas = document.createElement('canvas');
   const width = opts.w * opts.tickSpacing;
   
@@ -45,7 +46,7 @@ function createRuler(container, callback, options){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.strokeStyle = opts.color;
   ctx.fillStyle = opts.color;
-  ctx.translate(0.5, 0.5);
+  ctx.translate(0.5, 0.5); // sharp lines hack
   ctx.textAlign = 'left';
   ctx.beginPath();
 
@@ -55,8 +56,11 @@ function createRuler(container, callback, options){
   ctx.stroke();
   
   var j = Math.round(opts.min);
+  var i = 0;
+  //while (j <= opts.max){
   for (let i = 0; i <= width; i += opts.tickSpacing) {
-    let th = tickHeight[Math.abs(j % 10)];
+    let tickIndex = Math.abs((j/opts.step) % opts.scaleUnits);
+    let th = tickHeight[tickIndex];
     ctx.moveTo(i, opts.topMargin);
     ctx.lineTo(i, opts.topMargin + th);
     ctx.stroke();
@@ -65,9 +69,9 @@ function createRuler(container, callback, options){
          ? j < opts.max ? 'center' : 'right' : 'left';
       ctx.fillText(j, i, th + 15);
     }
-    j++;
+    j += opts.step;
   }
-  ctx.translate(-0.5, -0.5);
+  ctx.translate(-0.5, -0.5); // sharp lines hack
   divRuler.appendChild(canvas);
   let m = document.createElement('div');
   m.style.position = 'absolute';
