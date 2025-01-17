@@ -22,6 +22,11 @@ const log = {
   }
 }
 
+function capture(){
+  let elapsed = Date.now() - recorder.startTime;
+  recorder.elapsId.innerHTML = new Date(elapsed).toISOString().slice(11, 19);
+}
+
 const videoOpts = {
   facingMode: {ideal: "environment"},
   resizeMode: "crop-and-scale"
@@ -61,6 +66,9 @@ const recorder = {
         recorder.save();
     }
     this.mediaRecorder.start(2000);
+  },
+  stop: function(){
+    recorder.stop();
   }
 }
 
@@ -268,9 +276,11 @@ function startStop(){
   if (video.style.display !== 'none'){
     filename = getTimestampFilename()+".webm";
     t0 = Date.now();
-    //timer = setInterval(capture, 1000)
+    timer = setInterval(capture, 1000)
+    recorder.start();
   } else {
     clearInterval(timer);
+    recorder.stop();
   }
 }
 
