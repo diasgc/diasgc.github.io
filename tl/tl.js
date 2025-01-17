@@ -43,6 +43,7 @@ const recorder = {
   startTime: 0,
   fps: 30.0,
   speed: 90,
+  isRecording: false,
   opts: {
     mimeType: "video/webm; codecs=vp9"
   },
@@ -66,9 +67,11 @@ const recorder = {
         recorder.save();
     }
     this.mediaRecorder.start(2000);
+    this.isRecording: true;
   },
   stop: function(){
     recorder.stop();
+    recorder.isRecording = false;
   }
 }
 
@@ -273,7 +276,7 @@ const settings = {
 }
 
 function startStop(){
-  if (video.style.display !== 'none'){
+  if (!recorder.isRecording){
     filename = getTimestampFilename()+".webm";
     t0 = Date.now();
     timer = setInterval(capture, 1000)
