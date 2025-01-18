@@ -59,7 +59,7 @@ const recorder = {
       }
     };
     this.mediaRecorder.onstop = () => {
-      this.isRunning = false;
+      this.isRecording = false;
       clearInterval(t);
       recorder.timerId.style.opacity = 0.015625;
       recorder.timerId.innerText="00:00:00";
@@ -67,11 +67,10 @@ const recorder = {
         recorder.save();
     }
     this.mediaRecorder.start(2000);
-    this.isRecording: true;
+    this.isRecording = true;
   },
   stop: function(){
     recorder.stop();
-    recorder.isRecording = false;
   }
 }
 
