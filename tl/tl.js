@@ -29,7 +29,8 @@ function capture(){
 
 const videoOpts = {
   facingMode: {ideal: "environment"},
-  resizeMode: "crop-and-scale"
+  resizeMode: "crop-and-scale",
+  frameRate: "1.0"
 }
 
 const recorder = {
@@ -45,11 +46,13 @@ const recorder = {
   speed: 90,
   isRecording: false,
   opts: {
-    mimeType: "video/webm; codecs=vp9"
+    mimeType: "video/webm; codecs=vp9",
+    frameRate: 0.5,
   },
   start: function(){
     this.mediaRecorder = new MediaRecorder(stream.stream, this.opts);
     this.startTime = Date.now();
+    var fcount = 0;
     this.mediaRecorder.ondataavailable = event => {
       if (event.data.size > 0){
         fcount++;
@@ -60,7 +63,6 @@ const recorder = {
     };
     this.mediaRecorder.onstop = () => {
       this.isRecording = false;
-      clearInterval(t);
       recorder.timerId.style.opacity = 0.015625;
       recorder.timerId.innerText="00:00:00";
       if (recorder.data !== null && recorder.data.length > 0)
@@ -70,7 +72,18 @@ const recorder = {
     this.isRecording = true;
   },
   stop: function(){
-    recorder.stop();
+    this.mediaRecorder.stop();
+  },
+  save: function(){
+    timelapse(recorder.data, recorder.fps, function(blob){
+      //let blob = new Blob(data, { type: recorder.opts.mimeType });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = recorder.filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+   });
   }
 }
 
@@ -83,7 +96,6 @@ const stream = {
     this.track = stream.getVideoTracks()[0];
     this.caps = this.track.getCapabilities();
     settings.init(this.caps);
-
   },
   reset: function(onStream){
     navigator.mediaDevices
@@ -247,7 +259,6 @@ const settings = {
     abr: "dbg",
     def: false,
     type: "bool",
-    fmt: (c) => c+"x",
     btn: () => log.toggle()
   },
   init: function(caps){
@@ -265,7 +276,13 @@ const settings = {
     d.id = "td-" + key;
     d.innerHTML = "def";
     d.onclick = (e) => input.show(key, v => {
-      d.innerHTML = settings[key].fmt ? settings[key].fmt(v) : v;
+      d.innerHTML = settings[key].fmt
+        ? settings[key].fmt(v)
+        : settings.type === 'float'
+          ? v.toFixed(1)
+          : settings.type === 'str'
+            ? v.substring(0,3)
+            : v;
       if (stream[key])
         videoOpts[key] = v;
     });
@@ -276,7 +293,7 @@ const settings = {
 
 function startStop(){
   if (!recorder.isRecording){
-    filename = getTimestampFilename()+".webm";
+    recorder.filename = getTimestampFilename()+".webm";
     t0 = Date.now();
     timer = setInterval(capture, 1000)
     recorder.start();
