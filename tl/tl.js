@@ -27,11 +27,15 @@ function capture(){
   recorder.elapsId.innerHTML = new Date(elapsed).toISOString().slice(11, 19);
 }
 
+const timeLapseMs = 1000.0/30.0*90.0;
+
 const videoOpts = {
   facingMode: {ideal: "environment"},
   resizeMode: "crop-and-scale",
-  frameRate: "30.0"
+  frameRate: 30.0
 }
+
+
 
 const recorder = {
   timerId: document.getElementById('timer'),
@@ -47,7 +51,8 @@ const recorder = {
   fcount: 0,
   isRecording: false,
   opts: {
-    mimeType: "video/webm; codecs=vp9",
+    //mimeType: "video/webm; codecs=vp9",
+    mimeType: "video/mp4;codecs=avc1"
   },
   getTimestampFilename: function(){
     let ext = this.opts.mimeType.split(';')[0].split('/')[1];
@@ -58,23 +63,34 @@ const recorder = {
       .replace(/T/g,'-');
     return `${ret}.${ext}`;
   },
+  capture: function(){
+    recorder.mediaRecorder.resume();
+    recorder.mediaRecorder.requestData();
+    recorder.mediaRecorder.pause();
+    setTimeout(recorder.capture, recorder.frameMillis);
+  },
+  startCapture: function(stream, frameMillis){
+    this.frameMillis = frameMillis;
+    this.mediaRecorder = new MediaRecorder(stream, this.opts);
+    this.mediaRecorder.ondataavailable = event => this.ondataavailable(event);
+    this.mediaRecorder.start();
+    this.mediaRecorder.pause();
+    this.isRecording = true;
+    setTimeout(recorder.capture, frameMillis);
+  },
   start: function(){
-    this.mediaRecorder = new MediaRecorder(stream.stream, this.opts);
     this.startTime = Date.now();
     this.fcount = 0;
     this.filename = this.getTimestampFilename();
-    this.frameTime = 1000.0 / videoOpts.frameRate * this.speed;
-    this.mediaRecorder.ondataavailable = event => this.ondataavailable(event);
-    this.isRecording = true;
-    this.mediaRecorder.start(this.frameTime);
-    this.mediaRecorder.pause();
-    setTimeout(() => recorder.mediaRecorder.resume(), recorder.frameTime);
+    videoOpts.frameRate = 30.0;
+    let frameMillis = 1000.0 / videoOpts.frameRate * this.speed;
+    stream.reset(stream => recorder.startCapture(stream, frameMillis));
   },
   ondataavailable: function(event){
     if (event.data.size === 0)
       return;
-    this.mediaRecorder.pause();
-    setTimeout(() => recorder.mediaRecorder.resume(), recorder.frameTime);
+    //this.mediaRecorder.pause();
+    //setTimeout(() => recorder.mediaRecorder.resume(), recorder.frameTime);
     this.fcount++;
     this.dataSize += event.data.size;
     this.data.push(event.data);
@@ -318,7 +334,6 @@ function startStop(){
   if (!recorder.isRecording){
     timer = setInterval(recorder.update.bind(recorder), 1000)
     recorder.start();
-    recorder.filename = getTimestampFilename()+".webm";
   } else {
     clearInterval(timer);
     recorder.stop();
