@@ -64,33 +64,33 @@ const recorder = {
     return `${ret}.${ext}`;
   },
   capture: function(){
-    recorder.mediaRecorder.resume();
-    recorder.mediaRecorder.requestData();
-    recorder.mediaRecorder.pause();
-    setTimeout(recorder.capture, recorder.frameMillis);
+    if (recorder.mediaRecorder.state === 'paused'){
+      recorder.mediaRecorder.resume();
+      recorder.mediaRecorder.requestData();
+    }
   },
   startCapture: function(stream, frameMillis){
     this.frameMillis = frameMillis;
     this.mediaRecorder = new MediaRecorder(stream, this.opts);
     this.mediaRecorder.ondataavailable = event => this.ondataavailable(event);
-    this.mediaRecorder.start();
-    this.mediaRecorder.pause();
+    this.mediaRecorder.start(1000);
+    //this.mediaRecorder.pause();
     this.isRecording = true;
-    setTimeout(recorder.capture, frameMillis);
+    //setTimeout(recorder.capture, frameMillis);
   },
   start: function(){
     this.startTime = Date.now();
     this.fcount = 0;
     this.filename = this.getTimestampFilename();
-    videoOpts.frameRate = 30.0;
-    let frameMillis = 1000.0 / videoOpts.frameRate * this.speed;
+    //videoOpts.frameRate = 1;
+    let frameMillis = 1000.0 / this.fps * this.speed;
     stream.reset(stream => recorder.startCapture(stream, frameMillis));
   },
   ondataavailable: function(event){
     if (event.data.size === 0)
       return;
     //this.mediaRecorder.pause();
-    //setTimeout(() => recorder.mediaRecorder.resume(), recorder.frameTime);
+    //setTimeout(recorder.capture, recorder.frameMillis);
     this.fcount++;
     this.dataSize += event.data.size;
     this.data.push(event.data);
@@ -114,7 +114,7 @@ const recorder = {
     this.timerId.innerHTML = '00:00:00';
   },
   save: function(){
-    timelapse(recorder.data, recorder.fps, function(blob){
+    timelapse(recorder.data, 30.0, function(blob){
       //let blob = new Blob(data, { type: recorder.opts.mimeType });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
