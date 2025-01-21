@@ -73,7 +73,7 @@ const recorder = {
     this.frameMillis = frameMillis;
     this.mediaRecorder = new MediaRecorder(stream, this.opts);
     this.mediaRecorder.ondataavailable = event => this.ondataavailable(event);
-    this.mediaRecorder.start(1000);
+    this.mediaRecorder.start(frameMillis);
     //this.mediaRecorder.pause();
     this.isRecording = true;
     //setTimeout(recorder.capture, frameMillis);
@@ -82,8 +82,8 @@ const recorder = {
     this.startTime = Date.now();
     this.fcount = 0;
     this.filename = this.getTimestampFilename();
-    //videoOpts.frameRate = 1;
-    let frameMillis = 1000.0 / this.fps * this.speed;
+    videoOpts.frameRate = this.fps / this.speed;
+    let frameMillis = 1000.0 / videoOpts.frameRate;
     stream.reset(stream => recorder.startCapture(stream, frameMillis));
   },
   ondataavailable: function(event){
@@ -171,7 +171,7 @@ const input = {
         color: '#fff',
         min: cap.min,
         max: cap.max,
-        step: scap.step || cap.step
+        //step: scap.step || cap.step
       })
     }
   },
