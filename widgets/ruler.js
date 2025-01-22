@@ -63,7 +63,7 @@ function createRuler(container, callback, options){
     let th = tickHeight[tickIndex];
     ctx.moveTo(i, opts.topMargin);
     ctx.lineTo(i, opts.topMargin + th);
-    ctx.stroke();
+    //ctx.stroke(); awfuly slow!!!
     if (th === tickHeight[0]){
       ctx.textAlign = j > opts.min 
          ? j < opts.max ? 'center' : 'right' : 'left';
@@ -72,6 +72,7 @@ function createRuler(container, callback, options){
     j += opts.step;
     i += opts.tickSpacing;
   }
+  ctx.stroke();
   ctx.translate(-0.5, -0.5); // sharp lines hack
   divRuler.appendChild(canvas);
   let m = document.createElement('div');
