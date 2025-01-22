@@ -33,7 +33,7 @@ function createRuler(container, callback, options){
   canvas.height = divRuler.clientHeight || 50;
   canvas.style.setProperty('padding', `0 50%`);
 
-  divRuler.onscroll = (e) => callback(opts.min + opts.w * e.currentTarget.scrollLeft / width);
+  divRuler.onscroll = (e) => callback(opts.min + opts.step * opts.w * e.currentTarget.scrollLeft / width);
   
   
   const tickHeight = Array(opts.scaleUnits).fill(opts.tickHeightArray[opts.tickHeightArray.length - 1]);
@@ -57,9 +57,9 @@ function createRuler(container, callback, options){
   
   var j = Math.round(opts.min);
   var i = 0;
-  //while (j <= opts.max){
-  for (let i = 0; i <= width; i += opts.tickSpacing) {
-    let tickIndex = Math.abs((j/opts.step) % opts.scaleUnits);
+  while (j <= opts.max){
+  //for (let i = 0; i <= width; i += opts.tickSpacing) {
+    let tickIndex = Math.abs(Math.round(j/opts.step) % opts.scaleUnits);
     let th = tickHeight[tickIndex];
     ctx.moveTo(i, opts.topMargin);
     ctx.lineTo(i, opts.topMargin + th);
@@ -70,6 +70,7 @@ function createRuler(container, callback, options){
       ctx.fillText(j, i, th + 15);
     }
     j += opts.step;
+    i += opts.tickSpacing;
   }
   ctx.translate(-0.5, -0.5); // sharp lines hack
   divRuler.appendChild(canvas);

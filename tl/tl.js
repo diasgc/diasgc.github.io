@@ -47,7 +47,7 @@ const recorder = {
   dataSize: 0,
   startTime: 0,
   fps: 30.0,
-  speed: 90,
+  speed: 30,
   fcount: 0,
   isRecording: false,
   opts: {
@@ -84,7 +84,11 @@ const recorder = {
     this.filename = this.getTimestampFilename();
     videoOpts.frameRate = this.fps / this.speed;
     let frameMillis = 1000.0 / videoOpts.frameRate;
-    stream.reset(stream => recorder.startCapture(stream, frameMillis));
+    stream.reset(stream => {
+        recorder.startCapture(stream, frameMillis);
+        video.srcObject = stream;
+      }
+    );
   },
   ondataavailable: function(event){
     if (event.data.size === 0)
@@ -171,7 +175,7 @@ const input = {
         color: '#fff',
         min: cap.min,
         max: cap.max,
-        //step: scap.step || cap.step
+        step: scap.step || cap.step
       })
     }
   },
@@ -204,6 +208,7 @@ const settings = {
     abr: "T°K;",
     def: "5000",
     type: "int",
+    step: 10,
     fmt: (c) => c + "°K",
   },
   contrast: { 
@@ -322,8 +327,10 @@ const settings = {
           : settings.type === 'str'
             ? v.substring(0,3)
             : v;
-      if (stream[key])
+      if (stream[key]){
         videoOpts[key] = v;
+        stream.reset(s => video.srcObject = s)
+      }
     });
     this.th.appendChild(h);
     this.td.appendChild(d);
