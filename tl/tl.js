@@ -134,11 +134,13 @@ const stream = {
   stream: null,
   track: null,
   caps: null,
-  init: function(stream){
+  init: function(stream, v){
     this.stream = stream;
     this.track = stream.getVideoTracks()[0];
     this.caps = this.track.getCapabilities();
     settings.init(this.caps);
+    if (v)
+      v.srcObject = stream;
   },
   reset: function(onStream){
     navigator.mediaDevices
