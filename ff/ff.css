@@ -1,0 +1,19 @@
+@import url("../daynight.css");
+:root {
+  --fsz-tb: 13px;
+  --accent:  #fb0;
+  --main-bg: #111;
+  --main-fg: #eee;
+}
+
+body {
+  position: relative;
+  width: 100dvw;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  scrollbar-color: transparent transparent;
+  background: var(--main-bg);
+  color: var(--main-fg);
+}

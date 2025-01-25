@@ -1,0 +1,15 @@
+<svg version="1.1" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="linearGradient15" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#fafafa" offset="0"/>
+   <stop stop-color="#c8ccd0" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient4" x1="195" x2="59" y1="200" y2="54" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#15151f" offset="0"/>
+   <stop stop-color="#444d64" offset="1"/>
+  </linearGradient>
+ </defs>
+ <rect width="256" height="256" ry="32" fill="url(#linearGradient15)"/>
+ <path id="_x30_1-Film_roll" d="m195 200c19-18 31-44 31-72 0-55-45-100-100-100s-100 45-100 100 45 100 100 100c1.2 0 3.5-5.8e-4 3.5-5.8e-4 21 0 36-2.4 53-8 40-13 65-0.41 66 0.15l3.7-7 3.8-7c-1.1-0.6-24-13-61-5.7zm-22-130c2.8-1.6 6.4-0.66 8 2.2l20 35c1.6 2.8 0.66 6.4-2.2 8-12 7.1-28 2.9-35-9.5-7.1-12-3.2-29 9.2-36zm-95 114c-2.8 1.6-6.4 0.66-8-2.2l-20-35c-1.6-2.8-0.66-6.4 2.2-8 12-7.1 28-2.9 35 9.5 7.1 12 3.2 29-9.2 36zm9.5-79c-7.1 12-23 17-35 9.5-2.8-1.6-3.8-5.2-2.2-8l20-35c1.6-2.8 5.2-3.8 8-2.2 12 7.1 17 23 9.5 35zm58 97h-40c-3.2 0-5.9-2.6-5.9-5.9 0-14 12-26 26-26s26 12 26 26c0 3.2-2.6 5.9-5.9 5.9zm-39-75c0-10 8.4-19 19-19 10 0 19 8.4 19 19 0 10-8.4 19-19 19-10 0-19-8.4-19-19zm19-44c-14 0-26-12-26-26 0-3.2 2.6-5.9 5.9-5.9h40c3.2 0 5.9 2.6 5.9 5.9 0 14-12 26-26 26zm55 99c-1.6 2.8-5.2 3.8-8 2.2-12-7.1-17-23-9.5-35 7.1-12 23-17 35-9.5 2.8 1.6 3.8 5.2 2.2 8z" fill="url(#linearGradient4)" stroke-width=".62"/>
+ <ellipse cx="126" cy="127" rx="95" ry="95" fill="none" stroke="#000" stroke-linecap="round" stroke-width="9.5"/>
+</svg>
