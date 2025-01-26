@@ -274,7 +274,9 @@ const inputCtl = {
     let out = JSON.stringify(this.options, (k,v) => {
       return v === 'true' ? true : v === 'false' ? false : parseInt(v) || v; 
     });
-    return JSON.parse(out);
+    out = JSON.parse(out);
+    logger.log(out);
+    return out;
   },
 }
 
