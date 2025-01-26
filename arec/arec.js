@@ -271,6 +271,7 @@ const inputCtl = {
       });
   },
   getOptions: function(){
+    return this.options;
     let out = JSON.stringify(this.options, (k,v) => {
       return v === 'true' ? true : v === 'false' ? false : parseInt(v) || v; 
     });
