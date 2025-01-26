@@ -275,7 +275,7 @@ const inputCtl = {
       return v === 'true' ? true : v === 'false' ? false : parseInt(v) || v; 
     });
     out = JSON.parse(out);
-    logger.log(out);
+    //logger.log(JSON.stringify(out));
     return out;
   },
 }
@@ -445,6 +445,8 @@ const dataManager = {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+    this.chunks = [];
+    logger.log("idle");
   },
   transcode: async function(){
     logger.log("transcoding...");
