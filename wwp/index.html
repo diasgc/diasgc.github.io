@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Weather Wallpaper</title>
+  <link rel="manifest" href="site.webmanifest" crossorigin="use-credentials">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⛅</text></svg>"/>
+  <link rel="stylesheet" href="wwp.css">
+</head>
+<body>
+  <canvas id="gl-canvas"></canvas>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"
+    integrity="sha512-F6rjAEKNMtM0aODcc/MdnAvhGxn7FCbAkKJ5FKba/fnD3gnN+LBEok326WAMdOhKQKYNr+j/tJEuV1PKwIfhCA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"></script>
+  <script src="../glsl/glcanvas.js"></script>
+  <script src="wwp.js?v=250125"></script>
+</body>
+</html>
