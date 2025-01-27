@@ -62,11 +62,32 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
 
   uniforms = {
     isTouchDevice: 'ontouchstart' in window || navigator.msMaxTouchPoints,
-    sensorList: [
+    uniformList: [
       'accelerometer', 'gyroscope', 'magnetometer', 'ambientLightSensor', 'gravitySensor',
       'linearAccelerationSensor', 'relativeOrientationSensor', 'absoluteOrientationSensor',
       'mouse', 'time', 'random1', 'random2', 'noise24b256', 'noise8b256'
     ],
+    addUniform: function(name, type, start, stop){
+      this.uniformList.push(name);
+      this[name] = {
+        isEnabled: false,
+        name: name,
+        type: type,
+        data: [],
+        start: start || function(){},
+        stop:  stop  || function(){},
+        update: function(gl, program){
+          if (type === 'float')
+            gl.uniform1f(program[this.name], this.data[0]);
+          else if (type === 'vec2')
+            gl.uniform2f(program[this.name], this.data[0], this.data[1]);
+          else if (type === 'vec3')
+            gl.uniform3f(program[this.name], this.data[0], this.data[1], this.data[2]);
+          else if (type === 'sampler2D')
+            gl.uniform1i(program[this.name], 0);
+        }
+      };
+    },
     accelerometer: {
       isEnabled: false,
       name: 'iAccelerometer',
@@ -322,37 +343,39 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
     },
 
     inspectCode: function(code){
-      this.sensorList.forEach(sensor => {
-        let regex = new RegExp(`[\n\\s]+uniform\\s+${this[sensor].type}\\s+${this[sensor].name}`,'g');
-        this[sensor].isEnabled = code.match(regex) ? true : false;
+      this.uniformList.forEach(uniform => {
+        let regex = new RegExp(`[\n\\s]+uniform\\s+${this[uniform].type}\\s+${this[uniform].name}`,'g');
+        this[uniform].isEnabled = code.match(regex) ? true : false;
       });
     },
 
     init: function(gl, program){
-      this.sensorList.forEach(sensor => {
-        if (this[sensor].isEnabled){
-          program[this[sensor].name] = gl.getUniformLocation(program, this[sensor].name);
-          if (this[sensor].init)
-            this[sensor].init(gl, program);
+      this.uniformList.forEach(u => {
+        if (this[u].isEnabled){
+          program[this[u].name] = gl.getUniformLocation(program, this[u].name);
+          if (this[u].init)
+            this[u].init(gl, program);
         }
       });
       return program;
     },
 
     start: function(){
-      this.sensorList.forEach(sensor => {
-        if (this[sensor].isEnabled)
-          this[sensor].start();
+      this.uniformList.forEach(u => {
+        if (this[u].isEnabled)
+          this[u].start();
       });
     },
 
     update: function(gl, program){
-      this.sensorList.forEach(sensor => {
-        if (this[sensor].isEnabled)
-          this[sensor].update(gl, program);
+      this.uniformList.forEach(u => {
+        if (this[u].isEnabled)
+          this[u].update(gl, program);
       });
     }
   }
+
+
 
   constructor(id, options){
     this.options = options || this.defOptions;
