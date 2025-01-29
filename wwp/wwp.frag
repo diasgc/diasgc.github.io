@@ -21,9 +21,12 @@ uniform float iTime;
 // uniform vec2  iRandom2D;
 
 
-void mainImage(out vec4 fragColor, in vec2 fragCoord){
-    vec2 uv = fragCoord.xy / iResolution.xy;
-    fragColor = vec4(uv.x * cos(iTime), uv.y * sin(iTime), uv.x * uv.y, 1.0);
+#define S(k) i*i/1e4*sin(cos(k*2e2*u.x/i)+.0875*i*cos(2e1*i+0.1*iDate.w/k))
+    
+void mainImage(out vec4 f, vec2 u) {
+    u /= iResolution.xy;
+    for (float i=1.; i < 32.; i++) 
+		  f = u.y < .7-.03*i  +2.*S(1.)+S(2.)+.5*S(5.) ? i*vec4(.002,.009,.009,1) : f+.05; 
 }
 
 void main() {

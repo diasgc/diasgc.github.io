@@ -73,6 +73,8 @@ const wwprov = {
       wwprov.pos.longitude = cache.longitude;
       wwprov.wth.data = cache.wwdata;
       if (callback) callback();
+    } else {
+      wwprov.update();
     }
   },
   save: function(){

@@ -19,7 +19,7 @@
     navigator.getUserMedia({ audio: true, video: true }, (stream) => {
       navigator.mediaDevices.enumerateDevices()
       .then((devices) => {
-        document.body.innerHTML = JSON.stringify(devices, null, 2)
+        document.body.innerHTML = JSON.stringify(devices, null, 2);
       });
     }, (error) => console.error(error));
 
