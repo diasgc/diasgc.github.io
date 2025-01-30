@@ -105,3 +105,11 @@ window.onload = function(){
     fragmentCode: frag,
    }, gl => init(gl));
 }
+
+/*
+SHADERS
+https://www.shadertoy.com/view/tltGDM (this)
+https://www.shadertoy.com/view/wtlyzB
+https://www.shadertoy.com/view/wsfGWH
+https://www.shadertoy.com/view/Ntd3Ws (simple, no sun)
+*/
