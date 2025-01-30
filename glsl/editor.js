@@ -67,7 +67,7 @@ function ex(){
   assetList.forEach(item => opts+=`<option value='${item}'>${item}</option>`);
   sel.innerHTML = opts;
   sel.onchange = function(){
-    loadAsset(sel.value)
+    loadAsset('./shaders/' + sel.value);
     fname.removeChild(sel);
     fname.style.display = 'none';
   }

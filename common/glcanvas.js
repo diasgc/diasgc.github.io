@@ -426,8 +426,8 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
   }
 
   loadAsset(path, callback){
-    if (!path.match("shaders/"))
-      path = "./shaders/" + path;
+    //if (!path.match("shaders/"))
+    //  path = "./shaders/" + path;
     fetch(path)
       .then((response) => response.text())
       .then((text) => callback(text));
@@ -483,9 +483,9 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
     callback(this);
   }
 
-  start(){
+  start(loop=true){
     this.uniforms.start();
-    this.loop = true;
+    this.loop = loop;
     this.render();
   }
 

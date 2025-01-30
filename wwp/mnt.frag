@@ -17,7 +17,7 @@ float noise(float x){
 }
 
 float perlin(float x){
-    float r=0.,s=1.,w=1.;mountmountain(uv, 5.2, 9., 0.3, 0.6) + ain(uv, 5.2, 9., 0.3, 0.6) + 
+    float r=0.,s=1.,w=1.;
     for (int i=0; i<6; i++) {
         s *= 2.0;
         w *= 0.5;
@@ -36,12 +36,13 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     vec2 uv = fragCoord/iResolution.xy;
 
     // Time varying pixel color
-    vec3 col = mix(vec3(0.25,0.3,0.3)*0.5, 1.5*vec3(0.3,0.25,0.22),
-    mountain(uv, 7.2, 12., 0.4, 0.5) + 
-    mountain(uv, 5.2, 9., 0.3, 0.5) + 
-        1. - (1. - mountain(uv, 2.8, 3., 0.2, 0.4)) * 0.5 - 
-        (1. - mountain(uv, 1.8, 17.5, 0.05, 0.25)) * 0.5);
+    float m = 0.;
+    for(float i = 0.; i < 3.; i += 1.)
+        m += mountain(uv, 7.2 - i * 0.34, 12. - i * 0.52, 0.4 - i * 0.05, 0.5)
+    //m = mountain(uv, 7.2, 12., 0.4, 0.5) + mountain(uv, 5.2, 9., 0.3, 0.5) + 1. - (1. - mountain(uv, 2.8, 3., 0.2, 0.4)) * 0.5 - (1. - mountain(uv, 1.8, 17.5, 0.05, 0.25)) * 0.5;
+    vec3 col = mix(vec3(0.25,0.3,0.3)*0.5, 1.5*vec3(0.3,0.25,0.22),m);
 
+    
     // Output to screen
     fragColor = vec4(col,1.0);
 }

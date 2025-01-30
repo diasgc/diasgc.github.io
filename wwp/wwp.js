@@ -94,10 +94,14 @@ const wwprov = {
 let glcanvas = document.getElementById('gl-canvas');
 let webGl;
 
+function init(gl){
+  webGl = gl;
+  webGl.start(true);
+}
+
 window.onload = function(){
-  webGl = new GlCanvas('gl-canvas');
-  webGl.load({
-    fragmentAsset: 'wwp.frag',
-    vertexAsset: 'wwp.vert'
-   }, gl => gl.start());
+  let w = new GlCanvas('gl-canvas');
+  w.load({
+    fragmentCode: frag,
+   }, gl => init(gl));
 }
