@@ -51,13 +51,13 @@ float SunAttenuation(vec3 lightPos, vec3 ray){
 }
 
 vec4 ProceduralSkybox(vec3 ro, vec3 rd){
-  vec3 _WorldSpaceLightPos0 = vec3(2, sin(iTime * 0.5) * 10.0 + 1.0, 20);
+  vec3 _WorldSpaceLightPos0 = vec3(2, sin(iTime * 0.5) * 20.0 + 1.0, 20);
   vec3 kSkyTintInGammaSpace = _SkyTint;
-  vec3 kScatteringWavelength = mix(ScatteringWavelength-ScatteringWavelengthRange,ScatteringWavelength+ScatteringWavelengthRange,vec3(1,1,1) - kSkyTintInGammaSpace);
+  vec3 kScatteringWavelength = mix(ScatteringWavelength - ScatteringWavelengthRange, ScatteringWavelength + ScatteringWavelengthRange, vec3(1.) - kSkyTintInGammaSpace);
   vec3 kInvWavelength = 1.0 / (pow(kScatteringWavelength, vec3(4.0)));
   float kKrESun = kRAYLEIGH * kSUN_BRIGHTNESS;
   float kKr4PI = kRAYLEIGH * 4.0 * 3.14159265;
-  vec3 cameraPos = vec3(0,kInnerRadius + kCameraHeight,0);
+  vec3 cameraPos = vec3(0, kInnerRadius + kCameraHeight, 0);
   vec3 eyeRay = rd;
   float far = 0.0;
   vec3 cIn, cOut;
