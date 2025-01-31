@@ -1,4 +1,4 @@
-seDate.prototype.stdTimezoneOffset = function () {
+Date.prototype.stdTimezoneOffset = function () {
   var jan = new Date(this.getFullYear(), 0, 1);
   var jul = new Date(this.getFullYear(), 6, 1);
   return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
@@ -117,7 +117,7 @@ function init(gl){
   webGl = gl;
   setUniforms();
   webGl.start(false);
-  setInterval(upd, 5000);
+  setInterval(upd, 1000);
 }
 
 function upd(){

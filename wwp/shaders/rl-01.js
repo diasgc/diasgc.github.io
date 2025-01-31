@@ -1,20 +1,21 @@
 const frag = `
-uniform vec2 iResolution;
+uniform vec2  iResolution;
 uniform float iTime;
 uniform float uSunPosition;
 uniform float uAtmosphere;
 
-const vec4 nightColor = vec4(0.04, 0.034, 0.09, 1.0);
-const vec4 _LightColor0 = vec4(0.9,0.9,0.9, 1.);
-const vec3 _GroundColor = vec3(.369, .349, .341);
+const vec4  nightColor  = vec4(0.04, 0.034, 0.09, 1.0);
+const vec4 _LightColor0 = vec4(0.9,  0.9,   0.7,  1.0);
+const vec3 _GroundColor = vec3(0.);
 
 const float _Exposure = 1.0;
 const float _SunSize = 0.03;
 const float _SunSizeConvergence = 5.0;
-const vec3  _SkyTint = vec3(.5);
-const float _AtmosphereThickness = 1.0;
+const vec3  _SkyTint = vec3(.1, .25, .1);
+const float _AtmosphereThickness = 1.1;
 
 #define MOUNTAINS 1
+#define REALTIME 1
 #define OUTER_RADIUS 1.025
 #define kRAYLEIGH (mix(0.0, 0.0025, pow(_AtmosphereThickness + uAtmosphere, 2.5))) 
 #define kMIE 0.001 
@@ -22,8 +23,8 @@ const float _AtmosphereThickness = 1.0;
 #define kMAX_SCATTER 50.0 
 #define MIE_G (-0.990) 
 #define MIE_G2 0.9801 
-#define SKY_GROUND_THRESHOLD 0.05
-#define SKYBOX_COLOR_IN_TARGET_COLOR_SPACE 0
+#define SKY_GROUND_THRESHOLD 0.005
+#define SKYBOX_COLOR_IN_TARGET_COLOR_SPACE 1
 
 const vec3 ScatteringWavelength = vec3(.65, .57, .475); //vec3(.65, .57, .475);
 const vec3 ScatteringWavelengthRange = vec3(.15);    
@@ -47,13 +48,19 @@ float Scale(float inCos){
 }
 
 float SunAttenuation(vec3 lightPos, vec3 ray){
-  float EyeCos = pow(clamp(dot(lightPos, ray),0.0,1.0), _SunSizeConvergence);		
-  float temp = pow(1.0 + MIE_G2 - 2.0 * MIE_G * (-EyeCos), pow(_SunSize,0.65) * 10.);
+  float EyeCos = pow(clamp(dot(lightPos, ray), 0.0 , 1.0), _SunSizeConvergence);		
+  float temp = pow(1.0 + MIE_G2 - 2.0 * MIE_G * (-EyeCos), pow(_SunSize, 0.65) * 10.);
   return (1.5 * ((1.0 - MIE_G2) / (2.0 + MIE_G2)) * (1.0 + EyeCos * EyeCos) / max(temp,1.0e-4));	
 }
 
+#if REALTIME
+#define SUNMOV uSunPosition
+#else
+#define SUNMOV sin(iTime*0.1)
+#endif
+
 vec4 ProceduralSkybox(vec3 ro, vec3 rd){
-  vec3 _WorldSpaceLightPos0 = vec3(2, uSunPosition * 20.0 + 1.0, 20);
+  vec3 _WorldSpaceLightPos0 = vec3(2, SUNMOV * 20.0 + 1.0, 20);
   vec3 kSkyTintInGammaSpace = _SkyTint;
   vec3 kScatteringWavelength = mix(ScatteringWavelength - ScatteringWavelengthRange, ScatteringWavelength + ScatteringWavelengthRange, vec3(1.) - kSkyTintInGammaSpace);
   vec3 kInvWavelength = 1.0 / (pow(kScatteringWavelength, vec3(4.0)));
@@ -149,7 +156,7 @@ vec4 raymarch (vec3 ro, vec3 rd){
 
 const vec3 fade = vec3(0.1);
 const vec3 tone = vec3(0.3);
-const float hPos = 0.18;
+const float hPos = 0.01;
 const float hMnt = 0.5;
 const float sharpness = 0.001;
 
@@ -185,10 +192,10 @@ vec4 desaturate(vec4 color, float amount){
 }
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
-  vec2 uv = (3. * fragCoord.xy - iResolution.xy) / iResolution.y;
+  vec2 uv = (5. * fragCoord.xy - iResolution.xy) / iResolution.y;
   vec2 uv2 = fragCoord.xy/iResolution.xy - vec2(0., .05);
   vec3 ro = vec3 (0.);
-  vec3 rd = normalize(vec3(uv,2.0));
+  vec3 rd = normalize(vec3(uv, 2.0));
   vec3 hor = vec3(1.);
 #if MOUNTAINS
   float m = 0.;
