@@ -1,6 +1,8 @@
 const frag = `
 uniform vec2 iResolution;
 uniform float iTime;
+uniform float uSunPosition;
+uniform float uAtmosphere;
 
 const vec4 nightColor = vec4(0.04, 0.08, 0.09, 1.0);
 const vec4 _LightColor0 = vec4(0.4,0.4,0.4,1.);
@@ -14,7 +16,7 @@ const float _AtmosphereThickness = 1.2;
 
 #define MOUNTAINS 1
 #define OUTER_RADIUS 1.025
-#define kRAYLEIGH (mix(0.0, 0.0025, pow(_AtmosphereThickness,2.5))) 
+#define kRAYLEIGH (mix(0.0, 0.0025, pow(_AtmosphereThickness + uAtmosphere,2.5))) 
 #define kMIE 0.001 
 #define kSUN_BRIGHTNESS 20.0 
 #define kMAX_SCATTER 50.0 
@@ -51,7 +53,7 @@ float SunAttenuation(vec3 lightPos, vec3 ray){
 }
 
 vec4 ProceduralSkybox(vec3 ro, vec3 rd){
-  vec3 _WorldSpaceLightPos0 = vec3(2, sin(iTime * 0.5) * 20.0 + 1.0, 20);
+  vec3 _WorldSpaceLightPos0 = vec3(2, uSunPosition * 20.0 + 1.0, 20);
   vec3 kSkyTintInGammaSpace = _SkyTint;
   vec3 kScatteringWavelength = mix(ScatteringWavelength - ScatteringWavelengthRange, ScatteringWavelength + ScatteringWavelengthRange, vec3(1.) - kSkyTintInGammaSpace);
   vec3 kInvWavelength = 1.0 / (pow(kScatteringWavelength, vec3(4.0)));
@@ -194,7 +196,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     m += (1. - (1. - mountain(uv2, 1. +  i, 13.4 * rand(1.), hMnt, hPos)) * (0.5 + 0.45 * i));
   hor = mix(fade * 0.5, 1.5 * tone, m);
 #endif
-  vec4 ray = nightColor + desaturate(raymarch(ro,rd), log(_AtmosphereThickness));
+  vec4 ray = nightColor + desaturate(raymarch(ro,rd), log(_AtmosphereThickness + uAtmosphere));
   fragColor = ray * vec4(hor, 1.);
 }
 `;

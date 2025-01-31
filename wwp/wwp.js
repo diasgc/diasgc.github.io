@@ -1,3 +1,13 @@
+Date.prototype.stdTimezoneOffset = function () {
+  var jan = new Date(this.getFullYear(), 0, 1);
+  var jul = new Date(this.getFullYear(), 6, 1);
+  return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+}
+
+Date.prototype.isDstObserved = function () {
+  return this.getTimezoneOffset() < this.stdTimezoneOffset();
+}
+
 const wwprov = {
   home: "https://open-meteo.com/",
   docs: "https://open-meteo.com/en/docs",
@@ -22,13 +32,17 @@ const wwprov = {
   },
   sun: {
     elevRad: 0,
+    elevAbs: 0,
     sunset: 0,
     sunrise: 0,
     update: function(){
       const date = new Date();
       const times = SunCalc.getTimes(date, wwprov.pos.latitude, wwprov.pos.longitude);
-      const sunPosition = SunCalc.getPosition(date, latitude, longitude);
+      if (!date.isDstObserved())
+        date.setHours(date.getHours() + 1);
+      const sunPosition = SunCalc.getPosition(date, wwprov.pos.latitude, wwprov.pos.longitude);
       wwprov.sun.elevRad = sunPosition.altitude;
+      wwprov.sun.elevAbs = wwprov.sun.elevRad / Math.PI * 2.0;
       wwprov.sun.sunrise = times.sunrise.toLocaleTimeString();
       wwprov.sun.sunset = times.sunset.toLocaleTimeString();
     }
@@ -57,12 +71,16 @@ const wwprov = {
       if (Date.now() - wwprov.wth.timestamp > wwprov.wth.timeout){
         wwprov.wth.getData(callback);
       }
+    },
+    get: function(field){
+      let i = wwprov.wth.data.hourly.time.indexOf(new Date().toISOString().substring(0,14)+"00");
+      return wwprov.wth.data.hourly[field][i];
     }
   },
-  update: function(){
+  update: function(callback){
     wwprov.pos.update(() => {
       wwprov.sun.update();
-      wwprov.wth.update();
+      wwprov.wth.update(callback);
     });
   },
   load: function(callback){
@@ -74,7 +92,7 @@ const wwprov = {
       wwprov.wth.data = cache.wwdata;
       if (callback) callback();
     } else {
-      wwprov.update();
+      wwprov.update(callback);
     }
   },
   save: function(){
@@ -96,14 +114,27 @@ let webGl;
 
 function init(gl){
   webGl = gl;
-  webGl.start(true);
+  gl.uniforms.uSunPosition.data = [wwprov.sun.elevAbs];
+  let moist = wwprov.wth.get('soil_moisture_27_to_81cm') * 2;
+  gl.uniforms.uAtmosphere.data = [moist];
+  webGl.start(false);
 }
 
 window.onload = function(){
   let w = new GlCanvas('gl-canvas');
-  w.load({
-    fragmentCode: frag,
-   }, gl => init(gl));
+  wwprov.update(() => {
+    w.load({
+      fragmentCode: frag,
+      uniforms: {
+        uSunPosition: {
+          type: 'float',
+        },
+        uAtmosphere: {
+          type: 'float',
+        }
+      }
+     }, gl => init(gl));
+  });
 }
 
 /*

@@ -392,6 +392,11 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
     let isLoaded = false;
     this.vertexCode = this.defaultVertex;
     this.fragmentCode = this.defaultFragment;
+    if (opts.uniforms){
+      Object.keys(opts.uniforms).forEach(u => {
+        this.uniforms.addUniform(u, opts.uniforms[u].type, opts.uniforms[u].start || null, opts.uniforms[u].stop || null);
+      });
+    }
     if (opts.vertexId)
       this.vertexCode = document.getElementById(opts.vertexId).firstChild.nodeValue;
     if (opts.fragmentId)
