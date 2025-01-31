@@ -1,6 +1,6 @@
 {
-    "name": "AudioRecorder",
-    "short_name": "AudioRec",
+    "name": "wwp",
+    "short_name": "wwp",
     "icons": [
       {
           "src": "icon.svg",
