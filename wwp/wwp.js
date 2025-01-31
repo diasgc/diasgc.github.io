@@ -86,6 +86,7 @@ const wwprov = {
   load: function(callback){
     let cache = localStorage.getItem('wwprov');
     if (cache){
+      cache = JSON.parse(cache);
       wwprov.wth.timestamp = cache.timestamp;
       wwprov.pos.latitude = cache.latitude;
       wwprov.pos.longitude = cache.longitude;
@@ -102,10 +103,10 @@ const wwprov = {
       longitude: wwprov.longitude,
       wwdata: wwprov.wth.data
     }
-    localStorage.setItem('wwprov', cache);
+    localStorage.setItem('wwprov', JSON.stringify(cache));
   },
   clearCache: function(){
-    localStorage.setItem('wwprov', null);
+    localStorage.removeItem('wwprov');
   }
 }
 
@@ -121,9 +122,9 @@ function init(gl){
 }
 
 window.onload = function(){
-  wwprov.load();
+  //wwprov.clearCache();
   let w = new GlCanvas('gl-canvas');
-  wwprov.update(() => {
+  wwprov.load(() => {
     w.load({
       fragmentCode: frag,
       uniforms: {
@@ -134,7 +135,7 @@ window.onload = function(){
           type: 'float',
         }
       }
-     }, gl => init(gl));
+     }, gl => init(gl))
   });
 }
 
