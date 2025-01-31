@@ -3,3 +3,11 @@ body {
   overflow: hidden;
   background-color: red;
 }
+button {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  border: none;
+  background-color: transparent;
+  font-size: 18px;
+}

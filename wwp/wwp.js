@@ -121,6 +121,16 @@ function init(gl){
   webGl.start(false);
 }
 
+function reset(){
+  wwprov.clearCache();
+  wwprov.update(() => {
+    webGl.uniforms.uSunPosition.data = [wwprov.sun.elevAbs];
+    let moist = wwprov.wth.get('soil_moisture_27_to_81cm') * 2;
+    webGl.uniforms.uAtmosphere.data = [moist];
+    webGl.render();
+  });
+}
+
 window.onload = function(){
   //wwprov.clearCache();
   let w = new GlCanvas('gl-canvas');
