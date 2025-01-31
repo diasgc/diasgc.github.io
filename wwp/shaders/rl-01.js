@@ -15,6 +15,7 @@ const vec3  _SkyTint = vec3(.1, .25, .1);
 const float _AtmosphereThickness = 1.1;
 
 #define MOUNTAINS 1
+#define STARS 1
 #define REALTIME 1
 #define OUTER_RADIUS 1.025
 #define kRAYLEIGH (mix(0.0, 0.0025, pow(_AtmosphereThickness + uAtmosphere, 2.5))) 
@@ -191,12 +192,52 @@ vec4 desaturate(vec4 color, float amount){
   return vec4(mix(color.xyz, gray, amount),color.w);
 }
 
+
+vec3 starhash( vec3 p ){
+	p = vec3( dot(p, vec3(127.1, 311.7, 74.7)),
+			      dot(p, vec3(269.5, 183.3, 246.1)),
+			      dot(p, vec3(113.5, 271.9, 124.6)));
+	return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
+}
+
+float starnoise( in vec3 p ){
+  vec3 i = floor( p );
+  vec3 f = fract( p );
+	
+	vec3 u = f*f*(3.0-2.0*f);
+
+  return mix( mix( mix( dot( starhash( i + vec3(0.0,0.0,0.0) ), f - vec3(0.0,0.0,0.0) ), 
+                        dot( starhash( i + vec3(1.0,0.0,0.0) ), f - vec3(1.0,0.0,0.0) ), u.x),
+                   mix( dot( starhash( i + vec3(0.0,1.0,0.0) ), f - vec3(0.0,1.0,0.0) ), 
+                        dot( starhash( i + vec3(1.0,1.0,0.0) ), f - vec3(1.0,1.0,0.0) ), u.x), u.y),
+              mix( mix( dot( starhash( i + vec3(0.0,0.0,1.0) ), f - vec3(0.0,0.0,1.0) ), 
+                        dot( starhash( i + vec3(1.0,0.0,1.0) ), f - vec3(1.0,0.0,1.0) ), u.x),
+                   mix( dot( starhash( i + vec3(0.0,1.0,1.0) ), f - vec3(0.0,1.0,1.0) ), 
+                        dot( starhash( i + vec3(1.0,1.0,1.0) ), f - vec3(1.0,1.0,1.0) ), u.x), u.y), u.z );
+}
+
+float starfield(vec2 uv){
+  
+  // modifies the number of stars that are visible
+  float stars_threshold = 8.0;
+
+  // modifies the overall strength of the stars
+  float stars_exposure = 20.0;
+
+  vec3 stars_direction = normalize(vec3(uv * 2.0 - 1.0, 1.0)); // could be view vector for example
+	float stars = pow(clamp(starnoise(stars_direction * 200.0), 0.0, 1.0), stars_threshold) * stars_exposure;
+	stars *= mix(0.4, 1.4, starnoise(stars_direction * 100.0 + vec3(iTime))); // time based flickering
+  
+  return stars;
+}
+
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec2 uv = (5. * fragCoord.xy - iResolution.xy) / iResolution.y;
   vec2 uv2 = fragCoord.xy/iResolution.xy - vec2(0., .05);
   vec3 ro = vec3 (0.);
   vec3 rd = normalize(vec3(uv, 2.0));
   vec3 hor = vec3(1.);
+  vec3 stars = vec3(0.);
 #if MOUNTAINS
   float m = 0.;
   for(float i = 2.; i > 0.; i -= 1.)
@@ -204,7 +245,11 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   if (m < 0.999)
     hor = mix(fade * 0.5, 1.5 * tone, m);
 #endif
+#if STARS
+  if (uSunPosition < 0.0 && uv2.y > 0.3)
+    stars = vec3(uv.y * starfield(uv2));
+#endif
   vec4 ray = nightColor + desaturate(raymarch(ro,rd), log(_AtmosphereThickness));
-  fragColor = ray * vec4(hor, 1.);
+  fragColor = ray * vec4(hor, 1.) + vec4(stars, 1.);
 }
 `;
