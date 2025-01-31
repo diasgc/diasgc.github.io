@@ -192,9 +192,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 hor = vec3(1.);
 #if MOUNTAINS
   float m = 0.;
-  for(float i = 3.; i > 0.; i -= 1.)
+  for(float i = 2.; i > 0.; i -= 1.)
     m += (1. - (1. - mountain(uv2, 1. +  i, 13.4 * rand(1.), hMnt, hPos)) * (0.5 + 0.45 * i));
-  if (m < 0.99)
+  if (m < 0.999)
     hor = mix(fade * 0.5, 1.5 * tone, m);
 #endif
   vec4 ray = nightColor + desaturate(raymarch(ro,rd), log(_AtmosphereThickness));
