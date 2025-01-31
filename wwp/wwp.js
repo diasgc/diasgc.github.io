@@ -136,7 +136,7 @@ function setUniforms(){
 
 function reset(){
   wwprov.clearCache();
-  wwp.update();
+  wwprov.update();
 }
 
 window.onload = function(){
