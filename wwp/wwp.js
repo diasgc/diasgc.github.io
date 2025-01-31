@@ -121,6 +121,7 @@ function init(gl){
 }
 
 window.onload = function(){
+  wwprov.load();
   let w = new GlCanvas('gl-canvas');
   wwprov.update(() => {
     w.load({
