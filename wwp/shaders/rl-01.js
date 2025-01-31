@@ -4,19 +4,19 @@ uniform float iTime;
 uniform float uSunPosition;
 uniform float uAtmosphere;
 
-const vec4 nightColor = vec4(0.04, 0.08, 0.09, 1.0);
-const vec4 _LightColor0 = vec4(0.4,0.4,0.4,1.);
+const vec4 nightColor = vec4(0.04, 0.034, 0.09, 1.0);
+const vec4 _LightColor0 = vec4(0.9,0.9,0.9, 1.);
 const vec3 _GroundColor = vec3(.369, .349, .341);
 
 const float _Exposure = 1.0;
 const float _SunSize = 0.03;
 const float _SunSizeConvergence = 5.0;
 const vec3  _SkyTint = vec3(.5);
-const float _AtmosphereThickness = 1.2;
+const float _AtmosphereThickness = 1.0;
 
 #define MOUNTAINS 1
 #define OUTER_RADIUS 1.025
-#define kRAYLEIGH (mix(0.0, 0.0025, pow(_AtmosphereThickness + uAtmosphere,2.5))) 
+#define kRAYLEIGH (mix(0.0, 0.0025, pow(_AtmosphereThickness + uAtmosphere, 2.5))) 
 #define kMIE 0.001 
 #define kSUN_BRIGHTNESS 20.0 
 #define kMAX_SCATTER 50.0 
@@ -147,11 +147,11 @@ vec4 raymarch (vec3 ro, vec3 rd){
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-const vec3 fade = vec3(0.1, 0.1, 0.1);
-const vec3 tone = vec3(0.3, 0.31, 0.31);
-const float hPos = 0.2;
+const vec3 fade = vec3(0.1);
+const vec3 tone = vec3(0.3);
+const float hPos = 0.18;
 const float hMnt = 0.5;
-const float sharpness = 0.01;
+const float sharpness = 0.001;
 
 float rand(float x){
     return fract(sin(x)*75154.32912);
@@ -194,9 +194,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float m = 0.;
   for(float i = 3.; i > 0.; i -= 1.)
     m += (1. - (1. - mountain(uv2, 1. +  i, 13.4 * rand(1.), hMnt, hPos)) * (0.5 + 0.45 * i));
-  hor = mix(fade * 0.5, 1.5 * tone, m);
+  if (m < 0.99)
+    hor = mix(fade * 0.5, 1.5 * tone, m);
 #endif
-  vec4 ray = nightColor + desaturate(raymarch(ro,rd), log(_AtmosphereThickness + uAtmosphere));
+  vec4 ray = nightColor + desaturate(raymarch(ro,rd), log(_AtmosphereThickness));
   fragColor = ray * vec4(hor, 1.);
 }
 `;

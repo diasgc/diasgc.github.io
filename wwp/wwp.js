@@ -11,7 +11,7 @@ Date.prototype.isDstObserved = function () {
 const wwprov = {
   home: "https://open-meteo.com/",
   docs: "https://open-meteo.com/en/docs",
-  flds: [ 'temperature_2m','precipitation','surface_pressure','wind_speed_10m','soil_moisture_27_to_81cm' ],
+  flds: [ 'temperature_2m','relative_humidity_2m','precipitation','surface_pressure','wind_speed_10m','soil_moisture_27_to_81cm' ],
   kind: 'hourly', //'current',
   timestamp: 0,
   timeout: 24 * 60 * 60 * 1000, 
@@ -38,8 +38,8 @@ const wwprov = {
     update: function(){
       const date = new Date();
       const times = SunCalc.getTimes(date, wwprov.pos.latitude, wwprov.pos.longitude);
-      if (!date.isDstObserved())
-        date.setHours(date.getHours() + 1);
+      //if (!date.isDstObserved())
+      //  date.setHours(date.getHours() + 1);
       const sunPosition = SunCalc.getPosition(date, wwprov.pos.latitude, wwprov.pos.longitude);
       wwprov.sun.elevRad = sunPosition.altitude;
       wwprov.sun.elevAbs = wwprov.sun.elevRad / Math.PI * 2.0;
@@ -99,8 +99,8 @@ const wwprov = {
   save: function(){
     let cache = {
       timestamp: wwprov.wth.timestamp,
-      latitude: wwprov.latitude,
-      longitude: wwprov.longitude,
+      latitude: wwprov.pos.latitude,
+      longitude: wwprov.pos.longitude,
       wwdata: wwprov.wth.data
     }
     localStorage.setItem('wwprov', JSON.stringify(cache));
@@ -115,18 +115,24 @@ let webGl;
 
 function init(gl){
   webGl = gl;
-  gl.uniforms.uSunPosition.data = [wwprov.sun.elevAbs];
-  let moist = wwprov.wth.get('soil_moisture_27_to_81cm') * 2;
-  gl.uniforms.uAtmosphere.data = [moist];
+  setUniforms();
   webGl.start(false);
+}
+
+
+function setUniforms(){
+  wwprov.sun.update();
+  let a = wwprov.sun.elevAbs;
+  console.log(a);
+  webGl.uniforms.uSunPosition.data = [a];
+  let moist = wwprov.wth.get('relative_humidity_2m') / 100.0;
+  webGl.uniforms.uAtmosphere.data = [moist];
 }
 
 function reset(){
   wwprov.clearCache();
   wwprov.update(() => {
-    webGl.uniforms.uSunPosition.data = [wwprov.sun.elevAbs];
-    let moist = wwprov.wth.get('soil_moisture_27_to_81cm') * 2;
-    webGl.uniforms.uAtmosphere.data = [moist];
+    setUniforms();
     webGl.render();
   });
 }
