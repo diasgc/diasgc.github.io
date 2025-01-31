@@ -1,4 +1,4 @@
-Date.prototype.stdTimezoneOffset = function () {
+seDate.prototype.stdTimezoneOffset = function () {
   var jan = new Date(this.getFullYear(), 0, 1);
   var jul = new Date(this.getFullYear(), 6, 1);
   return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
@@ -117,8 +117,13 @@ function init(gl){
   webGl = gl;
   setUniforms();
   webGl.start(false);
+  setInterval(upd, 5000);
 }
 
+function upd(){
+  setUniforms();
+  webGl.render();
+}
 
 function setUniforms(){
   wwprov.sun.update();
@@ -131,14 +136,11 @@ function setUniforms(){
 
 function reset(){
   wwprov.clearCache();
-  wwprov.update(() => {
-    setUniforms();
-    webGl.render();
-  });
+  wwp.update();
 }
 
 window.onload = function(){
-  //wwprov.clearCache();
+  
   let w = new GlCanvas('gl-canvas');
   wwprov.load(() => {
     w.load({
