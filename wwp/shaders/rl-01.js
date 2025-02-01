@@ -2,7 +2,8 @@ const frag = `
 uniform vec2  iResolution;
 uniform float iTime;
 uniform float uSunPosition;
-uniform float uAtmosphere;
+uniform float uClouds;
+uniform float uHumidity;
 
 const vec4  nightColor  = vec4(0.04, 0.034, 0.09, 1.0);
 const vec4 _LightColor0 = vec4(0.9,  0.9,   0.7,  1.0);
@@ -18,7 +19,7 @@ const float _AtmosphereThickness = 1.1;
 #define STARS 1
 #define REALTIME 1
 #define OUTER_RADIUS 1.025
-#define kRAYLEIGH (mix(0.0, 0.0025, pow(_AtmosphereThickness + uAtmosphere, 2.5))) 
+#define kRAYLEIGH (mix(0.0, 0.0025, pow(_AtmosphereThickness + uHumidity, 2.5))) 
 #define kMIE 0.001 
 #define kSUN_BRIGHTNESS 20.0 
 #define kMAX_SCATTER 50.0 
@@ -236,12 +237,17 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
   vec3 ro = vec3 (0.);
   vec3 rd = normalize(vec3(uv, 2.0));
-  vec4 color = nightColor + desaturate(raymarch(ro,rd), log(_AtmosphereThickness + uAtmosphere) );
+  vec4 color = nightColor;
+  vec4 ray = raymarch(ro, rd);
+  //if (uClouds > 0.9)
+    ray = desaturate(ray, smoothstep(0.9,1.0,uClouds));
+  color += ray;
 
 #if MOUNTAINS
   float m = 0.;
-  vec3 tone = vec3(0.15 + uAtmosphere * 0.5);
-  vec3 fade = vec3(0.1 + uAtmosphere * 0.5);
+  float s = max(SUNMOV, 0.0);
+  vec3 tone = vec3(s * (0.15 + uHumidity * 0.2));
+  vec3 fade = vec3(s * (0.2 + uHumidity * uHumidity * 0.1));
   for(float i = 0.; i < 4.; i += 1.)
     m += mix(.67, mountain(uv2, 1. +  i, 7. * i + 5., hMnt + i * 0.17, hPos),0.5 + 0.448 * i);
   if (m < 0.999)
@@ -249,10 +255,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #endif
 
 #if STARS
-  if (SUNMOV < 0.0 && uv2.y > 0.3)
+  if (SUNMOV < 0.0 && uClouds < 0.8 && uv2.y > 0.3)
     color += vec4(vec3(uv.y * starfield(uv2)), 1.);
 #endif
 
-fragColor = color;
+fragColor = color;  
 }
 `;

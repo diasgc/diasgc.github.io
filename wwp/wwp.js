@@ -11,7 +11,7 @@ Date.prototype.isDstObserved = function () {
 const wwprov = {
   home: "https://open-meteo.com/",
   docs: "https://open-meteo.com/en/docs",
-  flds: [ 'temperature_2m','relative_humidity_2m','precipitation','surface_pressure','wind_speed_10m','soil_moisture_27_to_81cm' ],
+  flds: [ "temperature_2m", "relative_humidity_2m", "precipitation", "cloud_cover", "cloud_cover_low", "cloud_cover_mid", "cloud_cover_high", "visibility" ],
   kind: 'hourly', //'current',
   timestamp: 0,
   timeout: 24 * 60 * 60 * 1000, 
@@ -130,9 +130,11 @@ function setUniforms(){
   wwprov.sun.update();
   let elev = wwprov.sun.elevAbs;
   webGl.uniforms.uSunPosition.data = [elev];
+  let clds = wwprov.wth.get('cloud_cover') / 100.0;
+  webGl.uniforms.uClouds.data = [clds];
   let hum = wwprov.wth.get('relative_humidity_2m') / 100.0;
-  webGl.uniforms.uAtmosphere.data = [hum];
-  info.innerHTML = `sun: ${elev.toFixed(4)} hum: ${hum.toFixed(2)}`;
+  webGl.uniforms.uHumidity.data = [hum];
+  info.innerHTML = `sun: ${elev.toFixed(4)} clouds: ${clds.toFixed(2)} hum: ${hum.toFixed(2)}`;
 }
 
 function reset(){
@@ -147,12 +149,9 @@ window.onload = function(){
     w.load({
       fragmentCode: frag,
       uniforms: {
-        uSunPosition: {
-          type: 'float',
-        },
-        uAtmosphere: {
-          type: 'float',
-        }
+        uSunPosition: { type: 'float' },
+        uClouds: { type: 'float' },
+        uHumidity: { type: 'float' },
       }
      }, gl => init(gl))
   });
