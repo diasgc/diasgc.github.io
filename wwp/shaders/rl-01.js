@@ -17,7 +17,7 @@ const float _AtmosphereThickness = 1.1;
 
 #define MOUNTAINS 1
 #define STARS 1
-#define REALTIME 1
+#define REALTIME 0
 #define OUTER_RADIUS 1.025
 #define kRAYLEIGH (mix(0.0, 0.0025, pow(_AtmosphereThickness + uHumidity, 2.5))) 
 #define kMIE 0.001 
