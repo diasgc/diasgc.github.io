@@ -163,4 +163,8 @@ https://www.shadertoy.com/view/tltGDM (this)
 https://www.shadertoy.com/view/wtlyzB
 https://www.shadertoy.com/view/wsfGWH
 https://www.shadertoy.com/view/Ntd3Ws (simple, no sun)
+https://www.shadertoy.com/view/4tVSRt (simple, with sun)
+https://www.shadertoy.com/view/WdByDV
+https://www.shadertoy.com/view/tsXBzM (terrain)
+https://www.shadertoy.com/view/wllyW4 (nice colors)
 */
