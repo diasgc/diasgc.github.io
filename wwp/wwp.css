@@ -1,7 +1,7 @@
 body {
   margin: 0;
   overflow: hidden;
-  background-color: red;
+  background-color: #002;
 }
 button {
   position: absolute;
@@ -9,5 +9,6 @@ button {
   bottom: 8px;
   border: none;
   background-color: transparent;
+  color: red;
   font-size: 18px;
 }

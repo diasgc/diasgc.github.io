@@ -155,10 +155,6 @@ vec4 raymarch (vec3 ro, vec3 rd){
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-const vec3 fade = vec3(0.1);
-const vec3 tone = vec3(0.3);
-const float hPos = 0.01;
-const float hMnt = 0.5;
 const float sharpness = 0.001;
 
 float rand(float x){
@@ -231,25 +227,32 @@ float starfield(vec2 uv){
   return stars;
 }
 
+const float hPos = 0.13;
+const float hMnt = 0.03;
+
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
-  vec2 uv = (5. * fragCoord.xy - iResolution.xy) / iResolution.y;
+  vec2 uv = (4. * fragCoord.xy - iResolution.xy) / iResolution.y;
   vec2 uv2 = fragCoord.xy/iResolution.xy - vec2(0., .05);
+
   vec3 ro = vec3 (0.);
   vec3 rd = normalize(vec3(uv, 2.0));
-  vec3 hor = vec3(1.);
-  vec3 stars = vec3(0.);
+  vec4 color = nightColor + desaturate(raymarch(ro,rd), log(_AtmosphereThickness + uAtmosphere) );
+
 #if MOUNTAINS
   float m = 0.;
-  for(float i = 2.; i > 0.; i -= 1.)
-    m += (1. - (1. - mountain(uv2, 1. +  i, 13.4 * rand(1.), hMnt, hPos)) * (0.5 + 0.45 * i));
+  vec3 tone = vec3(0.15 + uAtmosphere * 0.5);
+  vec3 fade = vec3(0.1 + uAtmosphere * 0.5);
+  for(float i = 0.; i < 4.; i += 1.)
+    m += mix(.67, mountain(uv2, 1. +  i, 7. * i + 5., hMnt + i * 0.17, hPos),0.5 + 0.448 * i);
   if (m < 0.999)
-    hor = mix(fade * 0.5, 1.5 * tone, m);
+    color = vec4(mix(fade * 0.5, 1.5 * tone, m), 1.);
 #endif
+
 #if STARS
   if (SUNMOV < 0.0 && uv2.y > 0.3)
-    stars = vec3(uv.y * starfield(uv2));
+    color += vec4(vec3(uv.y * starfield(uv2)), 1.);
 #endif
-  vec4 ray = nightColor + desaturate(raymarch(ro,rd), log(_AtmosphereThickness));
-  fragColor = ray * vec4(hor, 1.) + vec4(stars, 1.);
+
+fragColor = color;
 }
 `;
