@@ -246,7 +246,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     hor = mix(fade * 0.5, 1.5 * tone, m);
 #endif
 #if STARS
-  if (uSunPosition < 0.0 && uv2.y > 0.3)
+  if (SUNMOV < 0.0 && uv2.y > 0.3)
     stars = vec3(uv.y * starfield(uv2));
 #endif
   vec4 ray = nightColor + desaturate(raymarch(ro,rd), log(_AtmosphereThickness));
