@@ -125,13 +125,14 @@ function upd(){
   webGl.render();
 }
 
+const info = document.getElementById('info');
 function setUniforms(){
   wwprov.sun.update();
-  let a = wwprov.sun.elevAbs;
-  console.log(a);
-  webGl.uniforms.uSunPosition.data = [a];
-  let moist = wwprov.wth.get('relative_humidity_2m') / 100.0;
-  webGl.uniforms.uAtmosphere.data = [moist];
+  let elev = wwprov.sun.elevAbs;
+  webGl.uniforms.uSunPosition.data = [elev];
+  let hum = wwprov.wth.get('relative_humidity_2m') / 100.0;
+  webGl.uniforms.uAtmosphere.data = [hum];
+  info.innerHTML = `sun: ${elev.toFixed(4)} hum: ${hum.toFixed(2)}`;
 }
 
 function reset(){

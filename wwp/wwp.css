@@ -2,6 +2,7 @@ body {
   margin: 0;
   overflow: hidden;
   background-color: #002;
+  font-family: "Courier New", Courier, monospace;
 }
 button {
   position: absolute;
@@ -11,4 +12,14 @@ button {
   background-color: transparent;
   color: red;
   font-size: 18px;
+}
+
+#info {
+  position: absolute;
+  left: 8px;
+  text-align: center;
+  bottom: 8px;
+  color: green;
+  font-size: 12px;
+  font-weight: bold;
 }
