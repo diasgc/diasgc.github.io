@@ -245,7 +245,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
 #if MOUNTAINS
   float m = 0.;
-  float sharpness = 0.001 + smoothstep(0.9,1.0, uHumidity) * 0.5;
+  float sharpness = 0.001 + smoothstep(0.9,1.0, uHumidity) * 0.005;
   float s = max(SUNMOV, 0.0);
   vec3 tone = vec3(s * (0.15 + uHumidity * 0.2));
   vec3 fade = vec3(s * (0.2 + uHumidity * uHumidity * 0.1));
