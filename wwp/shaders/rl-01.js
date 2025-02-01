@@ -156,7 +156,7 @@ vec4 raymarch (vec3 ro, vec3 rd){
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-const float sharpness = 0.001;
+// const float sharpness = 0.001;
 
 float rand(float x){
     return fract(sin(x)*75154.32912);
@@ -179,7 +179,7 @@ float perlin(float x){
   return r;
 }
 
-float mountain(vec2 uv, float scale, float offset, float h1, float h2){
+float mountain(vec2 uv, float scale, float offset, float h1, float h2, float sharpness){
   float h = h1 + perlin(scale * uv.x + offset) * (h2 - h1);
   return smoothstep(h, h + sharpness, uv.y);
 }
@@ -245,11 +245,12 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
 #if MOUNTAINS
   float m = 0.;
+  float sharpness = 0.001 + smoothstep(0.9,1.0, uHumidity) * 0.05;
   float s = max(SUNMOV, 0.0);
   vec3 tone = vec3(s * (0.15 + uHumidity * 0.2));
   vec3 fade = vec3(s * (0.2 + uHumidity * uHumidity * 0.1));
   for(float i = 0.; i < 4.; i += 1.)
-    m += mix(.67, mountain(uv2, 1. +  i, 7. * i + 5., hMnt + i * 0.17, hPos),0.5 + 0.448 * i);
+    m += mix(.67, mountain(uv2, 1. +  i, 7. * i + 5., hMnt + i * 0.17, hPos, sharpness), 0.5 + 0.448 * i);
   if (m < 0.999)
     color = vec4(mix(fade * 0.5, 1.5 * tone, m), 1.);
 #endif
