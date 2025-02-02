@@ -24,7 +24,7 @@ uniform float uHumidity;
 #undef fastRefractiveIndex
 #undef fastMolsPerVolume
 
-#ifdef DEMO
+#if DEMO
 #define SUNPOSITION sin(iTime * 0.1)
 #else
 #define SUNPOSITION uSunPosition
@@ -223,7 +223,7 @@ float starfield(vec2 uv){
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec2 uv = vec2(2. * fragCoord.x/iResolution.x, fragCoord.y/iResolution.y - 0.2);
   vec3 vPosition = vec3(uv, 0.0);
-  vec3 sunPosition = vec3( 0.5, SUNPOSITION, -1.5 );
+  vec3 sunPosition = vec3( 0.5, SUNPOSITION, -2.0 );
   vec3 vSunDirection = normalize( sunPosition );
   float cosGamma  = dot( vSunDirection, zenithDirection ); // 0 at horizon, 1 at zenith
   vec3 vHum = pow( vec3( humidity, clouds, rain ), vec3( 8., 30.0, 1.0 ));
@@ -293,23 +293,23 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 sky = ACESFilm(sky);
 
 #if STARS
-  if (sunPosition.y < -0.0 && uClouds < 0.8 && uv.y > 0.3)
+  if (sunPosition.y < -0.0 && uClouds < 0.8)
     sky += vec3(smoothstep(0.0, -0.18, sunPosition.y) * uv.y * starfield(uv));
 #endif
 
 #if MOUNTAINS
   float m = 0.;
-  float hPos = -0.13;
-  float hMnt = -0.003;
+  float hPos = -0.10;
+  float hMnt = -0.005;
 
   float sharpness = 0.001 + smoothstep(0.9, 1.0, humidity) * 0.005;
   float s = max(sunPosition.y, 0.0);
-  vec3 tone = vec3(s * (0.15 + humidity * 0.7));
+  vec3 tone = vec3(s * (0.15 + humidity * 0.6));
   vec3 fade = vec3(s * (0.2 + humidity * 0.3));
   for(float i = 0.; i < 4.; i += 1.)
-    m += mix(.67, mountain(uv, 1. +  i, 7. * i + 5., hMnt + i * 0.17, hPos, sharpness), 0.5 + 0.448 * i);
+    m += mix(.67, mountain(uv, 1. +  i * 0.5, 6. * i + 7., hMnt + i * 0.12, hPos, sharpness), 0.52 + 0.448 * i);
   if (m < 1.)
-    sky = mix(fade * 0.5, 1.5 * tone, m);
+    sky = mix(fade * 0.7, 1.5 * tone, m);
 #endif
   fragColor = vec4( sky, 1.0);
 }`
