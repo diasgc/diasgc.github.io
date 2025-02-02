@@ -10,7 +10,7 @@ uniform float uHumidity;
 
 #define MOUNTAINS 1
 #define STARS 1
-#define DEMO 1
+#define DEMO 0
 
 #define humidity uHumidity
 #define clouds uClouds
