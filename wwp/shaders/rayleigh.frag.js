@@ -1,5 +1,12 @@
-const frag = `#pragma optimize(on)
+const frag = `
+#pragma optimize(on)
 #pragma debug(off)
+
+uniform vec2 iResolution;
+uniform float iTime;
+uniform float uSunPosition;
+uniform float uClouds;
+uniform float uHumidity;
 
 #define weather
 #undef  default_horizonline
@@ -144,16 +151,14 @@ vec3 ACESFilm( vec3 x ){
     return clamp((x*(tA*x+tB))/(x*(tC*x+tD)+tE),0.0,1.0);
 }
 
-uniform vec2 iResolution;
-uniform float iTime;
 
-void main() {
-
-  vec3 vPosition = vec3( gl_FragCoord.xy / iResolution.xy, 0.0 );
-  vec3 sunPosition = vec3( 0.5 /*cos(iTime)*/, sin( iTime * .1), 0. );
+void mainImage( out vec4 fragColor, in vec2 fragCoord ){
+  vec2 uv = fragCoord.xy / iResolution.xy; // * vec2(1.0, 0.8) + vec2(0.0, 0.2);
+  vec3 vPosition = vec3(uv, 0.0);
+  vec3 sunPosition = vec3( 0.5, uSunPosition, 0. );
   vec3 vSunDirection = normalize( sunPosition );
   float cosGamma  = dot( vSunDirection, zenithDirection ); // 0 at horizon, 1 at zenith
-  vec3 vVapor = pow( vec3( humidity, clouds, rain ), vec3( 8., 30.0, 1.0 ));
+  vec3 vVapor = pow( vec3( uHumidity, uClouds, rain ), vec3( 8., 30.0, 1.0 ));
   // refraction at horizon hack: todo
   float refraction = 0.0035;
 
@@ -166,7 +171,7 @@ void main() {
   float vSunFd = 1.0 - clip( 1.0 - exp( cosGamma)); // exp(vSunDirection.y)
   float rayleighCoefficient = rayleigh + vSunFd - 1.0;
   // extinction (absorbtion + out scattering)
-  vec3 vBetaR = getBetaRayleigh( rayleigh, temperature, pressure, humidity ) * rayleighCoefficient;
+  vec3 vBetaR = getBetaRayleigh( rayleigh, temperature, pressure, uHumidity ) * rayleighCoefficient;
   vec3 vBetaM = getBetaMie( turbidity ) * mieCoefficient;
 
   // Mie directional g def float g = 0.8;
@@ -216,6 +221,6 @@ void main() {
     sky = vec3(0.5 + atan(20. * (cosGamma - 0.06))/pi) + nightsky * vec3(1.,1.5,1.1);
   }
 #endif
-  gl_FragColor = vec4( ACESFilm(sky), 1.0 - vVapor.y);
+  fragColor = vec4( ACESFilm(sky), 1.0 - vVapor.y);
 }
 `;
