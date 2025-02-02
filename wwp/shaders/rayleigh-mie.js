@@ -9,10 +9,13 @@ uniform float uClouds;
 uniform float uHumidity;
 
 #define MOUNTAINS 1
+#define STARS 1
+#define DEMO 1
+
 #define humidity uHumidity
 #define clouds uClouds
 
-#define weather
+#undef weather
 #undef default_horizonline
 
 #undef fast
@@ -20,6 +23,12 @@ uniform float uHumidity;
 #undef fastMie
 #undef fastRefractiveIndex
 #undef fastMolsPerVolume
+
+#ifdef DEMO
+#define SUNPOSITION sin(iTime * 0.1)
+#else
+#define SUNPOSITION uSunPosition
+#endif
 
 #ifdef fast
 #define fastRayleigh
@@ -34,11 +43,11 @@ uniform float uHumidity;
 // utilities
 #define clip(x) clamp(x, 0., 1.)
 
-//const vec3 sunPosition = vec3( 0.0, 0.5, 0.0 );
 const float temperature = 273.0;
 const float altitude = 0.0;
 const float pressure = 1018.0;
 const float rain = 0.2;
+
 const float pi = acos(0.0) * 2.0;
 const float pi316 = 3.0 / (16.0 * pi);
 const float pi14 = 1.0 / (4.0 * pi);
@@ -76,7 +85,9 @@ const vec3  kSunExPow = vec3( 0.5 );
 
 const float kMoonFade = 2.0;
 const vec3  kColorSun = vec3 (0.5);
-const vec3  kColorNight = vec3( 0.0, 0.015, 0.05078125 ); // vec3( 0.0, 1.3e-6, 8e-6 )
+const vec3  kColorNight = vec3(0.04, 0.034, 0.09) * 0.3; 
+//                        vec3(0.00, 0.015, 0.05078125 );
+//                        vec3(0.00, 1.3e-6, 8e-6 );
 
 #define rayleighPhase(a) pi316 * ( 1.0 + a * a )
 #define hgPhase( a, g, g2 ) pi14 * ( ( 1.0 - g2 ) / pow( 1.0 - 2.0 * g * a + g2, 1.5 ) )
@@ -212,7 +223,7 @@ float starfield(vec2 uv){
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec2 uv = vec2(2. * fragCoord.x/iResolution.x, fragCoord.y/iResolution.y - 0.2);
   vec3 vPosition = vec3(uv, 0.0);
-  vec3 sunPosition = vec3( 0.5, uSunPosition, -1.5 );
+  vec3 sunPosition = vec3( 0.5, SUNPOSITION, -1.5 );
   vec3 vSunDirection = normalize( sunPosition );
   float cosGamma  = dot( vSunDirection, zenithDirection ); // 0 at horizon, 1 at zenith
   vec3 vHum = pow( vec3( humidity, clouds, rain ), vec3( 8., 30.0, 1.0 ));
@@ -279,6 +290,13 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   }
 #endif
 
+sky = ACESFilm(sky);
+
+#if STARS
+  if (sunPosition.y < -0.0 && uClouds < 0.8 && uv.y > 0.3)
+    sky += vec3(smoothstep(0.0, -0.18, sunPosition.y) * uv.y * starfield(uv));
+#endif
+
 #if MOUNTAINS
   float m = 0.;
   float hPos = -0.13;
@@ -293,5 +311,5 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   if (m < 1.)
     sky = mix(fade * 0.5, 1.5 * tone, m);
 #endif
-  fragColor = vec4( ACESFilm(sky), 1.0);
+  fragColor = vec4( sky, 1.0);
 }`

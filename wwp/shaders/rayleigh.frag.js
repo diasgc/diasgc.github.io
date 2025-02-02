@@ -74,7 +74,10 @@ const vec3  kSunExPow = vec3( 0.5 );
 
 const float kMoonFade = 2.0;
 const vec3  kColorSun = vec3 (0.5);
-const vec3  kColorNight = vec3( 0.0, 0.015, 0.05078125 ); // vec3( 0.0, 1.3e-6, 8e-6 )
+const vec3  kColorNight = vec3(0.04, 0.034, 0.09); 
+//                        vec3(0.00, 0.015, 0.05078125 );
+//                        vec3(0.00, 1.3e-6, 8e-6 )
+const vec4  nightColor  = vec4(0.04, 0.034, 0.09, 1.0);
 
 #define rayleighPhase(a) pi316 * ( 1.0 + a * a )
 #define hgPhase( a, g, g2 ) pi14 * ( ( 1.0 - g2 ) / pow( 1.0 - 2.0 * g * a + g2, 1.5 ) )
