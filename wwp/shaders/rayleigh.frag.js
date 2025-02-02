@@ -49,8 +49,8 @@ const float kSunMax = 1.0;
 const float moon = 0.5;
 const float opacity = 1.0;
 
-const vec3 zenithDirection = vec3 ( 0.0, 1.0, 0.0 );
-const vec3 cameraPos = vec3( 0.0, 0.0, 0.0 );
+const vec3 zenithDirection = vec3 ( 0.0, 1.5, 0.0 );
+const vec3 cameraPos = vec3( 0.0, 0.0, 1.5 );
 
 // constants for atmospheric scattering
 // optical length at zenith for molecules
@@ -150,7 +150,7 @@ uniform float iTime;
 void main() {
 
   vec3 vPosition = vec3( gl_FragCoord.xy / iResolution.xy, 0.0 );
-  vec3 sunPosition = vec3(cos(iTime),0.5 + 0.5 * sin( iTime / 2.0), 0. );
+  vec3 sunPosition = vec3( 0.5 /*cos(iTime)*/, sin( iTime * .1), 0. );
   vec3 vSunDirection = normalize( sunPosition );
   float cosGamma  = dot( vSunDirection, zenithDirection ); // 0 at horizon, 1 at zenith
   vec3 vVapor = pow( vec3( humidity, clouds, rain ), vec3( 8., 30.0, 1.0 ));
