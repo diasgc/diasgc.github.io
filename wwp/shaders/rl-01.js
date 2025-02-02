@@ -239,8 +239,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 rd = normalize(vec3(uv, 2.0));
   vec4 color = nightColor;
   vec4 ray = raymarch(ro, rd);
-  //if (uClouds > 0.9)
-    ray = desaturate(ray, smoothstep(0.9,1.0,uClouds));
+  ray = desaturate(ray, smoothstep(0.9, 1.0, uClouds));
   color += ray;
 
 #if MOUNTAINS
@@ -256,8 +255,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #endif
 
 #if STARS
-  if (SUNMOV < 0.0 && uClouds < 0.8 && uv2.y > 0.3)
-    color += vec4(vec3(uv.y * starfield(uv2)), 1.);
+  if (SUNMOV < -0.0 && uClouds < 0.8 && uv2.y > 0.3)
+    color += vec4(vec3(smoothstep(0.0, -0.18, SUNMOV) * uv.y * starfield(uv2)), 1.);
 #endif
 
 fragColor = color;  
