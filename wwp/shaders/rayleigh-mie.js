@@ -221,7 +221,7 @@ float starfield(vec2 uv){
 }
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
-  vec2 uv = vec2(2. * fragCoord.x/iResolution.x, fragCoord.y/iResolution.y - 0.2);
+  vec2 uv = 2. * vec2(fragCoord.x/iResolution.x, fragCoord.y/iResolution.y - 0.1);
   vec3 vPosition = vec3(uv, 0.0);
   vec3 sunPosition = vec3( 0.5, SUNPOSITION, -2.0 );
   vec3 vSunDirection = normalize( sunPosition );
