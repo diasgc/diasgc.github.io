@@ -303,7 +303,7 @@ sky = ACESFilm(sky);
   float hMnt = -0.005;
 
   float sharpness = 0.001 + smoothstep(0.9, 1.0, humidity) * 0.005;
-  float s = max(sunPosition.y, 0.0);
+  float s = smoothstep(0.0, 0.42,sunPosition.y);
   vec3 tone = vec3(s * (0.15 + humidity * 0.6));
   vec3 fade = vec3(s * (0.2 + humidity * 0.3));
   for(float i = 0.; i < 4.; i += 1.)
