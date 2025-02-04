@@ -35,12 +35,14 @@ const wwprov = {
     elevAbs: 0,
     sunset: 0,
     sunrise: 0,
+    moon: 0,
     update: function(){
       const date = new Date();
       const times = SunCalc.getTimes(date, wwprov.pos.latitude, wwprov.pos.longitude);
       //if (!date.isDstObserved())
       //  date.setHours(date.getHours() + 1);
       const sunPosition = SunCalc.getPosition(date, wwprov.pos.latitude, wwprov.pos.longitude);
+      wwprov.sun.moon = SunCalc.getMoonIllumination(date).phase;
       wwprov.sun.elevRad = sunPosition.altitude;
       wwprov.sun.elevAbs = wwprov.sun.elevRad / Math.PI * 2.0;
       wwprov.sun.sunrise = times.sunrise.toLocaleTimeString();
@@ -134,7 +136,13 @@ function setUniforms(){
   webGl.uniforms.uClouds.data = [clds];
   let hum = wwprov.wth.get('relative_humidity_2m') / 100.0;
   webGl.uniforms.uHumidity.data = [hum];
-  info.innerHTML = `sun: ${elev.toFixed(4)} clouds: ${clds.toFixed(2)} hum: ${hum.toFixed(2)}`;
+  let moon = wwprov.sun.moon;
+  webGl.uniforms.uMoon.data = [moon];
+  let rain = wwprov.wth.get('precipitation') / 100.0;
+  webGl.uniforms.uRain.data = [rain];
+  let temp = wwprov.wth.get('temperature_2m');
+  info.innerHTML = `e: ${elev.toFixed(4)} m: ${moon.toFixed(1)} | TºC: ${temp.toFixed(1)} Hr: ${hum.toFixed(2)} c: ${clds.toFixed(2)} pp: ${rain.toFixed(2)}`;
+  webGl.uniforms.uTemperature.data = [temp + 273.15];
 }
 
 function reset(){
@@ -152,6 +160,9 @@ window.onload = function(){
         uSunPosition: { type: 'float' },
         uClouds: { type: 'float' },
         uHumidity: { type: 'float' },
+        uMoon: { type: 'float' },
+        uRain: { type: 'float' },
+        uTemperature: { type: 'float' }
       }
      }, gl => init(gl))
   });

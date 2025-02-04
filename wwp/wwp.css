@@ -2,7 +2,7 @@ body {
   margin: 0;
   overflow: hidden;
   background-color: #002;
-  font-family: "Courier New", Courier, monospace;
+  font-family: sans-serif;
 }
 button {
   position: absolute;
