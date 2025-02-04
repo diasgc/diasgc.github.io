@@ -227,7 +227,7 @@ float starfield(vec2 uv, float sunpos){
   if (sunpos > -0.12)
     return 0.;
   float fade = smoothstep(-0.12, -0.18, sunpos);
-  float thres = 6.0 + smoothstep(0.5, 1.0, humidity * fade) * 4.;
+  float thres = 6.0 + smoothstep(0.5, 1.0, clouds * fade) * 4.;
   float expos = 20.0;
   vec3 dir = normalize(vec3(uv * 2.0 - 1.0, 1.0));
   float stars = pow(clamp(noise2(dir * 200.0), 0.0, 1.0), thres) * expos;
@@ -330,5 +330,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   if (m < 1.)
     sky = mix(fade * 0.7, 1.5 * tone, m);
 #endif
+
   fragColor = vec4( sky, 1.0);
 }`;
