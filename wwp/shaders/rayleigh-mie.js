@@ -306,7 +306,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #endif
   vec3 sky = pow((L + L0) * k, vec3(sk));
   if (clouds > 0.9)
-    sky = vec3(sky.x);
+      sky = vec3(sky.y) * (1. - 0.4 * smoothstep(0.9,1.0,clouds));
   sky = ACESFilm(sky);
   sky = max(sky, nightsky);
 
