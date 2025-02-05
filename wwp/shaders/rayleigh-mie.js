@@ -7,8 +7,8 @@ const frag=`#pragma optimize(on)
 
 #define STARS 1
 
-#define SHADERTOY 0
-#define DEMO 0
+#define SHADERTOY 1
+#define DEMO 1
 #define DEMO_SPEED 0.2
 
 #undef fast
@@ -35,7 +35,7 @@ const frag=`#pragma optimize(on)
 // environment variables
 #if SHADERTOY
 #define temperature 273.0
-#define humidity    0.4
+#define humidity    0.1
 #define clouds      0.2
 #define moon        0.5
 #define rain        0.0
@@ -44,7 +44,7 @@ const frag=`#pragma optimize(on)
 uniform vec2        iResolution;
 uniform float       iTime;
 uniform vec3        iMouse;
-uniform float       uSunPosition;
+uniform float       uSolarPos;
 uniform float       uClouds;
 uniform float       uHumidity;
 uniform float       uMoon;
@@ -81,7 +81,7 @@ const float kSunMax = 1.0;
 // a = angle, r = refraction
 #define sunIntensity(a, r) kSunI * (1. - exp( -kSunIStep * ( kCutoffAngle - acos(clamp(a,-1.,1.)) + r ) ))
 
-const vec3 zenithDir = vec3 ( 0.0, 1.5, 0.0 );
+const vec3 zenDir = vec3 ( 0.0, 1.5, 0.0 );
 const vec3 cameraPos = vec3( 0.0, 0.0, 1.5 );
 
 // constants for atmospheric scattering
@@ -233,38 +233,40 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #if SHADERTOY || DEMO
   float y = iMouse.z > 0. ? iMouse.y/iResolution.y : sin( iTime * DEMO_SPEED);
 #else
-  float y = usunPos;
+  float y = uSolarPos;
 #endif
-  vec3 sunPos = vec3( 0.5, y, -cameraPos.z );
+  vec3 sunPos = vec3( 0.5, y, -1.5 );
   vec3 sunDir = normalize( sunPos );
-  float cosGamma  = dot( sunDir, zenithDir ); // 0 at horizon, 1 at zenith
-  // empirical values for turbudity
+  float cosGamma  = dot( sunDir, zenDir ); // 0 at horizon, 1 at zenith
+  
+  // empirical values for water vapor turbidity
   vec2 vHum = pow(vec2(humidity), vec2(3.));
   vHum.y = 1. - vHum.x;
+  
   // refraction at horizon hack: todo
   float refraction = 0.0035;
-
+  
   // empiric Rayleigh + Mie coeffs from environment variables
-  float rayleigh  = 1.0 + exp( -cosGamma * vHum.x - altitude * 1.0e-9);
-  float turbidity = (1. + 8. * vHum.x) * exp( -altitude/5000. );
+  float rayleigh  = 1. + exp( -cosGamma * vHum.x - altitude * 1.0E-9);
+  float turbidity = (0.25 + 0.875 * vHum.x) * exp( -altitude/5000. );
   float mieCoefficient = 0.004 + 0.001 * vHum.x;
   
   float sunEx = sunIntensity( cosGamma, refraction );
-  sunEx -= vHum.x * 0.05;
-  float sunFd = 1.0 - clip( 1.0 - exp( cosGamma)); // exp(sunDir.y)
+  //sunEx -= vHum.x * 0.05;
+  float sunFd = 1.0 - clip( 1.0 - exp( cosGamma));
   float rayleighCoefficient = rayleigh + sunFd - 1.0;
   // extinction (absorbtion + out scattering)
   vec3 vBetaR = getBetaRayleigh( rayleigh, temperature, pressure, vHum.x ) * rayleighCoefficient;
   vec3 vBetaM = getBetaMie( turbidity ) * mieCoefficient;
 
   // Mie directional g def float g = 0.8;
-  float g = 0.8 + vHum.x * 0.1;
+  float g = 0.8 + vHum.x * 0.01;
   float g2 = g * g;
   
   vec3 direction = normalize( vec3(uv, 0.0) - cameraPos );
-  float cosZenith = dot( zenithDir, direction );
+  float cosZenith = dot( zenDir, direction );
   float cosTheta  = dot( sunDir, direction );
-  float angZenith = acos( clamp(0., 1., cosZenith ) ); // horizon cutoff
+  float angZenith = acos( clip(cosZenith) ); // horizon cutoff
   
   // combined extinction factor
   float Iqbal = 1.0 / ( cosZenith + 0.15 * pow( 93.885 - degrees( angZenith ), -1.253 ) );
@@ -286,17 +288,12 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
   // the horizon line
   L *= mix( kColorSun, B , clip(pow(1.0 - cosGamma, 5.0)));
-#ifdef default_horizonline // default
-  float sk = 1.0 / ( 1.2 + 1.2 * sunFd );
+  float sk = 2.0 / ( 1.2 + 1.2 * sunFd );
   float k = 0.04;
-#else
-  float sk = 1. - vHum.x / (8.0 * cosGamma * cosGamma + 2.3);
-  float k = 0.02 + sk * 0.02;
-#endif
   vec3 sky = pow((L + L0) * k, vec3(sk));
   
   // clouds will desaturate
-  float cloudCover = smoothstep(0.8, 1.0, clouds);
+  float cloudCover = smoothstep(0.9, 1.0, clouds);
   sky = mix(sky, vec3(length(sky)) * (1. - 0.4 * cloudCover), cloudCover);
   
   // acesfilmic color filter, sky only
