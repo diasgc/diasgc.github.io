@@ -44,7 +44,7 @@ const frag=`#pragma optimize(on)
 uniform vec2        iResolution;
 uniform float       iTime;
 uniform vec3        iMouse;
-uniform float       uSunPosition;
+uniform float       usunPos;
 uniform float       uClouds;
 uniform float       uHumidity;
 uniform float       uMoon;
@@ -81,7 +81,7 @@ const float kSunMax = 1.0;
 // a = angle, r = refraction
 #define sunIntensity(a, r) kSunI * (1. - exp( -kSunIStep * ( kCutoffAngle - acos(clamp(a,-1.,1.)) + r ) ))
 
-const vec3 zenithDirection = vec3 ( 0.0, 1.5, 0.0 );
+const vec3 zenithDir = vec3 ( 0.0, 1.5, 0.0 );
 const vec3 cameraPos = vec3( 0.0, 0.0, 1.5 );
 
 // constants for atmospheric scattering
@@ -230,16 +230,15 @@ float starfield(vec2 uv, float sunpos){
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec2 uv = fragCoord.xy/iResolution.xy - vec2(0.0, 0.1);
-  vec3 vPosition = vec3(uv, 0.0);
 #if SHADERTOY || DEMO
   float y = iMouse.z > 0. ? iMouse.y/iResolution.y : sin( iTime * DEMO_SPEED);
 #else
-  float y = uSunPosition;
+  float y = usunPos;
 #endif
-  vec3 sunPosition = vec3( 0.5, y, -1.5 );
-  vec3 vSunDirection = normalize( sunPosition );
-  float cosGamma  = dot( vSunDirection, zenithDirection ); // 0 at horizon, 1 at zenith
-  // empirical values for water vapor turbidity
+  vec3 sunPos = vec3( 0.5, y, -cameraPos.z );
+  vec3 sunDir = normalize( sunPos );
+  float cosGamma  = dot( sunDir, zenithDir ); // 0 at horizon, 1 at zenith
+  // empirical values for turbudity
   vec2 vHum = pow(vec2(humidity), vec2(3.));
   vHum.y = 1. - vHum.x;
   // refraction at horizon hack: todo
@@ -250,10 +249,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float turbidity = (1. + 8. * vHum.x) * exp( -altitude/5000. );
   float mieCoefficient = 0.004 + 0.001 * vHum.x;
   
-  float vSunEx = sunIntensity( cosGamma, refraction );
-  vSunEx -= vHum.x * 0.05;
-  float vSunFd = 1.0 - clip( 1.0 - exp( cosGamma)); // exp(vSunDirection.y)
-  float rayleighCoefficient = rayleigh + vSunFd - 1.0;
+  float sunEx = sunIntensity( cosGamma, refraction );
+  sunEx -= vHum.x * 0.05;
+  float sunFd = 1.0 - clip( 1.0 - exp( cosGamma)); // exp(sunDir.y)
+  float rayleighCoefficient = rayleigh + sunFd - 1.0;
   // extinction (absorbtion + out scattering)
   vec3 vBetaR = getBetaRayleigh( rayleigh, temperature, pressure, vHum.x ) * rayleighCoefficient;
   vec3 vBetaM = getBetaMie( turbidity ) * mieCoefficient;
@@ -262,9 +261,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float g = 0.8 + vHum.x * 0.1;
   float g2 = g * g;
   
-  vec3 direction = normalize( vPosition - cameraPos );
-  float cosZenith = dot( zenithDirection, direction );
-  float cosTheta  = dot( vSunDirection, direction );
+  vec3 direction = normalize( vec3(uv, 0.0) - cameraPos );
+  float cosZenith = dot( zenithDir, direction );
+  float cosTheta  = dot( sunDir, direction );
   float angZenith = acos( clamp(0., 1., cosZenith ) ); // horizon cutoff
   
   // combined extinction factor
@@ -275,20 +274,20 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float rPhase = rayleighPhase( cosTheta * 0.5 + 0.5 );
   float mPhase = hgPhase( cosTheta, g, g2 );
   vec3 betaTotal = ( vBetaR * rPhase + vBetaM * mPhase ) / ( vBetaR + vBetaM );
-  vec3 L = pow( vSunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.5 ) );
-  vec3 B = pow( vSunEx * betaTotal * Fex, vec3( 0.5 ) );
+  vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.5 ) );
+  vec3 B = pow( sunEx * betaTotal * Fex, vec3( 0.5 ) );
   vec3 L0 = 0.5 * Fex;
   
   // composition + solar disc
   float sundisk = clouds > 0.9 ? 0. : smoothstep( kSunArc, kSunArc + 2e-6, cosTheta + kSunDim );
-  L0 += vSunEx * 19000.0 * Fex * sundisk;
+  L0 += sunEx * 19000.0 * Fex * sundisk;
   
   vec3 nightsky = kColorNight * (1.0 + moon * kMoonFade);
   
   // the horizon line
   L *= mix( kColorSun, B , clip(pow(1.0 - cosGamma, 5.0)));
 #ifdef default_horizonline // default
-  float sk = 1.0 / ( 1.2 + 1.2 * vSunFd );
+  float sk = 1.0 / ( 1.2 + 1.2 * sunFd );
   float k = 0.04;
 #else
   float sk = 1. - vHum.x / (8.0 * cosGamma * cosGamma + 2.3);
@@ -307,8 +306,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
 
 #if STARS
-  if (sunPosition.y < -0.12 && clouds < 0.9)
-    sky += vec3(starfield(uv, sunPosition.y));
+  if (sunPos.y < -0.12 && clouds < 0.9)
+    sky += vec3(starfield(uv, sunPos.y));
 #endif
 
 #if MOUNTAINS
@@ -317,7 +316,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float hMnt = -0.005;
 
   float sharpness = 0.001 + smoothstep(0.9, 1.0, vHum.x) * 0.005;
-  float s = max(sunPosition.y, 0.0);
+  float s = max(sunPos.y, 0.0);
   vec3 tone = vec3(s * (0.25 + vHum.x * 0.35));
   vec3 fade = vec3(s * (0.3 + vHum.x * 0.2));
   for(float i = 0.; i < 4.; i += 1.)
