@@ -33,7 +33,7 @@ const frag=`#pragma optimize(on)
 // environment variables
 #if SHADERTOY
 #define temperature 273.0
-#define humidity    0.9
+#define humidity    0.5
 #define clouds      0.2
 #define moon        0.5
 #define rain        0.0
@@ -170,7 +170,7 @@ vec3 getBetaRayleigh( float rayleigh, float Tk, float P, float H ){
 #define MOUNTAIN_SHADE vec3(1.13, 1.04, 1.1) // vec3(1.04, 1.13, 1.1)
 #define MOUNTAIN_STEPS 10
 #define MOUNTAIN_YSIZE 1.2
-#define MOUNTAIN_YOFFS 0.09
+#define MOUNTAIN_YOFFS 0.07
 
 float noise(float x){
     float i = floor(x);
@@ -258,14 +258,14 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   // empiric Rayleigh + Mie coeffs from environment variables
   float rayleigh  = 1. + exp( -cosGamma * vHum.x - altitude * 1E-9);
   float turbidity = (0.25 + 0.875 * vHum.x) * exp(-altitude/5E3);
-  float mieCoefficient = 0.004 + 0.001 * vHum.x;
+  float mieCoefficient = 0.01 + 0.001 * vHum.x;
   
   float sunEx = sunIntensity( cosGamma, refraction );
   //sunEx -= vHum.x * 0.05;
   float sunFd = 1.0 - clip( 1.0 - exp( cosGamma));
   float rayleighCoefficient = rayleigh + sunFd - 1.0;
   // extinction (absorbtion + out scattering)
-  vec3 vBetaR = getBetaRayleigh( rayleigh, temperature, pressure, vHum.x ) * rayleighCoefficient;
+  vec3 vBetaR = getBetaRayleigh( rayleigh, temperature, pressure, humidity ) * rayleighCoefficient;
   vec3 vBetaM = getBetaMie( turbidity ) * mieCoefficient;
 
   // Mie directional g def float g = 0.8;
