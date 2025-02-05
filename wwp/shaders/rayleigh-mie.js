@@ -8,7 +8,7 @@ const frag=`#pragma optimize(on)
 #define STARS 1
 
 #define SHADERTOY 0
-#define DEMO 1
+#define DEMO 0
 #define DEMO_SPEED 0.2
 
 #undef fast
