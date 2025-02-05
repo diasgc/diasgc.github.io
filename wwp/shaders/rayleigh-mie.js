@@ -44,7 +44,7 @@ const frag=`#pragma optimize(on)
 uniform vec2        iResolution;
 uniform float       iTime;
 uniform vec3        iMouse;
-uniform float       usunPos;
+uniform float       usunPosition;
 uniform float       uClouds;
 uniform float       uHumidity;
 uniform float       uMoon;
