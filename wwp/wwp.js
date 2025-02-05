@@ -64,7 +64,7 @@ const wwprov = {
           wwprov.wth.data = JSON.parse(JSON.stringify(xhr.response));
           wwprov.timestamp = Date.now();
           wwprov.save();
-          callback();
+          if (callback) callback();
         }
       };
       xhr.send();
@@ -141,7 +141,7 @@ function setUniforms(){
   let rain = wwprov.wth.get('precipitation') / 100.0;
   webGl.uniforms.uRain.data = [rain];
   let temp = wwprov.wth.get('temperature_2m');
-  info.innerHTML = `e: ${elev.toFixed(4)} m: ${moon.toFixed(1)} | TºC: ${temp.toFixed(1)} Hr: ${hum.toFixed(2)} c: ${clds.toFixed(2)} pp: ${rain.toFixed(2)}`;
+  info.innerHTML = `e: ${elev.toFixed(4)} m: ${moon.toFixed(1)} | ${temp.toFixed(1)}ºC ${hum * 100}%Hr c: ${clds.toFixed(2)} pp: ${rain.toFixed(2)}`;
   webGl.uniforms.uTemperature.data = [temp + 273.15];
 }
 
