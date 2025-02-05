@@ -1,4 +1,4 @@
-const frag=`#pragma optimize(on)
+#pragma optimize(on)
 #pragma debug(off)
 
 #define MOUNTAINS 1
@@ -7,8 +7,8 @@ const frag=`#pragma optimize(on)
 
 #define STARS 1
 
-#define SHADERTOY 0
-#define DEMO 0
+#define SHADERTOY 1
+#define DEMO 1
 #define DEMO_SPEED 0.2
 
 #undef fast
@@ -44,7 +44,7 @@ const frag=`#pragma optimize(on)
 uniform vec2        iResolution;
 uniform float       iTime;
 uniform vec3        iMouse;
-uniform float       uSunPosition;
+uniform float       uSolarPos;
 uniform float       uClouds;
 uniform float       uHumidity;
 uniform float       uMoon;
@@ -233,7 +233,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #if SHADERTOY || DEMO
   float y = iMouse.z > 0. ? iMouse.y/iResolution.y : sin( iTime * DEMO_SPEED);
 #else
-  float y = uSunPosition;
+  float y = uSolarPos;
 #endif
   vec3 sunPos = vec3( 0.5, y, -1.5 );
   vec3 sunDir = normalize( sunPos );
@@ -323,4 +323,4 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #endif
 
   fragColor = vec4( sky, 1.0);
-}`;
+}
