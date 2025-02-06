@@ -290,10 +290,10 @@ float SS(vec2 uv) {
     return mix(b, t, lv.y);
 }
   
-vec3 renderClouds(vec2 uv, float sunpos, vec3 hum){
+vec3 renderClouds(vec2 uv, float sunpos, float humidity, float clouds){
   float c = 0.;
   for(float i = 1.; i < CLOUD_STEPS; i+=1.) {
-    c += SS(-iTime * DEMO_SPEED + uv * pow(1.5 + 1.5 * uv.y, i + 1.2 * hum.z)) * pow(CLOUD_SMOOTH, i);
+    c += SS(-iTime * DEMO_SPEED + uv * pow(1.0 + (uv.y + humidity), i + .7 * clouds)) * pow(CLOUD_SMOOTH, i);
   }
   return vec3( c * CLOUD_INTENSITY );
 }
@@ -329,8 +329,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float mieCoefficient = 0.01 + 0.001 * vHum.x - 0.01 * vHum.z;
   
   float sunEx = sunIntensity( cosGamma, refraction );
-  sunEx -= 25. * vHum.z;
-  float sunFd = 1.0 - clip( 1.0 - exp( cosGamma)) - vHum.z * 0.1;
+  //sunEx -= 25. * vHum.z;
+  float sunFd = 1.0 - clip( 1.0 - exp( cosGamma));
   float rayleighCoefficient = rayleigh + sunFd - 1.0;
   // extinction (absorbtion + out scattering)
   vec3 vBetaR = getBetaRayleigh( rayleigh, temperature, pressure, humidity ) * rayleighCoefficient;
@@ -342,7 +342,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
  
   // combined extinction factor
-  float Iqbal = 1.0 / ( cosZenith + 0.15 * pow( 93.885 - degrees( angZenith ), -1.253 ) );
+  float iq0 = 1.0 - vHum.z * 0.2;
+  float Iqbal = iq0 / ( cosZenith + 0.15 * pow( 93.885 - degrees( angZenith ), -1.253 ) );
   vec3 Fex = exp( -Iqbal * ( vBetaR * zenithR + vBetaM * zenithM ) );
   
   // in scattering
@@ -354,21 +355,25 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 L0 = 0.5 * Fex;
   
   // composition + solar disc
-  float sundisk = vHum.z > 0. ? 0. : smoothstep( kSunArc, kSunArc + 2e-6, cosTheta + kSunDim );
-  L0 += sunEx * 1.9e2 * Fex * sundisk;
-  
+  if (vHum.z < 0.1) {
+    float sundisk = smoothstep( kSunArc, kSunArc + 2e-6, cosTheta + kSunDim );
+    L0 += sunEx * 1.9e2 * Fex * sundisk;
+  }
   
   // the horizon line
   L *= mix( kColorSun, B , clip(pow(1.0 - cosGamma, 5.0)));
   float sk = 2.0 / ( 1.2 + 1.2 * sunFd );
   float k = 0.04;
+  
   vec3 sky = pow((L + L0) * k, vec3(sk));
   
   // clouds will desaturate
-  if (vHum.z > 0.0)
-    sky = mix(sky, vec3(length(sky)) * (1. - 0.4 * vHum.z), vHum.z);
-
+  if (vHum.z > 0.0){
+    sky = mix(sky, vec3(length(sky)) * (1. - 0.6 * vHum.z), vHum.z);
+  }
   
+
+
   // acesfilmic color filter, sky only
   sky = ACESFilmic(sky);
   
@@ -399,7 +404,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #endif
 
 #if CLOUDS
-  sky += renderClouds(uv, sunPos.y, vHum);
+  sky += renderClouds(uv, sunPos.y, humidity, clouds);
 #endif
 
   fragColor = vec4( sky, 1.0);
