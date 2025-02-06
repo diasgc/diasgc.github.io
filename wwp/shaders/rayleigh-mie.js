@@ -2,11 +2,11 @@ const frag=`#pragma optimize(on)
 #pragma debug(off)
 
 #define MOUNTAINS 1
-
 #define STARS 1
 #define CLOUDS 1
+
 #define SHADERTOY 0
-#define DEMO 1
+#define DEMO 0
 #define DEMO_SPEED 0.2
 
 #undef fast
