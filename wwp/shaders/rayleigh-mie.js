@@ -196,44 +196,71 @@ float mountain(vec2 uv, float scale, float offset, float h1, float h2, float s){
 
 // Starfield (https://www.shadertoy.com/view/NtsBzB)
 
-vec3 hash( in vec3 p ){
-	p = vec3( dot(p, vec3(127.1, 311.7, 74.7)),
-              dot(p, vec3(269.5, 183.3, 246.1)),
-              dot(p, vec3(113.5, 271.9, 124.6)));
-	return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
+vec3 hash(vec3 p) {
+    p = fract(p * vec3(127.1, 311.7, 74.7));
+    p += dot(p, p.yzx + 19.19);
+    return fract(sin(p) * 43758.5453123);
 }
 
-
-float noise2( in vec3 p ){
-  vec3 i = floor( p );
-  vec3 f = fract( p );
-  vec3 u = f*f*(3.0-2.0*f);
-  return mix( mix( mix( dot( hash( i + vec3(0.0,0.0,0.0) ), f - vec3(0.0,0.0,0.0) ), 
-                        dot( hash( i + vec3(1.0,0.0,0.0) ), f - vec3(1.0,0.0,0.0) ), u.x),
-                   mix( dot( hash( i + vec3(0.0,1.0,0.0) ), f - vec3(0.0,1.0,0.0) ), 
-                        dot( hash( i + vec3(1.0,1.0,0.0) ), f - vec3(1.0,1.0,0.0) ), u.x), u.y),
-              mix( mix( dot( hash( i + vec3(0.0,0.0,1.0) ), f - vec3(0.0,0.0,1.0) ), 
-                        dot( hash( i + vec3(1.0,0.0,1.0) ), f - vec3(1.0,0.0,1.0) ), u.x),
-                   mix( dot( hash( i + vec3(0.0,1.0,1.0) ), f - vec3(0.0,1.0,1.0) ), 
-                        dot( hash( i + vec3(1.0,1.0,1.0) ), f - vec3(1.0,1.0,1.0) ), u.x), u.y), u.z );
+float noise2(vec3 p) {
+    vec3 i = floor(p);
+    vec3 f = fract(p);
+    vec3 u = f * f * (3.0 - 2.0 * f);
+    
+    return mix(
+        mix(
+            mix(dot(hash(i + vec3(0.0, 0.0, 0.0)), f - vec3(0.0, 0.0, 0.0)),
+                dot(hash(i + vec3(1.0, 0.0, 0.0)), f - vec3(1.0, 0.0, 0.0)),
+                u.x),
+            mix(dot(hash(i + vec3(0.0, 1.0, 0.0)), f - vec3(0.0, 1.0, 0.0)),
+                dot(hash(i + vec3(1.0, 1.0, 0.0)), f - vec3(1.0, 1.0, 0.0)),
+                u.x),
+            u.y),
+        mix(
+            mix(dot(hash(i + vec3(0.0, 0.0, 1.0)), f - vec3(0.0, 0.0, 1.0)),
+                dot(hash(i + vec3(1.0, 0.0, 1.0)), f - vec3(1.0, 0.0, 1.0)),
+                u.x),
+            mix(dot(hash(i + vec3(0.0, 1.0, 1.0)), f - vec3(0.0, 1.0, 1.0)),
+                dot(hash(i + vec3(1.0, 1.0, 1.0)), f - vec3(1.0, 1.0, 1.0)),
+                u.x),
+            u.y),
+        u.z);
 }
-
 
 float starfield(vec2 uv, float sunpos, float clds){
   if (sunpos > -0.12 || clds > 0.9)
     return 0.;
   float fade = smoothstep(-0.12, -0.18, sunpos);
-  float thres = 6.0 + smoothstep(0.5, 1.0, clouds * fade) * 4.;
+  float thres = 6.0 + smoothstep(0.5, 1.0, clds * fade) * 4.;
   float expos = 20.0;
   vec3 dir = normalize(vec3(uv * 2.0 - 1.0, 1.0));
   float stars = pow(clamp(noise2(dir * 200.0), 0.0, 1.0), thres) * expos;
   stars *= mix(0.4, 1.4, noise2(dir * 100.0 + vec3(iTime)));
   return stars * fade;
 }
-    
+
+// Starfield#2 (https://www.shadertoy.com/view/fsSfD3) (why AI 4s23Rt)
+
+#define R12(co,s) fract(tan(distance(co * 1.61803398875, co) * s) * co.x)
+
+#define H12(s) vec2(R12(vec2(243.234, 63.834), s) - 0.5, R12(vec2(53.1434, 13.1234), s) - 0.5)
+
+float LS2(vec2 uv, vec2 ofs, float b, float l) {
+  float len = length(uv - ofs);
+  return smoothstep(0.0, 1000.0, b * max(0.1, l) / pow(max(1e-13, len), 1.0 / max(0.1, l)));
+}
+  
+void sf2(vec2 uv, out vec3 col) {
+  for (float i = 0.0; i < 200.0; i++) {
+    vec2 ofs = H12(i + 1.0) * vec2(1.8, 1.1);
+    float r = (mod(i, 20.0) == 0.0) ? 0.5 + abs(sin(i / 50.0)) : 0.25;
+    float l = 1.0 + 0.02 * (sin(fract(iTime) * 0.5 * i) + 1.0);
+    col += vec3(LS2(uv, ofs, r, l));
+  }
+}    
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
-  vec2 uv = fragCoord.xy/iResolution.xy;
+  vec2 uv = fragCoord/iResolution.xy;
   vec3 pos = vec3(izoom * uv - vec2(0.0, 0.1), 0.0);
 #if SHADERTOY || DEMO
   float y = iMouse.z > 0. ? iMouse.y/iResolution.y : sin( iTime * DEMO_SPEED);
@@ -248,9 +275,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float cosTheta  = dot( sunDir, direction );
   float angZenith = acos( clip(cosZenith) ); // horizon cutoff
   
-  // empirical values for water vapor turbidity
-  vec2 vHum = pow(vec2(humidity), vec2(3.));
+  // empirical values for overall humidity turbidity
+  vec3 vHum = vec3(pow(humidity, 3.), 0.0, smoothstep(0.9, 1.0, clouds));
   vHum.y = 1. - vHum.x;
+  
   
   // refraction at horizon hack: todo
   float refraction = 0.0035;
@@ -258,10 +286,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   // empiric Rayleigh + Mie coeffs from environment variables
   float rayleigh  = 1. + exp( -cosGamma * vHum.x - altitude * 1E-9);
   float turbidity = (0.25 + 0.875 * vHum.x) * exp(-altitude/5E3);
-  float mieCoefficient = 0.01 + 0.001 * vHum.x;
+  float mieCoefficient = 0.01 + 0.001 * vHum.x - 0.01 * vHum.z;
   
   float sunEx = sunIntensity( cosGamma, refraction );
-  //sunEx -= vHum.x * 0.05;
+  sunEx -= vHum.z * 0.5;
   float sunFd = 1.0 - clip( 1.0 - exp( cosGamma));
   float rayleighCoefficient = rayleigh + sunFd - 1.0;
   // extinction (absorbtion + out scattering)
@@ -286,10 +314,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 L0 = 0.5 * Fex;
   
   // composition + solar disc
-  float sundisk = clouds > 0.9 ? 0. : smoothstep( kSunArc, kSunArc + 2e-6, cosTheta + kSunDim );
+  float sundisk = vHum.z > 0. ? 0. : smoothstep( kSunArc, kSunArc + 2e-6, cosTheta + kSunDim );
   L0 += sunEx * 1.9e2 * Fex * sundisk;
   
-  vec3 nightsky = kColorNight * (1.0 + moon * kMoonFade);
   
   // the horizon line
   L *= mix( kColorSun, B , clip(pow(1.0 - cosGamma, 5.0)));
@@ -298,17 +325,19 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 sky = pow((L + L0) * k, vec3(sk));
   
   // clouds will desaturate
-  float cloudCover = smoothstep(0.9, 1.0, clouds);
-  sky = mix(sky, vec3(length(sky)) * (1. - 0.4 * cloudCover), cloudCover);
+  if (vHum.z > 0.0)
+    sky = mix(sky, vec3(length(sky)) * (1. - 0.4 * vHum.z), vHum.z);
   
   // acesfilmic color filter, sky only
   sky = ACESFilmic(sky);
   
-  sky = max(sky, nightsky);
+  // add moonlight according to moon phase (do not apply acesfilmic)
+  sky += kColorNight * (1.0 + moon * kMoonFade);;
 
 
 #if STARS
-  sky += vec3(starfield(uv, sunPos.y, clouds));
+  sky += vec3(starfield(uv, sunPos.y, vHum.z));
+  //sf2(uv, sky);
 #endif
 
 #if MOUNTAINS

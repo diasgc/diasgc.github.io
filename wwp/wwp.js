@@ -8,6 +8,8 @@ Date.prototype.isDstObserved = function () {
   return this.getTimezoneOffset() < this.stdTimezoneOffset();
 }
 
+let demo = false;
+
 const wwprov = {
   home: "https://open-meteo.com/",
   docs: "https://open-meteo.com/en/docs",
@@ -118,10 +120,10 @@ let webGl;
 function init(gl){
   webGl = gl;
   setUniforms();
-  webGl.start(false);
-  setInterval(upd, 1000);
+  webGl.start(demo);
+  if (!demo)
+    setInterval(upd, 1000);
 }
-
 function upd(){
   setUniforms();
   webGl.render();

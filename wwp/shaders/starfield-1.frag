@@ -1,4 +1,4 @@
-const frag = `// Starfield (https://www.shadertoy.com/view/NtsBzB)
+// Starfield (https://www.shadertoy.com/view/NtsBzB)
 
 vec3 hash(vec3 p) {
     p = fract(p * vec3(127.1, 311.7, 74.7));
@@ -48,4 +48,4 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec2 uv = fragCoord/iResolution.xy;
   float stars = starfield(uv, 0.0, 0.0);
   fragColor = vec4(vec3(uv.y * stars),1.0);
-}`
+}
