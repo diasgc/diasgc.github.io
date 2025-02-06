@@ -4,9 +4,9 @@ const frag=`#pragma optimize(on)
 #define MOUNTAINS 1
 
 #define STARS 1
-
+#define CLOUDS 1
 #define SHADERTOY 0
-#define DEMO 0
+#define DEMO 1
 #define DEMO_SPEED 0.2
 
 #undef fast
@@ -227,16 +227,16 @@ float noise2(vec3 p) {
         u.z);
 }
 
-float starfield(vec2 uv, float sunpos, float clds){
+vec3 starfield(vec2 uv, float sunpos, float clds){
   if (sunpos > -0.12 || clds > 0.9)
-    return 0.;
+    return vec3(0.);
   float fade = smoothstep(-0.12, -0.18, sunpos);
   float thres = 6.0 + smoothstep(0.5, 1.0, clds * fade) * 4.;
   float expos = 20.0;
   vec3 dir = normalize(vec3(uv * 2.0 - 1.0, 1.0));
   float stars = pow(clamp(noise2(dir * 200.0), 0.0, 1.0), thres) * expos;
   stars *= mix(0.4, 1.4, noise2(dir * 100.0 + vec3(iTime)));
-  return stars * fade;
+  return vec3( stars * fade );
 }
 
 // Starfield#2 (https://www.shadertoy.com/view/fsSfD3) (why AI 4s23Rt)
@@ -250,18 +250,58 @@ float LS2(vec2 uv, vec2 ofs, float b, float l) {
   return smoothstep(0.0, 1000.0, b * max(0.1, l) / pow(max(1e-13, len), 1.0 / max(0.1, l)));
 }
   
-void sf2(vec2 uv, out vec3 col) {
-  for (float i = 0.0; i < 200.0; i++) {
+vec3 sf2(vec2 uv, float sunpos, float clds) {
+  if (sunpos > -0.12 || clds > 0.9)
+    return vec3(0.);
+  vec3 col = vec3(0.0);
+  for (float i = 0.0; i < 50.0; i++) {
     vec2 ofs = H12(i + 1.0) * vec2(1.8, 1.1);
-    float r = (mod(i, 20.0) == 0.0) ? 0.5 + abs(sin(i / 50.0)) : 0.25;
+    float r = (mod(i, 10.0) == 0.0) ? 0.5 + abs(sin(i / 50.0)) : 0.25;
     float l = 1.0 + 0.02 * (sin(fract(iTime) * 0.5 * i) + 1.0);
-    col += vec3(LS2(uv, ofs, r, l));
+    col += vec3(LS2(0.5 - uv, ofs, r, l));
   }
+  return col;
 }    
 
+// Clouds (https://www.shadertoy.com/view/Xs23zX)
+
+#define CLOUD_STEPS 8.
+#define CLOUD_SCALE 0.001
+#define CLOUD_INTENSITY 0.5
+#define CLOUD_SMOOTH 0.23
+
+float N21(vec2 p) {
+    return fract(sin(p.x*100.+p.y*7446.)*8345.);
+}
+
+float SS(vec2 uv) {
+    vec2 lv = fract(uv);
+    lv = lv * lv * (3.0 - 2.0 * lv);
+    vec2 id = floor(uv);
+    
+    float bl = N21(id);
+    float br = N21(id + vec2(1., 0.));
+    float b = mix(bl, br, lv.x);
+
+    float tl = N21(id + vec2(0., 1.));
+    float tr = N21(id + vec2(1., 1.));
+    float t = mix(tl, tr, lv.x);
+
+    return mix(b, t, lv.y);
+}
+  
+vec3 renderClouds(vec2 uv, float sunpos, vec3 hum){
+  float c = 0.;
+  for(float i = 1.; i < CLOUD_STEPS; i+=1.) {
+    c += SS(-iTime * DEMO_SPEED + uv * pow(1.5 + 1.5 * uv.y, i + 1.2 * hum.z)) * pow(CLOUD_SMOOTH, i);
+  }
+  return vec3( c * CLOUD_INTENSITY );
+}
+
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
+  float ar = iResolution.y/iResolution.x;
   vec2 uv = fragCoord/iResolution.xy;
-  vec3 pos = vec3(izoom * uv - vec2(0.0, 0.1), 0.0);
+  vec3 pos = vec3(izoom * uv * ar - vec2(0.0, 0.1), 0.0);
 #if SHADERTOY || DEMO
   float y = iMouse.z > 0. ? iMouse.y/iResolution.y : sin( iTime * DEMO_SPEED);
 #else
@@ -289,8 +329,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float mieCoefficient = 0.01 + 0.001 * vHum.x - 0.01 * vHum.z;
   
   float sunEx = sunIntensity( cosGamma, refraction );
-  sunEx -= vHum.z * 0.5;
-  float sunFd = 1.0 - clip( 1.0 - exp( cosGamma));
+  sunEx -= 25. * vHum.z;
+  float sunFd = 1.0 - clip( 1.0 - exp( cosGamma)) - vHum.z * 0.1;
   float rayleighCoefficient = rayleigh + sunFd - 1.0;
   // extinction (absorbtion + out scattering)
   vec3 vBetaR = getBetaRayleigh( rayleigh, temperature, pressure, humidity ) * rayleighCoefficient;
@@ -327,18 +367,21 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   // clouds will desaturate
   if (vHum.z > 0.0)
     sky = mix(sky, vec3(length(sky)) * (1. - 0.4 * vHum.z), vHum.z);
+
   
   // acesfilmic color filter, sky only
   sky = ACESFilmic(sky);
   
+  
   // add moonlight according to moon phase (do not apply acesfilmic)
-  sky += kColorNight * (1.0 + moon * kMoonFade);;
+  sky += kColorNight * (1.0 + moon * kMoonFade);
 
 
 #if STARS
-  sky += vec3(starfield(uv, sunPos.y, vHum.z));
-  //sf2(uv, sky);
+  //sky += starfield(uv, sunPos.y, clouds);
+  sky += sf2(uv, sunPos.y, vHum.z);
 #endif
+  
 
 #if MOUNTAINS
   float m = 0.;
@@ -353,6 +396,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     m += mix(.67, mountain(uv, 1. +  i * 0.5, 6. * i + 7., hMnt + i * 0.12, hPos, sharpness), 0.52 + 0.448 * i);
   if (m < 1.)
     sky = mix(fade * 0.8, 1.2 * tone, m);
+#endif
+
+#if CLOUDS
+  sky += renderClouds(uv, sunPos.y, vHum);
 #endif
 
   fragColor = vec4( sky, 1.0);
