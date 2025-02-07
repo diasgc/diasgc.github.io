@@ -4,12 +4,13 @@ const frag=`#pragma optimize(on)
 #define MOUNTAINS 1
 #define STARS 1
 #define CLOUDS 1
+#define WEATHER 1
 
 #define SHADERTOY 0
 #define DEMO 0
 #define DEMO_SPEED 0.1
 
-#undef fast
+#define fast
 #undef fastRayleigh
 #undef fastMie
 #undef fastRefractiveIndex
@@ -72,13 +73,13 @@ const float kCutoffAngle = pi / 1.766;
 
 // inverse of sun intensity stepness: (def: 0.66 = 1./1.5)
 const float kSunIStep = .66;
-const float kSunI = 550.0;
+const float kSunI = 400.0;
 
 // Sun fade max (1.0)
-const float kSunMax = 2.0;
+const float kSunMax = 1.0;
 
 // Sun fade factor (0.2) lower values increase contrast
-const float kSunFade = 0.8;
+const float kSunFade = 0.2;
 
 // 66 arc seconds -> degrees, and the cosine of that
 const float kSunArc = 0.999956676; //cos( arcsec2rad * 3840. );
@@ -96,10 +97,10 @@ const float zenithR = 8400.0;
 const float zenithM = 1250.0;
 
 // Sun extinction power def 0.5
-const vec3  kSunExPow = vec3( 0.8 );
+const vec3  kSunExPow = vec3( 0.5 );
 
 const float kMoonFade = 2.0;
-const vec3  kColorSun = vec3 (0.5);
+const vec3  kColorSun = vec3(0.5);
 const vec3  kColorNight = vec3(0.04, 0.034, 0.09) * 0.5;
 
 #define rayleighPhase(a)    pi316 * ( 1.0 + a * a )
@@ -303,12 +304,14 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float ar = 1.;//iResolution.x/iResolution.y;
   vec2 uv = fragCoord/iResolution.xy;
   vec3 pos = vec3(izoom * uv * ar - vec2(0.0, 0.1), 0.0);
+
 #if SHADERTOY || DEMO
   float y = iMouse.z > 0. ? iMouse.y/iResolution.y : sin( iTime * DEMO_SPEED);
 #else
   float y = uSunPosition;
 #endif
   vec3 sunPos = vec3( 0.5, y, -1.5 );
+
   vec3 sunDir = normalize( sunPos );
   vec3 cameraPos = vec3( sunPos.x, 0.0, -sunPos.z);
   float cosGamma  = dot( sunDir, zenDir ); // 0 at horizon, 1 at zenith
@@ -317,9 +320,13 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float cosTheta  = dot( sunDir, direction );
   float angZenith = acos( clip(cosZenith) ); // horizon cutoff
   
+#if WEATHER
   // empirical values for overall humidity turbidity
   vec3 vHum = vec3(pow(humidity, 3.), 0.0, smoothstep(0.9, 1.0, clouds));
   vHum.y = 1. - vHum.x;
+#else
+  vec3 vHum = vec3(0.0, 1.0, 0.0);
+#endif
   
   
   // refraction at horizon hack: todo
@@ -327,7 +334,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
   // empiric Rayleigh + Mie coeffs from environment variables
   float rayleigh  = 1. + exp( -cosGamma * vHum.x - altitude * 1E-9);
-  float turbidity = (0.25 + 0.875 * vHum.x) * exp(-altitude/5E3);
+  float turbidity = 1.8 + vHum.x * 7.2;
   float mieCoefficient = 0.01 + 0.001 * vHum.x - 0.01 * vHum.z;
   
   float sunEx = sunIntensity( cosGamma, refraction );
@@ -368,10 +375,14 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float k = 0.04;
   
   vec3 sky = pow((L + L0) * k, vec3(sk));
-  
+  vec3 night = kColorNight * (1.0 + moon * kMoonFade);
+
   // clouds will desaturate
-  if (vHum.z > 0.0){
+  if (clouds > 0.0){
     sky = mix(sky, vec3(length(sky)) * (1. - 0.6 * vHum.z), vHum.z);
+    #if CLOUDS
+      night += renderClouds(uv, sunPos.y, humidity, clouds);
+    #endif
   }
   
 
@@ -381,7 +392,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
   
   // add moonlight according to moon phase (do not apply acesfilmic)
-  sky += kColorNight * (1.0 + moon * kMoonFade);
+  sky += night;
 
 
 #if STARS
@@ -403,10 +414,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     m += mix(.67, mountain(uv, 1. +  i * 0.5, 6. * i + 7., hMnt + i * 0.12, hPos, sharpness), 0.52 + 0.448 * i);
   if (m < 1.)
     sky = mix(fade * 0.8, 1.2 * tone, m);
-#endif
-
-#if CLOUDS
-  sky += renderClouds(uv, sunPos.y, humidity, clouds);
 #endif
 
   fragColor = vec4( sky, 1.0);

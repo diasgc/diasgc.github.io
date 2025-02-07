@@ -8,7 +8,7 @@ Date.prototype.isDstObserved = function () {
   return this.getTimezoneOffset() < this.stdTimezoneOffset();
 }
 
-let demo = false;
+let demo = true;
 
 const wwprov = {
   home: "https://open-meteo.com/",
