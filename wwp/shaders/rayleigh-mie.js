@@ -7,7 +7,7 @@ const frag=`#pragma optimize(on)
 
 #define SHADERTOY 0
 #define DEMO 0
-#define DEMO_SPEED 0.2
+#define DEMO_SPEED 0.1
 
 #undef fast
 #undef fastRayleigh
@@ -59,7 +59,7 @@ uniform float       uTemperature;
 #define altitude    0.0
 #define pressure    1018.0
 #define opacity     1.0
-#define izoom       2.5
+#define izoom       2.0
 
 const float pi = acos(0.0) * 2.0;
 const float pi316 = 3.0 / (16.0 * pi);
@@ -78,7 +78,7 @@ const float kSunI = 550.0;
 const float kSunMax = 2.0;
 
 // Sun fade factor (0.2) lower values increase contrast
-const float kSunFade = 0.5;
+const float kSunFade = 0.8;
 
 // 66 arc seconds -> degrees, and the cosine of that
 const float kSunArc = 0.999956676; //cos( arcsec2rad * 3840. );
@@ -88,7 +88,7 @@ const float kSunDim = 2e-5;
 #define sunIntensity(a, r) kSunI * (1. - exp( -kSunIStep * ( kCutoffAngle - acos(clamp(a,-1.,1.)) + r ) ))
 
 const vec3 zenDir = vec3 ( 0.0, 1.5, 0.0 );
-const vec3 cameraPos = vec3( 0.0, 0.0, 1.5 );
+vec3 cameraPos = vec3( 1.0, 0.0, 1.5 );
 
 // constants for atmospheric scattering
 // optical length at zenith for molecules
@@ -96,7 +96,7 @@ const float zenithR = 8400.0;
 const float zenithM = 1250.0;
 
 // Sun extinction power def 0.5
-const vec3  kSunExPow = vec3( 0.5 );
+const vec3  kSunExPow = vec3( 0.8 );
 
 const float kMoonFade = 2.0;
 const vec3  kColorSun = vec3 (0.5);
@@ -170,7 +170,7 @@ vec3 getBetaRayleigh( float rayleigh, float Tk, float P, float H ){
 #define MOUNTAIN_SHADE vec3(1.13, 1.04, 1.1) // vec3(1.04, 1.13, 1.1)
 #define MOUNTAIN_STEPS 10
 #define MOUNTAIN_YSIZE 1.2
-#define MOUNTAIN_YOFFS 0.07
+#define MOUNTAIN_YOFFS 0.08
 
 float noise(float x){
     float i = floor(x);
@@ -269,6 +269,7 @@ vec3 sf2(vec2 uv, float sunpos, float clds) {
 #define CLOUD_SCALE 0.001
 #define CLOUD_INTENSITY 0.5
 #define CLOUD_SMOOTH 0.23
+#define CLOUD_SPEED 0.001
 
 float N21(vec2 p) {
     return fract(sin(p.x*100.+p.y*7446.)*8345.);
@@ -293,13 +294,13 @@ float SS(vec2 uv) {
 vec3 renderClouds(vec2 uv, float sunpos, float humidity, float clouds){
   float c = 0.;
   for(float i = 1.; i < CLOUD_STEPS; i+=1.) {
-    c += SS(-iTime * DEMO_SPEED + uv * pow(1.0 + (uv.y + humidity), i + .7 * clouds)) * pow(CLOUD_SMOOTH, i);
+    c += SS(-iTime * CLOUD_SPEED + uv * pow(1.0 + (uv.y + humidity), i + .7 * clouds)) * pow(CLOUD_SMOOTH, i);
   }
   return vec3( c * CLOUD_INTENSITY );
 }
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
-  float ar = iResolution.y/iResolution.x;
+  float ar = 1.;//iResolution.x/iResolution.y;
   vec2 uv = fragCoord/iResolution.xy;
   vec3 pos = vec3(izoom * uv * ar - vec2(0.0, 0.1), 0.0);
 #if SHADERTOY || DEMO
@@ -309,6 +310,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #endif
   vec3 sunPos = vec3( 0.5, y, -1.5 );
   vec3 sunDir = normalize( sunPos );
+  vec3 cameraPos = vec3( sunPos.x, 0.0, -sunPos.z);
   float cosGamma  = dot( sunDir, zenDir ); // 0 at horizon, 1 at zenith
   vec3 direction = normalize( pos - cameraPos );
   float cosZenith = dot( zenDir, direction );
@@ -329,7 +331,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float mieCoefficient = 0.01 + 0.001 * vHum.x - 0.01 * vHum.z;
   
   float sunEx = sunIntensity( cosGamma, refraction );
-  //sunEx -= 25. * vHum.z;
+  
   float sunFd = 1.0 - clip( 1.0 - exp( cosGamma));
   float rayleighCoefficient = rayleigh + sunFd - 1.0;
   // extinction (absorbtion + out scattering)
