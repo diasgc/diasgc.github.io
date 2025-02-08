@@ -7,7 +7,7 @@ const frag=`#pragma optimize(on)
 #define WEATHER 1
 
 #define SHADERTOY 0
-#define DEMO 0
+#define DEMO 1
 #define DEMO_SPEED 0.1
 
 #undef fast
@@ -335,7 +335,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   // empiric Rayleigh + Mie coeffs from environment variables
   float rayleigh  = 1. + exp( -cosGamma * vHum.x - altitude * 1E-9);
   float turbidity = 0.5 + vHum.x;
-  float mieCoefficient = 0.005 + 0.001 * vHum.x - 0.01 * vHum.z;
+  float mieCoefficient = 0.005 + clip(0.001 * vHum.x - 0.01 * vHum.z);
   
   float sunEx = sunIntensity( cosGamma, refraction );
   
@@ -360,13 +360,20 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float mPhase = hgPhase( cosTheta, g, g2 );
   vec3 betaTotal = ( vBetaR * rPhase + vBetaM * mPhase ) / ( vBetaR + vBetaM );
   vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.5 ) );
-  vec3 B = pow( sunEx * betaTotal * Fex, kSunExPow );
+  vec3 B = pow( sunEx * betaTotal * Fex, vec3( 0.5) );
   vec3 L0 = 0.5 * Fex;
   
+  vec3 night = kColorNight * (1.0 + moon * kMoonFade);
+
   // composition + solar disc
-  if (vHum.z < 0.1) {
-    float sundisk = smoothstep( kSunArc, kSunArc + 2e-6, cosTheta + kSunDim );
-    L0 += sunEx * 1.9e2 * Fex * sundisk;
+  if (vHum.z < 0.01) {
+    float sundisk = smoothstep( kSunArc, kSunArc + kSunDim, cosTheta);
+    L0 += sunEx * 1.9e5 * Fex * sundisk;
+  } else {
+    L = mix(L, vec3(length(L)) * (1. - 0.6 * vHum.z), vHum.z);
+#if CLOUDS
+    night += renderClouds(uv, sunPos.y, humidity, clouds);
+#endif
   }
   
   // the horizon line
@@ -375,22 +382,24 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float k = 0.04;
   
   vec3 sky = pow((L + L0) * k, vec3(sk));
-  vec3 night = kColorNight * (1.0 + moon * kMoonFade);
+  
 
+#if 0
   // clouds will desaturate
-  if (vHum.z > 0.0){
+  if (vHum.z > 0.01){
     sky = mix(sky, vec3(length(sky)) * (1. - 0.6 * vHum.z), vHum.z);
     #if CLOUDS
       night += renderClouds(uv, sunPos.y, humidity, clouds);
     #endif
   }
-  
+#endif
+
   // acesfilmic color filter, sky only
   sky = ACESFilmic(sky);
   
   
   // add moonlight according to moon phase (do not apply acesfilmic)
-  sky = max(sky,night);
+  sky = max(sky, night);
 
 
 #if STARS
