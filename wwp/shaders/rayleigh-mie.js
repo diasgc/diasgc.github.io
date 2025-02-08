@@ -74,7 +74,7 @@ const float kCutoffAngle = pi / 1.766;
 
 // inverse of sun intensity stepness: (def: 0.66 = 1./1.5)
 const float kSunIStep = .66;
-const float kSunI = 400.0;
+const float kSunI = 1000.0;
 
 // Sun fade max (1.0)
 const float kSunMax = 1.0;
@@ -87,7 +87,9 @@ const float kSunArc = 0.999956676; //cos( arcsec2rad * 3840. );
 const float kSunDim = 2e-5;
 
 // a = angle, r = refraction
-#define sunIntensity(a, r) kSunI * (1. - exp( -kSunIStep * ( kCutoffAngle - acos(clamp(a,-1.,1.)) + r ) ))
+float sunIntensity(float a, float r, float nebulosity) {
+  return mix(kSunI, 150.0, nebulosity) * (1. - exp( -kSunIStep * ( kCutoffAngle - acos(clamp(a,-1.,1.)) + r ) ));
+}
 
 const vec3 zenDir = vec3 ( 0.0, 1.5, 0.0 );
 vec3 cameraPos = vec3( 1.0, 0.0, 1.5 );
@@ -102,7 +104,7 @@ const vec3  kSunExPow = vec3( 0.5 );
 
 const float kMoonFade = 2.0;
 const vec3  kColorSun = vec3(1.0);
-const vec3  kColorNight = vec3(0.04, 0.034, 0.09) * 0.5;
+const vec3  kColorNight = vec3(0.04, 0.034, 0.09) * 0.32;
 
 #define rayleighPhase(a)    pi316 * ( 1.0 + a * a )
 #define hgPhase( a, g, g2 ) pi14 * (( 1.0 - g2 ) / pow( 1.0 - 2.0 * g * a + g2, 1.5 ))
@@ -116,10 +118,8 @@ const vec3 LAMBDA = vec3( 650E-9, 550E-9, 450E-9 );
 #define getBetaMie(T) vec3( 1.8399918514433978E-14, 2.7798023919660528E-14, 4.0790479543861094E-14 )
 #else
 // calc: 10E-18 * 0.434 * ( 0.2 * T ) * pi * pow( ( 2. * pi ) / LAMBDA, V ) * MIE_K
-// K coefficient for the primaries
-const vec3 kMie = vec3( 0.686, 0.678, 0.666 );
-const vec3 V = vec3( 4.0 - 2.0 );
-#define getBetaMie(T) 2.726902423E-18 * T * pow( ( 2. * pi ) / LAMBDA, V ) * kMie
+const vec3 bMie = 2.726902423E-18 * pow( (2.0 * pi) / LAMBDA, vec3( 4.0 - 2.0 ) ) * vec3( 0.686, 0.678, 0.666 );
+#define getBetaMie(T) T * bMie
 #endif 
 
 #ifdef fastRefractiveIndex
@@ -298,7 +298,7 @@ vec3 renderClouds(vec2 uv, float sunpos, float humidity, float clouds){
   for(float i = 1.; i < CLOUD_STEPS; i+=1.) {
     c += SS(-iTime * CLOUD_SPEED + uv * pow(1.0 + (uv.y + humidity), i + .7 * clouds)) * pow(CLOUD_SMOOTH, i);
   }
-  return vec3( c * CLOUD_INTENSITY );
+  return vec3( c * clouds );
 }
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
@@ -311,7 +311,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #else
   float y = uSunPosition;
 #endif
-  vec3 sunPos = vec3( 0.5, y, -1.5 );
+  vec3 sunPos = vec3( 0.5 , y, -1. );
 
   vec3 sunDir = normalize( sunPos );
   vec3 cameraPos = vec3( sunPos.x, 0.0, -sunPos.z);
@@ -336,9 +336,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   // empiric Rayleigh + Mie coeffs from environment variables
   float rayleigh  = 1. + exp( -cosGamma * vHum.x - altitude * 1E-9);
   float turbidity = 0.5 + vHum.x;
-  float mieCoefficient = 0.005 + clip(0.001 * vHum.x - 0.01 * vHum.z);
+  float mieCoefficient = 0.005 + clip(0.001 * vHum.x - 0.001 * vHum.z);
   
-  float sunEx = sunIntensity( cosGamma, refraction );
+  float sunEx = sunIntensity( cosGamma, refraction, vHum.z );
   
   float sunFd = 1.0 - clip( 1.0 - exp( cosGamma));
   float rayleighCoefficient = rayleigh + sunFd - 1.0;
@@ -366,11 +366,13 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
   vec3 night = kColorNight * (1.0 + moon * kMoonFade);
 
-  // composition + solar disc
+  
   if (vHum.z < 0.01) {
+    // composition + solar disc
     float sundisk = smoothstep( kSunArc, kSunArc + kSunDim, cosTheta);
     L0 += sunEx * 1.9e5 * Fex * sundisk;
   } else {
+    // clouds will desaturated 
     L = mix(L, vec3(length(L)) * (1. - 0.6 * vHum.z), vHum.z);
 #if CLOUDS
     night += renderClouds(uv, sunPos.y, humidity, clouds);
@@ -383,24 +385,14 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float k = 0.04;
   
   vec3 sky = pow((L + L0) * k, vec3(sk));
-  
-
-#if 0
-  // clouds will desaturate
-  if (vHum.z > 0.01){
-    sky = mix(sky, vec3(length(sky)) * (1. - 0.6 * vHum.z), vHum.z);
-    #if CLOUDS
-      night += renderClouds(uv, sunPos.y, humidity, clouds);
-    #endif
-  }
-#endif
 
   // acesfilmic color filter, sky only
   sky = ACESFilmic(sky);
   
   
   // add moonlight according to moon phase (do not apply acesfilmic)
-  sky = max(sky, night);
+  //sky = max(sky, night);
+  sky += night;
 
 
 #if STARS
