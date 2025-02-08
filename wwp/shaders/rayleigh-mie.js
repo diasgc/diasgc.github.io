@@ -1,3 +1,4 @@
+const live = false;
 const frag=`#pragma optimize(on)
 #pragma debug(off)
 
@@ -7,7 +8,7 @@ const frag=`#pragma optimize(on)
 #define WEATHER 1
 
 #define SHADERTOY 0
-#define DEMO 1
+#define DEMO ${live ? 0 : 1}
 #define DEMO_SPEED 0.1
 
 #undef fast
