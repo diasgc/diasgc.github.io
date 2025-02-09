@@ -46,6 +46,7 @@ uniform float       iTime;
 uniform vec3        iMouse;
 uniform float       uSunPosition;
 uniform float       uClouds;
+uniform float       uCloudLow;
 uniform float       uHumidity;
 uniform float       uMoon;
 uniform float       uRain;
@@ -53,6 +54,7 @@ uniform float       uTemperature;
 // alias
 #define humidity    uHumidity
 #define clouds      uClouds
+#define cloudLow    uCloudLow
 #define moon        uMoon
 #define rain        uRain
 #define temperature uTemperature
@@ -439,12 +441,12 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
 
 #if MOUNTAINS
-float m = renderMountains(uv, sunPos.y, vHum.z);
+float m = renderMountains(uv, sunPos.y, cloudLow);
 if (m > 0.0) {
   float s = clip(sunPos.y);
   vec3 shade = mix(MOUNTAIN_SHADE, vec3(length(max(sky, MOUNTAIN_SHADE)) * 0.8), clouds);
-  vec3 fade = vec3(s * (0.25 + vHum.x * 0.25)) * shade;
-  vec3 tone = vec3(s * (0.35 + vHum.x * 0.35)) * shade;
+  vec3 fade = vec3(s * (0.25 + clouds * 0.25)) * shade;
+  vec3 tone = vec3(s * (0.35 + clouds * 0.35)) * shade;
   sky = mix(0.9 * tone, fade * 1.1, m);
 }
 #endif

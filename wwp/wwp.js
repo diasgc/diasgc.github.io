@@ -134,6 +134,8 @@ function setUniforms(){
   webGl.uniforms.uSunPosition.data = [elev];
   let clds = wwprov.wth.get('cloud_cover') / 100.0;
   webGl.uniforms.uClouds.data = [clds];
+  let cldL = wwprov.wth.get('cloud_cover_low') / 100.0;
+  webGl.uniforms.uCloudLow.data = [cldL];
   let hum = wwprov.wth.get('relative_humidity_2m') / 100.0;
   webGl.uniforms.uHumidity.data = [hum];
   let moon = wwprov.sun.moon;
@@ -141,7 +143,7 @@ function setUniforms(){
   let rain = wwprov.wth.get('precipitation') / 100.0;
   webGl.uniforms.uRain.data = [rain];
   let temp = wwprov.wth.get('temperature_2m');
-  info.innerHTML = `e: ${elev.toFixed(4)} m: ${moon.toFixed(1)} | ${temp.toFixed(1)}ºC ${hum * 100}%Hr c: ${clds.toFixed(2)} pp: ${rain.toFixed(2)}`;
+  info.innerHTML = `e: ${elev.toFixed(4)} m: ${moon.toFixed(1)} | ${temp.toFixed(1)}ºC ${hum * 100}%Hr c/L: ${clds.toFixed(2)}/${cldL.toFixed(2)} pp: ${rain.toFixed(2)}`;
   webGl.uniforms.uTemperature.data = [temp + 273.15];
 }
 
@@ -159,6 +161,7 @@ window.onload = function(){
       uniforms: {
         uSunPosition: { type: 'float' },
         uClouds: { type: 'float' },
+        uCloudLow: { type: 'float' },
         uHumidity: { type: 'float' },
         uMoon: { type: 'float' },
         uRain: { type: 'float' },
