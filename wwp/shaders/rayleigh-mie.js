@@ -1,4 +1,4 @@
-const live = true;
+const live = false;
 const frag=`#pragma optimize(on)
 #pragma debug(off)
 
@@ -170,44 +170,44 @@ vec3 getBetaRayleigh( float rayleigh, float Tk, float P, float H ){
 // Mountains (https://www.shadertoy.com/view/fsdGWf)
 
 #define MOUNTAIN_SHADE vec3(1.13, 1.04, 1.1) // vec3(1.04, 1.13, 1.1)
-#define MOUNTAIN_STEPS 10
+#define PERLIN_STEPS 10
 #define MOUNTAIN_YSIZE 1.2
 #define MOUNTAIN_YOFFS 0.08
 
-float noise(float x){
+float R11(float x){
+    return fract(sin(x)*43758.5453);
+}
+
+float N11(float x){
     float i = floor(x);
-    float a = rand(i), b = rand(i + 1.);
-    float f = x - i;
-    return mix(a, b, f);
+    float f = fract(x);
+    return mix(R11(i), R11(i + 1.), f);
 }
 
 float perlin(float x){
-  float r=0., s=1., w=1.;
-  for (int i = 0; i < MOUNTAIN_STEPS; i++) {
-    s *= 2.0;
-    w *= 0.5;
-    r += w * noise(s*x);
+  float p = 0.0, freq = 1.0, amp = 1.0;
+  for (int i = 0; i < PERLIN_STEPS; i++) {
+    freq *= 2.0;
+    amp *= 0.5;
+    p += amp * N11(freq * x);
   }
-  return r;
+  return p;
 }
 
 float mountain(vec2 uv, float scale, float offset, float h1, float h2, float s){
   float h = h1 + perlin(MOUNTAIN_YSIZE * scale * uv.x + offset) * (h2 - h1);
-  return smoothstep(h, h + s, uv.y - MOUNTAIN_YOFFS);
+  return 1. - smoothstep(h, h + s, uv.y - MOUNTAIN_YOFFS);
 }
 
-vec3 renderMountains(vec2 uv, float sunElev, float hum, vec3 sky){
+float renderMountains(vec2 uv, float sunElev, float hum){
   float m = 0.;
-  float hPos = -0.10;
-  float hMnt = -0.005;
-
-  float sharpness = 0.001 + smoothstep(0.9, 1.0, hum) * 0.005;
   float s = max(sunElev, 0.0);
-  vec3 tone = vec3(s * (0.25 + hum * 0.35)) * MOUNTAIN_SHADE;
-  vec3 fade = vec3(s * (0.3 + hum * 0.2)) * MOUNTAIN_SHADE;
-  for(float i = 0.; i < 4.; i += 1.)
-    m += mix(.67, mountain(uv, 1. +  i * 0.5, 6. * i + 7., hMnt + i * 0.12, hPos, sharpness), 0.52 + 0.448 * i);
-  return m < 1. ? mix(fade * 0.8, 1.2 * tone, m) : sky;
+  float ss = 0.001 + smoothstep(0.9, 1.0, hum) * 0.009;
+  m  = mountain(uv, 1.0, 7., -0.005, -0.10, ss);
+  m += max(m, mountain(uv, 1.2, 9., 0.025, -0.10, ss));
+  m += max(m, mountain(uv, 1.7, 11., 0.105, -0.10, ss));
+  m += max(m, mountain(uv, 2.5, 16., 0.175, -0.10, ss));
+  return m * (1. - ss * uv.y * 500.);
 }
 
 // Starfield (https://www.shadertoy.com/view/NtsBzB)
@@ -438,7 +438,14 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
 
 #if MOUNTAINS
-  sky = renderMountains(uv, sunPos.y, vHum.z, sky);
+float m = renderMountains(uv, sunPos.y, vHum.z);
+if (m > 0.0) {
+  float s = clip(sunPos.y);
+  vec3 shade = mix(MOUNTAIN_SHADE, vec3(length(max(sky, MOUNTAIN_SHADE)) * 0.8), clouds);
+  vec3 fade = vec3(s * (0.25 + vHum.x * 0.25)) * shade;
+  vec3 tone = vec3(s * (0.35 + vHum.x * 0.35)) * shade;
+  sky = mix(0.9 * tone, fade * 1.1, m);
+}
 #endif
 
   fragColor = vec4( sky, 1.0);
