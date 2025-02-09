@@ -398,17 +398,18 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 betaTotal = ( vBetaR * rPhase + vBetaM * mPhase ) / ( vBetaR + vBetaM );
   vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.5 ) );
   vec3 B = pow( sunEx * betaTotal * Fex, vec3( 0.5) );
-  vec3 L0 = 0.5 * Fex;
+  vec3 LO = vec3(0.);
   
   vec3 night = nightColor * (1.0 + moon * moonFade);
 
   
   if (vHum.z < 0.01) {
+    L0 += 0.5 * Fex;
     // composition + solar disc
     float sundisk = smoothstep( kSunArc, kSunArc + kSunDim, cosTheta);
     L0 += sunEx * 1.9e5 * Fex * sundisk;
   } else {
-    // clouds will desaturated 
+    // clouds will desaturate
     L = mix(L, vec3(length(L)) * (1. - 0.6 * vHum.z), vHum.z);
 #if CLOUDS
     night += renderClouds(uv, sunPos.y, humidity, clouds);
