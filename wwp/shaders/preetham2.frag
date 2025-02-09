@@ -2,7 +2,7 @@
 precision highp float;
 #endif
 
-/*
+/* https://github.com/Tw1ddle/Sky-Shader/blob/master/src/shaders/glsl/sky.fragment
 
 Based on "A Practical Analytic Model for Daylight"
 aka The Preetham Model, the de facto standard analytic skydome model

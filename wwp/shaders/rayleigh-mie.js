@@ -73,7 +73,7 @@ const float rad2deg = 180.0 / pi;
 const float kCutoffAngle = pi / 1.766;
 
 // inverse of sun intensity stepness: (def: 0.66 = 1./1.5)
-const float kSunIStep = .66;
+const float kSunIStep = 0.66;
 const float kSunI = 1000.0;
 
 // Sun fade max (1.0)
@@ -88,7 +88,7 @@ const float kSunDim = 2e-5;
 
 // a = angle, r = refraction
 float sunIntensity(float a, float r, float nebulosity) {
-  return mix(kSunI, 150.0, nebulosity) * (1. - exp( -kSunIStep * ( kCutoffAngle - acos(clamp(a,-1.,1.)) + r ) ));
+  return mix(kSunI, 100.0, nebulosity) * (1. - exp( -kSunIStep * ( kCutoffAngle - acos(clamp(a,-1.,1.)) + r ) ));
 }
 
 const vec3 zenDir = vec3 ( 0.0, 1.5, 0.0 );
@@ -115,12 +115,12 @@ const vec3 LAMBDA = vec3( 650E-9, 550E-9, 450E-9 );
 // Mie scaytering for large particles
 #ifdef fastMie
 // precalculated values
-#define getBetaMie(T) vec3( 1.8399918514433978E-14, 2.7798023919660528E-14, 4.0790479543861094E-14 )
-#else
-// calc: 10E-18 * 0.434 * ( 0.2 * T ) * pi * pow( ( 2. * pi ) / LAMBDA, V ) * MIE_K
-const vec3 bMie = 2.726902423E-18 * pow( (2.0 * pi) / LAMBDA, vec3( 4.0 - 2.0 ) ) * vec3( 0.686, 0.678, 0.666 );
-#define getBetaMie(T) T * bMie
-#endif 
+ #define getBetaMie(T) vec3( 1.8399918514433978E-14, 2.7798023919660528E-14, 4.0790479543861094E-14 )
+ #else
+ // calc: 10E-18 * 0.434 * ( 0.2 * T ) * pi * pow( ( 2. * pi ) / LAMBDA, V ) * MIE_K
+ const vec3 bMie = 2.726902423E-18 * pow( (2.0 * pi) / LAMBDA, vec3( 4.0 - 2.0 ) ) * vec3( 0.686, 0.678, 0.666 );
+ #define getBetaMie(T) T * bMie
+ #endif 
 
 #ifdef fastRefractiveIndex
 #define airRefractiveIndex(Tk, Pmbar, rHum) 1.0003
