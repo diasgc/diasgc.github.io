@@ -173,6 +173,7 @@ window.onload = function(){
 
 /*
 SHADERS
+https://github.com/shff/opengl_sky
 https://www.shadertoy.com/view/tltGDM (this)
 https://www.shadertoy.com/view/wtlyzB
 https://www.shadertoy.com/view/wsfGWH
