@@ -88,7 +88,7 @@ const float kSunDim = 2e-5;
 
 // a = angle, r = refraction
 float sunIntensity(float a, float r, float nebulosity) {
-  return mix(kSunI, 100.0, nebulosity) * (1. - exp( -kSunIStep * ( kCutoffAngle - acos(clamp(a,-1.,1.)) + r ) ));
+  return mix(kSunI, 250.0, nebulosity) * (1. - exp( -kSunIStep * ( kCutoffAngle - acos(clamp(a,-1.,1.)) + r ) ));
 }
 
 const vec3 zenDir = vec3 ( 0.0, 1.5, 0.0 );
