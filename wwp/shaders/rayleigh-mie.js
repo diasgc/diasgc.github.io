@@ -398,7 +398,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 betaTotal = ( vBetaR * rPhase + vBetaM * mPhase ) / ( vBetaR + vBetaM );
   vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.5 ) );
   vec3 B = pow( sunEx * betaTotal * Fex, vec3( 0.5) );
-  vec3 LO = vec3(0.);
+  vec3 L0 = vec3(0.);
   
   vec3 night = nightColor * (1.0 + moon * moonFade);
 
