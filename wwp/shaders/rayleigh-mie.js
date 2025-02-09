@@ -196,6 +196,20 @@ float mountain(vec2 uv, float scale, float offset, float h1, float h2, float s){
   return smoothstep(h, h + s, uv.y - MOUNTAIN_YOFFS);
 }
 
+vec3 renderMountains(vec2 uv, float sunElev, float hum, vec3 sky){
+  float m = 0.;
+  float hPos = -0.10;
+  float hMnt = -0.005;
+
+  float sharpness = 0.001 + smoothstep(0.9, 1.0, hum) * 0.005;
+  float s = max(sunElev, 0.0);
+  vec3 tone = vec3(s * (0.25 + hum * 0.35)) * MOUNTAIN_SHADE;
+  vec3 fade = vec3(s * (0.3 + hum * 0.2)) * MOUNTAIN_SHADE;
+  for(float i = 0.; i < 4.; i += 1.)
+    m += mix(.67, mountain(uv, 1. +  i * 0.5, 6. * i + 7., hMnt + i * 0.12, hPos, sharpness), 0.52 + 0.448 * i);
+  return m < 1. ? mix(fade * 0.8, 1.2 * tone, m) : sky;
+}
+
 // Starfield (https://www.shadertoy.com/view/NtsBzB)
 
 vec3 H33(vec3 p) {
@@ -204,26 +218,50 @@ vec3 H33(vec3 p) {
     return fract((p + p.yzx) * 43758.5453123);
 }
 
+float H33_D(vec3 i, vec3 f, vec3 ii) {
+  vec3 p = i + ii;
+  p = fract(p * vec3(127.1, 311.7, 74.7));
+  p += dot(p, p.yzx + 19.19);
+  p = fract((p + p.yzx) * 43758.5453123);
+  return dot(H33(i + ii), f - ii);
+}
+
+const vec2 I = vec2(0.0, 1.0);
+#define H33D(i,f,ii) dot(H33(i + ii), f - ii)
+
 float N13(vec3 p) {
     vec3 i = floor(p);
     vec3 f = fract(p);
     vec3 u = f * f * (3.0 - 2.0 * f);
     return mix(
         mix(
-            mix(dot(H33(i + vec3(0.0, 0.0, 0.0)), f - vec3(0.0, 0.0, 0.0)),
-                dot(H33(i + vec3(1.0, 0.0, 0.0)), f - vec3(1.0, 0.0, 0.0)),
-                u.x),
-            mix(dot(H33(i + vec3(0.0, 1.0, 0.0)), f - vec3(0.0, 1.0, 0.0)),
-                dot(H33(i + vec3(1.0, 1.0, 0.0)), f - vec3(1.0, 1.0, 0.0)),
-                u.x),
+            mix(H33D(i,f,I.xxx), H33D(i,f,I.yxx), u.x),
+            mix(H33D(i,f,I.xyx), H33D(i,f,I.yyx), u.x),
             u.y),
         mix(
-            mix(dot(H33(i + vec3(0.0, 0.0, 1.0)), f - vec3(0.0, 0.0, 1.0)),
-                dot(H33(i + vec3(1.0, 0.0, 1.0)), f - vec3(1.0, 0.0, 1.0)),
-                u.x),
-            mix(dot(H33(i + vec3(0.0, 1.0, 1.0)), f - vec3(0.0, 1.0, 1.0)),
-                dot(H33(i + vec3(1.0, 1.0, 1.0)), f - vec3(1.0, 1.0, 1.0)),
-                u.x),
+            mix(H33D(i,f,I.xxy), H33D(i,f,I.yxy), u.x),
+            mix(H33D(i,f,I.xyy), H33D(i,f,I.yyy), u.x),
+
+            u.y),
+        u.z);
+}
+        
+float N13_old(vec3 p) {
+    vec3 i = floor(p);
+    vec3 f = fract(p);
+    vec3 u = f * f * (3.0 - 2.0 * f);
+    return mix(
+        mix(
+            mix(dot(H33(i + I.xxx), f - I.xxx),
+                dot(H33(i + I.yxx), f - I.yxx), u.x),
+            mix(dot(H33(i + I.xyx), f - I.xyx),
+                dot(H33(i + I.yyx), f - I.yyx), u.x),
+            u.y),
+        mix(
+            mix(dot(H33(i + I.xxy), f - I.xxy),
+                dot(H33(i + I.yxy), f - I.yxy), u.x),
+            mix(dot(H33(i + I.xyy), f - I.xyy),
+                dot(H33(i + I.yyy), f - I.yyy), u.x),
             u.y),
         u.z);
 }
@@ -281,14 +319,14 @@ float H12(vec2 p) {
     return fract(sin(p.x * 100. + p.y * 7446.) * 8345.);
 }
 
-float N12(vec2 uv) {
-    vec2 lv = fract(uv);
-    vec2 id = floor(uv);
-    lv = lv * lv * (3.0 - 2.0 * lv);
+float N12(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
     return mix(
-      mix(H12(id), H12(id + vec2(1., 0.)), lv.x),
-      mix(H12(id + vec2(0., 1.)), H12(id + vec2(1., 1.)), lv.x),
-      lv.y);
+      mix(H12(i), H12(i + I.yx), f.x),
+      mix(H12(i + I.xy), H12(i + I.yy), f.x),
+      f.y);
 }
   
 vec3 renderClouds(vec2 uv, float sunpos, float humidity, float clouds){
@@ -400,18 +438,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
 
 #if MOUNTAINS
-  float m = 0.;
-  float hPos = -0.10;
-  float hMnt = -0.005;
-
-  float sharpness = 0.001 + smoothstep(0.9, 1.0, vHum.x) * 0.005;
-  float s = max(sunPos.y, 0.0);
-  vec3 tone = vec3(s * (0.25 + vHum.x * 0.35)) * MOUNTAIN_SHADE;
-  vec3 fade = vec3(s * (0.3 + vHum.x * 0.2)) * MOUNTAIN_SHADE;
-  for(float i = 0.; i < 4.; i += 1.)
-    m += mix(.67, mountain(uv, 1. +  i * 0.5, 6. * i + 7., hMnt + i * 0.12, hPos, sharpness), 0.52 + 0.448 * i);
-  if (m < 1.)
-    sky = mix(fade * 0.8, 1.2 * tone, m);
+  sky = renderMountains(uv, sunPos.y, vHum.z, sky);
 #endif
 
   fragColor = vec4( sky, 1.0);
