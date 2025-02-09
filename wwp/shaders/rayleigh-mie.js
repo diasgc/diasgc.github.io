@@ -298,7 +298,7 @@ vec3 renderClouds(vec2 uv, float sunpos, float humidity, float clouds){
   for(float i = 1.; i < CLOUD_STEPS; i+=1.) {
     c += SS(-iTime * CLOUD_SPEED + uv * pow(1.0 + (uv.y + humidity), i + .7 * clouds)) * pow(CLOUD_SMOOTH, i);
   }
-  return vec3( c * clouds );
+  return vec3( c * clouds * CLOUD_INTENSITY * mix(0.25, 1.5, clip(sunpos)));
 }
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
@@ -334,9 +334,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float refraction = 0.0035;
   
   // empiric Rayleigh + Mie coeffs from environment variables
-  float rayleigh  = 1. + exp( -cosGamma * vHum.x - altitude * 1E-9);
-  float turbidity = 0.5 + vHum.x;
-  float mieCoefficient = 0.005 + clip(0.001 * vHum.x - 0.001 * vHum.z);
+  float rayleigh  = 1.0 + exp( -cosGamma * vHum.x - altitude * 1E-9);
+  float turbidity = 1.0 + vHum.x;
+  float mieCoefficient = 0.00335 + clip(0.001 * vHum.x - 0.001 * vHum.z);
   
   float sunEx = sunIntensity( cosGamma, refraction, vHum.z );
   
