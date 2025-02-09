@@ -198,32 +198,38 @@ float mountain(vec2 uv, float scale, float offset, float h1, float h2, float s){
 
 // Starfield (https://www.shadertoy.com/view/NtsBzB)
 
+vec3 H33(vec3 p) {
+    p = fract(p * vec3(127.1, 311.7, 74.7));
+    p += dot(p, p.yzx + 19.19);
+    return fract((p + p.yzx) * 43758.5453123);
+}
+
 vec3 hash(vec3 p) {
     p = fract(p * vec3(127.1, 311.7, 74.7));
     p += dot(p, p.yzx + 19.19);
     return fract(sin(p) * 43758.5453123);
 }
 
-float noise2(vec3 p) {
+float N13(vec3 p) {
     vec3 i = floor(p);
     vec3 f = fract(p);
     vec3 u = f * f * (3.0 - 2.0 * f);
     
     return mix(
         mix(
-            mix(dot(hash(i + vec3(0.0, 0.0, 0.0)), f - vec3(0.0, 0.0, 0.0)),
-                dot(hash(i + vec3(1.0, 0.0, 0.0)), f - vec3(1.0, 0.0, 0.0)),
+            mix(dot(H33(i + vec3(0.0, 0.0, 0.0)), f - vec3(0.0, 0.0, 0.0)),
+                dot(H33(i + vec3(1.0, 0.0, 0.0)), f - vec3(1.0, 0.0, 0.0)),
                 u.x),
-            mix(dot(hash(i + vec3(0.0, 1.0, 0.0)), f - vec3(0.0, 1.0, 0.0)),
-                dot(hash(i + vec3(1.0, 1.0, 0.0)), f - vec3(1.0, 1.0, 0.0)),
+            mix(dot(H33(i + vec3(0.0, 1.0, 0.0)), f - vec3(0.0, 1.0, 0.0)),
+                dot(H33(i + vec3(1.0, 1.0, 0.0)), f - vec3(1.0, 1.0, 0.0)),
                 u.x),
             u.y),
         mix(
-            mix(dot(hash(i + vec3(0.0, 0.0, 1.0)), f - vec3(0.0, 0.0, 1.0)),
-                dot(hash(i + vec3(1.0, 0.0, 1.0)), f - vec3(1.0, 0.0, 1.0)),
+            mix(dot(H33(i + vec3(0.0, 0.0, 1.0)), f - vec3(0.0, 0.0, 1.0)),
+                dot(H33(i + vec3(1.0, 0.0, 1.0)), f - vec3(1.0, 0.0, 1.0)),
                 u.x),
-            mix(dot(hash(i + vec3(0.0, 1.0, 1.0)), f - vec3(0.0, 1.0, 1.0)),
-                dot(hash(i + vec3(1.0, 1.0, 1.0)), f - vec3(1.0, 1.0, 1.0)),
+            mix(dot(H33(i + vec3(0.0, 1.0, 1.0)), f - vec3(0.0, 1.0, 1.0)),
+                dot(H33(i + vec3(1.0, 1.0, 1.0)), f - vec3(1.0, 1.0, 1.0)),
                 u.x),
             u.y),
         u.z);
@@ -236,8 +242,8 @@ vec3 starfield(vec2 uv, float sunpos, float clds){
   float thres = 6.0 + smoothstep(0.5, 1.0, clds * fade) * 4.;
   float expos = 20.0;
   vec3 dir = normalize(vec3(uv * 2.0 - 1.0, 1.0));
-  float stars = pow(clamp(noise2(dir * 200.0), 0.0, 1.0), thres) * expos;
-  stars *= mix(0.4, 1.4, noise2(dir * 100.0 + vec3(iTime)));
+  float stars = pow(clamp(N13(dir * 200.0), 0.0, 1.0), thres) * expos;
+  stars *= mix(0.4, 1.4, N13(dir * 100.0 + vec3(iTime)));
   return vec3( stars * fade );
 }
 
