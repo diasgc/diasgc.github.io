@@ -231,4 +231,5 @@ https://www.shadertoy.com/view/4tVSRt (simple, with sun)
 https://www.shadertoy.com/view/WdByDV
 https://www.shadertoy.com/view/tsXBzM (terrain)
 https://www.shadertoy.com/view/wllyW4 (nice colors)
+https://www.shadertoy.com/view/fsdGWf (terrain lightning)
 */

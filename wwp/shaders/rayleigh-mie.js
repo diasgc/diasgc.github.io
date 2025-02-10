@@ -462,5 +462,5 @@ if (m > 0.0) {
 }
 #endif
 
-  fragColor = vec4( sky, 1.0);
+  fragColor = vec4( sky  + vHum.y * vHum.x * 0.5, 1.0);
 }`;
