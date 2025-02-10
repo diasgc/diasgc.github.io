@@ -10,12 +10,48 @@ Date.prototype.isDstObserved = function () {
 
 const settings = {
   timeId: document.getElementById('time'),
+  sunPos: 'auto',
+  humidity: 'auto',
+  clouds: 'auto',
+  cloudsLow: 'auto',
+  rain: 'auto',
+  moon: 'auto',
   init: function(){
     document.getElementById('bsettings').addEventListener('change', (e) => {
       document.getElementById('settings').style.display = e.target.checked ? 'inline' : 'none';
     });
     document.getElementById('binfo').addEventListener('change', (e) => {
       document.getElementById('info').style.display = e.target.checked ? 'inline' : 'none';
+    });
+    document.getElementById('s1').addEventListener('change', (e) => {
+      let i =  parseInt(e.target.value);
+      settings.sunPos = i < 0 ? 'auto' : 2.0 * (i - 50) / 100.0;
+      document.getElementById('l1').innerHTML = "sunposition: " + settings.sunPos;
+    });
+    document.getElementById('s2').addEventListener('change', (e) => {
+      let i =  parseInt(e.target.value);
+      settings.humidity = i < 0 ? 'auto' : i / 100.0;
+      document.getElementById('l2').innerHTML = "humidity: " + settings.humidity;
+    });
+    document.getElementById('s3').addEventListener('change', (e) => {
+      let i =  parseInt(e.target.value);
+      settings.clouds = i < 0 ? 'auto' : i / 100.0;
+      document.getElementById('l3').innerHTML = "clouds: " + settings.clouds;
+    });
+    document.getElementById('s4').addEventListener('change', (e) => {
+      let i =  parseInt(e.target.value);
+      settings.cloudsLow = i < 0 ? 'auto' : i / 100.0;
+      document.getElementById('l4').innerHTML = "clouds low: " + settings.cloudsLow;
+    });
+    document.getElementById('s5').addEventListener('change', (e) => {
+      let i =  parseInt(e.target.value);
+      settings.rain = i < 0 ? 'auto' : i / 100.0;
+      document.getElementById('l5').innerHTML = "rain: " + settings.rain;
+    });
+    document.getElementById('s6').addEventListener('change', (e) => {
+      let i =  parseInt(e.target.value);
+      settings.moon = i < 0 ? 'auto' : i / 100.0;
+      document.getElementById('l6').innerHTML = "moon: " + settings.moon;
     });
   }
 }
@@ -142,17 +178,17 @@ function upd(){
 const info = document.getElementById('info');
 function setUniforms(){
   wwprov.sun.update();
-  let elev = wwprov.sun.elevAbs;
+  let elev = settings.sunPos === 'auto' ? wwprov.sun.elevAbs : settings.sunPos;
   webGl.uniforms.uSunPosition.data = [elev];
-  let clds = wwprov.wth.get('cloud_cover') / 100.0;
+  let clds = settings.clouds === 'auto' ? wwprov.wth.get('cloud_cover') / 100.0 : settings.clouds;
   webGl.uniforms.uClouds.data = [clds];
-  let cldL = wwprov.wth.get('cloud_cover_low') / 100.0;
+  let cldL = settings.cloudsLow === 'auto' ? wwprov.wth.get('cloud_cover_low') / 100.0 : settings.cloudsLow;
   webGl.uniforms.uCloudLow.data = [cldL];
-  let hum = wwprov.wth.get('relative_humidity_2m') / 100.0;
+  let hum = settings.humidity === 'auto' ? wwprov.wth.get('relative_humidity_2m') / 100.0 : settings.humidity; //wwprov.wth.get('relative_humidity_2m') / 100.0;
   webGl.uniforms.uHumidity.data = [hum];
-  let moon = wwprov.sun.moon;
+  let moon = settings.moon === 'auto' ? wwprov.sun.moon : settings.moon; //wwprov.sun.moon;
   webGl.uniforms.uMoon.data = [moon];
-  let rain = wwprov.wth.get('precipitation') / 100.0;
+  let rain = settings.rain === 'auto' ? wwprov.wth.get('precipitation') / 100.0 : settings.rain; //wwprov.wth.get('precipitation') / 100.0;
   webGl.uniforms.uRain.data = [rain];
   let temp = wwprov.wth.get('temperature_2m');
   info.innerHTML = `e: ${elev.toFixed(4)} m: ${moon.toFixed(1)} | ${temp.toFixed(1)}ºC ${hum * 100}%Hr c/L: ${clds.toFixed(2)}/${cldL.toFixed(2)} pp: ${rain.toFixed(2)}`;

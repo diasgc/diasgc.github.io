@@ -17,15 +17,19 @@
 <body>
   <canvas id="gl-canvas"></canvas>
   <div id="settings">
-    <label for="s1">sunposition</label>
-    <input id="s1" type="range" min="0" max="100" step="1" value="50">
-    <label for="s2">humidity</label>
-    <input id="s2" type="range" min="0" max="100" step="1" value="50">
-    <label for="s3">clouds</label>
-    <input id="s3" type="range" min="0" max="100" step="1" value="50">
-    <label for="s4">clouds low</label>
-    <input id="s4" type="range" min="0" max="100" step="1" value="50">
-    <button id="reset" onclick="reset()">reset</button>
+    <label id="l1" for="s1">sunposition: auto</label>
+    <input id="s1" type="range" min="-1" max="100" step="1" value="-1">
+    <label id="l2" for="s2">humidity: auto</label>
+    <input id="s2" type="range" min="-1" max="100" step="1" value="-1">
+    <label id="l3" for="s3">clouds: auto</label>
+    <input id="s3" type="range" min="-1" max="100" step="1" value="-1">
+    <label id="l4" for="s4">clouds low: auto</label>
+    <input id="s4" type="range" min="-1" max="100" step="1" value="-1">
+    <label id="l5" for="s5">rain: auto</label>
+    <input id="s5" type="range" min="-1" max="100" step="1" value="-1">
+    <label id="l6" for="s6">moon: auto</label>
+    <input id="s6" type="range" min="-1" max="100" step="1" value="-1">
+    <button id="reset" onclick="reset()">w-update</button>
   </div>
   <input id="bsettings" type="checkbox">
   <div class="bctl"><input id="binfo" type="checkbox" checked><div id="info"></div></div>
