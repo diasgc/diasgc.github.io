@@ -17,13 +17,18 @@
 <body>
   <canvas id="gl-canvas"></canvas>
   <div id="settings">
-    <input id="time-auto" type="checkbox"><label for="time_auto">auto</label>
-    <input id="time" type="time">
-    <button id="now" onclick="reset()">now</span>
+    <label for="s1">sunposition</label>
+    <input id="s1" type="range" min="0" max="100" step="1" value="50">
+    <label for="s2">humidity</label>
+    <input id="s2" type="range" min="0" max="100" step="1" value="50">
+    <label for="s3">clouds</label>
+    <input id="s3" type="range" min="0" max="100" step="1" value="50">
+    <label for="s4">clouds low</label>
+    <input id="s4" type="range" min="0" max="100" step="1" value="50">
     <button id="reset" onclick="reset()">reset</button>
   </div>
   <input id="bsettings" type="checkbox">
-  <div class="bctl"><input id="binfo" type="checkbox" checked><label for="binfo">info</label><div id="info"></div></div>
+  <div class="bctl"><input id="binfo" type="checkbox" checked><div id="info"></div></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"
     integrity="sha512-F6rjAEKNMtM0aODcc/MdnAvhGxn7FCbAkKJ5FKba/fnD3gnN+LBEok326WAMdOhKQKYNr+j/tJEuV1PKwIfhCA=="
     crossorigin="anonymous"

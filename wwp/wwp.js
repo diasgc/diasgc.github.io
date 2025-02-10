@@ -10,24 +10,13 @@ Date.prototype.isDstObserved = function () {
 
 const settings = {
   timeId: document.getElementById('time'),
-  binfoId: document.getElementById('binfo'),
-  infoId: document.getElementById('info'),
-  timeAuto: true,
-  timeAutoId: document.getElementById('time-auto'),
   init: function(){
     document.getElementById('bsettings').addEventListener('change', (e) => {
       document.getElementById('settings').style.display = e.target.checked ? 'inline' : 'none';
     });
     document.getElementById('binfo').addEventListener('change', (e) => {
-      settings.infoId.style.display = settings.binfoId.checked ? 'inline' : 'none';
+      document.getElementById('info').style.display = e.target.checked ? 'inline' : 'none';
     });
-    this.timeAutoId.addEventListener('change', this.timeAutoIdChange);
-  },
-  timeAutoIdChange: function(){
-    settings.timeId.style.display = settings.timeAutoId.checked ?  'none' : 'inline';
-  },
-  binfoClick: function(){
-    settings.infoId.style.display = settings.binfoId.checked ? 'inline' : 'none';
   }
 }
 
