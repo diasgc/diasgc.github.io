@@ -17,6 +17,11 @@ const frag=`#pragma optimize(on)
 #undef fastRefractiveIndex
 #undef fastMolsPerVolume
 
+#if WEATHER == 0
+#undef CLOUDS
+#define CLOUDS 0
+#endif
+
 #ifdef  fast
 #define fastRayleigh
 #define fastMie
@@ -77,7 +82,7 @@ const vec3 cameraPos = vec3( 1.0, 0.0, 1.0 );
 
 const float moonFade = 2.0;
 const vec3  sunLighColor = vec3(1.0);
-const vec3  nightColor = vec3(0.04, 0.034, 0.09) * 0.32;
+const vec3  nightColor = vec3(0.03, 0.034, 0.09) * 0.32;
 
 // inverse of sun intensity steepness: (def: 0.66 = 1./1.5)
 const float sunIStep = 0.66;
@@ -85,7 +90,7 @@ const float sunImax = 1000.0;
 const float sunImin = 300.0;
 
 // earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
-const float sunCutoffAngle = pi / 1.95; //1.766
+const float sunCutoffAngle = pi / 1.9; //1.766
 
 // 66 arc seconds -> degrees, and the cosine of that
 const float kSunArc = 0.999956676; //cos( arcsec2rad * 3840. );
@@ -404,12 +409,12 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float rPhase = rayleighPhase( cosTheta * 0.5 + 0.5 );
   float mPhase = hgPhase( cosTheta, g, g2 );
   vec3 betaTotal = ( vBetaR * rPhase + vBetaM * mPhase ) / ( vBetaR + vBetaM );
-  vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.5 ) );
-  vec3 B = pow( sunEx * betaTotal * Fex, vec3( 0.5) );
+  vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.0 + cosGamma) ); // zenith
+  vec3 B = pow( sunEx * betaTotal * Fex, vec3( 0.5 - cosGamma) ); // horizon
   vec3 L0 = vec3(0.);
   
   vec3 night = nightColor * (1.0 + moon * moonFade);
-  vec3 light = sunLighColor * (1.0 - clouds * 0.75 - cloudLow * 0.25) + night;
+  vec3 light = sunLighColor * (1.0 - vHum.z * 0.75 - vHum.y * 0.25) + night;
 
   
   if (vHum.z < 0.01) {

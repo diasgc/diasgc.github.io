@@ -8,6 +8,29 @@ Date.prototype.isDstObserved = function () {
   return this.getTimezoneOffset() < this.stdTimezoneOffset();
 }
 
+const settings = {
+  timeId: document.getElementById('time'),
+  binfoId: document.getElementById('binfo'),
+  infoId: document.getElementById('info'),
+  timeAuto: true,
+  timeAutoId: document.getElementById('time-auto'),
+  init: function(){
+    document.getElementById('bsettings').addEventListener('change', (e) => {
+      document.getElementById('settings').style.display = e.target.checked ? 'inline' : 'none';
+    });
+    document.getElementById('binfo').addEventListener('change', (e) => {
+      settings.infoId.style.display = settings.binfoId.checked ? 'inline' : 'none';
+    });
+    this.timeAutoId.addEventListener('change', this.timeAutoIdChange);
+  },
+  timeAutoIdChange: function(){
+    settings.timeId.style.display = settings.timeAutoId.checked ?  'none' : 'inline';
+  },
+  binfoClick: function(){
+    settings.infoId.style.display = settings.binfoId.checked ? 'inline' : 'none';
+  }
+}
+
 const wwprov = {
   home: "https://open-meteo.com/",
   docs: "https://open-meteo.com/en/docs",
@@ -152,8 +175,9 @@ function reset(){
   wwprov.update();
 }
 
+
 window.onload = function(){
-  
+  settings.init();
   let w = new GlCanvas('gl-canvas');
   wwprov.load(() => {
     w.load({
