@@ -452,15 +452,16 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
 
 #if MOUNTAINS
-float m = renderMountains(uv, sunPos.y, vHum.y);
-if (m > 0.0) {
-  float s = clip(sunPos.y);
-  vec3 shade = mix(MOUNTAIN_SHADE, light, vHum.y);
-  vec3 fade = vec3(s * (0.25 + vHum.y * 0.25)) * shade;
-  vec3 tone = vec3(s * (0.35 + vHum.y * 0.35)) * shade;
-  sky = mix(0.9 * tone, fade * 1.1, m);
-}
+  float m = renderMountains(uv, sunPos.y, vHum.y);
+  if (m > 0.0) {
+    float s = clip(sunPos.y);
+    vec3 shade = mix(MOUNTAIN_SHADE, light, vHum.y);
+    vec3 fade = vec3(s * (0.25 + vHum.y * 0.25)) * shade;
+    vec3 tone = vec3(s * (0.35 + vHum.y * 0.35)) * shade;
+    sky = mix(0.9 * tone, fade * 1.1, m);
+  }
 #endif
+  float haze = 1. - vHum.y * vHum.x * clamp(cosGamma, 0.1, 0.8); 
 
-  fragColor = vec4( sky  + vHum.y * vHum.x * 0.5, 1.0);
+  fragColor = vec4( sky * haze, 1.0);
 }`;
