@@ -462,6 +462,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     sky = mix(0.9 * tone, fade * 1.1, m);
   }
 #endif
-  float haze = 1. - vHum.y * vHum.x * clamp(sunPosition.y, 0.1, 0.8); 
+  float haze = 1. - vHum.y * vHum.x * clamp(sunPos.y, 0.1, 0.8); 
   fragColor = vec4( sky * haze, 1.0);
 }`;
