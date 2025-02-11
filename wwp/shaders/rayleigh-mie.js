@@ -113,7 +113,7 @@ const float zenithM = 1250.0;
 #define hgPhase( a, g, g2 ) pi14 * (( 1.0 - g2 ) / pow( 1.0 - 2.0 * g * a + g2, 1.5 ))
 
 // Lambda constant for rayleigh and mie, def vec3( 680E-9, 550E-9, 450E-9 );
-const vec3 LAMBDA = vec3( 650E-9, 550E-9, 450E-9 ); // 650e-9
+const vec3 LAMBDA = vec3( 680E-9, 550E-9, 450E-9 ); // 650e-9
 const vec3 L_SCAT = vec3( 0.686, 0.678, 0.666 ); // ?vec3(3.469, 9.288, 21.2);
 
 
