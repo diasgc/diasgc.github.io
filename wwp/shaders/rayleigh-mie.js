@@ -70,13 +70,13 @@ uniform float       uTemperature;
 #define opacity     1.0
 #define izoom       2.0
 
-const float pi = acos(0.0) * 2.0;
-const float pi316 = 3.0 / (16.0 * pi);
-const float pi14 = 1.0 / (4.0 * pi);
-const float arcsec2rad = pi / 648000.0;
+const float pi      = acos(0.0) * 2.0;
+const float pi316   = 3.0 / (16.0 * pi);
+const float pi14    = 1.0 / (4.0 * pi);
+const float asec2r  = pi / 648000.0;
 const float rad2deg = 180.0 / pi;
 
-const vec3 zenDir = vec3 ( 0.0, 1.0, 0.0 );
+const vec3 zenDir    = vec3( 0.0, 1.0, 0.0 );
 const vec3 cameraPos = vec3( 1.0, 0.0, 1.0 );
 
 
@@ -86,14 +86,14 @@ const vec3  nightColor = vec3(0.03, 0.034, 0.09) * 0.32;
 
 // inverse of sun intensity steepness: (def: 0.66 = 1./1.5)
 const float sunIStep = 0.66;
-const float sunImax = 1000.0;
-const float sunImin = 300.0;
+const float sunImax  = 1000.0;
+const float sunImin  = 700.0;
 
 // earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
 const float sunCutoffAngle = pi / 1.9; //1.766
 
 // 66 arc seconds -> degrees, and the cosine of that
-const float kSunArc = 0.999956676; //cos( arcsec2rad * 3840. );
+const float kSunArc = 0.999956676; //cos( asec2r * 3840. );
 const float kSunDim = 2e-5;
 
 // Sun extinction power def 0.5
