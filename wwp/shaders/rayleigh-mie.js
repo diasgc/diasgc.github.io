@@ -114,6 +114,7 @@ const float zenithM = 1250.0;
 
 // Lambda constant for rayleigh and mie, def vec3( 680E-9, 550E-9, 450E-9 );
 const vec3 LAMBDA = vec3( 680E-9, 550E-9, 450E-9 ); // 650e-9
+// #define LAMBDA vec3( 680E-9, 550E-9, 450E-9 ) - vec3( 230E-9, 100E-9, 1E-9 ) * smoothstep(0.9, 1.0, clouds)
 const vec3 L_SCAT = vec3( 0.686, 0.678, 0.666 ); // ?vec3(3.469, 9.288, 21.2);
 
 
@@ -461,7 +462,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     sky = mix(0.9 * tone, fade * 1.1, m);
   }
 #endif
-  float haze = 1. - vHum.y * vHum.x * clamp(cosGamma, 0.1, 0.8); 
-
+  float haze = 1. - vHum.y * vHum.x * clamp(sunPosition.y, 0.1, 0.8); 
   fragColor = vec4( sky * haze, 1.0);
 }`;
