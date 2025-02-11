@@ -6,6 +6,7 @@ const frag=`#pragma optimize(on)
 #define STARS 1
 #define CLOUDS 1
 #define WEATHER 1
+#define XLAMB 1
 
 #define SHADERTOY 0
 #define DEMO ${live ? 1 : 0}
@@ -113,9 +114,16 @@ const float zenithM = 1250.0;
 #define hgPhase( a, g, g2 ) pi14 * (( 1.0 - g2 ) / pow( 1.0 - 2.0 * g * a + g2, 1.5 ))
 
 // Lambda constant for rayleigh and mie, def vec3( 680E-9, 550E-9, 450E-9 );
-const vec3 LAMBDA = vec3( 680E-9, 550E-9, 450E-9 ); // 650e-9
-// #define LAMBDA vec3( 680E-9, 550E-9, 450E-9 ) - vec3( 230E-9, 100E-9, 1E-9 ) * smoothstep(0.9, 1.0, clouds)
 const vec3 L_SCAT = vec3( 0.686, 0.678, 0.666 ); // ?vec3(3.469, 9.288, 21.2);
+#if XLAMB == 0
+const vec3 LAMBDA = vec3( 680E-9, 550E-9, 450E-9 ); // 650e-9
+const vec3 bMie = 2.726902423E-18 * pow( (2.0 * pi) / LAMBDA, vec3( 4.0 - 2.0 ) ) * L_SCAT;
+const vec3  L4 = pow(LAMBDA, vec3( 4.0 ) );
+#else
+#define LAMBDA vec3( 680E-9, 550E-9, 450E-9 ) - vec3( 230E-9, 100E-9, 1E-9 ) * smoothstep(0.9, 1.0, clouds)
+#define bMie 2.726902423E-18 * pow( (2.0 * pi) / LAMBDA, vec3( 4.0 - 2.0 ) ) * L_SCAT
+#define L4 pow(LAMBDA, vec3( 4.0 ) )
+#endif
 
 
 // Mie scaytering for large particles
@@ -124,7 +132,6 @@ const vec3 L_SCAT = vec3( 0.686, 0.678, 0.666 ); // ?vec3(3.469, 9.288, 21.2);
  #define getBetaMie(T) vec3( 1.8399918514433978E-14, 2.7798023919660528E-14, 4.0790479543861094E-14 )
  #else
  // calc: 10E-18 * 0.434 * ( 0.2 * T ) * pi * pow( ( 2. * pi ) / LAMBDA, V ) * MIE_K
- const vec3 bMie = 2.726902423E-18 * pow( (2.0 * pi) / LAMBDA, vec3( 4.0 - 2.0 ) ) * L_SCAT;
  #define getBetaMie(T) T * bMie
  #endif 
 
@@ -165,7 +172,6 @@ const float KB = 1.3806488e-23;
 const float def_pn = 0.0279;
 const float def_kpn = (6.0 + 3.0 * def_pn)/( 6.0 - 7.0 * def_pn );
 const float pi383 = 8.0 / 3.0 * pow( pi, 3. );
-const vec3  L4 = pow(LAMBDA, vec3( 4.0 ) );
 // (8*pi³*(n²-1)²*(6+3pn)) / (3N * pow(lambda, vec3(4.0))*(6-7pn))
 vec3 getBetaRayleigh( float rayleigh, float Tk, float P, float H ){
   float n = pow( pow( airRefractiveIndex(Tk, P, H), 2.) - 1., 2.);
