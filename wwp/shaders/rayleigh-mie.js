@@ -6,7 +6,7 @@ const frag=`#pragma optimize(on)
 #define STARS 1
 #define CLOUDS 1
 #define WEATHER 1
-#define XLAMB 1
+#define DEF_LAMBDA 0
 
 #define SHADERTOY 0
 #define DEMO ${live ? 1 : 0}
@@ -115,7 +115,7 @@ const float zenithM = 1250.0;
 
 // Lambda constant for rayleigh and mie, def vec3( 680E-9, 550E-9, 450E-9 );
 const vec3 L_SCAT = vec3( 0.686, 0.678, 0.666 ); // ?vec3(3.469, 9.288, 21.2);
-#if XLAMB == 0
+#if DEF_LAMBDA
 const vec3 LAMBDA = vec3( 680E-9, 550E-9, 450E-9 ); // 650e-9
 const vec3 bMie = 2.726902423E-18 * pow( (2.0 * pi) / LAMBDA, vec3( 4.0 - 2.0 ) ) * L_SCAT;
 const vec3  L4 = pow(LAMBDA, vec3( 4.0 ) );
@@ -431,7 +431,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     L0 += sunEx * 1.9e5 * Fex * sundisk;
   } else {
     // clouds will desaturate
+#if DEF_LAMBDA
     L = mix(L, vec3(length(L)) * (1. - 0.6 * vHum.z), vHum.z);
+#endif
 #if CLOUDS
     night += renderClouds(uv, sunPos.y, vHum.x, vHum.z);
 #endif
