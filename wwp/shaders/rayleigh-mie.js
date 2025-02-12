@@ -82,8 +82,8 @@ const float rad2deg = 180.0 / pi;
 const vec3 zenDir   = vec3( 0.0, 1.0, 0.0 );
 
 const float moonFade   = 2.0;
-const vec3  lightColor = vec3( 1.0 );
 const vec3  nightColor = vec3( 0.03, 0.034, 0.09) * 0.32;
+
 
 const struct Sun {
   float arc;    // 66 arc seconds -> degrees, and the cosine of that
@@ -95,20 +95,6 @@ const struct Sun {
   float cutoff; // earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
   vec3  color;
 } sun = Sun( cos(asec2r * 3840.), 2e-5, 0.5, 0.66, 1000., 500., pi / 1.9, vec3( 1.0 ) );
-
-// inverse of sun intensity steepness: (def: 0.66 = 1./1.5)
-const float sunIStep   = 0.66;
-const float sunImax    = 1000.0;
-const float sunImin    = 500.0;
-
-// earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
-const float sunCutoffAngle = pi / 1.89; //1.766
-// 66 arc seconds -> degrees, and the cosine of that
-const float sunArc     = cos( asec2r * 3840.0 ); // 0.999956676;
-const float sunDim     = 2E-5;
-
-// Sun extinction power def 0.5
-const vec3  sunExtinctPow = vec3( 0.5 );
 
 float sunIntensity(float angle, float refraction, float cloudiness) {
   return mix(sun.imax, sun.imin, cloudiness) * max(0., 1. - exp( -sun.istep * ( sun.cutoff - acos(angle) + refraction )));
