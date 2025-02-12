@@ -85,24 +85,34 @@ const float moonFade   = 2.0;
 const vec3  lightColor = vec3( 1.0 );
 const vec3  nightColor = vec3( 0.03, 0.034, 0.09) * 0.32;
 
+const struct Sun {
+  float arc;    // 66 arc seconds -> degrees, and the cosine of that
+  float dim;
+  float extPow; // Sun extinction power def 0.5
+  float istep;  // inverse of sun intensity steepness: (def: 0.66 = 1./1.5)
+  float imax;
+  float imin;
+  float cutoff; // earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
+  vec3  color;
+} sun = Sun( cos(asec2r * 3840.), 2e-5, 0.5, 0.66, 1000., 500., pi / 1.9, vec3( 1.0 ) );
+
 // inverse of sun intensity steepness: (def: 0.66 = 1./1.5)
 const float sunIStep   = 0.66;
 const float sunImax    = 1000.0;
 const float sunImin    = 500.0;
 
 // earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
-const float sunCutoffAngle = pi / 1.9; //1.766
+const float sunCutoffAngle = pi / 1.89; //1.766
 // 66 arc seconds -> degrees, and the cosine of that
-const float sunArc     = 0.999956676; //cos( asec2r * 3840.0 );
+const float sunArc     = cos( asec2r * 3840.0 ); // 0.999956676;
 const float sunDim     = 2E-5;
 
 // Sun extinction power def 0.5
 const vec3  sunExtinctPow = vec3( 0.5 );
 
 float sunIntensity(float angle, float refraction, float cloudiness) {
-  return mix(sunImax, sunImin, cloudiness) * max(0., 1. - exp( -sunIStep * ( sunCutoffAngle - acos(angle) + refraction )));
+  return mix(sun.imax, sun.imin, cloudiness) * max(0., 1. - exp( -sun.istep * ( sun.cutoff - acos(angle) + refraction )));
 }
-
 
 // constants for atmospheric scattering
 // optical length at zenith for molecules
@@ -352,8 +362,9 @@ float N12(vec2 p) {
 vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
   float r = 0.;
   float pw = 1.0;
+  vec2 uv2 = (1. - uv);
   for(float i = 1.0; i < CLOUD_STEPS; i += 1.0) {
-    r += N12(-iTime * CLOUD_SPEED + uv * pow(1.0 + (uv.y + h), i + pw * c)) * pow(CLOUD_SMOOTH, i);
+    r += N12(-iTime * CLOUD_SPEED + uv2 * pow(1.0 + uv2.y + h, i + pw * c)) * pow(CLOUD_SMOOTH, i);
   }
   return vec3( r * c * CLOUD_INTENSITY * mix(0.25, 0.5, clip(sunpos)));
 }
@@ -398,15 +409,14 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #endif
   
   float sunEx = sunIntensity( cosGamma, refraction, clouds );
-  
   float sunFd = 1.0 - clip( 1.0 - exp( cosGamma ));  // <---- exp(cosGamma) original
   float rayleighCoefficient = rayleigh + sunFd - 1.0;
   // extinction (absorbtion + out scattering)
-  vec3 vBetaR = getBetaRayleigh( rayleigh, temperature, pressure, vHum.x ) * rayleighCoefficient;
+  vec3 vBetaR = getBetaRayleigh( rayleigh, temperature, pressure, humidity ) * rayleighCoefficient;
   vec3 vBetaM = getBetaMie( turbidity ) * mieCoefficient;
 
   // Mie directional g def float g = 0.8;
-  float g = 0.8 + vHum.x * 0.01;
+  float g = 0.8;
   float g2 = g * g;
   
  
@@ -423,14 +433,14 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 B = pow( sunEx * betaTotal * Fex, vec3( 0.5 - cosGamma) ); // horizon
   vec3 L0 = vec3(0.);
   
-  vec3 night = nightColor * (1.0 + moon * moonFade);
-  vec3 light = lightColor * (1.0 - vHum.z * 0.75 - vHum.y * 0.25) + night;
+  vec3 night = nightColor * (1.0 + sin(pi * moon));
+  vec3 light = sun.color * (1.0 - vHum.z * 0.75 - vHum.y * 0.25) + night;
 
   
   if (vHum.z < 0.01) {
     L0 += 0.5 * Fex;
     // composition + solar disc
-    float sundisk = smoothstep( sunArc, sunArc + sunDim, cosTheta);
+    float sundisk = smoothstep( sun.arc, sun.arc + sun.dim, cosTheta);
     L0 += sunEx * 1.9e5 * Fex * sundisk;
   } else {
     // clouds will desaturate
@@ -438,7 +448,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     L = mix(L, vec3(length(L)) * (1. - 0.6 * vHum.z), vHum.z);
 #endif
 #if CLOUDS
-    night += renderClouds(uv, sunPos.y, vHum.x, vHum.z + vHum.y);
+    night += renderClouds(uv, cosGamma, vHum.x, vHum.z + vHum.y);
 #endif
   }
   
