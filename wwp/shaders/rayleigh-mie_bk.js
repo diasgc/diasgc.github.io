@@ -19,18 +19,18 @@ const frag=`#pragma optimize(on)
 #undef fastMolsPerVolume
 
 #if WEATHER == 0
- #undef  CLOUDS
- #define CLOUDS 0
+#undef CLOUDS
+#define CLOUDS 0
 #endif
 
 #ifdef  fast
- #define fastRayleigh
- #define fastMie
+#define fastRayleigh
+#define fastMie
 #endif
 
 #ifdef fastRayleigh
- #define fastRefractiveIndex
- #define fastMolsPerVolume
+#define fastRefractiveIndex
+#define fastMolsPerVolume
 #endif
 
 // utilities
@@ -40,30 +40,30 @@ const frag=`#pragma optimize(on)
 
 // environment variables
 #if SHADERTOY
- #define temperature 273.0
- #define humidity    0.5
- #define clouds      0.2
- #define moon        0.5
- #define rain        0.0
+#define temperature 273.0
+#define humidity    0.5
+#define clouds      0.2
+#define moon        0.5
+#define rain        0.0
 #else
- // uniforms
- uniform vec2        iResolution;
- uniform float       iTime;
- uniform vec3        iMouse;
- uniform float       uSunPosition;
- uniform float       uClouds;
- uniform float       uCloudLow;
- uniform float       uHumidity;
- uniform float       uMoon;
- uniform float       uRain;
- uniform float       uTemperature;
- // alias
- #define humidity    uHumidity
- #define clouds      uClouds
- #define cloudLow    uCloudLow
- #define moon        uMoon
- #define rain        uRain
- #define temperature uTemperature
+// uniforms
+uniform vec2        iResolution;
+uniform float       iTime;
+uniform vec3        iMouse;
+uniform float       uSunPosition;
+uniform float       uClouds;
+uniform float       uCloudLow;
+uniform float       uHumidity;
+uniform float       uMoon;
+uniform float       uRain;
+uniform float       uTemperature;
+// alias
+#define humidity    uHumidity
+#define clouds      uClouds
+#define cloudLow    uCloudLow
+#define moon        uMoon
+#define rain        uRain
+#define temperature uTemperature
 #endif
 
 #define altitude    0.0
@@ -99,7 +99,7 @@ const float sunDim = 2E-5;
 const vec3  sunExtinctPow = vec3( 0.5 );
 
 float sunIntensity(float angle, float refraction, float cloudiness) {
-  return mix(sunImax, sunImin, cloudiness) * max(0., 1. - exp( -sunIStep * ( sunCutoffAngle - acos(angle) + refraction )));
+  return mix(sunImax, sunImin, cloudiness) * (1. - exp( -sunIStep * ( sunCutoffAngle - acos(clamp(angle, -1.0, 1.0)) + refraction ) ));
 }
 
 
