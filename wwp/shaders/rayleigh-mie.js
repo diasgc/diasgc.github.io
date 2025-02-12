@@ -9,7 +9,7 @@ const frag=`#pragma optimize(on)
 #define DEF_LAMBDA 0
 
 #define SHADERTOY 0
-#define DEMO ${live ? 1 : 0}
+#define DEMO 1
 #define DEMO_SPEED 0.1
 
 #undef fast
@@ -36,13 +36,14 @@ const frag=`#pragma optimize(on)
 // utilities
 #define clip(x) clamp(x, 0., 1.)
 #define rand(x) fract(sin(x) * 75154.32912)
-#define ACESFilmic(x) clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0)
+#define ACESFilmic(x) clip((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14))
 
 // environment variables
 #if SHADERTOY
  #define temperature 273.0
  #define humidity    0.5
- #define clouds      0.2
+ #define clouds      0.9
+ #define cloudLow    0.9
  #define moon        0.5
  #define rain        0.0
 #else
@@ -85,15 +86,15 @@ const vec3  lightColor = vec3( 1.0 );
 const vec3  nightColor = vec3( 0.03, 0.034, 0.09) * 0.32;
 
 // inverse of sun intensity steepness: (def: 0.66 = 1./1.5)
-const float sunIStep = 0.66;
-const float sunImax  = 1000.0;
-const float sunImin  = 700.0;
+const float sunIStep   = 0.66;
+const float sunImax    = 1000.0;
+const float sunImin    = 500.0;
 
 // earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
 const float sunCutoffAngle = pi / 1.9; //1.766
 // 66 arc seconds -> degrees, and the cosine of that
-const float sunArc = 0.999956676; //cos( asec2r * 3840.0 );
-const float sunDim = 2E-5;
+const float sunArc     = 0.999956676; //cos( asec2r * 3840.0 );
+const float sunDim     = 2E-5;
 
 // Sun extinction power def 0.5
 const vec3  sunExtinctPow = vec3( 0.5 );
@@ -108,11 +109,11 @@ float sunIntensity(float angle, float refraction, float cloudiness) {
 const float zenithR = 8400.0;
 const float zenithM = 1250.0;
 
-#define rayleighPhase(a)    pi316 * ( 1.0 + a * a )
-#define hgPhase( a, g, g2 ) pi14 * (( 1.0 - g2 ) / pow( 1.0 - 2.0 * g * a + g2, 1.5 ))
+#define rayleighPhase(a)  pi316 * ( 1.0 + a * a )
+#define hgPhase(a,g,g2)   pi14 * (( 1.0 - g2 ) / pow( 1.0 - 2.0 * g * a + g2, 1.5 ))
 
 
-const vec3 L_SCAT = vec3( 0.686, 0.678, 0.666 ); // ?vec3(3.469, 9.288, 21.2);
+const vec3 L_SCAT   = vec3( 0.686, 0.678, 0.666 ); // ?vec3(3.469, 9.288, 21.2);
 // Lambda constant for rayleigh and mie, def vec3( 680E-9, 550E-9, 450E-9 );
 const vec3 LAMBDA_1 = vec3( 680E-9, 550E-9, 450E-9 );
 const vec3 LAMBDA_0 = vec3( 450E-9 );
@@ -121,7 +122,7 @@ const vec3 LAMBDA_0 = vec3( 450E-9 );
  const vec3 BMIE    = 2.726902423E-18 * pow( (2.0 * pi) / LAMBDA, vec3( 4.0 - 2.0 ) ) * L_SCAT;
  const vec3 L4      = pow(LAMBDA, vec3( 4.0 ) );
 #else
- #define LAMBDA mix(LAMBDA_1, LAMBDA_0, smoothstep(0.9, 1.0, clouds))
+ #define LAMBDA mix(LAMBDA_1, LAMBDA_0, smoothstep(0.8, 1.0, clouds))
  // calc: 10E-18 * 0.434 * ( 0.2 * T ) * pi * pow( ( 2. * pi ) / LAMBDA, V ) * MIE_K
  #define BMIE       2.726902423E-18 * pow( (2.0 * pi) / LAMBDA, vec3( 2.0 ) ) * L_SCAT
  #define L4         pow(LAMBDA, vec3( 4.0 ) )
@@ -227,6 +228,8 @@ float renderMountains(vec2 uv, float sunElev, float hum){
   return m * (1. - ss * uv.y * 500.);
 }
 
+const vec2 I = vec2(0.0, 1.0);
+
 // Starfield (https://www.shadertoy.com/view/NtsBzB)
 
 vec3 H33(vec3 p) {
@@ -243,7 +246,7 @@ float H33_D(vec3 i, vec3 f, vec3 ii) {
   return dot(H33(i + ii), f - ii);
 }
 
-const vec2 I = vec2(0.0, 1.0);
+
 #define H33D(i,f,ii) dot(H33(i + ii), f - ii)
 
 float N13(vec3 p) {
@@ -295,7 +298,7 @@ vec3 starfield(vec2 uv, float sunpos, float clds){
   return vec3( stars * fade );
 }
 
-// Starfield#2 (https://www.shadertoy.com/view/fsSfD3) (why AI 4s23Rt)
+// Starfield#2 (based on https://www.shadertoy.com/view/fsSfD3)
 
 const float phi = 1.61803398874989484820459;
 float R121(vec2 co, float s){
@@ -311,7 +314,7 @@ float LS2(vec2 uv, vec2 ofs, float b, float l) {
   return smoothstep(0.0, 1000.0, b * max(0.1, l) / pow(max(1e-13, len), 1.0 / max(0.1, l)));
 }
   
-vec3 sf2(vec2 uv, float sunpos, float clds) {
+vec3 renderStarfield(vec2 uv, float sunpos, float clds) {
   if (sunpos > -0.12 || clds > 0.5)
     return vec3(0.);
   vec3 col = vec3(0.0);
@@ -328,7 +331,7 @@ vec3 sf2(vec2 uv, float sunpos, float clds) {
 
 #define CLOUD_STEPS 8.
 #define CLOUD_SCALE 0.001
-#define CLOUD_INTENSITY 0.5
+#define CLOUD_INTENSITY 1.0
 #define CLOUD_SMOOTH 0.23
 #define CLOUD_SPEED 0.001
 
@@ -346,13 +349,16 @@ float N12(vec2 p) {
       f.y);
 }
   
-vec3 renderClouds(vec2 uv, float sunpos, float humidity, float clouds){
-  float c = 0.;
-  for(float i = 1.; i < CLOUD_STEPS; i+=1.) {
-    c += N12(-iTime * CLOUD_SPEED + uv * pow(1.0 + (uv.y + humidity), i + .7 * clouds)) * pow(CLOUD_SMOOTH, i);
+vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
+  float r = 0.;
+  float pw = 1.0;
+  for(float i = 1.0; i < CLOUD_STEPS; i += 1.0) {
+    r += N12(-iTime * CLOUD_SPEED + uv * pow(1.0 + (uv.y + h), i + pw * c)) * pow(CLOUD_SMOOTH, i);
   }
-  return vec3( c * clouds * CLOUD_INTENSITY * mix(0.25, 1.5, clip(sunpos)));
+  return vec3( r * c * CLOUD_INTENSITY * mix(0.25, 0.5, clip(sunpos)));
 }
+
+
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float ar = 1.;//iResolution.x/iResolution.y;
@@ -385,17 +391,13 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float turbidity = 1.0 + vHum.x + vHum.y;
   float mieCoefficient = 0.00335 - clip(0.001 * vHum.x - 0.001 * vHum.y);
 #else
-  vec3 vHum = vec3(0.0);
+  vec3  vHum = vec3(0.0);
   float rayleigh  = 1.0;
   float turbidity = 0.7;
   float mieCoefficient = 0.00335;
 #endif
   
-  
-  
-  
-  
-  float sunEx = sunIntensity( cosGamma, refraction, vHum.z );
+  float sunEx = sunIntensity( cosGamma, refraction, clouds );
   
   float sunFd = 1.0 - clip( 1.0 - exp( cosGamma ));  // <---- exp(cosGamma) original
   float rayleighCoefficient = rayleigh + sunFd - 1.0;
@@ -436,7 +438,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     L = mix(L, vec3(length(L)) * (1. - 0.6 * vHum.z), vHum.z);
 #endif
 #if CLOUDS
-    night += renderClouds(uv, sunPos.y, vHum.x, vHum.z);
+    night += renderClouds(uv, sunPos.y, vHum.x, vHum.z + vHum.y);
 #endif
   }
   
@@ -457,7 +459,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
 
 #if STARS
-  sky += sf2(uv, sunPos.y, vHum.z);
+  sky += renderStarfield(uv, sunPos.y, vHum.z);
 #endif
   
 
