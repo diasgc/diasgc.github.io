@@ -220,10 +220,10 @@ function updateNow(elev, moon, temp, hum, clds, cldL, rain){
   i.innerHTML = `solar elevation: ${elev} rad, ${deg.toFixed(2)}º<br>
   moon age: ${moon * 29.5}d<br>
   temp.: ${temp}ºC<br>
-  Relative Humidity: ${hum}%<br>
-  Cloudiness (total): ${clds}%<br>
-  Low clouds: ${cldL}%<br>
-  Precipitation: ${rain.toFixed(2)} mm`
+  Relative Humidity: ${hum.toFixed(1)}%<br>
+  Cloudiness (total): ${clds.toFixed(1)}%<br>
+  Low clouds: ${cldL.toFixed(1)}%<br>
+  Precipitation: ${rain.toFixed(1)} mm`
 }
 
 window.onload = function(){

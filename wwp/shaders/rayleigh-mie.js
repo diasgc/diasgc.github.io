@@ -70,7 +70,7 @@ const frag=`#pragma optimize(on)
 #define altitude    0.0
 #define pressure    1018.0
 #define opacity     1.0
-#define izoom       2.0
+#define izoom       1.0
 
 // constants
 const float pi      = acos(0.0) * 2.0;
@@ -84,7 +84,7 @@ const float rad2deg = 180.0 / pi;
 const vec3 zenDir   = vec3( 0.0, 1.0, 0.0 );
 
 const float moonFade   = 2.0;
-const vec3  nightColor = vec3( 0.03, 0.034, 0.09) * 0.32;
+const vec3  nightColor = vec3( 0.01, 0.03, 0.09) * 0.42;
 
 
 const struct Sun {
@@ -96,10 +96,10 @@ const struct Sun {
   float imin;
   float cutoff; // earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
   vec3  color;
-} sun = Sun( cos(asec2r * 3840.), 2e-5, 0.5, 0.66, 1000., 500., pi / 1.9, vec3( 1.0 ) );
+} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5, 0.66, 1000., 500., pi / 1.9, vec3( 1.0 ) );
 
-float sunIntensity(float angle, float refraction, float cloudiness) {
-  return mix(sun.imax, sun.imin, cloudiness) * max(0., 1. - exp( -sun.istep * ( sun.cutoff - acos(angle) + refraction )));
+float sunIntensity(float angle, float refraction) {
+  return sun.imax * max(0., 1. - exp( -sun.istep * ( sun.cutoff - acos(angle) + refraction )));
 }
 
 const struct Scattering {
@@ -111,6 +111,9 @@ const struct Scattering {
   vec3  V;
   vec3  betaMie;
   float airRefractiveIndex; // refractive index of air (default: 1.0003):
+  vec3  fastRayleigh;       // precalculated values - default: vec3 (6.869069761642851E-6, 1.3399870327319272E-5, 3.2714527166306815E-5)
+  float fastMolsPerVolume;
+  float fastRefractiveIndex;
 } SCAT = Scattering(
   8400.0,
   1250.0,
@@ -119,6 +122,9 @@ const struct Scattering {
   vec3( 680E-9 ),
   vec3( 4.0 - 2.0 ),
   vec3( 1.8399918514433978E-14, 2.7798023919660528E-14, 4.0790479543861094E-14 ),
+  1.0003,
+  vec3( 5.804542996261093E-6, 1.3562911419845635E-5, 3.0265902468824876E-5 ),
+  2.545E25,
   1.0003
 );
 
@@ -139,55 +145,53 @@ const struct Scattering {
 
 // Mie scaytering for large particles
 #ifdef fastMie
-// precalculated values
  #define getBetaMie(T) SCAT.betaMie
- #else
+#else
  #define getBetaMie(T) T * BMIE
- #endif 
+#endif
 
 #ifdef fastRefractiveIndex
-#define airRefractiveIndex(kelvin, Pmbar, rHum) 1.0003
+ #define airRefractiveIndex(kelvin, Pmbar, rHum) SCAT.fastRefractiveIndex
 #else
-// Appendix B:  Simple Shop-floor Formula for Refractive Index of Air
-// https://emtoolbox.nist.gov/Wavelength/Documentation.asp#AppendixB
-// 1. + 7.86e-4 * kPa / kelvin - 1.5e-11 * relH * (kelvin - 273.15)² + 160.0 (1kPa = 10mbar)
-float airRefractiveIndex(float kelvin, float Pmbar, float relH) {
-  return 1.0 + 7.86e-5 * Pmbar / kelvin - 1.5e-11 * relH * (pow(kelvin - 273.15, 2.0) + 160.0);
-}
-// full calculation
-float airRefractiveIndexFull(float kelvin, float P, float rH){
+ // Appendix B:  Simple Shop-floor Formula for Refractive Index of Air
+ // https://emtoolbox.nist.gov/Wavelength/Documentation.asp#AppendixB
+ // 1. + 7.86e-4 * kPa / kelvin - 1.5e-11 * relH * (kelvin - 273.15)² + 160.0 (1kPa = 10mbar)
+ float airRefractiveIndex(float kelvin, float Pmbar, float relH) {
+   return 1.0 + 7.86e-5 * Pmbar / kelvin - 1.5e-11 * relH * (pow(kelvin - 273.15, 2.0) + 160.0);
+ }
+ // full calculation
+ float airRefractiveIndexFull(float kelvin, float P, float rH){
   float t = kelvin - 273.15;
   float e = rH * ( 1. + 1e-4 * (7.2 + P * (0.00320 + 5.9e-7 * t * t))) * 6.1121 * exp( ( 18.678 - t / 234.5 ) * t / (t + 257.14));
-  float Nr = (77.6 * P - e * (5.6  + 3.75e5 / kelvin)) / kelvin;
+  float Nr = (77.6 * P - e * (5.6  + 3.75E5 / kelvin)) / kelvin;
   // refractive index of air (default: 1.0003):
-  return 1.0 + Nr * 1e-6 * exp( -altitude / SCAT.zenithR );
-}
+  return 1.0 + Nr * 1E-6 * exp( -altitude / SCAT.zenithR );
+ }
 #endif
 
 #ifdef fastMolsPerVolume
-#define molsPerVolume(Pmbar,kelvin) 2.545E25
+ #define molsPerVolume(Pmbar,kelvin) SCAT.fastMolsPerVolume
 #else
-// Boltzmann constant
-const float KB = 1.3806488e-23;
-#define molsPerVolume(Pmbar,kelvin) 100.0 * Pmbar / (KB * kelvin)
+ // Boltzmann constant
+ const float KB = 1.3806488E-23;
+ #define molsPerVolume(Pmbar,kelvin) 100.0 * Pmbar / (KB * kelvin)
 #endif
 
 
 //Rayleigh scattering for small particles
 #ifdef fastRayleigh
-// precalculated values - default: vec3 (6.869069761642851E-6, 1.3399870327319272E-5, 3.2714527166306815E-5)
-#define getBetaRayleigh(r, Tk, Pmbar, H ) vec3( 5.804542996261093E-6, 1.3562911419845635E-5, 3.0265902468824876E-5 )
+ #define getBetaRayleigh(r, Tk, Pmbar, H ) SCAT.fastRayleigh
 #else
-// depolarization factor (default: 0.0035) 0.0279
-const float def_pn = 0.0279;
-const float def_kpn = (6.0 + 3.0 * def_pn)/( 6.0 - 7.0 * def_pn );
+ // depolarization factor (default: 0.0035) 0.0279
+ const float def_pn = 0.0279;
+ const float def_kpn = (6.0 + 3.0 * def_pn)/( 6.0 - 7.0 * def_pn );
 
-// (8*pi³*(n²-1)²*(6+3pn)) / (3N * pow(lambda, vec3(4.0))*(6-7pn))
-vec3 getBetaRayleigh( float rayleigh, float Tk, float P, float H ){
+ // (8*pi³*(n²-1)²*(6+3pn)) / (3N * pow(lambda, vec3(4.0))*(6-7pn))
+ vec3 getBetaRayleigh( float rayleigh, float Tk, float P, float H ){
   float n = pow( pow( airRefractiveIndex(Tk, P, H), 2.) - 1., 2.);
   float N = molsPerVolume(P,Tk);  
   return pi383 * n * def_kpn / ( N * L4);
-}
+ }
 #endif
 
 
@@ -225,10 +229,10 @@ float mountain(vec2 uv, float scale, float offset, float h1, float h2, float s){
   return 1. - smoothstep(h, h + s, uv.y - MOUNTAIN_YOFFS);
 }
 
-float renderMountains(vec2 uv, float sunElev, float hum){
+float renderMountains(vec2 uv, float sunElev, float h){
   float m = 0.;
   float s = max(sunElev, 0.0);
-  float ss = 0.001 + smoothstep(0.9, 1.0, hum) * 0.009;
+  float ss = 0.001 + smoothstep(0.9, 1.0, h) * 0.009;
   m  = mountain(uv, 1.0, 7., -0.005, -0.10, ss);
   m += max(m, mountain(uv, 1.2, 9., 0.025, -0.10, ss));
   m += max(m, mountain(uv, 1.7, 11., 0.105, -0.10, ss));
@@ -273,26 +277,6 @@ float N13(vec3 p) {
             u.y),
         u.z);
 }
-        
-float N13_old(vec3 p) {
-    vec3 i = floor(p);
-    vec3 f = fract(p);
-    vec3 u = f * f * (3.0 - 2.0 * f);
-    return mix(
-        mix(
-            mix(dot(H33(i + I.xxx), f - I.xxx),
-                dot(H33(i + I.yxx), f - I.yxx), u.x),
-            mix(dot(H33(i + I.xyx), f - I.xyx),
-                dot(H33(i + I.yyx), f - I.yyx), u.x),
-            u.y),
-        mix(
-            mix(dot(H33(i + I.xxy), f - I.xxy),
-                dot(H33(i + I.yxy), f - I.yxy), u.x),
-            mix(dot(H33(i + I.xyy), f - I.xyy),
-                dot(H33(i + I.yyy), f - I.yyy), u.x),
-            u.y),
-        u.z);
-}
 
 vec3 starfield(vec2 uv, float sunpos, float clds){
   if (sunpos > -0.12 || clds > 0.9)
@@ -309,6 +293,7 @@ vec3 starfield(vec2 uv, float sunpos, float clds){
 // Starfield#2 (based on https://www.shadertoy.com/view/fsSfD3)
 
 const float phi = 1.61803398874989484820459;
+
 float R121(vec2 co, float s){
   return fract(tan(distance(co * phi, co) * s) * co.x);
 }
@@ -319,7 +304,7 @@ vec2 H21(float s){
 
 float LS2(vec2 uv, vec2 ofs, float b, float l) {
   float len = length(uv - ofs);
-  return smoothstep(0.0, 1000.0, b * max(0.1, l) / pow(max(1e-13, len), 1.0 / max(0.1, l)));
+  return smoothstep(0.0, 1000.0, b * max(0.1, l) / pow(max(1E-13, len), 1.0 / max(0.1, l)));
 }
   
 vec3 renderStarfield(vec2 uv, float sunpos, float clds) {
@@ -362,25 +347,22 @@ vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
   float pw = 1.0;
   vec2 uv2 = (1. - uv);
   for(float i = 1.0; i < CLOUD_STEPS; i += 1.0) {
-    r += N12(-iTime * CLOUD_SPEED + uv2 * pow(1.0 + uv2.y + h, i + pw * c)) * pow(CLOUD_SMOOTH, i);
+    r += N12(-iTime * CLOUD_SPEED + uv2 * pow(1.0 + uv2.y + c, i + pw * c)) * pow(CLOUD_SMOOTH, i);
   }
   return vec3( r * c * CLOUD_INTENSITY * mix(0.25, 0.5, clip(sunpos)));
 }
 
-
+#if SHADERTOY || DEMO
+  #define SUN_ELEV iMouse.z > 0. ? iMouse.y/iResolution.y : sin( iTime * DEMO_SPEED)
+#else
+  #define SUN_ELEV uSunPosition
+#endif
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
-  float ar = 1.;//iResolution.x/iResolution.y;
+  float ar = iResolution.y/iResolution.x;
   vec2 uv = fragCoord/iResolution.xy;
-  vec3 pos = vec3(izoom * uv * ar - vec2(0.0, 0.1), 0.0);
-
-#if SHADERTOY || DEMO
-  float y = iMouse.z > 0. ? iMouse.y/iResolution.y : sin( iTime * DEMO_SPEED);
-#else
-  float y = uSunPosition;
-#endif
-  vec3 sunPos = vec3( 0.5 , y, -1. );
-
+  vec3 pos = vec3(izoom * uv * ar - vec2(0.0, izoom/25.0), 0.0);
+  vec3 sunPos = vec3( 0.5 , SUN_ELEV, -1. );
   vec3 sunDir = normalize( sunPos );
   vec3 camPos = vec3( sunPos.x, 0.0, -sunPos.z);
   float cosGamma  = dot( sunDir, zenDir ); // 0 at horizon, 1 at zenith
@@ -406,9 +388,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float mieCoefficient = 0.00335;
 #endif
   
-  float sunEx = sunIntensity( cosGamma, refraction, clouds );
-  float sunFd = 1.0 - clip( 1.0 - exp( cosGamma ));  // <---- exp(cosGamma) original
+  float sunEx = sunIntensity( cosGamma, refraction );
+  float sunFd = 1.0 - clip( 1.0 - exp( cosGamma ));
   float rayleighCoefficient = rayleigh + sunFd - 1.0;
+  
   // extinction (absorbtion + out scattering)
   vec3 vBetaR = getBetaRayleigh( rayleigh, temperature, pressure, humidity ) * rayleighCoefficient;
   vec3 vBetaM = getBetaMie( turbidity ) * mieCoefficient;
@@ -419,7 +402,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
  
   // combined extinction factor
-  float iq0 = 1.0 - vHum.z * 0.2;
+  float iq0 = 2.0;
   float Iqbal = iq0 / ( cosZenith + 0.15 * pow( 93.885 - degrees( angZenith ), -1.253 ) );
   vec3 Fex = exp( -Iqbal * ( vBetaR * SCAT.zenithR + vBetaM * SCAT.zenithM ) );
   
@@ -427,30 +410,28 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float rPhase = rayleighPhase( cosTheta * 0.5 + 0.5 );
   float mPhase = hgPhase( cosTheta, g, g2 );
   vec3 betaTotal = ( vBetaR * rPhase + vBetaM * mPhase ) / ( vBetaR + vBetaM );
-  //vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.0 + cosGamma) ); // zenith
-  //vec3 B = pow( sunEx * betaTotal * Fex, vec3( 0.5 - cosGamma) ); // horizon
   vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.0) ); // zenith
   vec3 B = pow( sunEx * betaTotal * Fex , vec3( 1. ) ); // horizon
   vec3 L0 = vec3(0.);
-  
+  L0 += 0.5 * Fex;
   vec3 night = nightColor * (1.0 + sin(pi * moon));
-  vec3 light = sun.color * (1.0 - vHum.z * 0.75 - vHum.y * 0.25) + night;
-
+  vec3 light = sun.color + night;
   
-  if (vHum.z < 0.01) {
-    L0 += 0.5 * Fex;
+  
+  if (clouds < 0.9) {
     // composition + solar disc
     float sundisk = smoothstep( sun.arc, sun.arc + sun.dim, cosTheta);
-    L0 += sunEx * 1.9e5 * Fex * sundisk;
+    L0 += sunEx * 1.9E5 * Fex * sundisk;
   } else {
-    // clouds will desaturate
 #if DEF_LAMBDA
+    // clouds will desaturate
     L = mix(L, vec3(length(L)) * (1. - 0.6 * vHum.z), vHum.z);
 #endif
+  }
+
 #if CLOUDS
     night += renderClouds(uv, cosGamma, vHum.x, vHum.z + vHum.y);
 #endif
-  }
   
   // the horizon line
   L *= mix( light, B , clip(pow(1.0 - cosGamma, 5.0)));
@@ -462,9 +443,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   // acesfilmic color filter, sky only
   sky = ACESFilmic(sky);
   
-  
   // add moonlight according to moon phase (do not apply acesfilmic)
-  //sky = max(sky, night);
   sky += night;
 
 
@@ -474,15 +453,15 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
 
 #if MOUNTAINS
-  float m = renderMountains(uv, sunPos.y, vHum.y);
+  float m = renderMountains(uv, sunPos.y, 1.0);
   if (m > 0.0) {
     float s = clip(sunPos.y);
     vec3 shade = mix(MOUNTAIN_SHADE, light, vHum.y);
-    vec3 fade = vec3(s * (0.25 + vHum.y * 0.25)) * shade;
-    vec3 tone = vec3(s * (0.35 + vHum.y * 0.35)) * shade;
+    vec3 fade = vec3(s * (0.15 + vHum.y * 0.32)) * shade;
+    vec3 tone = vec3(s * (0.55 + vHum.y * 0.35)) * shade;
     sky = mix(0.9 * tone, fade * 1.1, m);
   }
 #endif
-  float haze = 1. - vHum.y * vHum.x * clamp(sunPos.y, 0.1, 0.8); 
-  fragColor = vec4( sky * haze, 1.0);
+  float haze = vHum.y * vHum.x * clamp(cosGamma, moon * 0.2, 0.4); 
+  fragColor = vec4( sky + haze, 1.0);
 }`;
