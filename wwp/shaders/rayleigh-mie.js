@@ -74,7 +74,9 @@ const frag=`#pragma optimize(on)
 
 // constants
 const float pi      = acos(0.0) * 2.0;
+const float pi2     = pi * 2.0;
 const float pi316   = 3.0 / (16.0 * pi);
+const float pi383   = 8.0 / 3.0 * pow( pi, 3. );
 const float pi14    = 1.0 / (4.0 * pi);
 const float asec2r  = pi / 648000.0;
 const float rad2deg = 180.0 / pi;
@@ -100,27 +102,37 @@ float sunIntensity(float angle, float refraction, float cloudiness) {
   return mix(sun.imax, sun.imin, cloudiness) * max(0., 1. - exp( -sun.istep * ( sun.cutoff - acos(angle) + refraction )));
 }
 
-// constants for atmospheric scattering
-// optical length at zenith for molecules
-const float zenithR = 8400.0;
-const float zenithM = 1250.0;
+const struct Scattering {
+  float zenithR;  // Rayleigh optical length at zenith for molecules
+  float zenithM;  // Mie optical length at zenith for molecules
+  vec3  primary;  //
+  vec3  lambda;   // Lambda constant for rayleigh and mie, def vec3( 680E-9, 550E-9, 450E-9 );
+  vec3  l0;
+  vec3  V;
+  vec3  betaMie;
+  float airRefractiveIndex; // refractive index of air (default: 1.0003):
+} SCAT = Scattering(
+  8400.0,
+  1250.0,
+  vec3( 0.686, 0.678, 0.666 ),
+  vec3( 680E-9, 550E-9, 450E-9 ),
+  vec3( 680E-9 ),
+  vec3( 4.0 - 2.0 ),
+  vec3( 1.8399918514433978E-14, 2.7798023919660528E-14, 4.0790479543861094E-14 ),
+  1.0003
+);
 
 #define rayleighPhase(a)  pi316 * ( 1.0 + a * a )
 #define hgPhase(a,g,g2)   pi14 * (( 1.0 - g2 ) / pow( 1.0 - 2.0 * g * a + g2, 1.5 ))
 
-
-const vec3 L_SCAT   = vec3( 0.686, 0.678, 0.666 ); // ?vec3(3.469, 9.288, 21.2);
-// Lambda constant for rayleigh and mie, def vec3( 680E-9, 550E-9, 450E-9 );
-const vec3 LAMBDA_1 = vec3( 680E-9, 550E-9, 450E-9 );
-const vec3 LAMBDA_0 = vec3( 450E-9 );
 #if DEF_LAMBDA
- const vec3 LAMBDA  = LAMBDA_1;
- const vec3 BMIE    = 2.726902423E-18 * pow( (2.0 * pi) / LAMBDA, vec3( 4.0 - 2.0 ) ) * L_SCAT;
+ #define LAMBDA     SCAT.lambda
+ const vec3 BMIE    = 2.726902423E-18 * pow( pi2 / LAMBDA, SCAT.V ) * SCAT.primary;
  const vec3 L4      = pow(LAMBDA, vec3( 4.0 ) );
 #else
- #define LAMBDA mix(LAMBDA_1, LAMBDA_0, smoothstep(0.8, 1.0, clouds))
- // calc: 10E-18 * 0.434 * ( 0.2 * T ) * pi * pow( ( 2. * pi ) / LAMBDA, V ) * MIE_K
- #define BMIE       2.726902423E-18 * pow( (2.0 * pi) / LAMBDA, vec3( 2.0 ) ) * L_SCAT
+ #define LAMBDA     mix(SCAT.lambda, SCAT.l0, smoothstep(0.8, 1.0, clouds))
+ // calc: 10E-18 * 0.434 * ( 0.2 * T ) * pi * pow( 2*pi / LAMBDA, V ) * MIE_K
+ #define BMIE       2.726902423E-18 * pow( pi2 / LAMBDA, SCAT.V ) * SCAT.primary
  #define L4         pow(LAMBDA, vec3( 4.0 ) )
 #endif
 
@@ -128,7 +140,7 @@ const vec3 LAMBDA_0 = vec3( 450E-9 );
 // Mie scaytering for large particles
 #ifdef fastMie
 // precalculated values
- #define getBetaMie(T) vec3( 1.8399918514433978E-14, 2.7798023919660528E-14, 4.0790479543861094E-14 )
+ #define getBetaMie(T) SCAT.betaMie
  #else
  #define getBetaMie(T) T * BMIE
  #endif 
@@ -148,7 +160,7 @@ float airRefractiveIndexFull(float kelvin, float P, float rH){
   float e = rH * ( 1. + 1e-4 * (7.2 + P * (0.00320 + 5.9e-7 * t * t))) * 6.1121 * exp( ( 18.678 - t / 234.5 ) * t / (t + 257.14));
   float Nr = (77.6 * P - e * (5.6  + 3.75e5 / kelvin)) / kelvin;
   // refractive index of air (default: 1.0003):
-  return 1.0 + Nr * 1e-6 * exp( -altitude / zenithR );
+  return 1.0 + Nr * 1e-6 * exp( -altitude / SCAT.zenithR );
 }
 #endif
 
@@ -169,7 +181,7 @@ const float KB = 1.3806488e-23;
 // depolarization factor (default: 0.0035) 0.0279
 const float def_pn = 0.0279;
 const float def_kpn = (6.0 + 3.0 * def_pn)/( 6.0 - 7.0 * def_pn );
-const float pi383 = 8.0 / 3.0 * pow( pi, 3. );
+
 // (8*pi³*(n²-1)²*(6+3pn)) / (3N * pow(lambda, vec3(4.0))*(6-7pn))
 vec3 getBetaRayleigh( float rayleigh, float Tk, float P, float H ){
   float n = pow( pow( airRefractiveIndex(Tk, P, H), 2.) - 1., 2.);
@@ -409,14 +421,16 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   // combined extinction factor
   float iq0 = 1.0 - vHum.z * 0.2;
   float Iqbal = iq0 / ( cosZenith + 0.15 * pow( 93.885 - degrees( angZenith ), -1.253 ) );
-  vec3 Fex = exp( -Iqbal * ( vBetaR * zenithR + vBetaM * zenithM ) );
+  vec3 Fex = exp( -Iqbal * ( vBetaR * SCAT.zenithR + vBetaM * SCAT.zenithM ) );
   
   // in scattering
   float rPhase = rayleighPhase( cosTheta * 0.5 + 0.5 );
   float mPhase = hgPhase( cosTheta, g, g2 );
   vec3 betaTotal = ( vBetaR * rPhase + vBetaM * mPhase ) / ( vBetaR + vBetaM );
-  vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.0 + cosGamma) ); // zenith
-  vec3 B = pow( sunEx * betaTotal * Fex, vec3( 0.5 - cosGamma) ); // horizon
+  //vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.0 + cosGamma) ); // zenith
+  //vec3 B = pow( sunEx * betaTotal * Fex, vec3( 0.5 - cosGamma) ); // horizon
+  vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.0) ); // zenith
+  vec3 B = pow( sunEx * betaTotal * Fex , vec3( 1. ) ); // horizon
   vec3 L0 = vec3(0.);
   
   vec3 night = nightColor * (1.0 + sin(pi * moon));

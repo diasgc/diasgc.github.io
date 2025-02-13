@@ -20,9 +20,9 @@ const settings = {
     document.getElementById('bsettings').addEventListener('change', (e) => {
       document.getElementById('settings').style.display = e.target.checked ? 'inline' : 'none';
     });
-    document.getElementById('binfo').addEventListener('change', (e) => {
-      document.getElementById('info').style.display = e.target.checked ? 'inline' : 'none';
-    });
+    //document.getElementById('binfo').addEventListener('change', (e) => {
+    //  document.getElementById('info').style.display = e.target.checked ? 'inline' : 'none';
+    //});
     document.getElementById('s1').addEventListener('change', (e) => {
       let i =  parseInt(e.target.value);
       settings.sunPos = i < 0 ? 'auto' : 2.0 * (i - 50) / 100.0;
@@ -110,7 +110,7 @@ const wwprov = {
         var status = xhr.status;
         if (status === 200) {
           wwprov.wth.data = JSON.parse(JSON.stringify(xhr.response));
-          wwprov.timestamp = Date.now();
+          wwprov.wth.timestamp = Date.now();
           wwprov.save();
           if (callback) callback();
         }
@@ -178,7 +178,7 @@ function upd(){
 const info = document.getElementById('info');
 function setUniforms(){
   wwprov.sun.update();
-  let elev = settings.sunPos === 'auto' ? wwprov.sun.elevAbs : settings.sunPos;
+  let elev = settings.sunPos === 'auto' ? wwprov.sun.elevRad : settings.sunPos;
   webGl.uniforms.uSunPosition.data = [elev];
   let clds = settings.clouds === 'auto' ? wwprov.wth.get('cloud_cover') / 100.0 : settings.clouds;
   webGl.uniforms.uClouds.data = [clds];
@@ -191,20 +191,46 @@ function setUniforms(){
   let rain = settings.rain === 'auto' ? wwprov.wth.get('precipitation') / 100.0 : settings.rain; //wwprov.wth.get('precipitation') / 100.0;
   webGl.uniforms.uRain.data = [rain];
   let temp = wwprov.wth.get('temperature_2m');
-  info.innerHTML = `e: ${elev.toFixed(4)} m: ${moon.toFixed(1)} | ${temp.toFixed(1)}ºC ${hum * 100}%Hr c/L: ${clds.toFixed(2)}/${cldL.toFixed(2)} pp: ${rain.toFixed(2)}`;
+  updateNow(elev.toFixed(4),moon.toFixed(1),temp.toFixed(1),hum*100,clds*100,cldL*100,rain);
+  //info.innerHTML = `e: ${elev.toFixed(4)} m: ${moon.toFixed(1)} | ${temp.toFixed(1)}ºC ${hum * 100}%Hr c/L: ${clds.toFixed(2)}/${cldL.toFixed(2)} pp: ${rain.toFixed(2)}`;
   webGl.uniforms.uTemperature.data = [temp + 273.15];
 }
 
 function reset(){
+  let d = document.getElementById('reset');
+  d.style.color = '#bb0';
   wwprov.clearCache();
-  wwprov.update();
+  wwprov.update(() => {
+    d.style.color = '#0b0';
+    updateInfo();
+  });
 }
 
+function updateInfo(){
+  let i = document.getElementById('wwp-info');
+  i.innerHTML = `last update: ${new Date(wwprov.wth.timestamp).toISOString()}<br>
+  gps: lat: ${wwprov.pos.latitude.toFixed(4)} long: ${wwprov.pos.longitude.toFixed(4)}<br>
+  data from: ${wwprov.wth.data.hourly.time[0]} to ${wwprov.wth.data.hourly.time[wwprov.wth.data.hourly.time.length - 1]}`
+}
+
+
+function updateNow(elev, moon, temp, hum, clds, cldL, rain){
+  let i = document.getElementById('wwp-now');
+  let deg = elev * 57.2957795;
+  i.innerHTML = `solar elevation: ${elev} rad, ${deg.toFixed(2)}º<br>
+  moon age: ${moon * 29.5}d<br>
+  temp.: ${temp}ºC<br>
+  Relative Humidity: ${hum}%<br>
+  Cloudiness (total): ${clds}%<br>
+  Low clouds: ${cldL}%<br>
+  Precipitation: ${rain.toFixed(2)} mm`
+}
 
 window.onload = function(){
   settings.init();
   let w = new GlCanvas('gl-canvas');
   wwprov.load(() => {
+    updateInfo();
     w.load({
       fragmentCode: frag,
       uniforms: {
