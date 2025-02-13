@@ -359,7 +359,7 @@ vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
 #endif
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
-  float ar = iResolution.y/iResolution.x;
+  float ar = 1.;//iResolution.y/iResolution.x;
   vec2 uv = fragCoord/iResolution.xy;
   vec3 pos = vec3(izoom * uv * ar - vec2(0.0, izoom/25.0), 0.0);
   vec3 sunPos = vec3( 0.5 , SUN_ELEV, -1. );
@@ -402,7 +402,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
  
   // combined extinction factor
-  float iq0 = 2.0;
+  float iq0 = 1.0;
   float Iqbal = iq0 / ( cosZenith + 0.15 * pow( 93.885 - degrees( angZenith ), -1.253 ) );
   vec3 Fex = exp( -Iqbal * ( vBetaR * SCAT.zenithR + vBetaM * SCAT.zenithM ) );
   
@@ -420,7 +420,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
   if (clouds < 0.9) {
     // composition + solar disc
-    float sundisk = smoothstep( sun.arc, sun.arc + sun.dim, cosTheta);
+    float sundisk = cosGamma * smoothstep( sun.arc, sun.arc + sun.dim, cosTheta);
     L0 += sunEx * 1.9E5 * Fex * sundisk;
   } else {
 #if DEF_LAMBDA
