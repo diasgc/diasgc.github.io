@@ -84,7 +84,7 @@ const float rad2deg = 180.0 / pi;
 const vec3 zenDir   = vec3( 0.0, 1.0, 0.0 );
 
 const float moonFade   = 2.0;
-const vec3  nightColor = vec3( 0.01, 0.03, 0.09) * 0.42;
+const vec3  nightColor = vec3( 0.01, 0.03, 0.09) * 1.0;
 
 
 const struct Sun {
@@ -199,6 +199,13 @@ const struct Scattering {
 
 // Mountains (https://www.shadertoy.com/view/fsdGWf)
 
+const struct Mountains {
+  vec3  shade;
+  int   steps;
+  float height;
+  float offset;
+} MOUNTS = Mountains(vec3(1.13, 1.04, 1.1), 10, 1.2, 0.08);
+
 #define MOUNTAIN_SHADE vec3(1.13, 1.04, 1.1) // vec3(1.04, 1.13, 1.1)
 #define PERLIN_STEPS 10
 #define MOUNTAIN_YSIZE 1.2
@@ -225,8 +232,8 @@ float perlin(float x){
 }
 
 float mountain(vec2 uv, float scale, float offset, float h1, float h2, float s){
-  float h = h1 + perlin(MOUNTAIN_YSIZE * scale * uv.x + offset) * (h2 - h1);
-  return 1. - smoothstep(h, h + s, uv.y - MOUNTAIN_YOFFS);
+  float h = h1 + perlin(MOUNTS.height * scale * uv.x + offset) * (h2 - h1);
+  return 1. - smoothstep(h, h + s, uv.y - MOUNTS.offset);
 }
 
 float renderMountains(vec2 uv, float sunElev, float h){
@@ -455,11 +462,11 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #if MOUNTAINS
   float m = renderMountains(uv, sunPos.y, 1.0);
   if (m > 0.0) {
-    float s = clip(sunPos.y);
-    vec3 shade = mix(MOUNTAIN_SHADE, light, vHum.y);
-    vec3 fade = vec3(s * (0.15 + vHum.y * 0.32)) * shade;
-    vec3 tone = vec3(s * (0.55 + vHum.y * 0.35)) * shade;
-    sky = mix(0.9 * tone, fade * 1.1, m);
+    float s = max(0.1, cosGamma);
+    vec3 shade = mix(MOUNTS.shade, light * s, cloudLow);
+    vec3 fade = 0.5 * shade;
+    vec3 tone = shade;
+    sky = s * mix(0.9 * tone, fade * 1.1, m) + vHum.y * 0.1;
   }
 #endif
   float haze = vHum.y * vHum.x * clamp(cosGamma, moon * 0.2, 0.4); 

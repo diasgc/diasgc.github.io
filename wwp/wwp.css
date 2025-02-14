@@ -8,6 +8,8 @@ body {
 #settings {
   display: none;
   position: absolute;
+  overflow-y: scroll;
+  overflow-x: hidden;
   left: 5%;
   right: 5%;
   top: 10%;
