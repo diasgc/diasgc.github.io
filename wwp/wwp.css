@@ -8,7 +8,7 @@ body {
 #settings {
   display: none;
   position: absolute;
-  overflow-y: scroll;
+  overflow-y: overlay;
   overflow-x: hidden;
   left: 5%;
   right: 5%;
@@ -18,6 +18,9 @@ body {
   padding: 8px;
   border-radius: 12px;
   background: #2224;
+  &::-webkit-scrollbar {
+    background: transparent;
+  }
 }
 
 button {

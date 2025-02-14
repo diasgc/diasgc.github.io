@@ -34,57 +34,57 @@ const frag=`#pragma optimize(on)
 #endif
 
 // utilities
-#define clip(x) clamp(x, 0., 1.)
-#define rand(x) fract(sin(x) * 75154.32912)
-#define ACESFilmic(x) clip((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14))
+#define clip(x)       clamp(x, 0., 1.)
+#define rand(x)       fract(sin(x) * 75154.32912)
+#define ACESFilmic(x) (x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14)
 
 // environment variables
 #if SHADERTOY
- #define temperature 273.0
- #define humidity    0.5
- #define clouds      0.9
- #define cloudLow    0.9
- #define moon        0.5
- #define rain        0.0
+ #define temperature  273.0
+ #define humidity     0.5
+ #define clouds       0.9
+ #define cloudLow     0.9
+ #define moon         0.5
+ #define rain         0.0
 #else
  // uniforms
- uniform vec2        iResolution;
- uniform float       iTime;
- uniform vec3        iMouse;
- uniform float       uSunPosition;
- uniform float       uClouds;
- uniform float       uCloudLow;
- uniform float       uHumidity;
- uniform float       uMoon;
- uniform float       uRain;
- uniform float       uTemperature;
+ uniform vec2         iResolution;
+ uniform float        iTime;
+ uniform vec3         iMouse;
+ uniform float        uSunPosition;
+ uniform float        uClouds;
+ uniform float        uCloudLow;
+ uniform float        uHumidity;
+ uniform float        uMoon;
+ uniform float        uRain;
+ uniform float        uTemperature;
  // alias
- #define humidity    uHumidity
- #define clouds      uClouds
- #define cloudLow    uCloudLow
- #define moon        uMoon
- #define rain        uRain
- #define temperature uTemperature
+ #define humidity     uHumidity
+ #define clouds       uClouds
+ #define cloudLow     uCloudLow
+ #define moon         uMoon
+ #define rain         uRain
+ #define temperature  uTemperature
 #endif
 
-#define altitude    0.0
-#define pressure    1018.0
-#define opacity     1.0
-#define izoom       1.0
+#define altitude      0.0
+#define pressure      1018.0
+#define opacity       1.0
+#define izoom         1.0
 
 // constants
-const float pi      = acos(0.0) * 2.0;
-const float pi2     = pi * 2.0;
-const float pi316   = 3.0 / (16.0 * pi);
-const float pi383   = 8.0 / 3.0 * pow( pi, 3. );
-const float pi14    = 1.0 / (4.0 * pi);
-const float asec2r  = pi / 648000.0;
-const float rad2deg = 180.0 / pi;
+const float pi        = acos(0.0) * 2.0;
+const float pi2       = pi * 2.0;
+const float pi316     = 3.0 / (16.0 * pi);
+const float pi383     = 8.0 / 3.0 * pow( pi, 3. );
+const float pi14      = 1.0 / (4.0 * pi);
+const float asec2r    = pi / 648000.0;
+const float rad2deg   = 180.0 / pi;
 
-const vec3 zenDir   = vec3( 0.0, 1.0, 0.0 );
+const vec3 zenDir     = vec3( 0.0, 1.0, 0.0 );
 
-const float moonFade   = 2.0;
-const vec3  nightColor = vec3( 0.01, 0.03, 0.09) * 1.0;
+const float moonFade  = 2.0;
+const vec3 nightColor = vec3( 0.01, 0.03, 0.09) * 1.0;
 
 
 const struct Sun {
@@ -96,10 +96,10 @@ const struct Sun {
   float imin;
   float cutoff; // earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
   vec3  color;
-} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5, 0.66, 1000., 500., pi / 1.9, vec3( 1.0 ) );
+} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5, 0.66, 1000., 300., pi / 1.9, vec3( 1.0 ) );
 
 float sunIntensity(float angle, float refraction) {
-  return sun.imax * max(0., 1. - exp( -sun.istep * ( sun.cutoff - acos(angle) + refraction )));
+  return mix(sun.imin,sun.imax, cloudLow) * max(0., 1. - exp( -sun.istep * ( sun.cutoff - acos(angle) + refraction )));
 }
 
 const struct Scattering {
@@ -206,11 +206,6 @@ const struct Mountains {
   float offset;
 } MOUNTS = Mountains(vec3(1.13, 1.04, 1.1), 10, 1.2, 0.08);
 
-#define MOUNTAIN_SHADE vec3(1.13, 1.04, 1.1) // vec3(1.04, 1.13, 1.1)
-#define PERLIN_STEPS 10
-#define MOUNTAIN_YSIZE 1.2
-#define MOUNTAIN_YOFFS 0.08
-
 float R11(float x){
     return fract(sin(x)*43758.5453);
 }
@@ -223,7 +218,7 @@ float N11(float x){
 
 float perlin(float x){
   float p = 0.0, freq = 1.0, amp = 1.0;
-  for (int i = 0; i < PERLIN_STEPS; i++) {
+  for (int i = 0; i < MOUNTS.steps; i++) {
     freq *= 2.0;
     amp *= 0.5;
     p += amp * N11(freq * x);
@@ -329,11 +324,13 @@ vec3 renderStarfield(vec2 uv, float sunpos, float clds) {
 
 // Clouds (https://www.shadertoy.com/view/Xs23zX)
 
-#define CLOUD_STEPS 8.
-#define CLOUD_SCALE 0.001
-#define CLOUD_INTENSITY 1.0
-#define CLOUD_SMOOTH 0.23
-#define CLOUD_SPEED 0.001
+const struct Clouds {
+  float steps;
+  float scale;
+  float intensity;
+  float smooth;
+  float speed;
+} CLDS = Clouds( 8., 0.001, 1., 0.23, 0.001 );
 
 float H12(vec2 p) {
     return fract(sin(p.x * 100. + p.y * 7446.) * 8345.);
@@ -353,10 +350,10 @@ vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
   float r = 0.;
   float pw = 1.0;
   vec2 uv2 = (1. - uv);
-  for(float i = 1.0; i < CLOUD_STEPS; i += 1.0) {
-    r += N12(-iTime * CLOUD_SPEED + uv2 * pow(1.0 + uv2.y + c, i + pw * c)) * pow(CLOUD_SMOOTH, i);
+  for(float i = 1.0; i < CLDS.steps; i += 1.0) {
+    r += N12(-iTime * CLDS.speed + uv2 * pow(1.0 + uv2.y, i + pw * c)) * pow(CLDS.smooth, i);
   }
-  return vec3( r * c * CLOUD_INTENSITY * mix(0.25, 0.5, clip(sunpos)));
+  return vec3( r * c * CLDS.intensity * mix(0.25, 0.5, clip(sunpos)));
 }
 
 #if SHADERTOY || DEMO
@@ -432,7 +429,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   } else {
 #if DEF_LAMBDA
     // clouds will desaturate
-    L = mix(L, vec3(length(L)) * (1. - 0.6 * vHum.z), vHum.z);
+    L = mix(L, vec3(length(L)), vHum.z);
 #endif
   }
 
@@ -462,13 +459,13 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #if MOUNTAINS
   float m = renderMountains(uv, sunPos.y, 1.0);
   if (m > 0.0) {
-    float s = max(0.1, cosGamma);
+    float s = smoothstep(0.005, 0.1, cosGamma) * length(sky) * cloudLow * 0.5;
     vec3 shade = mix(MOUNTS.shade, light * s, cloudLow);
     vec3 fade = 0.5 * shade;
     vec3 tone = shade;
-    sky = s * mix(0.9 * tone, fade * 1.1, m) + vHum.y * 0.1;
+    sky = s * mix(tone, fade, m) + vHum.y * 0.1;
   }
 #endif
-  float haze = vHum.y * vHum.x * clamp(cosGamma, moon * 0.2, 0.4); 
-  fragColor = vec4( sky + haze, 1.0);
+  float haze = 1. - vHum.y * vHum.x * clamp(cosGamma, moon * 0.1, 0.35); 
+  fragColor = vec4( sky * haze, 1.0);
 }`;
