@@ -96,7 +96,7 @@ const struct Sun {
   float imin;
   float cutoff; // earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
   vec3  color;
-} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5E5, 0.5, 0.66, 1000., 300., pi / 1.9, vec3( 1.0 ) );
+} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5E5, 0.5, 0.66, 1000., 500., pi / 1.9, vec3( 1.0 ) );
 
 float sunIntensity(float angle, float refraction) {
   return mix(sun.imax, sun.imin, clouds) * max(0., 1. - exp( -sun.istep * ( sun.cutoff - acos(angle) + refraction )));
@@ -379,7 +379,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float refraction = 0.0035;
 
 #if WEATHER
-  // empirical values for overall humidity turbidity
+  // empirical values for global humidity turbidity
   vec3 vHum = pow(vec3(humidity, cloudLow, clouds), vec3(3.));
   // empiric Rayleigh + Mie coeffs from environment variables
   float rayleigh  = 1.0 + exp( -cosGamma - altitude * 1E-9) + length(vHum);
@@ -414,8 +414,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float rPhase = rayleighPhase( cosTheta * 0.5 + 0.5 );
   float mPhase = hgPhase( cosTheta, g, g2 );
   vec3 betaTotal = ( vBetaR * rPhase + vBetaM * mPhase ) / ( vBetaR + vBetaM );
-  vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.0) ); // zenith
-  vec3 B = pow( sunEx * betaTotal * Fex , vec3( 1. ) ); // horizon
+  vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.5) ); // zenith
+  vec3 B = pow( sunEx * betaTotal * Fex , vec3( .5 ) ); // horizon
   vec3 L0 = vec3(0.);
   L0 += 0.5 * Fex;
   vec3 night = nightColor * (1.0 + sin(pi * moon * (1. - vHum.z)));
@@ -466,6 +466,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     sky = s * mix(tone, fade, m) + vHum.y * 0.1;
   }
 #endif
-  float haze = 1. - vHum.y * vHum.z * clamp(cosGamma, moon * 0.1, 0.35); 
-  fragColor = vec4( sky * haze, 1.0);
+
+  float sc = smoothstep( 0.0, 0.1, uv.y * cosGamma);
+  float hazeD = 1. - 0.33 * humidity * cloudLow * sc;
+  float hazeE = (1. - hazeD) * sc;
+  //float haze = 1. - vHum.y * vHum.z * clamp(cosGamma, moon * 0.1, 0.35); 
+  fragColor = vec4( sky * hazeD + hazeE, 1.0);
 }
