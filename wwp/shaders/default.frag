@@ -89,16 +89,17 @@ const vec3 nightColor = vec3( 0.01, 0.03, 0.09) * .5;
 const struct Sun {
   float arc;    // 66 arc seconds -> degrees, and the cosine of that
   float dim;
+  float exd;
   float extPow; // Sun extinction power def 0.5
   float istep;  // inverse of sun intensity steepness: (def: 0.66 = 1./1.5)
   float imax;
   float imin;
   float cutoff; // earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
   vec3  color;
-} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5, 0.66, 1000., 300., pi / 1.9, vec3( 1.0 ) );
+} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5E5, 0.5, 0.66, 1000., 300., pi / 1.9, vec3( 1.0 ) );
 
 float sunIntensity(float angle, float refraction) {
-  return mix(sun.imin,sun.imax, cloudLow) * max(0., 1. - exp( -sun.istep * ( sun.cutoff - acos(angle) + refraction )));
+  return mix(sun.imax, sun.imin, clouds) * max(0., 1. - exp( -sun.istep * ( sun.cutoff - acos(angle) + refraction )));
 }
 
 const struct Scattering {
@@ -424,7 +425,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   if (clouds < 0.9) {
     // composition + solar disc
     float sundisk = cosGamma * smoothstep( sun.arc, sun.arc + sun.dim, cosTheta);
-    L0 += sunEx * 1.9E5 * Fex * sundisk;
+    L0 += sunEx * sun.exd * Fex * sundisk;
   } else {
 #if DEF_LAMBDA
     // clouds will desaturate
