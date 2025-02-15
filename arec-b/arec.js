@@ -474,7 +474,7 @@ async function startRecording(){
   outputCtl.collapse();
   outputCtl.setDisabled(true);
   session.audio = inputCtl.getOptions();
-  stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  stream = await navigator.mediaDevices.getUserMedia(session);
   lock = await navigator.wakeLock.request('screen');
   
   recorder = new MediaRecorder(stream, outputCtl.getOptions());
