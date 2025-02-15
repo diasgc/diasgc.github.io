@@ -16,7 +16,10 @@ class GlCanvas {
   defOptions = {
     square: false
   }
-  options;
+  
+  options = {
+    square: false
+  }
 
   sensorSupport = {
     accelerometer: window.accelerometer,
@@ -523,16 +526,15 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
   }
 
   resize(){
-    let w, h;
-    if (this.options.square){
-      w = Math.min(window.innerWidth, window.innerHeight);
-      h = w;
-    } else {
-      w = window.innerWidth;
-      h = window.innerHeight;
+    if (this.glCanvas){
+      if (this.options && this.options.square){
+        this.glCanvas.width = Math.min(window.innerWidth, window.innerHeight);
+        this.glCanvas.height = w;
+      } else {
+        this.glCanvas.width = window.innerWidth;
+        this.glCanvas.height = window.innerHeight;
+      }
     }
-    this.glCanvas.width = w;
-    this.glCanvas.height = h;
   }
 
   loadProgram(callback){

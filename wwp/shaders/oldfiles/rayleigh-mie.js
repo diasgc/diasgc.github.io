@@ -84,7 +84,7 @@ const float rad2deg   = 180.0 / pi;
 const vec3 zenDir     = vec3( 0.0, 1.0, 0.0 );
 
 const float moonFade  = 2.0;
-const vec3 nightColor = vec3( 0.01, 0.03, 0.09) * 1.0;
+const vec3 nightColor = vec3( 0.01, 0.03, 0.09) * .5;
 
 
 const struct Sun {
@@ -418,7 +418,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 B = pow( sunEx * betaTotal * Fex , vec3( 1. ) ); // horizon
   vec3 L0 = vec3(0.);
   L0 += 0.5 * Fex;
-  vec3 night = nightColor * (1.0 + sin(pi * moon));
+  vec3 night = nightColor * (1.0 + sin(pi * moon * (1. - vHum.z)));
   vec3 light = sun.color + night;
   
   
@@ -466,6 +466,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     sky = s * mix(tone, fade, m) + vHum.y * 0.1;
   }
 #endif
-  float haze = 1. - vHum.y * vHum.x * clamp(cosGamma, moon * 0.1, 0.35); 
+  float haze = 1. - vHum.y * vHum.z * clamp(cosGamma, moon * 0.1, 0.35); 
   fragColor = vec4( sky * haze, 1.0);
 }`;

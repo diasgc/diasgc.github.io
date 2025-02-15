@@ -9,6 +9,7 @@ Date.prototype.isDstObserved = function () {
 }
 
 const settings = {
+  live: false,
   timeId: document.getElementById('time'),
   sunPos: 'auto',
   humidity: 'auto',
@@ -166,8 +167,8 @@ let webGl;
 function init(gl){
   webGl = gl;
   setUniforms();
-  webGl.start(live);
-  if (!live)
+  webGl.start(settings.live);
+  if (!settings.live)
     setInterval(upd, 1000);
 }
 function upd(){
@@ -232,7 +233,7 @@ window.onload = function(){
   wwprov.load(() => {
     updateInfo();
     w.load({
-      fragmentCode: frag,
+      fragmentAsset: 'shaders/default.frag',
       uniforms: {
         uSunPosition: { type: 'float' },
         uClouds: { type: 'float' },

@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "wwp",
+      "webRoot": "${workspaceRoot}/wwp",
+      "file": "${workspaceFolder}/wwp/index.html",
+      "runtimeArgs": ["--disable-web-security"]   
+    }
+  ]
+}
