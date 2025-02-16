@@ -484,6 +484,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float sc = smoothstep( 0.0, 0.1, uv.y * cosGamma);
   float hazeD = 1. - 0.33 * vhum.x * vhum.y * sc;
   float hazeE = (1. - hazeD) * sc;
-  //float haze = 1. - vHum.y * vHum.z * clamp(cosGamma, moon * 0.1, 0.35); 
+  //float haze = 1. - vHum.y * vHum.z * clamp(cosGamma, moon * 0.01, 0.35); 
   fragColor = vec4( sky * hazeD + hazeE, 1.0);
 }
