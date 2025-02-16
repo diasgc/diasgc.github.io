@@ -1,4 +1,4 @@
-WW2#pragma optimize(on)
+#pragma optimize(on)
 #pragma debug(off)
 
 #define MOUNTAINS 1
