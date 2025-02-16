@@ -356,6 +356,17 @@ vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
   return vec3( r * c * CLDS.intensity * mix(0.25, 0.5, clip(sunpos)));
 }
 
+
+
+
+
+
+struct AtmCond {
+  float hum;
+  float clow;
+  float clouds;
+};
+
 #if SHADERTOY || DEMO
   #define SUN_ELEV iMouse.z > 0. ? iMouse.y/iResolution.y : sin( iTime * DEMO_SPEED)
 #else
@@ -363,14 +374,14 @@ vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
 #endif
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
-  float ar = 1.;//iResolution.y/iResolution.x;
-  vec2 uv = fragCoord/iResolution.xy;
-  vec3 pos = vec3(izoom * uv * ar - vec2(0.0, izoom/25.0), 0.0);
-  vec3 sunPos = vec3( 0.5 , SUN_ELEV, -1. );
-  vec3 sunDir = normalize( sunPos );
-  vec3 camPos = vec3( sunPos.x, 0.0, -sunPos.z);
+  float ar        = 1.;//iResolution.y/iResolution.x;
+  vec2 uv         = fragCoord/iResolution.xy;
+  vec3 pos        = vec3(izoom * uv * ar - vec2(0.0, izoom/25.0), 0.0);
+  vec3 sunPos     = vec3( 0.5 , SUN_ELEV, -1. );
+  vec3 sunDir     = normalize( sunPos );
+  vec3 camPos     = vec3( sunPos.x, 0.0, -sunPos.z);
   float cosGamma  = dot( sunDir, zenDir ); // 0 at horizon, 1 at zenith
-  vec3 direction = normalize( pos - camPos );
+  vec3 direction  = normalize( pos - camPos );
   float cosZenith = dot( zenDir, direction );
   float cosTheta  = dot( sunDir, direction );
   float angZenith = acos( clip(cosZenith) ); // horizon cutoff
@@ -380,13 +391,16 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
 #if WEATHER
   // empirical values for global humidity turbidity
-  vec3 vHum = pow(vec3(humidity, cloudLow, clouds), vec3(3.));
+  // AtmCond atm = AtmCond(humidity, cloudLow, clouds);
+  vec3 vhum = vec3(humidity, cloudLow, clouds);
+  vec3 phum = pow(vhum, vec3(3.));
   // empiric Rayleigh + Mie coeffs from environment variables
-  float rayleigh  = 1.0 + exp( -cosGamma - altitude * 1E-9) + length(vHum);
-  float turbidity = 1.0 + vHum.x + vHum.y;
-  float mieCoefficient = 0.00335 - clip(0.001 * vHum.x - 0.001 * vHum.y);
+  float rayleigh  = 1.0 + exp( -cosGamma - altitude * 1E-9) + length(phum);
+  float turbidity = 1.0 + phum.x + phum.y;
+  float mieCoefficient = 0.00335 - clip(0.001 * phum.x - 0.001 * phum.y);
 #else
-  vec3  vHum = vec3(0.0);
+  vec3  vhum = vec3(0.0);
+  vec3  phum = vec3(0.0);
   float rayleigh  = 1.0;
   float turbidity = 0.7;
   float mieCoefficient = 0.00335;
@@ -397,7 +411,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float rayleighCoefficient = rayleigh + sunFd - 1.0;
   
   // extinction (absorbtion + out scattering)
-  vec3 vBetaR = getBetaRayleigh( rayleigh, temperature, pressure, humidity ) * rayleighCoefficient;
+  vec3 vBetaR = getBetaRayleigh( rayleigh, temperature, pressure, phum.x ) * rayleighCoefficient;
   vec3 vBetaM = getBetaMie( turbidity ) * mieCoefficient;
 
   // Mie directional g def float g = 0.8;
@@ -418,7 +432,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 B = pow( sunEx * betaTotal * Fex , vec3( .5 ) ); // horizon
   vec3 L0 = vec3(0.);
   L0 += 0.5 * Fex;
-  vec3 night = nightColor * (1.0 + sin(pi * moon * (1. - vHum.z)));
+  vec3 night = nightColor * (1.0 + sin(pi * moon * (1. - phum.z)));
   vec3 light = sun.color + night;
   
   
@@ -429,12 +443,12 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   } else {
 #if DEF_LAMBDA
     // clouds will desaturate
-    L = mix(L, vec3(length(L)), vHum.z);
+    L = mix(L, vec3(length(L)), phum.z);
 #endif
   }
 
 #if CLOUDS
-    night += renderClouds(uv, cosGamma, vHum.x, vHum.z + vHum.y);
+    night += renderClouds(uv, cosGamma, phum.x, phum.z + phum.y);
 #endif
   
   // the horizon line
@@ -452,23 +466,23 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
 
 #if STARS
-  sky += renderStarfield(uv, sunPos.y, vHum.z);
+  sky += renderStarfield(uv, sunPos.y, phum.z);
 #endif
   
 
 #if MOUNTAINS
   float m = renderMountains(uv, sunPos.y, 1.0);
   if (m > 0.0) {
-    float s = smoothstep(0.005, 0.1, cosGamma) * length(sky) * cloudLow * 0.5;
-    vec3 shade = mix(MOUNTS.shade, light * s, cloudLow);
+    float s = smoothstep(0.005, 0.1, cosGamma) * length(sky) * vhum.y * 0.5;
+    vec3 shade = mix(MOUNTS.shade, light * s, vhum.y);
     vec3 fade = 0.5 * shade;
     vec3 tone = shade;
-    sky = s * mix(tone, fade, m) + vHum.y * 0.1;
+    sky = s * mix(tone, fade, m) + phum.y * 0.1;
   }
 #endif
 
   float sc = smoothstep( 0.0, 0.1, uv.y * cosGamma);
-  float hazeD = 1. - 0.33 * humidity * cloudLow * sc;
+  float hazeD = 1. - 0.33 * vhum.x * vhum.y * sc;
   float hazeE = (1. - hazeD) * sc;
   //float haze = 1. - vHum.y * vHum.z * clamp(cosGamma, moon * 0.1, 0.35); 
   fragColor = vec4( sky * hazeD + hazeE, 1.0);
