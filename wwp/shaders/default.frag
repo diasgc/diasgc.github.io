@@ -434,7 +434,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   // relative air mass see https://github.com/pvlib/pvlib-python/blob/main/pvlib/atmosphere.py for more models
   float raModel = cosZenith + 0.15 * pow( 93.885 - degrees( angZenith ), -1.253 );
   float relAm = 1.0 / mix(raModel, phum.z, phum.z);
-  vec3 Fex = exp( -Iqbal * ( vBetaR * SCAT.zenithR + vBetaM * SCAT.zenithM ) );
+  vec3 Fex = exp( -relAm * ( vBetaR * SCAT.zenithR + vBetaM * SCAT.zenithM ) );
   
   // in scattering
   float rPhase = rayleighPhase( cosTheta );
