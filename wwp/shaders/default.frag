@@ -98,7 +98,7 @@ const struct Sun {
   float imin;
   float cutoff; // earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
   vec3  color;
-} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5E5, 0.5, 0.66, 1000., 500., pi / 1.9, vec3( 0.5 ) );
+} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5E5, 0.5, 0.66, 1000., 1000., pi / 1.9, vec3( 0.5 ) );
 
 float sunIntensity(float angle, float refraction) {
   return mix(sun.imax, sun.imin, clouds) * max(0., 1. - exp( -sun.istep * ( sun.cutoff - acos(angle) + refraction )));
@@ -142,7 +142,7 @@ const struct Scattering {
  const vec3 BMIE    = 2.726902423E-18 * pow( pi2 / LAMBDA, SCAT.V ) * SCAT.primary;
  const vec3 L4      = pow(LAMBDA, vec3( 4.0 ) );
 #else
- #define LAMBDA     mix(SCAT.lambda, SCAT.l0, smoothstep(0.8, 1.0, clouds))
+ #define LAMBDA     mix(SCAT.lambda, SCAT.l0, smoothstep(0.8, 1.0, clouds) * smoothstep(-0.12, 0.12, sunElev))
  // calc: 10E-18 * 0.434 * ( 0.2 * T ) * pi * pow( 2*pi / LAMBDA, V ) * MIE_K
  #define BMIE       2.726902423E-18 * pow( pi2 / LAMBDA, SCAT.V ) * SCAT.primary
  #define L4         pow(LAMBDA, vec3( 4.0 ) )
@@ -422,13 +422,13 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 vBetaM = getBetaMie( turbidity ) * mieCoefficient;
 
   // Mie directional g def float g = 0.8;
-  float g = 0.8;
+  float g = 0.08;
   float g2 = g * g;
   
  
   // combined extinction factor
   float iq0 = cosZenith + 0.15 * pow( 93.885 - degrees( angZenith ), -1.253 );
-  float Iqbal = 1.0 / mix(iq0, 1.0, phum.z);
+  float Iqbal = 1.0 / mix(iq0, phum.z, phum.z);
   vec3 Fex = exp( -Iqbal * ( vBetaR * SCAT.zenithR + vBetaM * SCAT.zenithM ) );
   
   // in scattering
