@@ -45,6 +45,7 @@
  #define cloudLow     0.9
  #define moon         0.5
  #define rain         0.0
+ #define wind         10.0
 #else
  // uniforms
  uniform vec2         iResolution;
@@ -57,6 +58,7 @@
  uniform float        uMoon;
  uniform float        uRain;
  uniform float        uTemperature;
+ uniform float        uWind;
  // alias
  #define sunElev      uSunPosition
  #define humidity     uHumidity
@@ -65,6 +67,7 @@
  #define moon         uMoon
  #define rain         uRain
  #define temperature  uTemperature
+ #define wind         uWind
 #endif
 
 #define altitude      0.0
@@ -336,7 +339,7 @@ const struct Clouds {
   float intensity;
   float smooth;
   float speed;
-} CLDS = Clouds( 8., 0.01, 2., 0.23, 0.001 );
+} CLDS = Clouds( 8., 0.01, 2., 0.23, 0.001);
 
 float H12(vec2 p) {
     return fract(sin(p.x * 100. + p.y * 7446.) * 8345.);
@@ -357,7 +360,7 @@ vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
   float pw = 1.0;
   vec2 uv2 = (1. - uv);
   for(float i = 1.0; i < CLDS.steps; i += 1.0) {
-    r += N12(-iTime * CLDS.speed + uv2 * pow(1.0 + uv2.y, i + pw * c)) * pow(CLDS.smooth, i);
+    r += N12(-iTime * CLDS.speed * wind + uv2 * pow(1.0 + uv2.y, i + pw * c)) * pow(CLDS.smooth, i);
   }
   return vec3( r * c * CLDS.intensity * mix(0.25, 0.5, clip(sunpos)));
 }
@@ -455,7 +458,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   }
 
 #if CLOUDS
-    night += pow(renderClouds(uv, cosGamma, phum.x, vhum.z + vhum.y), vec3(2.));
+    night += pow(renderClouds(uv, cosGamma, phum.x + vhum.y, vhum.z + vhum.y), vec3(1.5));
 #endif
   
   // the horizon line

@@ -17,6 +17,7 @@ const settings = {
   cloudsLow: 'auto',
   rain: 'auto',
   moon: 'auto',
+  wind: 'auto',
   init: function(){
     document.getElementById('bsettings').addEventListener('change', (e) => {
       document.getElementById('settings').style.display = e.target.checked ? 'inline' : 'none';
@@ -47,12 +48,17 @@ const settings = {
     document.getElementById('s5').addEventListener('change', (e) => {
       let i =  parseInt(e.target.value);
       settings.rain = i < 0 ? 'auto' : i / 100.0;
-      document.getElementById('l5').innerHTML = "rain: " + settings.rain;
+      document.getElementById('l5').innerHTML = "rain: " + settings.rain + " mm";
     });
     document.getElementById('s6').addEventListener('change', (e) => {
       let i =  parseInt(e.target.value);
       settings.moon = i < 0 ? 'auto' : i / 100.0;
       document.getElementById('l6').innerHTML = "moon: " + settings.moon;
+    });
+    document.getElementById('s7').addEventListener('change', (e) => {
+      let i =  parseInt(e.target.value);
+      settings.wind = i < 0 ? 'auto' : i;
+      document.getElementById('l7').innerHTML = "wind: " + settings.wind + " km/h";
     });
   }
 }
@@ -60,7 +66,7 @@ const settings = {
 const wwprov = {
   home: "https://open-meteo.com/",
   docs: "https://open-meteo.com/en/docs",
-  flds: [ "temperature_2m", "relative_humidity_2m", "precipitation", "cloud_cover", "cloud_cover_low", "cloud_cover_mid", "cloud_cover_high", "visibility" ],
+  flds: [ "temperature_2m", "relative_humidity_2m", "precipitation", "cloud_cover", "cloud_cover_low", "cloud_cover_mid", "cloud_cover_high", "visibility","wind_speed_10m" ],
   kind: 'hourly', //'current',
   timestamp: 0,
   timeout: 24 * 60 * 60 * 1000, 
@@ -192,9 +198,10 @@ function setUniforms(){
   let rain = settings.rain === 'auto' ? wwprov.wth.get('precipitation') / 100.0 : settings.rain; //wwprov.wth.get('precipitation') / 100.0;
   webGl.uniforms.uRain.data = [rain];
   let temp = wwprov.wth.get('temperature_2m');
-  updateNow(elev.toFixed(4),moon.toFixed(1),temp.toFixed(1),hum*100,clds*100,cldL*100,rain);
-  //info.innerHTML = `e: ${elev.toFixed(4)} m: ${moon.toFixed(1)} | ${temp.toFixed(1)}ºC ${hum * 100}%Hr c/L: ${clds.toFixed(2)}/${cldL.toFixed(2)} pp: ${rain.toFixed(2)}`;
   webGl.uniforms.uTemperature.data = [temp + 273.15];
+  let wind10 = settings.wind === 'auto' ? wwprov.wth.get('wind_speed_10m') : settings.wind;
+  webGl.uniforms.uWind.data = [wind10];
+  updateNow(elev.toFixed(4),moon.toFixed(1),temp.toFixed(1),hum*100,clds*100,cldL*100,rain, wind10);
 }
 
 function reset(){
@@ -215,7 +222,7 @@ function updateInfo(){
 }
 
 
-function updateNow(elev, moon, temp, hum, clds, cldL, rain){
+function updateNow(elev, moon, temp, hum, clds, cldL, rain, wind){
   let i = document.getElementById('wwp-now');
   let deg = elev * 57.2957795;
   i.innerHTML = `solar elevation: ${elev} rad, ${deg.toFixed(2)}º<br>
@@ -224,7 +231,8 @@ function updateNow(elev, moon, temp, hum, clds, cldL, rain){
   Relative Humidity: ${hum.toFixed(1)}%<br>
   Cloudiness (total): ${clds.toFixed(1)}%<br>
   Low clouds: ${cldL.toFixed(1)}%<br>
-  Precipitation: ${rain.toFixed(1)} mm`
+  Precipitation mm: ${rain.toFixed(1)}<br>
+  Wind km/h: ${wind.toFixed(1)}`
 }
 
 window.onload = function(){
@@ -241,7 +249,8 @@ window.onload = function(){
         uHumidity: { type: 'float' },
         uMoon: { type: 'float' },
         uRain: { type: 'float' },
-        uTemperature: { type: 'float' }
+        uTemperature: { type: 'float' },
+        uWind: { type: 'float' }
       }
      }, gl => init(gl))
   });
