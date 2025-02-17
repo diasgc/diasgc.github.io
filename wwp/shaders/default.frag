@@ -58,6 +58,7 @@
  uniform float        uRain;
  uniform float        uTemperature;
  // alias
+ #define sunElev      uSunPosition
  #define humidity     uHumidity
  #define clouds       uClouds
  #define cloudLow     uCloudLow
@@ -97,7 +98,7 @@ const struct Sun {
   float imin;
   float cutoff; // earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
   vec3  color;
-} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5E5, 0.5, 0.66, 1000., 500., pi / 1.787, vec3( 1.0 ) );
+} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5E5, 0.5, 0.66, 1000., 500., pi / 1.9, vec3( 0.5 ) );
 
 float sunIntensity(float angle, float refraction) {
   return mix(sun.imax, sun.imin, clouds) * max(0., 1. - exp( -sun.istep * ( sun.cutoff - acos(angle) + refraction )));
@@ -375,7 +376,7 @@ struct AtmCond {
 #if SHADERTOY || DEMO
   #define SUN_ELEV iMouse.z > 0. ? iMouse.y/iResolution.y : sin( iTime * DEMO_SPEED)
 #else
-  #define SUN_ELEV uSunPosition
+  #define SUN_ELEV sunElev
 #endif
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
@@ -402,8 +403,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   // empiric Rayleigh + Mie coeffs from environment variables
   float rayleigh  = 0.5 + exp(0.15/(sunPos.y * sunPos.y + 0.1) - altitude * 1E-9);
   // atmLen(cosGamma = 0) = sqrt(a2 +2aR), a = atm len, R = earth radius
-  float turbidity = 1.0 + phum.x + phum.y;
-  float mieCoefficient = 0.00335 - clip(0.001 * phum.x - 0.001 * phum.y);
+  float turbidity = 1.0;// + phum.x + phum.y;
+  float mieCoefficient = 0.00335;
 #else
   vec3  vhum = vec3(0.0);
   vec3  phum = vec3(0.0);
@@ -426,8 +427,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
  
   // combined extinction factor
-  float iq0 = 1.0;
-  float Iqbal = iq0 / ( cosZenith + 0.15 * pow( 93.885 - degrees( angZenith ), -1.253 ) );
+  float iq0 = cosZenith + 0.15 * pow( 93.885 - degrees( angZenith ), -1.253 );
+  float Iqbal = 1.0 / mix(iq0, 1.0, phum.z);
   vec3 Fex = exp( -Iqbal * ( vBetaR * SCAT.zenithR + vBetaM * SCAT.zenithM ) );
   
   // in scattering
