@@ -424,14 +424,16 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 vBetaR = getBetaRayleigh( rayleigh, temperature, pressure, vhum.x ) * rayleighCoefficient;
   vec3 vBetaM = getBetaMie( turbidity ) * mieCoefficient;
 
-  // Mie directional g def float g = 0.8;
+  // Mie directional, asymmetry parameter g def float g = 0.8
+  // https://www.tandfonline.com/doi/full/10.1080/02786826.2023.2186214#d1e188
   float g = 0.08;
   float g2 = g * g;
   
  
   // combined extinction factor
-  float iq0 = cosZenith + 0.15 * pow( 93.885 - degrees( angZenith ), -1.253 );
-  float Iqbal = 1.0 / mix(iq0, phum.z, phum.z);
+  // relative air mass see https://github.com/pvlib/pvlib-python/blob/main/pvlib/atmosphere.py for more models
+  float raModel = cosZenith + 0.15 * pow( 93.885 - degrees( angZenith ), -1.253 );
+  float relAm = 1.0 / mix(raModel, phum.z, phum.z);
   vec3 Fex = exp( -Iqbal * ( vBetaR * SCAT.zenithR + vBetaM * SCAT.zenithM ) );
   
   // in scattering
