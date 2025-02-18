@@ -32,6 +32,19 @@
  #define fastMolsPerVolume
 #endif
 
+// (Inverse) Relative Air Mass Models 1.0/ram
+// https://github.com/pvlib/pvlib-python/blob/main/pvlib/atmosphere.py
+#define ram_simple(c,d)          c
+#define ram_kastenyoung1989(c,d) c + 0.50572 * pow(96.07995 - d, -1.6364)
+#define ram_kasten1966(c,d)      c + 0.15 * pow(93.885 - d, -1.253 )
+#define ram_pickering2002(c,d)   sin(radians(90.0 - d + 244.0 / pow(165.0 + 47.0 * (90.0 - d), 1.1)))
+#define ram_youngirvine1967(c,d) c / (1.0 - 0.0012 * (pow(c, -2.0) - 1.0))
+#define ram_young1994(c,d)       (pow(c, 3.0) + 0.149864 * pow(c, 2.0) + 0.0102963 * c + 0.000303978) / (1.002432 * pow(c, 2.0) + 0.148386 * c + 0.0096467)
+#define ram_gueymard1993(c,d)    c + 0.00176759 * (d) * pow(94.37515 - d, -1.21563)
+#define ram_gueymard2003(c,d)    c + 0.48353 * pow(d, 0.095846) * pow(96.741 - d, -1.754)
+
+#define ra_model(c,d)            ram_kastenyoung1989(c,d)
+
 // utilities
 #define clip(x)       clamp(x, 0., 1.)
 #define rand(x)       fract(sin(x) * 75154.32912)
@@ -76,7 +89,8 @@
 #define izoom         1.0
 
 // constants
-const float pi        = acos(0.0) * 2.0;
+const float pi_2      = acos(0.0);
+const float pi        = pi_2 * 2.0;
 const float pi2       = pi * 2.0;
 const float pi316     = 3.0 / (16.0 * pi);
 const float pi34      = 3.0 / (4.0 * pi);
@@ -432,7 +446,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
  
   // combined extinction factor
   // relative air mass see https://github.com/pvlib/pvlib-python/blob/main/pvlib/atmosphere.py for more models
-  float raModel = cosZenith + 0.15 * pow( 93.885 - degrees( angZenith ), -1.253 );
+  float raModel = ra_model(cosZenith, degrees(angZenith));
   float relAm = 1.0 / mix(raModel, phum.z, phum.z);
   vec3 Fex = exp( -relAm * ( vBetaR * SCAT.zenithR + vBetaM * SCAT.zenithM ) );
   
