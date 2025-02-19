@@ -210,7 +210,7 @@ const inputCtl = {
     voiceIsolation: false,
     suppressLocalAudioPlayback: false,
     sampleRate: 48000,
-    channelCount: 2,
+    channelCount: 4,
     volume: 1.0,
     sampleSize: 16,
     latency: 0
