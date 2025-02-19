@@ -86,7 +86,7 @@
 #define altitude      0.0
 #define pressure      1018.0
 #define opacity       1.0
-#define izoom         1.0
+#define izoom         1.2
 
 // constants
 const float pi_2      = acos(0.0);
@@ -138,7 +138,7 @@ const struct Scattering {
 } SCAT = Scattering(
   8400.0,
   1250.0,
-  vec3( 0.686, 0.678, 0.666 ),
+  vec3(  0.686,  0.678,  0.666 ),
   vec3( 680E-9, 550E-9, 450E-9 ),
   vec3( 680E-9 ),
   vec3( 4.0 - 2.0 ),
@@ -415,18 +415,18 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #if WEATHER
   // empirical values for global humidity turbidity
   // AtmCond atm = AtmCond(humidity, cloudLow, clouds);
-  vec3 vhum = vec3(humidity, cloudLow, clouds);
-  vec3 phum = pow(vhum, vec3(3.));
+  vec3 vhum        = vec3(humidity, cloudLow, clouds);
+  vec3 phum        = pow(vhum, vec3(3.));
   // empiric Rayleigh + Mie coeffs from environment variables
-  float rayleigh  = 0.5 + exp(0.15/(sunPos.y * sunPos.y + 0.1) - altitude * 1E-9);
+  float rayleigh   = 0.5 + exp(0.15/(sunPos.y * sunPos.y + 0.1) - altitude * 1E-9);
   // atmLen(cosGamma = 0) = sqrt(a2 +2aR), a = atm len, R = earth radius
-  float turbidity = 1.0;// + phum.x + phum.y;
+  float turbidity  = 1.0;// + phum.x + phum.y;
   float mieCoefficient = 0.00335;
 #else
-  vec3  vhum = vec3(0.0);
-  vec3  phum = vec3(0.0);
-  float rayleigh  = 1.0;
-  float turbidity = 0.7;
+  vec3  vhum       = vec3(0.0);
+  vec3  phum       = vec3(0.0);
+  float rayleigh   = 1.0;
+  float turbidity  = 0.7;
   float mieCoefficient = 0.00335;
 #endif
   
