@@ -194,7 +194,7 @@ const inputCtl = {
   supportedConstraints: {},
 
   deviceId:         { name: "source", lab: "src ", sfx: "", entries: {} },
-  channelCount:     { name: "channels", lab: "", sfx: "", entries: { "mono": "1", "stereo*": "2" } },
+  channelCount:     { name: "channels", lab: "", sfx: "", entries: { "mono": "1", "stereo*": "2", "mobile": "4" } },
   sampleSize:       { name: "bits", lab: "", sfx: "-bits", entries: { "8": "8", "16*": "16", "24": "24" } },
   sampleRate:       { name: "samplerate", lab: "", sfx: "Hz", entries: {"8k": "8000", "11k": "11025", "44k": "44100", "48k*": "48000", "96k": "96000" } },
   autoGainControl:  { name: "agc", lab: "agc ", sfx: "", entries: { "off": "false", "on*": "true" } },
@@ -210,7 +210,7 @@ const inputCtl = {
     voiceIsolation: false,
     suppressLocalAudioPlayback: false,
     sampleRate: 48000,
-    channelCount: 4,
+    channelCount: 2,
     volume: 1.0,
     sampleSize: 16,
     latency: 0
