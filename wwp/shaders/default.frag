@@ -353,7 +353,7 @@ const struct Clouds {
   float intensity;
   float smooth;
   float speed;
-} CLDS = Clouds( 8., 0.01, 2., 0.23, 0.001);
+} CLDS = Clouds( 4., 0.01, 2., 0.23, 0.005);
 
 float H12(vec2 p) {
     return fract(sin(p.x * 100. + p.y * 7446.) * 8345.);
@@ -374,7 +374,7 @@ vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
   float pw = 1.0;
   vec2 uv2 = (1. - uv);
   for(float i = 1.0; i < CLDS.steps; i += 1.0) {
-    r += N12(-iTime * CLDS.speed * wind + uv2 * pow(1.0 + uv2.y, i + pw * c)) * pow(CLDS.smooth, i);
+    r += N12( -iTime * CLDS.speed * wind - uv2 * pow(1.0 + uv2.y, i + pw * c)) * pow(CLDS.smooth, i);
   }
   return vec3( r * c * CLDS.intensity * mix(0.25, 0.5, clip(sunpos)));
 }
@@ -418,7 +418,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 vhum        = vec3(humidity, cloudLow, clouds);
   vec3 phum        = pow(vhum, vec3(3.));
   // empiric Rayleigh + Mie coeffs from environment variables
-  float rayleigh   = 0.5 + exp(0.15/(sunPos.y * sunPos.y + 0.1) - altitude * 1E-9);
+  float rayleigh   = 0.5 + exp(0.15 / (sunPos.y * sunPos.y + 0.1) - altitude * 1E-9);
   // atmLen(cosGamma = 0) = sqrt(a2 +2aR), a = atm len, R = earth radius
   float turbidity  = 1.0;// + phum.x + phum.y;
   float mieCoefficient = 0.00335;
@@ -440,14 +440,16 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
   // Mie directional, asymmetry parameter g def float g = 0.8
   // https://www.tandfonline.com/doi/full/10.1080/02786826.2023.2186214#d1e188
-  float g = 0.08;
+  float g = 0.8;
   float g2 = g * g;
   
  
   // combined extinction factor
-  // relative air mass see https://github.com/pvlib/pvlib-python/blob/main/pvlib/atmosphere.py for more models
+  // Relative Air Mass
+  // see https://github.com/pvlib/pvlib-python/blob/main/pvlib/atmosphere.py for more models
   float raModel = ra_model(cosZenith, degrees(angZenith));
   float relAm = 1.0 / mix(raModel, phum.z, phum.z);
+  
   vec3 Fex = exp( -relAm * ( vBetaR * SCAT.zenithR + vBetaM * SCAT.zenithM ) );
   
   // in scattering
@@ -459,7 +461,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 L0 = vec3(0.);
   L0 += 0.5 * Fex;
   vec3 night = nightColor * (1.0 + sin(pi * moon * (1. - phum.z)));
-  vec3 light = sun.color;// + night;
+  vec3 light = sun.color + night;
   
   
   if (clouds < 0.9) {
@@ -474,7 +476,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   }
 
 #if CLOUDS
-    night += pow(renderClouds(uv, cosGamma, phum.x + vhum.y, vhum.z + vhum.y), vec3(1.5));
+    night += pow(renderClouds(uv, cosGamma, phum.z + vhum.y, vhum.x + vhum.y), vec3(1.5));
 #endif
   
   // the horizon line
@@ -507,13 +509,17 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   }
 #endif
 
-#if 0
-  float sc = smoothstep( 0.0, 0.1, uv.y * cosGamma);
-  float hazeD = 1. - 0.33 * phum.x * phum.y * sc;
-  float hazeE = (1. - hazeD) * sc;
-  sky = sky * hazeD + hazeE;
+#if 1
+
   //sky = vec3(cosTheta);
   //float haze = 1. - vHum.y * vHum.z * clamp(cosGamma, moon * 0.01, 0.35);
 #endif
+  if (phum.y > 0.5){
+    float sc = smoothstep( 0.0, 0.1, uv.y * cosGamma);
+    float hazeD = 1. - 0.33 * phum.x * phum.y * sc;
+    float hazeE = (1. - hazeD) * sc;
+    sky = sky * hazeD + hazeE;
+    sky += 0.25 * renderClouds(uv, cosGamma, vhum.y,vhum.y);
+  }
   fragColor = vec4( sky, 1.0);
 }

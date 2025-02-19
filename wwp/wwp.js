@@ -9,7 +9,7 @@ Date.prototype.isDstObserved = function () {
 }
 
 const settings = {
-  live: false,
+  live: true,
   timeId: document.getElementById('time'),
   sunPos: 'auto',
   humidity: 'auto',
@@ -174,12 +174,12 @@ function init(gl){
   webGl = gl;
   setUniforms();
   webGl.start(settings.live);
-  if (!settings.live)
-    setInterval(upd, 1000);
+  setInterval(upd, 1000);
 }
 function upd(){
   setUniforms();
-  webGl.render();
+  if (!settings.live)
+    webGl.render();
 }
 
 const info = document.getElementById('info');
