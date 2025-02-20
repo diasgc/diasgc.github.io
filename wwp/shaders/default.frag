@@ -139,7 +139,7 @@ const struct Scattering {
   1250.0,
   vec3(  0.686,  0.678,  0.666 ),
   vec3( 680E-9, 550E-9, 450E-9 ),
-  vec3( 680E-9 ),
+  vec3( 550E-9 ),
   vec3( 4.0 - 2.0 ),
   vec3( 1.8399918514433978E-14, 2.7798023919660528E-14, 4.0790479543861094E-14 ),
   1.0003,
@@ -266,54 +266,6 @@ float renderMountains(vec2 uv, float h){
 
 const vec2 I = vec2(0.0, 1.0);
 
-// Starfield (https://www.shadertoy.com/view/NtsBzB)
-
-vec3 H33(vec3 p) {
-    p = fract(p * vec3(127.1, 311.7, 74.7));
-    p += dot(p, p.yzx + 19.19);
-    return fract((p + p.yzx) * 43758.5453123);
-}
-
-float H33_D(vec3 i, vec3 f, vec3 ii) {
-  vec3 p = i + ii;
-  p = fract(p * vec3(127.1, 311.7, 74.7));
-  p += dot(p, p.yzx + 19.19);
-  p = fract((p + p.yzx) * 43758.5453123);
-  return dot(H33(i + ii), f - ii);
-}
-
-
-#define H33D(i,f,ii) dot(H33(i + ii), f - ii)
-
-float N13(vec3 p) {
-    vec3 i = floor(p);
-    vec3 f = fract(p);
-    vec3 u = f * f * (3.0 - 2.0 * f);
-    return mix(
-        mix(
-            mix(H33D(i,f,I.xxx), H33D(i,f,I.yxx), u.x),
-            mix(H33D(i,f,I.xyx), H33D(i,f,I.yyx), u.x),
-            u.y),
-        mix(
-            mix(H33D(i,f,I.xxy), H33D(i,f,I.yxy), u.x),
-            mix(H33D(i,f,I.xyy), H33D(i,f,I.yyy), u.x),
-
-            u.y),
-        u.z);
-}
-
-vec3 starfield(vec2 uv, float sunpos, float clds){
-  if (sunpos > -0.12 || clds > 0.9)
-    return vec3(0.);
-  float fade = smoothstep(-0.12, -0.18, sunpos);
-  float thres = 6.0 + smoothstep(0.5, 1.0, clds * fade) * 4.;
-  float expos = 20.0;
-  vec3 dir = normalize(vec3(uv * 2.0 - 1.0, 1.0));
-  float stars = pow(clamp(N13(dir * 200.0), 0.0, 1.0), thres) * expos;
-  stars *= mix(0.4, 1.4, N13(dir * 100.0 + vec3(iTime)));
-  return vec3( stars * fade );
-}
-
 // Starfield#2 (based on https://www.shadertoy.com/view/fsSfD3)
 
 const float phi = 1.61803398874989484820459;
@@ -363,7 +315,7 @@ float N12(vec2 p) {
     vec2 f = fract(p);
     f = f * f * (3.0 - 2.0 * f);
     return mix(
-      mix(H12(i), H12(i + I.yx), f.x),
+      mix(H12(i       ), H12(i + I.yx), f.x),
       mix(H12(i + I.xy), H12(i + I.yy), f.x),
       f.y);
 }
@@ -371,11 +323,22 @@ float N12(vec2 p) {
 vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
   float r = 0.;
   float pw = 1.0;
-  vec2 uv2 = (1. - uv);
+  vec2 uv2 = (1. - c * uv);
   for(float i = 1.0; i < CLDS.steps; i += 1.0) {
-    r += N12( -iTime * CLDS.speed * wind - uv2 * pow(1.0 + uv2.y, i + pw * c)) * pow(CLDS.smooth, i);
+    r += N12( -iTime * CLDS.speed * wind - uv2 * pow(1.0 + uv2.y, i + pw * c)) * pow(CLDS.smooth * h, i);
   }
-  return vec3( r * c * CLDS.intensity * mix(0.25, 0.5, clip(sunpos)));
+  return vec3( r * c * (CLDS.intensity - h * 0.5) * mix(0.25, 0.5, sunpos));
+}
+
+vec3 rclouds(vec2 uv, float cosGamma, vec3 hum, float windd){
+  float r = 0.0;
+  float wnd = 0.005 * windd * iTime;
+  float pz = 2. * hum.z * hum.y;
+  vec2 uv2 = (0.5 - uv * 0.5);
+  for(float i = 1.0; i < CLDS.steps; i += 1.0) {
+    r += N12( -wnd - uv2 * pow(pz + uv2.y, i + pz)) * pow(clamp(cosGamma * hum.x, 0.1, 0.8), i);
+  }
+  return vec3(2. * r);
 }
 
 
@@ -457,8 +420,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 betaTotal = ( vBetaR * rPhase + vBetaM * mPhase ) / ( vBetaR + vBetaM );
   vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.5) ); // zenith
   vec3 B = pow( sunEx * betaTotal * Fex , vec3( .5 ) ); // horizon
-  vec3 L0 = vec3(0.);
-  L0 += 0.5 * Fex;
+  vec3 L0 = vec3(0.5 * Fex);
   vec3 night = nightColor * (1.0 - cosGamma) * (1.0 + sin(pi * moon * (1. - phum.z)));
   vec3 light = sun.color + night;
   
@@ -482,7 +444,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   }
 
 #if CLOUDS
-    night += pow(renderClouds(uv, cosGamma, phum.z + vhum.y, vhum.x + vhum.y), vec3(1.5));
+    night += pow(renderClouds(uv, cosGamma, vhum.x * vhum.y * vhum.z, 1. - vhum.z), vec3(1.5));
+    //night += rclouds(uv, cosGamma, vhum, wind);
 #endif
   
   // the horizon line
@@ -493,11 +456,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 sky = pow((L + L0) * k, vec3(sk));
 
   // acesfilmic color filter, sky only
-  sky += night;
   sky = ACESFilmic(sky);
   
   // add moonlight according to moon phase (do not apply acesfilmic)
-  
+  sky += night;
 
 
 #if STARS
