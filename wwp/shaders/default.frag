@@ -444,7 +444,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   }
 
 #if CLOUDS
-    night += pow(renderClouds(uv, cosGamma, vhum.x * vhum.y * vhum.z, 1. - vhum.z), vec3(1.5));
+    night += pow(renderClouds(uv, cosGamma, vhum.x + vhum.y, vhum.z + vhum.y), vec3(1.5));
     //night += rclouds(uv, cosGamma, vhum, wind);
 #endif
   
