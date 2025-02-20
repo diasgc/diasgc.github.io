@@ -8,6 +8,20 @@
       "webRoot": "${workspaceRoot}/wwp",
       "file": "${workspaceFolder}/wwp/index.html",
       "runtimeArgs": ["--disable-web-security"]   
+    },
+    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "arec",
+      "webRoot": "${workspaceRoot}/arec",
+      "file": "${workspaceFolder}/arec/index.html"
+    },
+    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "glsl-edit",
+      "webRoot": "${workspaceRoot}/glsl",
+      "file": "${workspaceFolder}/glsl/editor.html"
     }
   ]
 }
