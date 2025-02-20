@@ -101,8 +101,7 @@ const float rad2deg   = 180.0 / pi;
 
 const vec3 zenDir     = vec3( 0.0, 1.0, 0.0 );
 
-const float moonFade  = 2.0;
-const vec3 nightColor = vec3( 0.01, 0.03, 0.09) * .5;
+const vec3 nightColor = vec3( 0.001, 0.02, 0.09) * 0.26;
 
 
 const struct Sun {
@@ -254,14 +253,14 @@ float mountain(vec2 uv, float scale, float offset, float h1, float h2, float s){
   return 1. - smoothstep(h, h + s, uv.y - MOUNTS.offset);
 }
 
-float renderMountains(vec2 uv, float sunElev, float h){
+float renderMountains(vec2 uv, float h){
   float m = 0.;
-  float s = max(sunElev, 0.0);
+  //float s = max(sunElev, 0.0);
   float ss = 0.001 + smoothstep(0.9, 1.0, h) * 0.009;
-  m  = mountain(uv, 1.0, 7., -0.005, -0.10, ss);
-  m += max(m, mountain(uv, 1.2, 9., 0.025, -0.10, ss));
+  m  = mountain(uv, 2.0, 7., -0.005, -0.07, ss * 1.5); // back
+  m += max(m, mountain(uv, 1.2, 9., 0.035, -0.10, ss));
   m += max(m, mountain(uv, 1.7, 11., 0.105, -0.10, ss));
-  m += max(m, mountain(uv, 2.5, 16., 0.175, -0.10, ss));
+  m += max(m, mountain(uv, 2.5, 16., 0.175, -0.10, ss * 1.5)); // front
   return m * (1. - ss * uv.y * 500.);
 }
 
@@ -418,25 +417,25 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 vhum        = vec3(humidity, cloudLow, clouds);
   vec3 phum        = pow(vhum, vec3(3.));
   // empiric Rayleigh + Mie coeffs from environment variables
-  float rayleigh   = 0.5 + exp(0.15 / (sunPos.y * sunPos.y + 0.1) - altitude * 1E-9);
+  float rayleigh   = 0.5 + exp(0.15 / (pow(cosGamma, 2.0) + 0.1) - altitude * 1E-9);
   // atmLen(cosGamma = 0) = sqrt(a2 +2aR), a = atm len, R = earth radius
-  float turbidity  = 1.0;// + phum.x + phum.y;
-  float mieCoefficient = 0.00335;
+  float turbidity  = 1.0 + 10. *  vhum.x * vhum.y;
+  float mieCoeff   = 0.00335;
 #else
   vec3  vhum       = vec3(0.0);
   vec3  phum       = vec3(0.0);
   float rayleigh   = 1.0;
   float turbidity  = 0.7;
-  float mieCoefficient = 0.00335;
+  float mieCoeff   = 0.00335;
 #endif
   
   float sunEx = sunIntensity( cosGamma, refraction );
   float sunFd = 1.0 - clip( 1.0 - exp( cosGamma ));
-  float rayleighCoefficient = rayleigh + sunFd - 1.0;
+  float rayleighCoeff = rayleigh + sunFd - 1.0;
   
   // extinction (absorbtion + out scattering)
-  vec3 vBetaR = getBetaRayleigh( rayleigh, temperature, pressure, vhum.x ) * rayleighCoefficient;
-  vec3 vBetaM = getBetaMie( turbidity ) * mieCoefficient;
+  vec3 vBetaR = getBetaRayleigh( rayleigh, temperature, pressure, vhum.x ) * rayleighCoeff;
+  vec3 vBetaM = getBetaMie( turbidity ) * mieCoeff;
 
   // Mie directional, asymmetry parameter g def float g = 0.8
   // https://www.tandfonline.com/doi/full/10.1080/02786826.2023.2186214#d1e188
@@ -448,7 +447,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   // Relative Air Mass
   // see https://github.com/pvlib/pvlib-python/blob/main/pvlib/atmosphere.py for more models
   float raModel = ra_model(cosZenith, degrees(angZenith));
-  float relAm = 1.0 / mix(raModel, phum.z, phum.z);
+  float relAm = 1.0 / mix(raModel, vhum.z, vhum.z);
   
   vec3 Fex = exp( -relAm * ( vBetaR * SCAT.zenithR + vBetaM * SCAT.zenithM ) );
   
@@ -460,11 +459,18 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 B = pow( sunEx * betaTotal * Fex , vec3( .5 ) ); // horizon
   vec3 L0 = vec3(0.);
   L0 += 0.5 * Fex;
-  vec3 night = nightColor * (1.0 + sin(pi * moon * (1. - phum.z)));
+  vec3 night = nightColor * (1.0 - cosGamma) * (1.0 + sin(pi * moon * (1. - phum.z)));
   vec3 light = sun.color + night;
   
   
-  if (clouds < 0.9) {
+
+#if MOUNTAINS
+  float m = renderMountains(uv, vhum.x * vhum.y);
+#else
+  float m = 0.;
+#endif
+
+  if (clouds < 0.9 && m == 0.) {
     // composition + solar disc
     float sundisk = cosGamma * smoothstep( sun.arc, sun.arc + sun.dim, cosTheta);
     L0 += sunEx * sun.exd * Fex * sundisk;
@@ -487,10 +493,11 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 sky = pow((L + L0) * k, vec3(sk));
 
   // acesfilmic color filter, sky only
+  sky += night;
   sky = ACESFilmic(sky);
   
   // add moonlight according to moon phase (do not apply acesfilmic)
-  sky += night;
+  
 
 
 #if STARS
@@ -498,8 +505,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #endif
   
 
-#if MOUNTAINS
-  float m = renderMountains(uv, sunPos.y, 1.0);
   if (m > 0.0) {
     float s = smoothstep(0.01, 0.1, cosGamma) * length(sky) * vhum.y * 0.5;
     vec3 shade = mix(MOUNTS.shade, light * s, vhum.y);
@@ -507,19 +512,14 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     vec3 tone = shade;
     sky = s * mix(sky, mix(tone, fade, m), m * phum.y * vhum.x * cosGamma);
   }
-#endif
 
-#if 1
-
-  //sky = vec3(cosTheta);
-  //float haze = 1. - vHum.y * vHum.z * clamp(cosGamma, moon * 0.01, 0.35);
-#endif
   if (phum.y > 0.5){
     float sc = smoothstep( 0.0, 0.1, uv.y * cosGamma);
     float hazeD = 1. - 0.33 * phum.x * phum.y * sc;
     float hazeE = (1. - hazeD) * sc;
-    sky = sky * hazeD + hazeE;
-    sky += 0.25 * renderClouds(uv, cosGamma, vhum.y,vhum.y);
+    sky = sky * hazeD;
+    sky += ACESFilmic(hazeE + 0.25 * renderClouds(uv, cosGamma, vhum.y,vhum.y));
   }
+
   fragColor = vec4( sky, 1.0);
 }
