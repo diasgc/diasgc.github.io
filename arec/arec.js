@@ -284,9 +284,7 @@ const inputCtl = {
       suppressLocalAudioPlayback: this.options.suppressLocalAudioPlayback === "true" ? true : false,
       sampleRate: parseInt(this.options.sampleRate),
       channelCount: parseInt(this.options.channelCount),
-      volume: 1.0,
-      sampleSize: parseInt(this.options.sampleSize),
-      latency: 0
+      sampleSize: parseInt(this.options.sampleSize)
     }
     let out = JSON.stringify(this.options, (k,v) => {
       return v === 'true' ? true : v === 'false' ? false : parseInt(v) || v; 
@@ -428,6 +426,7 @@ const outputCtl = {
       //opts.mimeType = "audio/webm;codecs=pcm";
       this.transcode = true;
     }
+    opts.audioBitsPerSecond = parseInt(opts.audioBitsPerSecond);
     delete opts.container;
     delete opts.codec;
     delete opts.timer;
