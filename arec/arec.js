@@ -200,15 +200,15 @@ const inputCtl = {
   autoGainControl:  { name: "agc", lab: "agc ", sfx: "", entries: { "off": "false", "on*": "true" } },
   noiseSuppression: { name: "noise", lab: "nr ", sfx: "", entries: { "off*": "false", "on": "true" } },
   echoCancellation: { name: "echo", lab: "echo ", sfx: "", entries: { "off*": "false", "on": "true" } },
-//  voiceIsolation:   { name: "voice", lab: "voice ", sfx: "", entries: { "off*": "false", "on": "true" } },
-//  suppressLocalAudioPlayback: { name: "local ", lab: "local ", sfx: "", entries: { "off*": "false", "on": "true" } },
+  voiceIsolation:   { name: "voice", lab: "voice ", sfx: "", entries: { "off*": "false", "on": "true" } },
+  suppressLocalAudioPlayback: { name: "local ", lab: "local ", sfx: "", entries: { "off*": "false", "on": "true" } },
   
   options: {
     echoCancellation: true,
     noiseSuppression: true,
     autoGainControl: true,
-//    voiceIsolation: false,
-//    suppressLocalAudioPlayback: false,
+    voiceIsolation: false,
+    suppressLocalAudioPlayback: false,
     sampleRate: 48000,
     channelCount: 2,
     volume: 1.0,
@@ -479,16 +479,12 @@ async function startRecording(){
   outputCtl.collapse();
   outputCtl.setDisabled(true);
   session.audio = inputCtl.getOptions();
-  stream = await navigator.mediaDevices.getUserMedia({
-    audio: {
-      channelCount: 2,
-      sampleRate: 48000,
-      sampleSize: 16,
-      volume: 1
-  }});
+  logger.log(JSON.stringify(session.audio));
+  stream = await navigator.mediaDevices.getUserMedia(session.audio);
   lock = await navigator.wakeLock.request('screen');
-  
-  recorder = new MediaRecorder(stream, outputCtl.getOptions());
+  let recOpts = outputCtl.getOptions();
+  logger.log(JSON.stringify(recOpts));
+  recorder = new MediaRecorder(stream, recOpts);
   recorder.start(dataManager.chunkTimeout);
   if (outputCtl.options.graph === 'true')
     graph2.start(stream);
