@@ -211,8 +211,8 @@ const inputCtl = {
   suppressLocalAudioPlayback: { name: "local ", lab: "local ", sfx: "", entries: { "off*": "false", "on": "true" } },
   
   options: {
-    echoCancellation: "true",
-    noiseSuppression: "true",
+    echoCancellation: "false",
+    noiseSuppression: "false",
     autoGainControl: "true",
     voiceIsolation: "false",
     suppressLocalAudioPlayback: "false",
