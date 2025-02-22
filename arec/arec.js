@@ -211,16 +211,14 @@ const inputCtl = {
   suppressLocalAudioPlayback: { name: "local ", lab: "local ", sfx: "", entries: { "off*": "false", "on": "true" } },
   
   options: {
-    echoCancellation: true,
-    noiseSuppression: true,
-    autoGainControl: true,
-    voiceIsolation: false,
-    suppressLocalAudioPlayback: false,
-    sampleRate: 48000,
-    channelCount: 2,
-    volume: 1.0,
-    sampleSize: 16,
-    latency: 0
+    echoCancellation: "true",
+    noiseSuppression: "true",
+    autoGainControl: "true",
+    voiceIsolation: "false",
+    suppressLocalAudioPlayback: "false",
+    sampleRate: "48000",
+    channelCount: "2",
+    sampleSize: "16",
   },
 
   toggleView: function(){
