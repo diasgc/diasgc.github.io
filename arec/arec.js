@@ -479,7 +479,13 @@ async function startRecording(){
   outputCtl.collapse();
   outputCtl.setDisabled(true);
   session.audio = inputCtl.getOptions();
-  stream = await navigator.mediaDevices.getUserMedia(session);
+  stream = await navigator.mediaDevices.getUserMedia({
+    audio: {
+      channelCount: 2,
+      sampleRate: 48000,
+      sampleSize: 16,
+      volume: 1
+  }});
   lock = await navigator.wakeLock.request('screen');
   
   recorder = new MediaRecorder(stream, outputCtl.getOptions());
