@@ -228,3 +228,7 @@ input:checked ~ .start-button {
   50%  { background-color: #fff; }
   100% { background-color: #b00; }
 }
+
+#code {
+  font-size: 9px;
+}
