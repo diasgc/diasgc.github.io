@@ -286,12 +286,6 @@ const inputCtl = {
       channelCount: parseInt(this.options.channelCount),
       sampleSize: parseInt(this.options.sampleSize)
     }
-    let out = JSON.stringify(this.options, (k,v) => {
-      return v === 'true' ? true : v === 'false' ? false : parseInt(v) || v; 
-    });
-    out = JSON.parse(out);
-    //logger.log(JSON.stringify(out));
-    return out;
   },
 }
 
