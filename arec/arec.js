@@ -500,7 +500,7 @@ async function startRecording(){
   let recOpts = outputCtl.getOptions();
   if (outputCtl.options.debug)
     logger.d(JSON.stringify(recOpts,null,2));
-  recorder = new MediaRecorder(stream, recOpts);
+  recorder = new MediaRecorder(stream);
   recorder.start(dataManager.chunkTimeout);
   if (outputCtl.options.graph === 'true')
     graph2.start(stream);
