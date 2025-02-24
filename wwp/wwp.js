@@ -18,48 +18,59 @@ const settings = {
   rain: 'auto',
   moon: 'auto',
   wind: 'auto',
-  init: function(){
+  init2: function(){
     document.getElementById('bsettings').addEventListener('change', (e) => {
       document.getElementById('settings').style.display = e.target.checked ? 'inline' : 'none';
     });
-    //document.getElementById('binfo').addEventListener('change', (e) => {
-    //  document.getElementById('info').style.display = e.target.checked ? 'inline' : 'none';
-    //});
-    document.getElementById('s1').addEventListener('change', (e) => {
-      let i =  parseInt(e.target.value);
-      settings.sunPos = i < 0 ? 'auto' : 2.0 * (i - 50) / 100.0;
-      document.getElementById('l1').innerHTML = "sunposition: " + settings.sunPos;
+    let d = document.getElementById('sinput');
+    d.replaceChildren();
+    settings.add(d, "sun position", -1, 100, -1, (v,l) => {
+      settings.sunPos = v < 0 ? 'auto' : 2.0 * (v - 50) / 100.0;
+      l.innerHTML = "sunposition: " + settings.sunPos;
     });
-    document.getElementById('s2').addEventListener('change', (e) => {
-      let i =  parseInt(e.target.value);
-      settings.humidity = i < 0 ? 'auto' : i / 100.0;
-      document.getElementById('l2').innerHTML = "humidity: " + settings.humidity;
+    settings.add(d, "humidity", -1, 100, -1, (v,l) => {
+      settings.humidity = v < 0 ? 'auto' : v / 100.0;
+      l.innerHTML = "humidity: " + settings.humidity;
     });
-    document.getElementById('s3').addEventListener('change', (e) => {
-      let i =  parseInt(e.target.value);
-      settings.clouds = i < 0 ? 'auto' : i / 100.0;
-      document.getElementById('l3').innerHTML = "clouds: " + settings.clouds;
+    settings.add(d, "clouds", -1, 100, -1, (v,l) => {
+      settings.clouds = v < 0 ? 'auto' : v / 100.0;
+      l.innerHTML = "clouds: " + settings.clouds;
     });
-    document.getElementById('s4').addEventListener('change', (e) => {
-      let i =  parseInt(e.target.value);
-      settings.cloudsLow = i < 0 ? 'auto' : i / 100.0;
-      document.getElementById('l4').innerHTML = "clouds low: " + settings.cloudsLow;
+    settings.add(d, "clouds low", -1, 100, -1, (v,l) => {
+      settings.cloudsLow = v < 0 ? 'auto' : v / 100.0;
+      l.innerHTML = "clouds low: " + settings.cloudsLow;
     });
-    document.getElementById('s5').addEventListener('change', (e) => {
-      let i =  parseInt(e.target.value);
-      settings.rain = i < 0 ? 'auto' : i / 100.0;
-      document.getElementById('l5').innerHTML = "rain: " + settings.rain + " mm";
+    settings.add(d, "rain", -1, 100, -1, (v,l) => {
+      settings.rain = v < 0 ? 'auto' : v / 100.0;
+      l.innerHTML = "rain: " + settings.rain + " mm";
     });
-    document.getElementById('s6').addEventListener('change', (e) => {
-      let i =  parseInt(e.target.value);
-      settings.moon = i < 0 ? 'auto' : i / 100.0;
-      document.getElementById('l6').innerHTML = "moon: " + settings.moon;
+    settings.add(d, "moon", -1, 100, -1, (v,l) => {
+      settings.moon = v < 0 ? 'auto' : v / 100.0;
+      l.innerHTML = "moon: " + settings.moon;
     });
-    document.getElementById('s7').addEventListener('change', (e) => {
-      let i =  parseInt(e.target.value);
-      settings.wind = i < 0 ? 'auto' : i;
-      document.getElementById('l7').innerHTML = "wind: " + settings.wind + " km/h";
+    settings.add(d, "wind", -1, 200, -1, (v,l) => {
+      settings.wind = v < 0 ? 'auto' : v;
+      l.innerHTML = "wind: " + settings.wind + " km/h";
     });
+  },
+  add: function(d,lab,min,max,def, onchangeListener){
+    let n = d.childElementCount + 1;
+    let s = document.createElement('input');
+    s.type = 'range';
+    s.min = min;
+    s.max = max;
+    s.step = 1;
+    s.value = def;
+    s.id = 's' + n;
+    let l = document.createElement('label');
+    l.id = 'l' + n;
+    l.setAttribute('for', 's' + n);
+    d.appendChild(l);
+    d.appendChild(s);
+    s.addEventListener('change', (e) => {
+      onchangeListener(e.target.value, l);
+    });
+    onchangeListener(def, l);
   }
 }
 
@@ -236,7 +247,7 @@ function updateNow(elev, moon, temp, hum, clds, cldL, rain, wind){
 }
 
 window.onload = function(){
-  settings.init();
+  settings.init2();
   let w = new GlCanvas('gl-canvas');
   wwprov.load(() => {
     updateInfo();

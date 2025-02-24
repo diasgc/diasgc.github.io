@@ -418,9 +418,11 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float rPhase = rayleighPhase( cosTheta );
   float mPhase = hgPhase( cosTheta, g, g2 );
   vec3 betaTotal = ( vBetaR * rPhase + vBetaM * mPhase ) / ( vBetaR + vBetaM );
+
   vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.5) ); // zenith
-  vec3 B = pow( sunEx * betaTotal * Fex , vec3( .5 ) ); // horizon
+  vec3 B = pow( sunEx * betaTotal * Fex , vec3( 0.5 ) ); // horizon
   vec3 L0 = vec3(0.5 * Fex);
+
   vec3 night = nightColor * (1.0 - cosGamma) * (1.0 + sin(pi * moon * (1. - phum.z)));
   vec3 light = sun.color + night;
   
@@ -452,7 +454,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   L *= mix( light, B , clip(pow(1.0 - cosGamma, 5.0)));
   float sk = 1.2 / ( 1.2 + 1.2 * sunFd );
   float k = 0.04;
-  
+
   vec3 sky = pow((L + L0) * k, vec3(sk));
 
   // acesfilmic color filter, sky only
