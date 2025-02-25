@@ -50,6 +50,7 @@ const graph2 = {
   source: '',
   analyser: '',
   init: function(){
+    this.audioContext = new (window.AudioContext || window.webkitAudioContext);
     let canvas = document.getElementById('canvas');
     this.canvasSize = { width: canvas.width, height: canvas.height}
     this.ctx = canvas.getContext("2d");
@@ -60,8 +61,8 @@ const graph2 = {
   },
   start: function(context, stream){
     this.container.style.display = 'flex';
-    this.source = context.createMediaStreamSource(stream);
-    this.analyser = context.createAnalyser();
+    this.source = this.audioContext.createMediaStreamSource(stream);
+    this.analyser = this.audioContext.createAnalyser();
     this.source.connect(this.analyser);
     this.analyser.fftSize = this.fftSize;
     this.buffLen = this.analyser.frequencyBinCount;
@@ -74,7 +75,7 @@ const graph2 = {
   stop: function(context){
     this.isEnabled = false;
     this.container.style.display = 'none';
-    context.close;
+    this.audioContext.close;
     this.source.disconnect;
     
   },
