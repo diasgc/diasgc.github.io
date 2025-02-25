@@ -110,6 +110,10 @@ const graph2 = {
 
 }
 
+const outputCtl = {
+  timeout: 3 * 60000,
+}
+
 const timer = {
   id: document.getElementById('timer'),
   startTime: 0,
@@ -159,32 +163,15 @@ const dataManager = {
       .replace(/T/g,'-');
   },
   save: function() {
-    let blob = outputCtl.transcode
-      ? this.transcode()
-      : new Blob(this.chunks, { type: outputCtl.mimeType });
+    let blob = new Blob(this.chunks, { type: "audio/ogg" });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = this.getTimestampFilename() + "." + outputCtl.options.container.replace('mp4','m4a');
+    a.download = this.getTimestampFilename() + ".ogg";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     this.chunks = [];
     logger.log("idle");
-  },
-  transcode: async function(){
-    logger.log("transcoding...");
-    const ffmpeg = createFFmpeg({ log: true });
-    //ffmpeg.on('log', e => console.log(e.message));
-    //ffmpeg.on('progress', e => console.log(e.progress));
-    if (ffmpeg.isLoaded() === false)
-      await ffmpeg.load();
-    let input = "temp-rec.webm  ";
-    let output = "output." + outputCtl.options.container;
-    ffmpeg.FS("writeFile", input, await fetchFile(new Blob(this.chunks, { type: outputCtl.mimeType })));
-    await ffmpeg.run("-i", input, "-c:a", "copy", output);
-    const data = ffmpeg.FS("readFile", output);
-    logger.log("size: " + data.buffer.byteLength);
-    return new Blob([data.buffer], { type: outputCtl.mimeType });
   }
 }
 
@@ -199,11 +186,9 @@ async function startRecording(){
   logger.d(null);
   stream = await navigator.mediaDevices.getUserMedia(session);
   lock = await navigator.wakeLock.request('screen');
-  let recOpts = outputCtl.getOptions();
   recorder = new MediaRecorder(stream);
   recorder.start(dataManager.chunkTimeout);
-  if (outputCtl.options.graph === 'true')
-    graph2.start(audioContext, stream);
+  graph2.start(audioContext, stream);  
   recorder.addEventListener("dataavailable", async (event) => {
     dataManager.add(event.data);
     if (recorder.state === "inactive")
@@ -221,10 +206,7 @@ async function stopRecording(){
     await lock.release();
     lock = null;
   }
-  inputCtl.setDisabled(false);
-  outputCtl.setDisabled(false);
-  if (outputCtl.options.graph === 'true')
-    graph2.stop(audioContext);
+  graph2.stop(audioContext);
 }
 
 let stream;
