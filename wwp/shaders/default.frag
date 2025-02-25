@@ -43,7 +43,9 @@
 #define ram_gueymard1993(c,d)    c + 0.00176759 * (d) * pow(94.37515 - d, -1.21563)
 #define ram_gueymard2003(c,d)    c + 0.48353 * pow(d, 0.095846) * pow(96.741 - d, -1.754)
 
-#define ra_model(c,d)            ram_kastenyoung1989(c,d)
+#define ra_model(c,d)            ram_young1994(c,d)
+
+const vec3 nightColor = vec3( 0.0, 0.001, 0.07) * 0.26; // vec3(0.0,0.001,0.0025) * 0.3
 
 // utilities
 #define clip(x)       clamp(x, 0., 1.)
@@ -101,8 +103,6 @@ const float rad2deg   = 180.0 / pi;
 
 const vec3 zenDir     = vec3( 0.0, 1.0, 0.0 );
 
-const vec3 nightColor = vec3( 0.001, 0.02, 0.09) * 0.26;
-
 
 const struct Sun {
   float arc;    // 66 arc seconds -> degrees, and the cosine of that
@@ -114,7 +114,7 @@ const struct Sun {
   float imin;
   float cutoff; // earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
   vec3  color;
-} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5E5, 0.5, 0.66, 1000., 1000., pi / 1.9, vec3( 0.5 ) );
+} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5E5, 0.5, 0.66, 1000., 800., pi / 1.81, vec3( 0.5 ) );
 
 float sunIntensity(float angle, float refraction) {
   return mix(sun.imax, sun.imin, clouds) * max(0., 1. - exp( -sun.istep * ( sun.cutoff - acos(angle) + refraction )));
@@ -362,9 +362,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float ar        = 1.;//iResolution.y/iResolution.x;
   vec2 uv         = fragCoord/iResolution.xy;
   vec3 pos        = vec3(izoom * uv * ar - vec2(0.0, izoom/25.0), 0.0);
-  vec3 sunPos     = vec3( 0.5 , SUN_ELEV, -1. );
+  vec3 sunPos     = vec3( 0. , SUN_ELEV, -1.0);
   vec3 sunDir     = normalize( sunPos );
-  vec3 camPos     = vec3( sunDir.x, 0.0, -sunDir.z);
+  vec3 camPos     = vec3( sunDir.x, 0.0, sunDir.z);
   float cosGamma  = dot( sunDir, zenDir ); // 0 at horizon, 1 at zenith
   vec3 direction  = normalize( pos - camPos );
   float cosZenith = dot( zenDir, direction );
@@ -415,15 +415,15 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 Fex = exp( -relAm * ( vBetaR * SCAT.zenithR + vBetaM * SCAT.zenithM ) );
   
   // in scattering
-  float rPhase = rayleighPhase( cosTheta );
-  float mPhase = hgPhase( cosTheta, g, g2 );
-  vec3 betaTotal = ( vBetaR * rPhase + vBetaM * mPhase ) / ( vBetaR + vBetaM );
+  float rPhase    = rayleighPhase( cosTheta );
+  float mPhase    = hgPhase( cosTheta, g, g2 );
+  vec3  betaTotal = ( vBetaR * rPhase + vBetaM * mPhase ) / ( vBetaR + vBetaM );
 
   vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.5) ); // zenith
   vec3 B = pow( sunEx * betaTotal * Fex , vec3( 0.5 ) ); // horizon
-  vec3 L0 = vec3(0.5 * Fex);
+  vec3 L0 = (1. - clouds) * vec3(0.1 * Fex);
 
-  vec3 night = nightColor * (1.0 - cosGamma) * (1.0 + sin(pi * moon * (1. - phum.z)));
+  vec3 night = nightColor * (1. - cosGamma) * (1.0 + sin(pi * moon * (1. - phum.z)));
   vec3 light = sun.color + night;
   
   
@@ -451,9 +451,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #endif
   
   // the horizon line
+
   L *= mix( light, B , clip(pow(1.0 - cosGamma, 5.0)));
   float sk = 1.2 / ( 1.2 + 1.2 * sunFd );
-  float k = 0.04;
+  float k = 0.04; //clamp(1./(cosGamma + 0.012), 0.04, 0.16);
 
   vec3 sky = pow((L + L0) * k, vec3(sk));
 
@@ -462,6 +463,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
   // add moonlight according to moon phase (do not apply acesfilmic)
   sky += night;
+
+  //sky = vec3(sunFd);
 
 
 #if STARS
@@ -478,11 +481,11 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   }
 
   if (phum.y > 0.5){
-    float sc = smoothstep( 0.0, 0.1, uv.y * cosGamma);
-    float hazeD = 1. - 0.33 * phum.x * phum.y * sc;
+    float sc = smoothstep( 0.0, 0.8, uv.y * cosGamma);
+    float hazeD = 1. - 0.5 * phum.x * phum.y * sc;
     float hazeE = (1. - hazeD) * sc;
     sky = sky * hazeD;
-    sky += ACESFilmic(hazeE + 0.25 * renderClouds(uv, cosGamma, vhum.y,vhum.y));
+    sky += (hazeE + phum.y * renderClouds(uv, cosGamma, vhum.y,vhum.y));
   }
 
   fragColor = vec4( sky, 1.0);
