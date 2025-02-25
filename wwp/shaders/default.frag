@@ -45,7 +45,7 @@
 
 #define ra_model(c,d)            ram_young1994(c,d)
 
-const vec3 nightColor = vec3( 0.0, 0.001, 0.07) * 0.26; // vec3(0.0,0.001,0.0025) * 0.3
+const vec3 nightColor = vec3( 0.0, 0.002, 0.07) * 0.32; // vec3(0.0,0.001,0.0025) * 0.3
 
 // utilities
 #define clip(x)       clamp(x, 0., 1.)
@@ -256,7 +256,7 @@ float mountain(vec2 uv, float scale, float offset, float h1, float h2, float s){
 float renderMountains(vec2 uv, float h){
   float m = 0.;
   //float s = max(sunElev, 0.0);
-  float ss = 0.001 + smoothstep(0.9, 1.0, h) * 0.009;
+  float ss = 0.001 + smoothstep(0.9, 1.0, h) * 0.008;
   m  = mountain(uv, 2.0, 7., -0.005, -0.07, ss * 1.5); // back
   m += max(m, mountain(uv, 1.2, 9., 0.035, -0.10, ss));
   m += max(m, mountain(uv, 1.7, 11., 0.105, -0.10, ss));
@@ -287,11 +287,15 @@ vec3 renderStarfield(vec2 uv, float sunpos, float clds) {
   if (sunpos > -0.12 || clds > 0.5)
     return vec3(0.);
   vec3 col = vec3(0.0);
-  for (float i = 0.0; i < 50.0; i++) {
+  float lim = min(-sunpos * 100.0, 50.0);
+  float intens = 0.02 + 0.02 * clds;
+  for (float i = 0.0; i < 50.0; i += 1.0) {
     vec2 ofs = H21(i + 1.0) * vec2(1.8, 1.1);
     float r = (mod(i, 10.0) == 0.0) ? 0.5 + abs(sin(i / 50.0)) : 0.25;
-    float l = 1.0 + 0.02 * (sin(fract(iTime) * 0.5 * i) + 1.0);
+    float l = 1.0 + intens * (sin(fract(iTime) * 0.5 * i) + 1.0);
     col += vec3(LS2(0.5 - uv, ofs, r, l));
+    if (i > lim)
+      break;
   }
   return col;
 }    
@@ -477,7 +481,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     vec3 shade = mix(MOUNTS.shade, light * s, vhum.y);
     vec3 fade = 0.5 * shade;
     vec3 tone = shade;
-    sky = s * mix(sky, mix(tone, fade, m), m * phum.y * vhum.x * cosGamma);
+    sky = s * mix(sky, mix(tone, fade, m), m * phum.y * (1. - vhum.x) * cosGamma);
   }
 
   if (phum.y > 0.5){
