@@ -30,9 +30,16 @@ if ("serviceWorker" in navigator) {
 
 const logger = {
   id: document.getElementById('log-stat'),
+  did: document.getElementById('code'),
   dataSize: 0,
   log: function(msg){
     this.id.innerText = msg;
+  },
+  d: function(msg){
+    if (msg === null)
+      this.did.innerText = "";
+    else  
+      this.did.innerText += msg;
   },
   addSize: function(size){
     this.dataSize += size;
@@ -194,8 +201,8 @@ const inputCtl = {
   supportedConstraints: {},
 
   deviceId:         { name: "source", lab: "src ", sfx: "", entries: {} },
-  channelCount:     { name: "channels", lab: "", sfx: "", entries: { "mono": "1", "stereo*": "2", "mobile": "4" } },
-  sampleSize:       { name: "bits", lab: "", sfx: "-bits", entries: { "8": "8", "16*": "16", "24": "24" } },
+  channelCount:     { name: "channels", lab: "", sfx: "", entries: { "mono": "1", "stereo*": "2" } },
+  sampleSize:       { name: "bits", lab: "", sfx: "-bits", entries: { "8": "8", "16*": "16"} },
   sampleRate:       { name: "samplerate", lab: "", sfx: "Hz", entries: {"8k": "8000", "11k": "11025", "44k": "44100", "48k*": "48000", "96k": "96000" } },
   autoGainControl:  { name: "agc", lab: "agc ", sfx: "", entries: { "off": "false", "on*": "true" } },
   noiseSuppression: { name: "noise", lab: "nr ", sfx: "", entries: { "off*": "false", "on": "true" } },
@@ -204,16 +211,14 @@ const inputCtl = {
   suppressLocalAudioPlayback: { name: "local ", lab: "local ", sfx: "", entries: { "off*": "false", "on": "true" } },
   
   options: {
-    echoCancellation: true,
-    noiseSuppression: true,
-    autoGainControl: true,
-    voiceIsolation: false,
-    suppressLocalAudioPlayback: false,
-    sampleRate: 48000,
-    channelCount: 2,
-    volume: 1.0,
-    sampleSize: 16,
-    latency: 0
+    echoCancellation: "false",
+    noiseSuppression: "false",
+    autoGainControl: "true",
+    voiceIsolation: "false",
+    suppressLocalAudioPlayback: "false",
+    sampleRate: "48000",
+    channelCount: "2",
+    sampleSize: "16",
   },
 
   toggleView: function(){
@@ -271,13 +276,16 @@ const inputCtl = {
       });
   },
   getOptions: function(){
-    return this.options;
-    let out = JSON.stringify(this.options, (k,v) => {
-      return v === 'true' ? true : v === 'false' ? false : parseInt(v) || v; 
-    });
-    out = JSON.parse(out);
-    //logger.log(JSON.stringify(out));
-    return out;
+    return {
+      echoCancellation: this.options.echoCancellation === "true" ? true : false,
+      noiseSuppression: this.options.noiseSuppression === "true" ? true : false,
+      autoGainControl: this.options.autoGainControl === "true" ? true : false,
+      voiceIsolation: this.options.voiceIsolation === "true" ? true : false,
+      suppressLocalAudioPlayback: this.options.suppressLocalAudioPlayback === "true" ? true : false,
+      sampleRate: parseInt(this.options.sampleRate),
+      channelCount: parseInt(this.options.channelCount),
+      sampleSize: parseInt(this.options.sampleSize)
+    }
   },
 }
 
@@ -288,6 +296,7 @@ const outputCtl = {
   builtInContainers: [ "webm", "mp4", "ogg" ],
   builtInCodecs: [ "opus", "pcm" ],
   graph: { name: "graph", entries: { "off": "false", "on*": "true"} },
+  debug: { name: "debug", entries: { "off*": "false", "on": "true"} },
   audioBitsPerSecond: { name: "bitrate", entries: { "32k": "32000", "56k": "56000", "128k": "128000", "192k": "192000", "256k*": "256000", "320k": "320000", "512k": "512000" } },
   audioBitrateMode:   { name: "mode",    entries: { "cbr": "constant", "vbr*": "variable" } },
   cnt: { name: "extension", entries: { "webm": "webm", "mp4*": "mp4" } },
@@ -305,7 +314,8 @@ const outputCtl = {
     container: 'mp4',
     codec: 'opus',
     timer: "300000",
-    graph: "true"
+    graph: "true",
+    debug: "false"
   },
 
   setDisabled: function(state){
@@ -366,6 +376,7 @@ const outputCtl = {
     this.fsi.appendChild(fsBuilder.build("radio", this.cod, this.options, "codec"));
     this.fsi.appendChild(fsBuilder.build("radio", this.timer, this.options, "timer"));
     this.fsi.appendChild(fsBuilder.build("radio", this.graph, this.options, "graph"));
+    this.fsi.appendChild(fsBuilder.build("radio", this.debug, this.options, "debug"));
     this.collapse();
   },
   
@@ -409,10 +420,12 @@ const outputCtl = {
       //opts.mimeType = "audio/webm;codecs=pcm";
       this.transcode = true;
     }
+    opts.audioBitsPerSecond = parseInt(opts.audioBitsPerSecond);
     delete opts.container;
     delete opts.codec;
     delete opts.timer;
     delete opts.graph;
+    delete opts.debug;
     return opts;
   }
 }
@@ -479,10 +492,15 @@ async function startRecording(){
   outputCtl.collapse();
   outputCtl.setDisabled(true);
   session.audio = inputCtl.getOptions();
+  logger.d(null);
+  if (outputCtl.options.debug)
+    logger.d(JSON.stringify(session,null,2));
   stream = await navigator.mediaDevices.getUserMedia(session);
   lock = await navigator.wakeLock.request('screen');
-  
-  recorder = new MediaRecorder(stream, outputCtl.getOptions());
+  let recOpts = outputCtl.getOptions();
+  if (outputCtl.options.debug)
+    logger.d(JSON.stringify(recOpts,null,2));
+  recorder = new MediaRecorder(stream);
   recorder.start(dataManager.chunkTimeout);
   if (outputCtl.options.graph === 'true')
     graph2.start(stream);
