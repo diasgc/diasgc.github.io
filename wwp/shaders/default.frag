@@ -369,8 +369,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   vec3 sunPos     = vec3( 0. , SUN_ELEV, -1.0);
   vec3 sunDir     = normalize( sunPos );
   vec3 camPos     = vec3( sunDir.x, 0.0, sunDir.z);
-  float cosGamma  = dot( sunDir, zenDir ); // 0 at horizon, 1 at zenith
   vec3 direction  = normalize( pos - camPos );
+  float cosGamma  = dot( sunDir, zenDir ); // 0 at horizon, 1 at zenith
   float cosZenith = dot( zenDir, direction );
   float cosTheta  = dot( sunDir, direction );
   float angZenith = acos( clip(cosZenith) ); // horizon cutoff
