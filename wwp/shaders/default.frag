@@ -50,6 +50,7 @@ const vec3 nightColor = vec3( 0.0, 0.002, 0.07) * 0.32; // vec3(0.0,0.001,0.0025
 // utilities
 #define clip(x)       clamp(x, 0., 1.)
 #define rand(x)       fract(sin(x) * 75154.32912)
+#define R11(x)        fract(sin(x) * 43758.5453)
 #define ACESFilmic(x) (x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14)
 
 // environment variables
@@ -114,7 +115,7 @@ const struct Sun {
   float imin;
   float cutoff; // earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
   vec3  color;
-} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5E5, 0.5, 0.66, 1000., 800., pi / 1.81, vec3( 0.5 ) );
+} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5E5, 0.5, 0.66, 1000., 800., pi / 1.83, vec3( 0.5 ) );
 
 float sunIntensity(float angle, float refraction) {
   return mix(sun.imax, sun.imin, clouds) * max(0., 1. - exp( -sun.istep * ( sun.cutoff - acos(angle) + refraction )));
@@ -138,8 +139,8 @@ const struct Scattering {
   8400.0,
   1250.0,
   vec3(  0.686,  0.678,  0.666 ),
-  vec3( 680E-9, 520E-9, 450E-9 ), 
-  vec3( 550E-9 ),
+  vec3( 650E-9, 550E-9, 450E-9 ),
+  vec3( 650E-9 ),
   vec3( 4.0 - 2.0 ),
   vec3( 1.8399918514433978E-14, 2.7798023919660528E-14, 4.0790479543861094E-14 ),
   1.0003,
@@ -228,14 +229,10 @@ const struct Mountains {
   float offset;
 } MOUNTS = Mountains(vec3(1.13, 1.04, 1.1), 10, 1.2, 0.08);
 
-float R11(float x){
-    return fract(sin(x)*43758.5453);
-}
-
 float N11(float x){
     float i = floor(x);
     float f = fract(x);
-    return mix(R11(i), R11(i + 1.), f);
+    return mix(R11(i), R11(i + 1.0), f);
 }
 
 float perlin(float x){
@@ -370,36 +367,37 @@ struct AtmCond {
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float ar        = 1.;//iResolution.y/iResolution.x;
-  vec2 uv         = fragCoord/iResolution.xy;
-  vec3 pos        = vec3(izoom * uv * ar - vec2(0.0, izoom/25.0), 0.0);
-  vec3 sunPos     = vec3( 0. , SUN_ELEV, -1.0);
-  vec3 sunDir     = normalize( sunPos );
-  vec3 camPos     = vec3( sunDir.x, 0.0, sunDir.z);
-  vec3 direction  = normalize( pos - camPos );
+  vec2  uv        = fragCoord/iResolution.xy;
+  vec3  pos       = vec3(izoom * uv * ar - vec2(0.0, izoom/25.0), 0.0);
+  vec3  sunPos    = vec3( 0. , SUN_ELEV, -1.0);
+  vec3  sunDir    = normalize( sunPos );
+  vec3  camPos    = vec3( sunDir.x, 0.0, sunDir.z);
+  vec3  direction = normalize( pos - camPos );
   float cosGamma  = dot( sunDir, zenDir ); // 0 at horizon, 1 at zenith
   float cosZenith = dot( zenDir, direction );
   float cosTheta  = dot( sunDir, direction );
   float angZenith = acos( clip(cosZenith) ); // horizon cutoff
   
   // refraction at horizon hack: todo
-  float refraction = 0.0035;
 
 #if WEATHER
   // empirical values for global humidity turbidity
   // AtmCond atm = AtmCond(humidity, cloudLow, clouds);
-  vec3 vhum        = vec3(humidity, cloudLow, clouds);
-  vec3 phum        = pow(vhum, vec3(3.));
+  vec3  vhum       = vec3(humidity, cloudLow, clouds);
+  vec3  phum       = pow(vhum, vec3(3.));
   // empiric Rayleigh + Mie coeffs from environment variables
   float rayleigh   = 0.5 + exp(0.15 / (pow(cosGamma, 2.0) + 0.1) - altitude * 1E-9);
   // atmLen(cosGamma = 0) = sqrt(a2 +2aR), a = atm len, R = earth radius
   float turbidity  = 1.0 + 10. *  vhum.x * vhum.y;
   float mieCoeff   = 0.00335;
+  float refraction = 0.0035;
 #else
   vec3  vhum       = vec3(0.0);
   vec3  phum       = vec3(0.0);
   float rayleigh   = 1.0;
   float turbidity  = 0.7;
   float mieCoeff   = 0.00335;
+  float refraction = 0.0035;
 #endif
   
   float sunEx = sunIntensity( cosGamma, refraction );
@@ -412,17 +410,17 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
   // Mie directional, asymmetry parameter g def float g = 0.8
   // https://www.tandfonline.com/doi/full/10.1080/02786826.2023.2186214#d1e188
-  float g = 0.8;
+  float g  = 0.8;
   float g2 = g * g;
   
  
   // combined extinction factor
   // Relative Air Mass
   // see https://github.com/pvlib/pvlib-python/blob/main/pvlib/atmosphere.py for more models
-  float raModel = ra_model(cosZenith, degrees(angZenith));
-  float relAm = 1.0 / mix(raModel, vhum.z, vhum.z);
+  float raModel   = ra_model(cosZenith, degrees(angZenith));
+  float relAm     = 1.0 / mix(raModel, vhum.z, vhum.z);
   
-  vec3 Fex = exp( -relAm * ( vBetaR * SCAT.zenithR + vBetaM * SCAT.zenithM ) );
+  vec3  Fex       = exp( -relAm * ( vBetaR * SCAT.zenithR + vBetaM * SCAT.zenithM ) );
   
   // in scattering
   float rPhase    = rayleighPhase( cosTheta );
@@ -431,51 +429,42 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
   vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.5) ); // zenith
   vec3 B = pow( sunEx * betaTotal * Fex , vec3( 0.5 ) ); // horizon
-  vec3 L0 = (1. - clouds) * vec3(0.1 * Fex);
+  vec3 L0 = (1. - phum.z) * vec3(0.1 * Fex);
 
   vec3 night = nightColor * (1. - cosGamma) * (1.0 + sin(pi * moon * (1. - phum.z)));
   vec3 light = sun.color + night;
   
   
-
 #if MOUNTAINS
   float m = renderMountains(uv, vhum.x * vhum.y);
 #else
   float m = 0.;
 #endif
 
-  if (clouds < 0.9 && m == 0.) {
-    // composition + solar disc
-    float sundisk = cosGamma * smoothstep( sun.arc, sun.arc + sun.dim, cosTheta);
-    L0 += sunEx * sun.exd * Fex * sundisk;
-  } else {
+  // sun disk
+  float sundisk  = cosGamma * smoothstep( sun.arc, sun.arc + sun.dim, cosTheta);
+  float overcast = step(phum.z, 0.5);
+  L0 += mix(0.0, sundisk, overcast * step(m, 0.0));
 #if DEF_LAMBDA
-    // clouds will desaturate
-    L = mix(L, vec3(length(L)), phum.z);
+  // clouds will desaturate
+  L = mix(L, vec3(length(L)), overcast);
 #endif
-  }
 
 #if CLOUDS
-    night += pow(renderClouds(uv, cosGamma, vhum.x + vhum.y, vhum.z + vhum.y), vec3(1.5));
-    //night += rclouds(uv, cosGamma, vhum, wind);
+  night += pow(renderClouds(uv, cosGamma, vhum.x + vhum.y, vhum.z + vhum.y), vec3(1.5));
 #endif
   
   // the horizon line
-
   L *= mix( light, B , clip(pow(1.0 - cosGamma, 5.0)));
   float sk = 1.2 / ( 1.2 + 1.2 * sunFd );
-  float k = 0.04; //clamp(1./(cosGamma + 0.012), 0.04, 0.16);
+  float k = 0.04;
 
   vec3 sky = pow((L + L0) * k, vec3(sk));
 
   // acesfilmic color filter, sky only
   sky = ACESFilmic(sky);
-  
   // add moonlight according to moon phase (do not apply acesfilmic)
   sky += night;
-
-  //sky = vec3(sunFd);
-
 
 #if STARS
   sky += renderStarfield(uv, sunPos.y, phum.z);
