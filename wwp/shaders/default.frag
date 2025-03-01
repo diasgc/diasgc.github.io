@@ -138,7 +138,7 @@ const struct Scattering {
   8400.0,
   1250.0,
   vec3(  0.686,  0.678,  0.666 ),
-  vec3( 680E-9, 550E-9, 450E-9 ),
+  vec3( 680E-9, 520E-9, 450E-9 ), 
   vec3( 550E-9 ),
   vec3( 4.0 - 2.0 ),
   vec3( 1.8399918514433978E-14, 2.7798023919660528E-14, 4.0790479543861094E-14 ),
@@ -311,25 +311,31 @@ const struct Clouds {
 } CLDS = Clouds( 4., 0.01, 2., 0.23, 0.005);
 
 float H12(vec2 p) {
-    return fract(sin(p.x * 100. + p.y * 7446.) * 8345.);
+  return fract(sin(p.x * 100. + p.y * 7446.) * 8345.);
 }
 
+//#define H12(p) fract(sin(p.x * 100. + p.y * 7446.) * 8345.)
+
 float N12(vec2 p) {
-    vec2 i = floor(p);
-    vec2 f = fract(p);
-    f = f * f * (3.0 - 2.0 * f);
-    return mix(
-      mix(H12(i       ), H12(i + I.yx), f.x),
-      mix(H12(i + I.xy), H12(i + I.yy), f.x),
-      f.y);
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  f = f * f * (3.0 - 2.0 * f);
+  return mix(
+    mix(H12(i       ), H12(i + I.yx), f.x),
+    mix(H12(i + I.xy), H12(i + I.yy), f.x),
+    f.y);
 }
   
 vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
   float r = 0.;
-  float pw = 1.0;
+  float pw = 1.0 * c;
+  float a = -iTime * CLDS.speed * wind;
+  float b = CLDS.smooth * h;
   vec2 uv2 = (1. - c * uv);
+  float accum = 1.0;
   for(float i = 1.0; i < CLDS.steps; i += 1.0) {
-    r += N12( -iTime * CLDS.speed * wind - uv2 * pow(1.0 + uv2.y, i + pw * c)) * pow(CLDS.smooth * h, i);
+    accum *= b; // Avoid pow() inside loop
+    r += N12(a - uv2 * (1.0 + uv2.y * (i + pw))) * accum;
   }
   return vec3( r * c * (CLDS.intensity - h * 0.5) * mix(0.25, 0.5, sunpos));
 }

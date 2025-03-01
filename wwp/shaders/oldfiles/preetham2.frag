@@ -191,6 +191,5 @@ vec3 sky(vec3 sunPosition, vec3 worldNormal) {
 
     vec3 retColor = pow(color,vec3(1.0/(1.2+(1.2*sunfade))));
 
-
     return retColor;
 }
