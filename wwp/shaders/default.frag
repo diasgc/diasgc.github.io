@@ -261,6 +261,30 @@ float renderMountains(vec2 uv, float h){
   return m * (1. - ss * uv.y * 500.);
 }
 
+/*
+float mountain2(vec2 u, in vec3 sky){
+  u /= iResolution.y;
+  float o = 0.;
+  float s = length(sky);
+  float d = 1.0, x = 0.0, a = 0.0, f = 0.0, l = 3.0;
+  for(float i = 0.0; i < 1.0; i += 0.1){
+      x = u.x / d + 71.0 * i;
+      for(float b = 0.5; b > 0.001; b = b * 0.5){
+          f = fract(x);
+          a += mix(fract((x - f) * 0.37), fract((x - f + 1.0) * 0.37), f) * b;
+          x *= 2.5;
+      }
+      if(u.y < d * a + i - 0.2)
+        l = i + .9;
+      if (l < 2.)
+        break;
+      d *= 0.9;
+      o = s * l;
+  }
+  return o;
+}
+*/
+
 const vec2 I = vec2(0.0, 1.0);
 
 // Starfield#2 (based on https://www.shadertoy.com/view/fsSfD3)
@@ -348,7 +372,7 @@ vec3 rclouds(vec2 uv, float cosGamma, vec3 hum, float windd){
     accum *= b; // Avoid pow() inside loop
     r += N12(a - uv2 * (1.0 + uv2.y * (i + pw))) * accum;
   }
-  return vec3( r * hum.y * (CLDS.intensity - hum.y * 0.5) * (0.2 + 0.8*step(cosGamma,0.0)));
+  return vec3( r * hum.y * (CLDS.intensity - hum.y * 0.5) * (0.2 + 0.8 * step(cosGamma, 0.0)));
 }
 
 
@@ -440,6 +464,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
 #if MOUNTAINS
   float m = renderMountains(uv, vhum.x * vhum.y);
+  //float m = mountain2(uv,L);
 #else
   float m = 0.;
 #endif
