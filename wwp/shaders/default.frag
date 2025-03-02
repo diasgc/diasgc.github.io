@@ -115,7 +115,7 @@ const struct Sun {
   float imin;
   float cutoff; // earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
   vec3  color;
-} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5E5, 0.5, 0.66, 1000., 800., pi / 1.83, vec3( 0.5 ) );
+} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5E5, 0.5, 0.66, 1000., 900., pi / 1.83, vec3( 0.5 ) );
 
 float sunIntensity(float angle, float refraction) {
   return mix(sun.imax, sun.imin, clouds) * max(0., 1. - exp( -sun.istep * ( sun.cutoff - acos(angle) + refraction )));
@@ -322,10 +322,10 @@ float N12(vec2 p) {
     mix(H12(i + I.xy), H12(i + I.yy), f.x),
     f.y);
 }
-  
+
 vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
   float r = 0.;
-  float pw = 1.0 * c;
+  float pw = .5 * c;
   float a = -iTime * CLDS.speed * wind;
   float b = CLDS.smooth * h;
   vec2 uv2 = (1. - c * uv);
@@ -338,14 +338,17 @@ vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
 }
 
 vec3 rclouds(vec2 uv, float cosGamma, vec3 hum, float windd){
-  float r = 0.0;
-  float wnd = 0.005 * windd * iTime;
-  float pz = 2. * hum.z * hum.y;
-  vec2 uv2 = (0.5 - uv * 0.5);
+  float r = 0.;
+  float pw = 2. * hum.y;
+  float a = -iTime * CLDS.speed * windd;
+  float b = CLDS.smooth * hum.y;
+  vec2 uv2 = (1. - hum.y * hum.x * uv);
+  float accum = 1.0;
   for(float i = 1.0; i < CLDS.steps; i += 1.0) {
-    r += N12( -wnd - uv2 * pow(pz + uv2.y, i + pz)) * pow(clamp(cosGamma * hum.x, 0.1, 0.8), i);
+    accum *= b; // Avoid pow() inside loop
+    r += N12(a - uv2 * (1.0 + uv2.y * (i + pw))) * accum;
   }
-  return vec3(2. * r);
+  return vec3( r * hum.y * (CLDS.intensity - hum.y * 0.5) * (0.2 + 0.8*step(cosGamma,0.0)));
 }
 
 
@@ -451,8 +454,12 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #endif
 
 #if CLOUDS
-  night += pow(renderClouds(uv, cosGamma, vhum.x + vhum.y, vhum.z + vhum.y), vec3(1.5));
+  vec3 clds = renderClouds(uv, cosGamma, vhum.x + vhum.y, vhum.z + vhum.y);
+  //vec3 clds = rclouds(uv, cosGamma, vhum, wind);
+#else
+  vec3 clds = vec3(0.);
 #endif
+  night += pow(clds, vec3(1.5));
   
   // the horizon line
   L *= mix( light, B , clip(pow(1.0 - cosGamma, 5.0)));
@@ -484,7 +491,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     float hazeD = 1. - 0.5 * phum.x * phum.y * sc;
     float hazeE = (1. - hazeD) * sc;
     sky = sky * hazeD;
-    sky += (hazeE + phum.y * renderClouds(uv, cosGamma, vhum.y,vhum.y));
+    sky += (hazeE + phum.y * clds * uv.y);
   }
 
   fragColor = vec4( sky, 1.0);
