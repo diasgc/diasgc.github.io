@@ -45,7 +45,7 @@
 
 #define ra_model(c,d)            ram_young1994(c,d)
 
-const vec3 nightColor = vec3( 0.0, 0.002, 0.07) * 0.32; // vec3(0.0,0.001,0.0025) * 0.3
+const vec3 nightColor = vec3( 0.0, 0.002, 0.07) * 0.52; // vec3(0.0,0.001,0.0025) * 0.3
 
 // utilities
 #define clip(x)       clamp(x, 0., 1.)
@@ -285,7 +285,7 @@ float mountain2(vec2 u, in vec3 sky){
       d *= 0.9;
       o = l;
   }
-  return o;
+  return 1, - o;
 }
 
 const vec2 I = vec2(0.0, 1.0);
@@ -311,10 +311,10 @@ vec3 renderStarfield(vec2 uv, float sunpos, float clds) {
   if (sunpos > -0.12 || clds > 0.5)
     return vec3(0.);
   vec3 col = vec3(0.0);
-  float lim = min(-sunpos * 100.0, 50.0);
+  float lim = min(-sunpos * 50.0, 50.0);
   float intens = 0.02 + 0.02 * clds;
-  for (float i = 0.0; i < 50.0; i += 1.0) {
-    vec2 ofs = H21(i + 1.0) * vec2(1.8, 1.1);
+  for (float i = 0.0; i < 100.0; i += 1.0) {
+    vec2 ofs = H21(i + 1.0) * vec2(1.1, 1.6);
     float r = (mod(i, 10.0) == 0.0) ? 0.5 + abs(sin(i / 50.0)) : 0.25;
     float l = 1.0 + intens * (sin(fract(iTime) * 0.5 * i) + 1.0);
     col += vec3(LS2(0.5 - uv, ofs, r, l));
@@ -322,7 +322,44 @@ vec3 renderStarfield(vec2 uv, float sunpos, float clds) {
       break;
   }
   return col;
-}    
+}
+
+
+vec3 H33(vec3 p) {
+  p = fract(p * vec3(127.1, 311.7, 74.7));
+  p += dot(p, p.yzx + 19.19);
+  return fract(sin(p) * 43758.5453123);
+}
+
+float N13(vec3 p) {
+  vec3 i = floor(p);
+  vec3 f = fract(p);
+  vec3 u = f * f * (3.0 - 2.0 * f);
+  return mix(
+    mix(
+      mix(dot(H33(i + I.xxx), f - I.xxx), dot(H33(i + I.yxx), f - I.yxx), u.x),
+      mix(dot(H33(i + I.xyx), f - I.xyx), dot(H33(i + I.yyx), f - I.yyx), u.x),
+      u.y),
+    mix(
+      mix(dot(H33(i + I.xxy), f - I.xxy), dot(H33(i + I.yxy), f - I.yxy), u.x),
+      mix(dot(H33(i + I.xyy), f - I.xyy), dot(H33(i + I.yyy), f - I.yyy), u.x),
+      u.y),
+    u.z);
+}
+
+void addStars(vec2 uv, float sunpos, vec3 h, float m, inout vec3 sky) {
+  if (sunpos > -0.12 || h.z > 0.9 || sky.z > 0.15 || m > 0.0)
+    return;
+  float fade = smoothstep(-0.12, -0.18, sunpos);
+  float thres = 6.0 + smoothstep(0.5, 1.0, h.z * h.z * fade) * 4.0;
+  float expos = (1. - h.z) * 500.0;
+  vec2 amp = vec2(0.3, 1.3 - 0.8 * h.x);
+  vec3 dir = normalize(vec3(uv * 2.0 - 1.0, 1.0));
+  float stars = pow(N13(dir * 200.0), thres) * expos;
+  stars *= mix(amp.x, amp.y, N13(dir * 100.0 + vec3(iTime)));
+  sky += vec3(stars);
+}
+
 
 // Clouds (https://www.shadertoy.com/view/Xs23zX)
 
@@ -375,7 +412,7 @@ vec3 rclouds(vec2 uv, float cosGamma, vec3 hum, float windd){
     accum *= b; // Avoid pow() inside loop
     r += N12(a - uv2 * (1.0 + uv2.y * (i + pw))) * accum;
   }
-  return vec3( r * hum.y * (CLDS.intensity - hum.y * 0.5) * (0.2 + 0.8 * step(cosGamma, 0.0)));
+  return vec3( r * hum.y * (CLDS.intensity - hum.y * 0.5) * (0.2 + 0.8 * step(0.0, cosGamma)));
 }
 
 
@@ -399,7 +436,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float ar        = 1.;//iResolution.y/iResolution.x;
   vec2  uv        = fragCoord/iResolution.xy;
   vec3  pos       = vec3(izoom * uv * ar - vec2(0.0, izoom/25.0), 0.0);
-  vec3  sunPos    = vec3( 0. , SUN_ELEV, -1.0);
+  vec3  sunPos    = vec3( 0.0 , SUN_ELEV, -1.0);
   vec3  sunDir    = normalize( sunPos );
   vec3  camPos    = vec3( sunDir.x, 0.0, sunDir.z);
   vec3  direction = normalize( pos - camPos );
@@ -414,7 +451,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   // empirical values for global humidity turbidity
   // AtmCond atm = AtmCond(humidity, cloudLow, clouds);
   vec3  vhum       = vec3(humidity, cloudLow, clouds);
-  vec3  phum       = pow(vhum, vec3(3.));
+  vec3  phum       = vhum * vhum * vhum;
+  float overcast   = step(0.92, vhum.z);
   // empiric Rayleigh + Mie coeffs from environment variables
   float rayleigh   = 0.5 + exp(0.15 / (pow(cosGamma, 2.0) + 0.1) - altitude * 1E-9);
   // atmLen(cosGamma = 0) = sqrt(a2 +2aR), a = atm len, R = earth radius
@@ -428,6 +466,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float turbidity  = 0.7;
   float mieCoeff   = 0.00335;
   float refraction = 0.0035;
+  float overcast   = 0.0;
 #endif
   
   float sunEx = sunIntensity( cosGamma, refraction );
@@ -448,7 +487,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   // Relative Air Mass
   // see https://github.com/pvlib/pvlib-python/blob/main/pvlib/atmosphere.py for more models
   float raModel   = ra_model(cosZenith, degrees(angZenith));
-  float relAm     = 1.0 / mix(raModel, vhum.z, vhum.z);
+  float relAm     = 1.0 / mix(raModel, phum.z, overcast);
   
   vec3  Fex       = exp( -relAm * ( vBetaR * SCAT.zenithR + vBetaM * SCAT.zenithM ) );
   
@@ -459,10 +498,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
   vec3 L = pow( sunEx * betaTotal * ( 1.0 - Fex ), vec3( 1.5) ); // zenith
   vec3 B = pow( sunEx * betaTotal * Fex , vec3( 0.5 ) ); // horizon
-  vec3 L0 = (1. - phum.z) * vec3(0.1 * Fex);
+  vec3 L0 = (1. - overcast) * vec3(0.1 * Fex);
 
   vec3 night = nightColor * (1. - cosGamma) * (1.0 + sin(pi * moon * (1. - phum.z)));
-  vec3 light = sun.color + night;
+  vec3 light = sun.color;// + night;
   
   
 #if MOUNTAINS
@@ -473,16 +512,15 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #endif
 
   // sun disk
-  float sundisk  = cosGamma * smoothstep( sun.arc, sun.arc + sun.dim, cosTheta);
-  float overcast = step(phum.z, 0.5);
-  L0 += mix(0.0, sundisk, overcast * step(m, 0.0));
+  float sundisk  = smoothstep( sun.arc, sun.arc + sun.dim, cosTheta);
+  L0 += sunEx * 1.9e3 * Fex * sundisk; //mix(sundisk, 0., overcast * m);
 #if DEF_LAMBDA
   // clouds will desaturate
   L = mix(L, vec3(length(L)), overcast);
 #endif
 
 #if CLOUDS
-  vec3 clds = renderClouds(uv, cosGamma, vhum.x + vhum.y, vhum.z + vhum.y);
+  vec3 clds = renderClouds(uv, cosGamma, vhum.x + vhum.y, phum.z + vhum.y);
   //vec3 clds = rclouds(uv, cosGamma, vhum, wind);
 #else
   vec3 clds = vec3(0.);
@@ -502,7 +540,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   sky += night;
 
 #if STARS
-  sky += renderStarfield(uv, sunPos.y, phum.z);
+  //sky += renderStarfield(uv, sunPos.y, phum.z);
+  addStars(uv, sunPos.y, vhum, m, sky);
 #endif
   
 
@@ -511,10 +550,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     vec3 shade = mix(MOUNTS.shade, light * s, vhum.y);
     vec3 fade = 0.5 * shade;
     vec3 tone = shade;
-    sky = s * mix(sky, mix(tone, fade, m), m * phum.y * (1. - vhum.x) * cosGamma);
+    sky = s * mix(sky, mix(tone, fade, m), m * phum.y * (1. - phum.x) * cosGamma);
   }
 
-  if (phum.y > 0.5){
+  if (overcast == 1.0){
     float sc = smoothstep( 0.0, 0.8, uv.y * cosGamma);
     float hazeD = 1. - 0.5 * phum.x * phum.y * sc;
     float hazeE = (1. - hazeD) * sc;
