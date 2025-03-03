@@ -45,7 +45,7 @@
 
 #define ra_model(c,d)            ram_young1994(c,d)
 
-const vec3 nightColor = vec3( 0.0, 0.002, 0.07) * 0.52; // vec3(0.0,0.001,0.0025) * 0.3
+const vec3 nightColor = vec3( 0.0, 0.002, 0.07) * 0.63; // vec3(0.0,0.001,0.0025) * 0.3
 
 // utilities
 #define clip(x)       clamp(x, 0., 1.)
@@ -321,18 +321,18 @@ float N13(vec3 p) {
 }
 
 void addStars(vec2 uv, float sunpos, vec3 h, float m, inout vec3 sky) {
-  if (sunpos > -0.12 || h.z > 0.9 || sky.z > 0.15 || m > 0.0)
+  if (sunpos > -0.12 || h.z > 0.9 || sky.x > 0.05 || m > 0.0)
     return;
   float n = 0.4 - 0.3 * h.y;
-  float fade = smoothstep(-0.12, -0.18, sunpos);
+  float fade = smoothstep(-0.10, -0.30, sunpos);
   float thres = 6.0 + smoothstep(0.5, 1.0, h.z * h.z * fade) * 4.0;
   float expos = (1. - h.z) * 500.0;
   vec2 amp = vec2(n, n + 0.2 * (1. + 5. * h.x));
   vec3 dir = normalize(vec3(uv * 2.0 - 1.0, 1.0));
-  // clip will remove artifacts
+  // clip to remove artifacts
   float stars = clip(pow(N13(dir * 200.0), thres) * expos);
   stars *= mix(amp.x, amp.y, N13(dir * 100.0 + vec3(iTime)));
-  sky += vec3(stars);
+  sky += vec3(fade * stars);
 }
 
 
@@ -364,7 +364,7 @@ float N12(vec2 p) {
 
 vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
   float r = 0.;
-  float pw = .5 * c;
+  float pw = 1.0 * c;
   float a = -iTime * CLDS.speed * wind;
   float b = CLDS.smooth * h;
   float ii = 2.; //CLDS.intensity - h * 0.5;
@@ -374,7 +374,7 @@ vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
     accum *= b; // Avoid pow() inside loop
     r += N12(a - uv2 * (1.0 + uv2.y * (i + pw))) * accum;
   }
-  return vec3( r * c * ii * mix(0.25, 1., sunpos));
+  return vec3( r * c * ii * mix(0.25, 0.5, sunpos));
 }
 
 
@@ -471,7 +471,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
   // sun disk
   float sundisk  = smoothstep( sun.arc, sun.arc + sun.dim, cosTheta);
-  L0 += sunEx * 1.9e3 * Fex * sundisk; //mix(sundisk, 0., overcast * m);
+  L0 += sunEx * 1.9e2 * Fex * sundisk; //mix(sundisk, 0., overcast * m);
 #if DEF_LAMBDA
   // clouds will desaturate
   L = mix(L, vec3(length(L)), overcast);
@@ -491,16 +491,17 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   float k = 0.04;
 
   vec3 sky = pow((L + L0) * k, vec3(sk));
-
-  // acesfilmic color filter, sky only
-  sky = ACESFilmic(sky);
-  // add moonlight according to moon phase (do not apply acesfilmic)
-  sky += night;
-
 #if STARS
   //sky += renderStarfield(uv, sunPos.y, phum.z);
   addStars(uv, sunPos.y, vhum, m, sky);
 #endif
+  // acesfilmic color filter, sky only
+  sky = ACESFilmic(sky);
+
+  // add moonlight according to moon phase (do not apply acesfilmic)
+  sky += night;
+
+
   
 
   if (m > 0.0) {
