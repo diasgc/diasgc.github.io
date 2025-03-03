@@ -140,7 +140,7 @@ const struct Scattering {
   1250.0,
   vec3(  0.686,  0.678,  0.666 ),
   vec3( 650E-9, 550E-9, 450E-9 ),
-  vec3( 650E-9 ),
+  vec3( 510E-9, 450E-9, 450E-9 ),
   vec3( 4.0 - 2.0 ),
   vec3( 1.8399918514433978E-14, 2.7798023919660528E-14, 4.0790479543861094E-14 ),
   1.0003,
@@ -356,6 +356,7 @@ void addStars(vec2 uv, float sunpos, vec3 h, float m, inout vec3 sky) {
   float expos = (1. - h.z) * 500.0;
   vec2 amp = vec2(n, n + 0.2 * (1. + 5. * h.x));
   vec3 dir = normalize(vec3(uv * 2.0 - 1.0, 1.0));
+  // clip will remove artifacts
   float stars = clip(pow(N13(dir * 200.0), thres) * expos);
   stars *= mix(amp.x, amp.y, N13(dir * 100.0 + vec3(iTime)));
   sky += vec3(stars);
@@ -393,13 +394,14 @@ vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
   float pw = .5 * c;
   float a = -iTime * CLDS.speed * wind;
   float b = CLDS.smooth * h;
+  float ii = 2.; //CLDS.intensity - h * 0.5;
   vec2 uv2 = (1. - c * uv);
   float accum = 1.0;
   for(float i = 1.0; i < CLDS.steps; i += 1.0) {
     accum *= b; // Avoid pow() inside loop
     r += N12(a - uv2 * (1.0 + uv2.y * (i + pw))) * accum;
   }
-  return vec3( r * c * (CLDS.intensity - h * 0.5) * mix(0.25, 0.5, sunpos));
+  return vec3( r * c * ii * mix(0.25, 1., sunpos));
 }
 
 
