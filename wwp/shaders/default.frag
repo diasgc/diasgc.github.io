@@ -350,12 +350,13 @@ float N13(vec3 p) {
 void addStars(vec2 uv, float sunpos, vec3 h, float m, inout vec3 sky) {
   if (sunpos > -0.12 || h.z > 0.9 || sky.z > 0.15 || m > 0.0)
     return;
+  float n = 0.4 - 0.3 * h.y;
   float fade = smoothstep(-0.12, -0.18, sunpos);
   float thres = 6.0 + smoothstep(0.5, 1.0, h.z * h.z * fade) * 4.0;
   float expos = (1. - h.z) * 500.0;
-  vec2 amp = vec2(0.3, 1.3 - 0.8 * h.x);
+  vec2 amp = vec2(n, n + 0.2 * (1. + 5. * h.x));
   vec3 dir = normalize(vec3(uv * 2.0 - 1.0, 1.0));
-  float stars = pow(N13(dir * 200.0), thres) * expos;
+  float stars = clip(pow(N13(dir * 200.0), thres) * expos);
   stars *= mix(amp.x, amp.y, N13(dir * 100.0 + vec3(iTime)));
   sky += vec3(stars);
 }
@@ -400,24 +401,6 @@ vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
   }
   return vec3( r * c * (CLDS.intensity - h * 0.5) * mix(0.25, 0.5, sunpos));
 }
-
-vec3 rclouds(vec2 uv, float cosGamma, vec3 hum, float windd){
-  float r = 0.;
-  float pw = 2. * hum.y;
-  float a = -iTime * CLDS.speed * windd;
-  float b = CLDS.smooth * hum.y;
-  vec2 uv2 = (1. - hum.y * hum.x * uv);
-  float accum = 1.0;
-  for(float i = 1.0; i < CLDS.steps; i += 1.0) {
-    accum *= b; // Avoid pow() inside loop
-    r += N12(a - uv2 * (1.0 + uv2.y * (i + pw))) * accum;
-  }
-  return vec3( r * hum.y * (CLDS.intensity - hum.y * 0.5) * (0.2 + 0.8 * step(0.0, cosGamma)));
-}
-
-
-
-
 
 
 struct AtmCond {
