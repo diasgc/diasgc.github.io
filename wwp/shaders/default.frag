@@ -140,7 +140,7 @@ const struct Scattering {
   1250.0,
   vec3(  0.686,  0.678,  0.666 ),
   vec3( 650E-9, 550E-9, 450E-9 ),
-  vec3( 510E-9, 450E-9, 450E-9 ),
+  vec3( 480E-9, 450E-9, 450E-9 ),
   vec3( 4.0 - 2.0 ),
   vec3( 1.8399918514433978E-14, 2.7798023919660528E-14, 4.0790479543861094E-14 ),
   1.0003,
@@ -255,37 +255,10 @@ float renderMountains(vec2 uv, float h){
   //float s = max(sunElev, 0.0);
   float ss = 0.001 + smoothstep(0.9, 1.0, h) * 0.008;
   m  = mountain(uv, 2.0, 7., -0.005, -0.07, ss * 1.5); // back
-  m += max(m, mountain(uv, 1.2, 9., 0.035, -0.10, ss));
+  m += max(m, mountain(uv, 1.2,  9., 0.035, -0.10, ss));
   m += max(m, mountain(uv, 1.7, 11., 0.105, -0.10, ss));
   m += max(m, mountain(uv, 2.5, 16., 0.175, -0.10, ss * 1.5)); // front
   return m * (1. - ss * uv.y * 500.);
-}
-
-
-float mountain2(vec2 u, in vec3 sky){
-  u /= iResolution.y;
-  float o = 0.;
-  float s = length(sky);
-  float d = 1.0, x = 0.0, a = 0.0, f = 0.0, l = 3.0;
-  for(float i = 0.0; i < 1.0; i += 0.1){
-      x = u.x / d + 71.0 * i;
-      float b = 0.5;
-      for(int j = 0; j < 20; j++){
-          f = fract(x);
-          a += mix(fract((x - f) * 0.37), fract((x - f + 1.0) * 0.37), f) * b;
-          x *= 2.5;
-          b *= 0.5;
-          if (b < 0.001)
-            break;
-      }
-      if(u.y < d * a + i - 0.2)
-        l = i + .9;
-      if (l < 2.)
-        break;
-      d *= 0.9;
-      o = l;
-  }
-  return 1, - o;
 }
 
 const vec2 I = vec2(0.0, 1.0);
