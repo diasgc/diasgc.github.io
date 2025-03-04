@@ -45,8 +45,6 @@
 
 #define ra_model(c,d)            ram_young1994(c,d)
 
-const vec3 nightColor = vec3( 0.0, 0.002, 0.07) * 0.6; // vec3(0.0,0.001,0.0025) * 0.3
-
 // utilities
 #define clip(x)       clamp(x, 0., 1.)
 #define rand(x)       fract(sin(x) * 75154.32912)
@@ -104,6 +102,7 @@ const float rad2deg   = 180.0 / pi;
 
 const vec3 zenDir     = vec3( 0.0, 1.0, 0.0 );
 
+const vec3 nightColor = vec3( 0.001, 0.005, 0.07) * 0.5; // vec3(0.0,0.001,0.0025) * 0.3
 
 const struct Sun {
   float arc;    // 66 arc seconds -> degrees, and the cosine of that
@@ -115,7 +114,7 @@ const struct Sun {
   float imin;
   float cutoff; // earth shadow hack, nautical twilight dark at -12º (def: pi/1.95)
   vec3  color;
-} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5E5, 0.5, 0.66, 1000., 900., pi / 1.83, vec3( 0.5 ) );
+} sun = Sun( cos(asec2r * 3840.), 2E-5, 0.5E5, 0.5, 0.66, 1000., 900., pi / 1.792, vec3( 0.5 ) );
 
 float sunIntensity(float angle, float refraction) {
   return mix(sun.imax, sun.imin, clouds) * max(0., 1. - exp( -sun.istep * ( sun.cutoff - acos(angle) + refraction )));
@@ -290,9 +289,9 @@ void addStars(vec2 uv, float sunpos, vec3 h, float m, inout vec3 sky) {
   if (sunpos > -0.12 || h.z > 0.9 || sky.x > 0.05 || m > 0.0)
     return;
   float n = 0.4 - 0.3 * h.y;
-  float fade = smoothstep(-0.10, -0.30, sunpos);
-  float thres = 6.0 + smoothstep(0.5, 1.0, h.z * h.z * fade) * 4.0;
-  float expos = (1. - h.z) * 500.0;
+  float fade = max(1. - smoothstep(0.10, 0.30, -sunpos), h.z);
+  float thres = 6.0 + smoothstep(0.5, 1.0, fade) * 4.0;
+  float expos = (1. - fade) * 500.0;
   vec2 amp = vec2(n, n + 0.2 * (1. + 5. * h.x));
   vec3 dir = normalize(vec3(uv * 2.0 - 1.0, 1.0));
   // clip to remove artifacts
