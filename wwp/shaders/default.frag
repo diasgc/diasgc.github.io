@@ -4,7 +4,7 @@
 #define MOUNTAINS 1
 #define STARS 1
 #define CLOUDS 1
-#define CLOUDS2 0
+#define CLOUDS2 1
 #define WEATHER 1
 #define DEF_LAMBDA 0
 
@@ -140,7 +140,7 @@ const struct Scattering {
   1250.0,
   vec3(  0.686,  0.678,  0.666 ),
   vec3( 650E-9, 550E-9, 450E-9 ),
-  vec3( 480E-9, 450E-9, 450E-9 ),
+  vec3( 460E-9, 455E-9, 450E-9 ),
   vec3( 4.0 - 2.0 ),
   vec3( 1.8399918514433978E-14, 2.7798023919660528E-14, 4.0790479543861094E-14 ),
   1.0003,
@@ -305,6 +305,7 @@ void addStars(vec2 uv, float sunpos, vec3 h, float m, inout vec3 sky) {
 
 #define R13(p) fract(sin(dot(p, vec3(12.345, 67.89, 412.12))) * 42123.45) * 2.0 - 1.0
 #define P13_OCTAVES 5
+#define VT_STEPS 120
 #define I vec2(0.0,1.0)
 
 // Perlin noise 3D
@@ -343,26 +344,27 @@ float fBM13(vec3 p) {
 }
 
 
-void volumetricTrace(vec3 ro, vec3 rd, inout vec3 sky, vec2 m) {
-
+void volumetricTrace(vec3 ro, vec3 rd, inout vec3 sky, float clds, float sunpos) {
     float depth = 0.0;
     vec4 sumColor = vec4(0.0);
-    
-    for (int i = 0; i < 120; i++) {
+    int nsteps = int(clds * 120.0);
+    float sun = 0.01 + clip(sunpos - 0.12) * 0.01;
+    for (int i = 0; i < VT_STEPS; i++) {
         vec3 p = ro + depth * rd;
         float density = fBM13(p);
         if (density > 1e-3) {
-            vec4 color = vec4(mix(sky, vec3(m.x), density), density);
-            color.w *= 0.4;
-            color.rgb *= color.w;
-            sumColor += color * (1.0 - sumColor.a);
-            sumColor.a = pow(sumColor.a, m.x);
+          vec4 color = vec4(mix(sumColor.rgb, vec3(sun), density), density);
+          color.a *= 0.45;
+          color.rgb *= color.a;
+          sumColor += color * (1.0 - sumColor.a);
+          sumColor.a = pow(sumColor.a, 0.4545);
         }
         depth += max(0.05, 0.03 * depth);
+        if (i > nsteps)
+          break;
     }
-    sumColor = clamp(sumColor, 0.0, 1.0);
-    sumColor = pow(sky.b * sumColor, vec4(m.y));
-    sky = mix(sky, sumColor.rgb, sumColor.a);
+    sumColor = pow(sumColor, vec4(0.4345));
+    sky += mix(vec3(0.0), sumColor.rgb, smoothstep(0.4,0.5, 2. * sumColor.a));
 }
 
 // Clouds (https://www.shadertoy.com/view/Xs23zX)
@@ -529,11 +531,13 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #endif
   // acesfilmic color filter, sky only
   sky = ACESFilmic(sky);
+
 #if CLOUDS2
-  vec3 ro = vec3(0.5, 1.0, -1.0);
+  vec3 ro = vec3(0.0, 1.0, -1.0);
   vec3 rd = normalize(vec3(-uv, 1.0));
-  volumetricTrace(ro, rd, sky, vec2(clouds, cosGamma));
+  volumetricTrace(ro, rd, sky, clouds, sunPos.y);
 #endif
+  
   // add moonlight according to moon phase (do not apply acesfilmic)
   sky += night;
 
