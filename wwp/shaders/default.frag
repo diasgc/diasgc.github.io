@@ -344,27 +344,27 @@ float fBM13(vec3 p) {
 }
 
 
-void volumetricTrace(vec3 ro, vec3 rd, inout vec3 sky, float clds, float sunpos) {
+void volumetricTrace(vec3 ro, vec3 rd, inout vec3 sky, vec3 ph, float m) {
     float depth = 0.0;
+    float clds = ph.z;
+    int steps = int( mix( 60.0, 120.0, clds) );
     vec4 sumColor = vec4(0.0);
-    int nsteps = int(clds * 120.0);
-    float sun = 0.01 + clip(sunpos - 0.12) * 0.01;
-    for (int i = 0; i < VT_STEPS; i++) {
+    for (int i = 0; i < 120; i++) {
         vec3 p = ro + depth * rd;
         float density = fBM13(p);
         if (density > 1e-3) {
-          vec4 color = vec4(mix(sumColor.rgb, vec3(sun), density), density);
-          color.a *= 0.45;
-          color.rgb *= color.a;
-          sumColor += color * (1.0 - sumColor.a);
-          sumColor.a = pow(sumColor.a, 0.4545);
+            vec4 color = vec4(mix(vec3(0.0), vec3(1.0), density), density);
+            color.w *= 0.4;
+            color.rgb *= color.w;
+            sumColor += color * (1.0 - sumColor.a);
         }
         depth += max(0.05, 0.03 * depth);
-        if (i > nsteps)
-          break;
+        if (i > steps) break;
     }
-    sumColor = pow(sumColor, vec4(0.4345));
-    sky += mix(vec3(0.0), sumColor.rgb, smoothstep(0.4,0.5, 2. * sumColor.a));
+    //sumColor = clamp(sumColor, 0.0, 1.0);
+    sumColor = pow(sky.b * sumColor, vec4(0.4545));
+    float fog = step(m, ph.y * ph.x);
+    sky = mix(sky, sumColor.rgb, fog * clds * sumColor.a);
 }
 
 // Clouds (https://www.shadertoy.com/view/Xs23zX)
@@ -495,7 +495,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
 #if MOUNTAINS
   float m = renderMountains(uv, vhum.x * vhum.y);
-  //float m = mountain2(uv,L);
 #else
   float m = 0.;
 #endif
@@ -534,8 +533,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
 #if CLOUDS2
   vec3 ro = vec3(0.0, 1.0, -1.0);
-  vec3 rd = normalize(vec3(-uv, 1.0));
-  volumetricTrace(ro, rd, sky, clouds, sunPos.y);
+  vec3 rd = normalize(vec3(uv.x * iResolution.x / iResolution.y, -uv.y, 1.0));
+  volumetricTrace(ro, rd, sky, phum, m);
 #endif
   
   // add moonlight according to moon phase (do not apply acesfilmic)

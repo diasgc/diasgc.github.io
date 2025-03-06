@@ -44,19 +44,17 @@ float fBM13(vec3 p) {
 
 
 void volumetricTrace(vec3 ro, vec3 rd, inout vec3 sky, vec2 m) {
-
     float depth = 0.0;
+    vec2 m = vec2(0.5 * sunpos, 0.5 * clds);
     vec4 sumColor = vec4(0.0);
-    
     for (int i = 0; i < 120; i++) {
         vec3 p = ro + depth * rd;
         float density = fBM13(p);
         if (density > 1e-3) {
-            vec4 color = vec4(mix(sky, vec3(m.x), density), density);
+            vec4 color = vec4(mix(vec3(0.0), vec3(1.0), density), density);
             color.w *= 0.4;
             color.rgb *= color.w;
             sumColor += color * (1.0 - sumColor.a);
-            sumColor.a = pow(sumColor.a, m.x);
         }
         depth += max(0.05, 0.03 * depth);
     }
