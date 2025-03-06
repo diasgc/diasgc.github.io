@@ -347,14 +347,17 @@ float fBM13(vec3 p) {
 void volumetricTrace(vec3 ro, vec3 rd, inout vec3 sky, vec3 ph, float m) {
     float depth = 0.0;
     float clds = ph.z;
-    int steps = int( mix( 60.0, 120.0, clds) );
+    float pw = 0.4545;
+    int steps = int( mix( 60.0, 100.0, clds) );
     vec4 sumColor = vec4(0.0);
-    for (int i = 0; i < 120; i++) {
+    vec3 tg = vec3(1.0);
+    for (int i = 0; i < 100; i++) {
         vec3 p = ro + depth * rd;
         float density = fBM13(p);
-        if (density > 1e-3) {
-            vec4 color = vec4(mix(vec3(0.0), vec3(1.0), density), density);
-            color.w *= 0.4;
+        if (density > 1e-4) { // 1e-3
+            //vec4 color = vec4(mix(vec3(0.0), tg, density), density);
+            vec4 color = vec4(density);
+            color.w *= pw; // 0.4
             color.rgb *= color.w;
             sumColor += color * (1.0 - sumColor.a);
         }
@@ -362,7 +365,8 @@ void volumetricTrace(vec3 ro, vec3 rd, inout vec3 sky, vec3 ph, float m) {
         if (i > steps) break;
     }
     //sumColor = clamp(sumColor, 0.0, 1.0);
-    sumColor = pow(sky.b * sumColor, vec4(0.4545));
+    //sumColor = pow(sky.r * sumColor, vec4(mix(0.2, 1.0, clds)));
+    sumColor = pow(sky.r * sumColor, vec4(pw));
     float fog = step(m, ph.y * ph.x);
     sky = mix(sky, sumColor.rgb, fog * clds * sumColor.a);
 }
