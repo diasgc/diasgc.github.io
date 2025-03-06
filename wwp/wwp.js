@@ -142,7 +142,7 @@ const wwprov = {
     },
     get: function(field){
       let i = wwprov.wth.data.hourly.time.indexOf(new Date().toISOString().substring(0,14)+"00");
-      return wwprov.wth.data.hourly[field][i];
+      return i < 0 ? 0 : wwprov.wth.data.hourly[field][i];
     }
   },
   update: function(callback){
