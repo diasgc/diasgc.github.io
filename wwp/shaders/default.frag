@@ -247,7 +247,7 @@ float perlin(float x){
 
 float mountain(vec2 uv, float scale, float offset, float h1, float h2, float s){
   float h = h1 + perlin(MOUNTS.height * scale * uv.x + offset) * (h2 - h1);
-  return 1. - smoothstep(h, h + s, uv.y - MOUNTS.offset);
+  return 1. - smoothstep(h, h + 0.001, uv.y - MOUNTS.offset);
 }
 
 float renderMountains(vec2 uv, float h){
@@ -328,47 +328,52 @@ float P13(vec3 p) {
 
 // Fractional Brownian Motion 3D
 float fBM13(vec3 p) {
-    vec3 off = vec3(0.0, 0.1, 1.0) * iTime * (-wind * 0.01);
-    vec3 q = p - off;
+    // wind dir vec3(1.0, -0.2, -1.0) (left)
+    vec3 q = p - vec3(0.0, 0.1, 1.0) * iTime * (-wind * 0.001);
     
     // fbm
-    float a1 = 0.5;
-    float a2 = 2.0;
+    float scale = 0.5;
+    float factor = 2.02;
     float f = 0.0;
     for (int i = 0; i < P13_OCTAVES; i++){
-        f += a1 * P13(q);
-        a1 *= 0.5;
-        q *= a2;
+        f += scale * P13(q);
+        scale *= 0.5;
+        q *= factor;
     }
-    return clamp(f - p.y, 0.0, 1.0);
+    return clamp(f, 0.0, 1.0);
 }
 
 
-void volumetricTrace(vec3 ro, vec3 rd, inout vec3 sky, vec3 ph, float m) {
+void volumetricTrace(vec3 ro, vec3 rd, inout vec3 sky, vec3 ph, float cosGamma, float m) {
     float depth = 0.0;
-    float clds = ph.z;
     float pw = 0.4545;
-    int steps = int( mix( 60.0, 100.0, clds) );
+    
+    float colSun = mix(0.1, 1.0, smoothstep(0.0, 0.1, cosGamma - 0.02));
+    float colCld = mix(1.0, 0.6, smoothstep(0.95, 1.0, clouds));
+    float defCol = min(colSun, colCld);
+    float c0 = 0.5 - clouds * 0.5; // cloudiness (0.0 -full, 0.5 - parcial)
+    
+    int steps = int( mix( 40.0, 100.0, ph.z * colSun) );
     vec4 sumColor = vec4(0.0);
-    vec3 tg = vec3(1.0);
+    
     for (int i = 0; i < 100; i++) {
         vec3 p = ro + depth * rd;
         float density = fBM13(p);
-        if (density > 1e-4) { // 1e-3
-            //vec4 color = vec4(mix(vec3(0.0), tg, density), density);
-            vec4 color = vec4(density);
+        if (density > 0.) { // 1e-3
+            //vec4 color = vec4(mix(tg, sc, density), density); vec4 color = vec4(vec3(1. - density), density);
+            vec4 color = vec4(smoothstep(c0, 1.0, density));
             color.w *= pw; // 0.4
             color.rgb *= color.w;
             sumColor += color * (1.0 - sumColor.a);
         }
-        depth += max(0.05, 0.03 * depth);
+        depth += max(0.05, 0.01 * depth);
         if (i > steps) break;
     }
-    //sumColor = clamp(sumColor, 0.0, 1.0);
-    //sumColor = pow(sky.r * sumColor, vec4(mix(0.2, 1.0, clds)));
-    sumColor = pow(sky.r * sumColor, vec4(pw));
+    sumColor = pow(sumColor, vec4(pw));
+    sumColor.rgb = mix(vec3(defCol), 0.5 + sumColor.rgb, defCol); // plain clouds
+    // mask mountains m with fog (ph.y * ph.x)
     float fog = step(m, ph.y * ph.x);
-    sky = mix(sky, sumColor.rgb, fog * clds * sumColor.a);
+    sky = mix(sky, sumColor.rgb, fog * clouds * sumColor.a);
 }
 
 // Clouds (https://www.shadertoy.com/view/Xs23zX)
@@ -538,7 +543,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 #if CLOUDS2
   vec3 ro = vec3(0.0, 1.0, -1.0);
   vec3 rd = normalize(vec3(uv.x * iResolution.x / iResolution.y, -uv.y, 1.0));
-  volumetricTrace(ro, rd, sky, phum, m);
+  volumetricTrace(ro, rd, sky, phum, cosGamma, m);
 #endif
   
   // add moonlight according to moon phase (do not apply acesfilmic)
