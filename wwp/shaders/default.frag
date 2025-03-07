@@ -348,7 +348,7 @@ void volumetricTrace(vec3 ro, vec3 rd, inout vec3 sky, vec3 ph, float cosGamma, 
     float depth = 0.0;
     float pw = 0.4545;
     
-    float colSun = mix(0.1, 1.0, smoothstep(0.0, 0.1, cosGamma - 0.02));
+    float colSun = mix(0.05, 1.0, smoothstep(0.0, 0.1, cosGamma - 0.02));
     float colCld = mix(1.0, 0.6, smoothstep(0.95, 1.0, clouds));
     float defCol = min(colSun, colCld); // contrast 0.1 at night, 1.0 at day, cloudy
     float c0 = 0.5 - clouds * 0.5; // cloudiness (0.0 -full, 0.5 - parcial)

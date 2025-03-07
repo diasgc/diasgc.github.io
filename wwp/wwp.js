@@ -41,7 +41,7 @@ const settings = {
       l.innerHTML = "clouds low: " + settings.cloudsLow;
     });
     settings.add(d, "rain", -1, 100, -1, (v,l) => {
-      settings.rain = v < 0 ? 'auto' : v / 100.0;
+      settings.rain = v < 0 ? 'auto' : v / 10.0;
       l.innerHTML = "rain: " + settings.rain + " mm";
     });
     settings.add(d, "moon", -1, 100, -1, (v,l) => {
@@ -77,7 +77,7 @@ const settings = {
 const wwprov = {
   home: "https://open-meteo.com/",
   docs: "https://open-meteo.com/en/docs",
-  flds: [ "temperature_2m", "relative_humidity_2m", "precipitation", "cloud_cover", "cloud_cover_low", "cloud_cover_mid", "cloud_cover_high", "visibility","wind_speed_10m" ],
+  flds: [ "temperature_2m", "relative_humidity_2m", "rain", "cloud_cover", "cloud_cover_low", "cloud_cover_mid", "cloud_cover_high", "visibility","wind_speed_10m" ],
   kind: 'hourly', //'current',
   timestamp: 0,
   timeout: 24 * 60 * 60 * 1000, 
@@ -206,7 +206,7 @@ function setUniforms(){
   webGl.uniforms.uHumidity.data = [hum];
   let moon = settings.moon === 'auto' ? wwprov.sun.moon : settings.moon; //wwprov.sun.moon;
   webGl.uniforms.uMoon.data = [moon];
-  let rain = settings.rain === 'auto' ? wwprov.wth.get('precipitation') / 100.0 : settings.rain; //wwprov.wth.get('precipitation') / 100.0;
+  let rain = settings.rain === 'auto' ? wwprov.wth.get('rain'): settings.rain; //wwprov.wth.get('precipitation') / 100.0;
   webGl.uniforms.uRain.data = [rain];
   let temp = wwprov.wth.get('temperature_2m');
   webGl.uniforms.uTemperature.data = [temp + 273.15];
