@@ -25,32 +25,32 @@ const settings = {
     let d = document.getElementById('sinput');
     d.replaceChildren();
     settings.add(d, "sun position", -1, 100, -1, (v,l) => {
-      settings.sunPos = v < 0 ? 'auto' : 2.0 * (v - 50) / 100.0;
-      l.innerHTML = "sunposition: " + settings.sunPos;
+      settings.sunPos = v < 0 ? 'auto' : Math.PI * (v - 50) / 100.0;
+      l.innerHTML = "sunposition: " +  (v < 0 ? "auto" : ((180/Math.PI) * settings.sunPos).toFixed(1) + "º");
     });
     settings.add(d, "humidity", -1, 100, -1, (v,l) => {
       settings.humidity = v < 0 ? 'auto' : v / 100.0;
-      l.innerHTML = "humidity: " + settings.humidity;
+      l.innerHTML = "humidity: " + (v < 0 ? "auto" : settings.humidity + "%");
     });
     settings.add(d, "clouds", -1, 100, -1, (v,l) => {
       settings.clouds = v < 0 ? 'auto' : v / 100.0;
-      l.innerHTML = "clouds: " + settings.clouds;
+      l.innerHTML = "clouds: " + (v < 0 ? "auto" : settings.clouds + "%");
     });
     settings.add(d, "clouds low", -1, 100, -1, (v,l) => {
       settings.cloudsLow = v < 0 ? 'auto' : v / 100.0;
-      l.innerHTML = "clouds low: " + settings.cloudsLow;
+      l.innerHTML = "clouds low: " + (v < 0 ? "auto" : settings.cloudsLow + "%");
     });
     settings.add(d, "rain", -1, 100, -1, (v,l) => {
       settings.rain = v < 0 ? 'auto' : v / 10.0;
-      l.innerHTML = "rain: " + settings.rain + " mm";
+      l.innerHTML = "rain: " + settings.rain + (v < 0 ? "" : " mm");
     });
     settings.add(d, "moon", -1, 100, -1, (v,l) => {
       settings.moon = v < 0 ? 'auto' : v / 100.0;
-      l.innerHTML = "moon: " + settings.moon;
+      l.innerHTML = "moon: " + (v < 0 ? "auto" : settings.moon + " d");
     });
     settings.add(d, "wind", -1, 200, -1, (v,l) => {
       settings.wind = v < 0 ? 'auto' : v;
-      l.innerHTML = "wind: " + settings.wind + " km/h";
+      l.innerHTML = "wind: " + settings.wind + (v < 0 ? "" : " km/h");
     });
   },
   add: function(d,lab,min,max,def, onchangeListener){
