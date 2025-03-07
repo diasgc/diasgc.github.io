@@ -350,30 +350,27 @@ void volumetricTrace(vec3 ro, vec3 rd, inout vec3 sky, vec3 ph, float cosGamma, 
     
     float colSun = mix(0.1, 1.0, smoothstep(0.0, 0.1, cosGamma - 0.02));
     float colCld = mix(1.0, 0.6, smoothstep(0.95, 1.0, clouds));
-    float defCol = min(colSun, colCld);
+    float defCol = min(colSun, colCld); // contrast 0.1 at night, 1.0 at day, cloudy
     float c0 = 0.5 - clouds * 0.5; // cloudiness (0.0 -full, 0.5 - parcial)
-    
     int steps = int( mix( 40.0, 100.0, ph.z * colSun) );
-    vec4 sumColor = vec4(0.0);
-    
+    vec2 c = vec2(0.0); // vec2(grey,alpha)
     for (int i = 0; i < 100; i++) {
         vec3 p = ro + depth * rd;
         float density = fBM13(p);
         if (density > 0.) { // 1e-3
-            //vec4 color = vec4(mix(tg, sc, density), density); vec4 color = vec4(vec3(1. - density), density);
-            vec4 color = vec4(smoothstep(c0, 1.0, density));
-            color.w *= pw; // 0.4
-            color.rgb *= color.w;
-            sumColor += color * (1.0 - sumColor.a);
+            vec2 c1 = vec2(smoothstep(c0, 1.0, density));
+            c1.y *= pw;
+            c1.x *= c1.y;
+            c += c1 * (1.0 - c.y);
         }
         depth += max(0.05, 0.01 * depth);
         if (i > steps) break;
     }
-    sumColor = pow(sumColor, vec4(pw));
-    sumColor.rgb = mix(vec3(defCol), 0.5 + sumColor.rgb, defCol); // plain clouds
+    c = pow(c, vec2(pw));
+    c.x = mix(defCol, 0.5 + c.x, defCol);
     // mask mountains m with fog (ph.y * ph.x)
     float fog = step(m, ph.y * ph.x);
-    sky = mix(sky, sumColor.rgb, fog * clouds * sumColor.a);
+    sky = mix(sky, vec3(c.x), fog * clouds * c.y);
 }
 
 // Clouds (https://www.shadertoy.com/view/Xs23zX)
