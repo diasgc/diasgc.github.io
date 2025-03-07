@@ -30,15 +30,15 @@ const settings = {
     });
     settings.add(d, "humidity", -1, 100, -1, (v,l) => {
       settings.humidity = v < 0 ? 'auto' : v / 100.0;
-      l.innerHTML = "humidity: " + (v < 0 ? "auto" : settings.humidity + "%");
+      l.innerHTML = "humidity: " + (v < 0 ? "auto" : settings.humidity * 100 + "%");
     });
     settings.add(d, "clouds", -1, 100, -1, (v,l) => {
       settings.clouds = v < 0 ? 'auto' : v / 100.0;
-      l.innerHTML = "clouds: " + (v < 0 ? "auto" : settings.clouds + "%");
+      l.innerHTML = "clouds: " + (v < 0 ? "auto" : settings.clouds * 100 + "%");
     });
     settings.add(d, "clouds low", -1, 100, -1, (v,l) => {
       settings.cloudsLow = v < 0 ? 'auto' : v / 100.0;
-      l.innerHTML = "clouds low: " + (v < 0 ? "auto" : settings.cloudsLow + "%");
+      l.innerHTML = "clouds low: " + (v < 0 ? "auto" : settings.cloudsLow * 100 + "%");
     });
     settings.add(d, "rain", -1, 100, -1, (v,l) => {
       settings.rain = v < 0 ? 'auto' : v / 10.0;
@@ -46,7 +46,7 @@ const settings = {
     });
     settings.add(d, "moon", -1, 100, -1, (v,l) => {
       settings.moon = v < 0 ? 'auto' : v / 100.0;
-      l.innerHTML = "moon: " + (v < 0 ? "auto" : settings.moon + " d");
+      l.innerHTML = "moon: " + (v < 0 ? "auto" : (settings.moon * 29.53).toFixed(1) + " d");
     });
     settings.add(d, "wind", -1, 200, -1, (v,l) => {
       settings.wind = v < 0 ? 'auto' : v;
