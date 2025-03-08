@@ -7,6 +7,8 @@
 #define CLOUDS2 1
 #define WEATHER 1
 #define DEF_LAMBDA 0
+#define CLOUDS_MIN 20 // 50 
+#define CLOUDS_MAX 60 // 100
 
 #define SHADERTOY 0
 #define DEMO 0
@@ -349,16 +351,19 @@ void volumetricTrace(vec3 ro, vec3 rd, inout vec3 sky, vec3 ph, float cosGamma, 
     float pw = 0.4545;
     
     float colSun = mix(0.05, 1.0, smoothstep(0.0, 0.1, cosGamma - 0.02));
-    float colCld = mix(1.0, 0.6, smoothstep(0.95, 1.0, clouds));
+    float colCld = mix(1.0, mix(0.6, 0.3, clip(rain * 0.2)), smoothstep(0.95, 1.0, clouds));
     float defCol = min(colSun, colCld); // contrast 0.1 at night, 1.0 at day, cloudy
     float c0 = 0.5 - clouds * 0.5; // cloudiness (0.0 -full, 0.5 - parcial)
-    int steps = int( mix( 40.0, 100.0, ph.z * colSun) );
+    int steps = int( mix( float(CLOUDS_MIN), float(CLOUDS_MAX), ph.z * colSun) );
     vec2 c = vec2(0.0); // vec2(grey,alpha)
-    for (int i = 0; i < 100; i++) {
-        vec3 p = ro + depth * rd;
-        float density = fBM13(p);
+    vec2 c1 = vec2(0.0);
+    vec3 p = vec3(0.0);
+    float density = 0.0;
+    for (int i = 0; i < CLOUDS_MAX; i++) {
+        p = ro + depth * rd;
+        density = fBM13(p);
         if (density > 0.) { // 1e-3
-            vec2 c1 = vec2(smoothstep(c0, 1.0, density));
+            c1 = vec2(smoothstep(c0, 1.0, density));
             c1.y *= pw;
             c1.x *= c1.y;
             c += c1 * (1.0 - c.y);
@@ -414,6 +419,30 @@ vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
   return vec3( r * c * ii * mix(0.25, 0.5, sunpos));
 }
 
+#define rain_rnd1(x) fract(sin(x)*43758.5453123)
+#define rain_drop(x,a,b) (1.5 * R11(x) - abs( x * a )) - b
+#define rain_fn(x,k) k * (fract(x/k) + fract(x))
+
+#define rain_d 0.99
+#define rain_p 1.0
+#define rain_f 1.9
+#define rain_s 0.2
+#define k3     5.0
+#define k1     50.0  
+#define rain_c 0.21
+
+vec2 rot(vec2 u, vec2 res, float r, float zoom){
+    return (u + vec2(0., u.x * r))/res * zoom;
+}
+
+void renderRain(in vec2 fragCoord, inout vec3 sky){
+  vec2 u = rot(fragCoord.xy, iResolution.xy, 4. , 5.);
+  // log density: 100=heavy rain; 1000=soft rain
+  float k2 = 1050. - pow(100.,rain);
+  float k4 = rain_s + pow(16., rain_c);
+  float r = k4 * rain_drop(u.x - 0.5 - rain_fn(iTime * rain_p, k1) + R11(u.y) * k2, k3, rain_f);
+  sky += clip(r);
+}
 
 struct AtmCond {
   float hum;
@@ -565,5 +594,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     sky += (hazeE + phum.y * clds * uv.y);
   }
 
+  if (rain > 0.0)
+    renderRain(fragCoord, sky);
+  
   fragColor = vec4( sky, 1.0);
 }
