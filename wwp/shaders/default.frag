@@ -438,10 +438,10 @@ vec2 rot(vec2 u, vec2 res, float r, float zoom){
 void renderRain(in vec2 fragCoord, inout vec3 sky){
   vec2 u = rot(fragCoord.xy, iResolution.xy, 4. , 5.);
   // log density: 100=heavy rain; 1000=soft rain
-  float k2 = 1050. - pow(100.,rain);
+  float k2 = 1050. - pow(1000., clamp(0.1, 1.0, 1. - rain));
   float k4 = rain_s + pow(16., rain_c);
   float r = k4 * rain_drop(u.x - 0.5 - rain_fn(iTime * rain_p, k1) + R11(u.y) * k2, k3, rain_f);
-  sky += clip(r);
+  sky += clip(rain * r);
 }
 
 struct AtmCond {
