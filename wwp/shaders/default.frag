@@ -419,17 +419,15 @@ vec3 renderClouds(vec2 uv, float sunpos, float h, float c){
   return vec3( r * c * ii * mix(0.25, 0.5, sunpos));
 }
 
-#define rain_rnd1(x) fract(sin(x)*43758.5453123)
+#define rain_rnd1(x)     fract(sin(x)*43758.5453123)
 #define rain_drop(x,a,b) (1.5 * R11(x) - abs( x * a )) - b
-#define rain_fn(x,k) k * (fract(x/k) + fract(x))
+#define rain_fn(x,k)     k * (fract(x/k) + fract(x))
 
 #define rain_d 0.99
 #define rain_p 1.0
 #define rain_f 1.9
 #define rain_s 0.2
-#define k3     5.0
-#define k1     50.0  
-#define rain_c 0.21
+//#define rain_c 0.21
 
 vec2 rot(vec2 u, vec2 res, float r, float zoom){
     return (u + vec2(0., u.x * r))/res * zoom;
@@ -438,10 +436,13 @@ vec2 rot(vec2 u, vec2 res, float r, float zoom){
 void renderRain(in vec2 fragCoord, inout vec3 sky){
   vec2 u = rot(fragCoord.xy, iResolution.xy, 4. , 5.);
   // log density: 100=heavy rain; 1000=soft rain
-  float k2 = 1050. - pow(1000., clamp(0.1, 1.0, 1. - rain));
-  float k4 = rain_s + pow(16., rain_c);
-  float r = k4 * rain_drop(u.x - 0.5 - rain_fn(iTime * rain_p, k1) + R11(u.y) * k2, k3, rain_f);
-  sky += clip(rain * r);
+  float k0 = 0.21 + rain * 0.01; 
+  float k1 = 50.0;
+  float k2 = mix(50.0, 1000.0, smoothstep(10.0, 0.0, rain));
+  float k3 = 5.0;
+  float k4 = rain_s + pow(16., k0);
+  float r = clip(k4 * rain_drop(u.x - 0.5 - rain_fn(fract(iTime) * rain_p, k1) + R11(u.y) * k2, k3, rain_f));
+  sky += vec3(r);
 }
 
 struct AtmCond {
