@@ -49,7 +49,7 @@
 #define ra_model(c,d)            ram_young1994(c,d)
 
 // utilities
-#define clip(x)       clamp(x, 0., 1.)
+#define clip(x)       clamp(x, 0.0, 1.0)
 #define rand(x)       fract(sin(x) * 75154.32912)
 #define R11(x)        fract(sin(x) * 43758.5453)
 #define ACESFilmic(x) (x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14)
@@ -347,35 +347,39 @@ float fBM13(vec3 p) {
 
 
 void volumetricTrace(vec3 ro, vec3 rd, inout vec3 sky, vec3 ph, float cosGamma, float m) {
-    float depth = 0.0;
-    float pw = 0.4545;
-    
-    float colSun = mix(0.05, 1.0, smoothstep(0.0, 0.1, cosGamma - 0.02));
-    float colCld = mix(1.0, mix(0.6, 0.3, clip(rain * 0.2)), smoothstep(0.95, 1.0, clouds));
-    float defCol = min(colSun, colCld); // contrast 0.1 at night, 1.0 at day, cloudy
-    float c0 = 0.5 - clouds * 0.5; // cloudiness (0.0 -full, 0.5 - parcial)
-    int steps = int( mix( float(CLOUDS_MIN), float(CLOUDS_MAX), ph.z * colSun) );
-    vec2 c = vec2(0.0); // vec2(grey,alpha)
-    vec2 c1 = vec2(0.0);
-    vec3 p = vec3(0.0);
-    float density = 0.0;
-    for (int i = 0; i < CLOUDS_MAX; i++) {
-        p = ro + depth * rd;
-        density = fBM13(p);
-        if (density > 0.) { // 1e-3
-            c1 = vec2(smoothstep(c0, 1.0, density));
-            c1.y *= pw;
-            c1.x *= c1.y;
-            c += c1 * (1.0 - c.y);
-        }
-        depth += max(0.05, 0.01 * depth);
-        if (i > steps) break;
+  float depth = 0.0;
+  float pw = 0.4545;
+  
+  float colSun = mix(0.05, 1.0, smoothstep(0.0, 0.1, cosGamma - 0.02));
+  float colCld = mix(1.0, mix(0.6, 0.3, clip(rain * 0.2)), smoothstep(0.95, 1.0, clouds));
+  float defCol = min(colSun, colCld); // contrast 0.1 at night, 1.0 at day, cloudy
+  float c0 = 0.5 - clouds * 0.5; // cloudiness (0.0 -full, 0.5 - parcial)
+  int steps = int( mix( float(CLOUDS_MIN), float(CLOUDS_MAX), ph.z * colSun) );
+  vec2 c = vec2(0.0); // vec2(grey,alpha)
+  vec2 c1 = vec2(0.0);
+  vec3 p = vec3(0.0);
+  float density = 0.0;
+  for (int i = 0; i < CLOUDS_MAX; i++) {
+    p = ro + depth * rd;
+    density = fBM13(p);
+#if 0
+    if (density > 0.) { // 1e-3
+      c1 = vec2(smoothstep(c0, 1.0, density));
+      c1.y *= pw;
+      c1.x *= c1.y;
+      c += c1 * (1.0 - c.y);
     }
-    c = pow(c, vec2(pw));
-    c.x = mix(defCol, 0.5 + c.x, defCol);
-    // mask mountains m with fog (ph.y * ph.x)
-    float fog = step(m, ph.y * ph.x);
-    sky = mix(sky, vec3(c.x), fog * clouds * c.y);
+#else
+    c += vec2(smoothstep(c0, 1.0, max(0.,density))) * (1.0 - c.y) * pw;
+#endif
+    depth += max(0.05, 0.01 * depth);
+    if (i > steps) break;
+  }
+  c = pow(c, vec2(pw));
+  c.x = mix(defCol, 0.5 + c.x, defCol);
+  // mask mountains m with fog (ph.y * ph.x)
+  float fog = step(m, ph.y * ph.x);
+  sky = mix(sky, vec3(c.x), fog * clouds * c.y);
 }
 
 // Clouds (https://www.shadertoy.com/view/Xs23zX)
