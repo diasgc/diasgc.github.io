@@ -289,10 +289,12 @@ float N13(vec3 p) {
 }
 
 void addStars(vec2 uv, float sunpos, vec3 h, float m, inout vec3 sky) {
-  if (sunpos > -0.12 || h.z > 0.9 || sky.x > 0.05 || m > 0.0)
+  if (sunpos > -0.12 || h.z > 0.9 || m > 0.0)
     return;
   float n = 0.4 - 0.3 * h.y;
-  float fade = max(1. - smoothstep(0.10, 0.30, -sunpos), h.z);
+  // todo: fix this
+  //float fade = max(1. - smoothstep(0.10, 0.30, -sunpos), h.z);
+  float fade = 0.5; //smoothstep(-0.10, -0.18, sunpos);
   float thres = 6.0 + smoothstep(0.5, 1.0, fade) * 4.0;
   float expos = (1. - fade) * 500.0;
   vec2 amp = vec2(n, n + 0.2 * (1. + 5. * h.x));
@@ -300,7 +302,7 @@ void addStars(vec2 uv, float sunpos, vec3 h, float m, inout vec3 sky) {
   // clip to remove artifacts
   float stars = clip(pow(N13(dir * 200.0), thres) * expos);
   stars *= mix(amp.x, amp.y, N13(dir * 100.0 + vec3(iTime)));
-  sky += vec3(fade * stars);
+  sky += vec3(stars);
 }
 
 // clouds
@@ -449,11 +451,14 @@ void renderRain(in vec2 fragCoord, inout vec3 sky){
   sky += vec3(r);
 }
 
-struct AtmCond {
-  float hum;
-  float clow;
-  float clouds;
-};
+
+
+
+
+
+
+
+
 
 #if SHADERTOY || DEMO
   #define SUN_ELEV iMouse.z > 0. ? iMouse.y/iResolution.y : sin( iTime * DEMO_SPEED)
