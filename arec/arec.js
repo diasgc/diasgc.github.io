@@ -436,7 +436,7 @@ const micCtl = {
 
 const dataManager = {
   chunks: [],
-  chunkTimeout: 2000,
+  chunkTimeout: 5000,
   add: function(data){
     this.chunks.push(data);
     logger.addSize(data.size);
