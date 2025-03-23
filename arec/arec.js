@@ -420,7 +420,8 @@ const outputCtl = {
       //opts.mimeType = "audio/webm;codecs=pcm";
       this.transcode = true;
     }
-    opts.audioBitsPerSecond = parseInt(opts.audioBitsPerSecond);
+    //opts.audioBitsPerSecond = parseInt(opts.audioBitsPerSecond);
+    delete opts.audioBitsPerSecond;
     delete opts.container;
     delete opts.codec;
     delete opts.timer;
