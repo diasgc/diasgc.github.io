@@ -501,11 +501,11 @@ async function startRecording(){
   inputCtl.setDisabled(true);
   outputCtl.collapse();
   outputCtl.setDisabled(true);
-  session.audio = inputCtl.getOptions();
-  logger.d(null);
-  if (outputCtl.options.debug)
-    logger.d(JSON.stringify(session,null,2));
-  stream = await navigator.mediaDevices.getUserMedia(session);
+  //session.audio = inputCtl.getOptions();
+  //logger.d(null);
+  //if (outputCtl.options.debug)
+  //  logger.d(JSON.stringify(session,null,2));
+  stream = await navigator.mediaDevices.getUserMedia({audio: inputCtl.getOptions()});
   lock = await navigator.wakeLock.request('screen');
   let recOpts = outputCtl.getOptions();
   if (outputCtl.options.debug)
