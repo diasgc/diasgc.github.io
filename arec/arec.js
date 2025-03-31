@@ -429,7 +429,7 @@ const outputCtl = {
       //opts.mimeType = "audio/webm;codecs=pcm";
       this.transcode = true;
     }
-    //opts.audioBitsPerSecond = parseInt(opts.audioBitsPerSecond);
+    opts.audioBitsPerSecond = parseInt(opts.audioBitsPerSecond);
     delete opts.audioBitsPerSecond;
     delete opts.container;
     delete opts.codec;
@@ -510,7 +510,10 @@ async function startRecording(){
   let recOpts = outputCtl.getOptions();
   if (outputCtl.options.debug)
     logger.d(JSON.stringify(recOpts,null,2));
-  recorder = new MediaRecorder(stream, outputCtl.options);
+  recorder = new MediaRecorder(stream, {
+    bitsPerSecond : "128000",
+    mimeType: "audio/wav"
+  });
   recorder.start(dataManager.chunkTimeout);
   if (outputCtl.options.graph === 'true')
     graph2.start(stream);
