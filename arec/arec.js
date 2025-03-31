@@ -429,7 +429,8 @@ const outputCtl = {
       //opts.mimeType = "audio/webm;codecs=pcm";
       this.transcode = true;
     }
-    opts.audioBitsPerSecond = parseInt(opts.audioBitsPerSecond);
+    //opts.audioBitsPerSecond = parseInt(opts.audioBitsPerSecond);
+    delete opts.audioBitsPerSecond;
     delete opts.container;
     delete opts.codec;
     delete opts.timer;
@@ -445,7 +446,7 @@ const micCtl = {
 
 const dataManager = {
   chunks: [],
-  chunkTimeout: 2000,
+  chunkTimeout: 5000,
   add: function(data){
     this.chunks.push(data);
     logger.addSize(data.size);
