@@ -501,8 +501,7 @@ async function startRecording(){
   inputCtl.setDisabled(true);
   outputCtl.collapse();
   outputCtl.setDisabled(true);
-  //session.audio = inputCtl.getOptions();
-  session.audio = outputCtl.options;
+  session.audio = inputCtl.getOptions();
   logger.d(null);
   if (outputCtl.options.debug)
     logger.d(JSON.stringify(session,null,2));
@@ -511,7 +510,7 @@ async function startRecording(){
   let recOpts = outputCtl.getOptions();
   if (outputCtl.options.debug)
     logger.d(JSON.stringify(recOpts,null,2));
-  recorder = new MediaRecorder(stream, session);
+  recorder = new MediaRecorder(stream, outputCtl.options);
   recorder.start(dataManager.chunkTimeout);
   if (outputCtl.options.graph === 'true')
     graph2.start(stream);
