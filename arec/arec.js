@@ -307,12 +307,21 @@ const outputCtl = {
   transcode: false,
   timeout: 300000,
 
-  options: {
+  options1: {
     audioBitsPerSecond : "256000",
     audioBitrateMode : "variable",
     mimeType: "audio/mp4;codecs=opus",
     container: 'mp4',
     codec: 'opus',
+    timer: "300000",
+    graph: "true",
+    debug: "false"
+  },
+
+  options: {
+    bitsPerSecond : "128000",
+    mimeType: "audio/wav",
+    container: 'wav',
     timer: "300000",
     graph: "true",
     debug: "false"
@@ -491,7 +500,8 @@ async function startRecording(){
   inputCtl.setDisabled(true);
   outputCtl.collapse();
   outputCtl.setDisabled(true);
-  session.audio = inputCtl.getOptions();
+  //session.audio = inputCtl.getOptions();
+  session.audio = outputCtl.options;
   logger.d(null);
   if (outputCtl.options.debug)
     logger.d(JSON.stringify(session,null,2));
@@ -500,7 +510,7 @@ async function startRecording(){
   let recOpts = outputCtl.getOptions();
   if (outputCtl.options.debug)
     logger.d(JSON.stringify(recOpts,null,2));
-  recorder = new MediaRecorder(stream);
+  recorder = new MediaRecorder(stream, session);
   recorder.start(dataManager.chunkTimeout);
   if (outputCtl.options.graph === 'true')
     graph2.start(stream);

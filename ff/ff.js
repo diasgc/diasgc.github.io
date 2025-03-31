@@ -1,3 +1,5 @@
+// see https://ffplayground.netlify.app/
+
 const message = document.getElementById('message');
 const { createFFmpeg, fetchFile } = FFmpeg;
 const ffmpeg = createFFmpeg({
