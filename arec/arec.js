@@ -320,8 +320,8 @@ const outputCtl = {
 
   options: {
     bitsPerSecond : "128000",
-    mimeType: "audio/wav",
-    container: 'wav',
+    mimeType: "audio/ogg",
+    container: 'ogg',
     timer: "300000",
     graph: "true",
     debug: "false"
