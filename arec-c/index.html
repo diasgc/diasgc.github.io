@@ -74,7 +74,7 @@
                   sourceNode = audioContext.createMediaStreamSource(audioStream);
                   processorNode = audioContext.createScriptProcessor(4096, 2, 2);
   
-                  encoder = new lamejs.Mp3Encoder(2, 48000, 128);
+                  encoder = new lamejs.Mp3Encoder(2, audioContext.sampleRate, 320);
   
                   processorNode.onaudioprocess = (e) => {
                       const left = e.inputBuffer.getChannelData(0);
