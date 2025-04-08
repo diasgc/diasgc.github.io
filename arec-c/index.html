@@ -46,89 +46,97 @@
       <button id="stopBtn" disabled>Stop & Save</button>
       <div id="status"></div>
   
-      <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.0/lame.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js"></script>
       <script>
-          const recordBtn = document.getElementById('recordBtn');
-          const stopBtn = document.getElementById('stopBtn');
-          const status = document.getElementById('status');
-  
-          let audioStream;
-          let audioContext;
-          let sourceNode;
-          let processorNode;
-          let mp3Chunks = [];
-          let encoder;
-  
-          async function startRecording() {
-              try {
-                  status.textContent = "Initializing...";
-                  audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                  audioStream = await navigator.mediaDevices.getUserMedia({
-                      audio: {
-                          channelCount: 2,
-                          sampleRate: audioContext.sampleRate,
-                          sampleSize: 16
-                      }
-                  });
+        const recordBtn = document.getElementById('recordBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const status = document.getElementById('status');
 
-                  sourceNode = audioContext.createMediaStreamSource(audioStream);
-                  processorNode = audioContext.createScriptProcessor(4096, 2, 2);
-  
-                  encoder = new lamejs.Mp3Encoder(2, audioContext.sampleRate, 320);
-  
-                  processorNode.onaudioprocess = (e) => {
-                      const left = e.inputBuffer.getChannelData(0);
-                      const right = e.inputBuffer.getChannelData(1);
-                      const samples = new Int16Array(left.length * 2);
-  
-                      for (let i = 0; i < left.length; i++) {
-                          samples[i * 2] = left[i] * 32767;
-                          samples[i * 2 + 1] = right[i] * 32767;
-                      }
-  
-                      const mp3Buffer = encoder.encodeBuffer(samples);
-                      if (mp3Buffer.length > 0) {
-                          mp3Chunks.push(mp3Buffer);
-                      }
-                  };
-  
-                  sourceNode.connect(processorNode);
-                  processorNode.connect(audioContext.destination);
-  
-                  recordBtn.disabled = true;
-                  stopBtn.disabled = false;
-                  status.textContent = "Recording...";
-              } catch (err) {
-                  status.textContent = `Error: ${err.message}`;
-                  console.error(err);
-              }
-          }
-  
-          function stopRecording() {
-              audioStream.getTracks().forEach(track => track.stop());
-              sourceNode.disconnect();
-              processorNode.disconnect();
-  
-              const finalBuffer = encoder.flush();
-              if (finalBuffer.length > 0) {
-                  mp3Chunks.push(finalBuffer);
-              }
-  
-              const blob = new Blob(mp3Chunks, { type: 'audio/mp3' });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = `recording_${Date.now()}.mp3`;
-              a.click();
-  
-              recordBtn.disabled = false;
-              stopBtn.disabled = true;
-              status.textContent = "Recording saved!";
-              mp3Chunks = [];
-          }
-  
-          recordBtn.addEventListener('click', startRecording);
-          stopBtn.addEventListener('click', stopRecording);
+        let audioStream;
+        let audioContext;
+        let sourceNode;
+        let workletNode;
+        let mp3Chunks = [];
+        let encoder;
+
+        // Register worklet processor
+        class RecorderWorklet extends AudioWorkletNode {
+            constructor(context) {
+                super(context, 'recorder-worklet');
+            }
+        }
+
+        async function startRecording() {
+            try {
+                status.textContent = "Initializing...";
+                audioStream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        channelCount: 2,
+                        sampleRate: 48000,
+                        sampleSize: 16
+                    }
+                });
+
+                audioContext = new AudioContext();
+                
+                if (audioContext.sampleRate !== 48000) {
+                    throw new Error(`Sample rate must be 48kHz (current: ${audioContext.sampleRate}Hz)`);
+                }
+
+                // Load and register worklet processor
+                await audioContext.audioWorklet.addModule('recorder-worklet.js');
+                
+                sourceNode = audioContext.createMediaStreamSource(audioStream);
+                workletNode = new AudioWorkletNode(audioContext, 'recorder-worklet');
+
+                encoder = new lamejs.Mp3Encoder(2, 48000, 128);
+
+                // Handle data from worklet
+                workletNode.port.onmessage = (e) => {
+                    const samples = e.data;
+                    const mp3Buffer = encoder.encodeBuffer(samples);
+                    if (mp3Buffer.length > 0) {
+                        mp3Chunks.push(mp3Buffer);
+                    }
+                };
+
+                sourceNode.connect(workletNode);
+                workletNode.connect(audioContext.destination);
+
+                recordBtn.disabled = true;
+                stopBtn.disabled = false;
+                status.textContent = "Recording...";
+            } catch (err) {
+                status.textContent = `Error: ${err.message}`;
+                console.error(err);
+            }
+        }
+
+        async function stopRecording() {
+            audioStream.getTracks().forEach(track => track.stop());
+            sourceNode.disconnect();
+            workletNode.disconnect();
+
+            const finalBuffer = encoder.flush();
+            if (finalBuffer.length > 0) {
+                mp3Chunks.push(finalBuffer);
+            }
+
+            const blob = new Blob(mp3Chunks, { type: 'audio/mp3' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `recording_${Date.now()}.mp3`;
+            a.click();
+
+            recordBtn.disabled = false;
+            stopBtn.disabled = true;
+            status.textContent = "Recording saved!";
+            mp3Chunks = [];
+        }
+
+        recordBtn.addEventListener('click', startRecording);
+        stopBtn.addEventListener('click', stopRecording);
       </script>
   </body>
 </html>
