@@ -62,20 +62,15 @@
           async function startRecording() {
               try {
                   status.textContent = "Initializing...";
+                  audioContext = new (window.AudioContext || window.webkitAudioContext)();
                   audioStream = await navigator.mediaDevices.getUserMedia({
                       audio: {
                           channelCount: 2,
-                          sampleRate: 48000,
+                          sampleRate: audioContext.sampleRate,
                           sampleSize: 16
                       }
                   });
-  
-                  audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                  
-                  if (audioContext.sampleRate !== 48000) {
-                      throw new Error(`Sample rate must be 48kHz (current: ${audioContext.sampleRate}Hz)`);
-                  }
-  
+
                   sourceNode = audioContext.createMediaStreamSource(audioStream);
                   processorNode = audioContext.createScriptProcessor(4096, 2, 2);
   
