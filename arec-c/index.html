@@ -1,142 +1,129 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>Audio Recorder</title>
-  <link rel="manifest" href="site.webmanifest">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎙️</text></svg>"/>
-  <link rel="stylesheet" href="arec.css">
-  <style>
-    body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        font-family: Arial, sans-serif;
-        margin: 2rem;
-    }
-    button {
-        padding: 1rem 2rem;
-        font-size: 1.2rem;
-        margin: 0.5rem;
-        cursor: pointer;
-        background: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 4px;
-    }
-    button:disabled {
-        background: #cccccc;
-        cursor: not-allowed;
-    }
-    #status {
-        margin-top: 1rem;
-        color: #666;
-    }
-</style>
+    <title>Stereo Audio Recording to FLAC</title>
+    <script src="https://cdn.jsdelivr.net/npm/libflacjs@5.4.0/dist/libflac.min.js"></script>
+    <style>
+        body { font-family: sans-serif; }
+        button { padding: 10px 20px; margin: 10px; cursor: pointer; }
+        #audioPlayer { margin-top: 20px; }
+    </style>
 </head>
-  <body>
-      <button id="recordBtn">Start Recording</button>
-      <button id="stopBtn" disabled>Stop & Save</button>
-      <div id="status"></div>
-  
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js"></script>
-      <script>
-        const recordBtn = document.getElementById('recordBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const status = document.getElementById('status');
+<body>
+    <h1>Stereo Audio Recording to FLAC</h1>
 
-        let audioStream;
+    <button id="startButton">Start Recording</button>
+    <button id="stopButton" disabled>Stop Recording</button>
+    <p id="status">Ready to record.</p>
+
+    <div id="audioPlayer" style="display: none;">
+        <h2>Recorded Audio (FLAC)</h2>
+        <audio id="recordedAudio" controls></audio>
+        <a id="downloadLink" download="recorded_audio.flac">Download FLAC</a>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        let flacEncoder;
         let audioContext;
-        let sourceNode;
-        let workletNode;
-        let mp3Chunks = [];
-        let encoder;
+        let audioSource;
 
-        // Register worklet processor
-        class RecorderWorklet extends AudioWorkletNode {
-            constructor(context) {
-                super(context, 'recorder-worklet');
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const statusElement = document.getElementById('status');
+        const audioPlayerDiv = document.getElementById('audioPlayer');
+        const recordedAudioElement = document.getElementById('recordedAudio');
+        const downloadLinkElement = document.getElementById('downloadLink');
+
+        async function initFlacEncoder() {
+            try {
+                flacEncoder = await Flac.create_libflac_encoder(48000, 2, 16, 8, true, 0);
+                console.log('FLAC encoder initialized.');
+            } catch (error) {
+                console.error('Error initializing FLAC encoder:', error);
+                statusElement.textContent = `Error initializing FLAC encoder: ${error.message}`;
+                startButton.disabled = true;
             }
         }
 
         async function startRecording() {
+            statusElement.textContent = 'Requesting microphone access...';
             try {
-                status.textContent = "Initializing...";
-                audioStream = await navigator.mediaDevices.getUserMedia({
-                    audio: {
-                        channelCount: 2,
-                        sampleRate: 48000,
-                        sampleSize: 16
-                    }
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: {
+                    channelCount: 2,
+                    sampleRate: 48000 // Attempt to request full sample rate
+                }});
+
+                audioContext = new (window.AudioContext || window.webkitAudioContext)({
+                    sampleRate: 48000 // Set audio context sample rate
                 });
+                audioSource = audioContext.createMediaStreamSource(stream);
+                const scriptProcessor = audioContext.createScriptProcessor(4096, 2, 1); // Buffer size, input channels, output channels (none)
 
-                audioContext = new AudioContext();
-                
-                if (audioContext.sampleRate !== 48000) {
-                    throw new Error(`Sample rate must be 48kHz (current: ${audioContext.sampleRate}Hz)`);
-                }
-
-                // Load and register worklet processor
-                await audioContext.audioWorklet.addModule('recorder-worklet.js');
-                
-                sourceNode = audioContext.createMediaStreamSource(audioStream);
-                workletNode = new AudioWorkletNode(audioContext, 'recorder-worklet');
-
-                encoder = new lamejs.Mp3Encoder(2, 48000, 128);
-
-                // Handle data from worklet
-                workletNode.port.onmessage = (e) => {
-                    const samples = e.data;
-                    const mp3Buffer = encoder.encodeBuffer(samples);
-                    if (mp3Buffer.length > 0) {
-                        mp3Chunks.push(mp3Buffer);
+                scriptProcessor.onaudioprocess = function(audioProcessingEvent) {
+                    if (flacEncoder) {
+                        const leftChannel = audioProcessingEvent.inputBuffer.getChannelData(0);
+                        const rightChannel = audioProcessingEvent.inputBuffer.getChannelData(1);
+                        const interleaved = new Int16Array(leftChannel.length * 2);
+                        for (let i = 0; i < leftChannel.length; i++) {
+                            interleaved[i * 2] = Math.round(leftChannel[i] * 32767); // Convert to 16-bit signed integer
+                            interleaved[i * 2 + 1] = Math.round(rightChannel[i] * 32767);
+                        }
+                        Flac.FLAC__stream_encoder_process_interleaved(flacEncoder, interleaved, interleaved.length / 2);
                     }
                 };
 
-                sourceNode.connect(workletNode);
-                workletNode.connect(audioContext.destination);
+                audioSource.connect(scriptProcessor);
+                scriptProcessor.connect(audioContext.destination); // Required to keep the audio stream active
 
-                recordBtn.disabled = true;
-                stopBtn.disabled = false;
-                status.textContent = "Recording...";
-            } catch (err) {
-                status.textContent = `Error: ${err.message}`;
-                console.error(err);
+                startButton.disabled = true;
+                stopButton.disabled = false;
+                statusElement.textContent = 'Recording...';
+                console.log('Recording started.');
+
+            } catch (error) {
+                console.error('Error accessing microphone:', error);
+                statusElement.textContent = `Error accessing microphone: ${error.message}`;
             }
         }
 
         async function stopRecording() {
-            audioStream.getTracks().forEach(track => track.stop());
-            sourceNode.disconnect();
-            workletNode.disconnect();
-
-            const finalBuffer = encoder.flush();
-            if (finalBuffer.length > 0) {
-                mp3Chunks.push(finalBuffer);
+            if (audioSource) {
+                audioSource.disconnect();
+            }
+            if (audioContext) {
+                // Disconnect all nodes in the audio graph
+                audioContext.suspend().then(() => {
+                    audioContext = null;
+                });
             }
 
-            const blob = new Blob(mp3Chunks, { type: 'audio/mp3' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `recording_${Date.now()}.mp3`;
-            a.click();
+            if (flacEncoder) {
+                flacEncoder.finish();
+                const flacData = flacEncoder.getEncodedData();
+                const flacBlob = new Blob([flacData], { type: 'audio/flac' });
+                const flacUrl = URL.createObjectURL(flacBlob);
 
-            recordBtn.disabled = false;
-            stopBtn.disabled = true;
-            status.textContent = "Recording saved!";
-            mp3Chunks = [];
+                recordedAudioElement.src = flacUrl;
+                downloadLinkElement.href = flacUrl;
+                audioPlayerDiv.style.display = 'block';
+
+                flacEncoder.delete();
+                flacEncoder = null;
+                console.log('Recording stopped and FLAC encoded.');
+            }
+
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            statusElement.textContent = 'Recording stopped.';
         }
 
-        recordBtn.addEventListener('click', startRecording);
-        stopBtn.addEventListener('click', stopRecording);
-      </script>
-  </body>
+        startButton.addEventListener('click', startRecording);
+        stopButton.addEventListener('click', stopRecording);
+
+        // Initialize the FLAC encoder when the page loads
+        initFlacEncoder();
+    </script>
+</body>
 </html>

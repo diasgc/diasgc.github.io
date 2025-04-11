@@ -7,7 +7,7 @@
       "name": "wwp",
       "webRoot": "${workspaceRoot}/wwp",
       "file": "${workspaceFolder}/wwp/index.html",
-      "runtimeArgs": ["--disable-web-security"]   
+      "runtimeArgs": ["--disable-web-security"]
     },
     {
       "type": "msedge",
@@ -15,6 +15,13 @@
       "name": "arec",
       "webRoot": "${workspaceRoot}/arec",
       "file": "${workspaceFolder}/arec/index.html"
+    },
+    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "arec-c",
+      "webRoot": "${workspaceRoot}/arec-c",
+      "file": "${workspaceFolder}/arec-c/index.html"
     },
     {
       "type": "msedge",

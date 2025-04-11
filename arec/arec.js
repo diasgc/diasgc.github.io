@@ -307,7 +307,7 @@ const outputCtl = {
   transcode: false,
   timeout: 300000,
 
-  options1: {
+  options: {
     audioBitsPerSecond : "256000",
     audioBitrateMode : "variable",
     mimeType: "audio/mp4;codecs=opus",
@@ -318,7 +318,7 @@ const outputCtl = {
     debug: "false"
   },
 
-  options: {
+  options2: {
     bitsPerSecond : "128000",
     mimeType: "audio/ogg",
     container: 'ogg',
@@ -426,7 +426,7 @@ const outputCtl = {
     this.mimeType = `audio/${opts.container}`;
     opts.mimeType = `${this.mimeType};codecs=${opts.codec}`;
     if (this.builtInContainers.indexOf(opts.container) < 0){
-      //opts.mimeType = "audio/webm;codecs=pcm";
+      opts.mimeType = "audio/webm;codecs=pcm";
       this.transcode = true;
     }
     opts.audioBitsPerSecond = parseInt(opts.audioBitsPerSecond);
