@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audio Converter</title>
+</head>
+<body>
+    <button id="start">Start</button>
+    <button id="stop" disabled>Stop</button>
+    <div id="status"></div>
+
+    <!-- Use version 0.9.8 which has better browser support -->
+    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.8/dist/umd/ffmpeg.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.4/dist/umd/ffmpeg-core.js"></script>
+
+    <script>
+        const { FFmpeg, fetchFile } = FFmpeg;
+        import { fetchFile } from '@ffmpeg/util'
+        const ffmpeg = new FFmpeg();
+        
+
+        let mediaRecorder;
+        let audioChunks = [];
+        
+        const startButton = document.getElementById('start');
+        const stopButton = document.getElementById('stop');
+        const statusDiv = document.getElementById('status');
+
+        async function startRecording() {
+            try {
+                statusDiv.textContent = 'Initializing...';
+                if (!ffmpeg.isLoaded()) {
+                    await ffmpeg.load();
+                }
+
+                statusDiv.textContent = 'Accessing microphone...';
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        sampleRate: 44100,
+                        channelCount: 2,
+                        noiseSuppression: true
+                    } 
+                });
+
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = e => {
+                    audioChunks.push(e.data);
+                };
+
+                mediaRecorder.onstop = processRecording;
+                mediaRecorder.start(1000);
+                
+                startButton.disabled = true;
+                stopButton.disabled = false;
+                statusDiv.textContent = 'Recording...';
+
+            } catch (err) {
+                console.error(err);
+                statusDiv.textContent = 'Error: ' + err.message;
+            }
+        }
+
+        async function processRecording() {
+            statusDiv.textContent = 'Processing...';
+            
+            try {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                await ffmpeg.writeFile('input.webm', await fetchFile(audioBlob));
+                
+                await ffmpeg.run(
+                    '-i', 'input.webm',
+                    '-vn',
+                    '-ar', '44100',
+                    '-ac', '2',
+                    'output.wav'
+                );
+
+                const data = ffmpeg.FS('readFile', 'output.wav');
+                const url = URL.createObjectURL(new Blob([data.buffer], { type: 'audio/wav' }));
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `recording-${Date.now()}.wav`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                statusDiv.textContent = 'Conversion complete!';
+                
+            } catch (err) {
+                console.error(err);
+                statusDiv.textContent = 'Conversion failed: ' + err.message;
+            }
+            
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        }
+
+        stopButton.addEventListener('click', () => {
+            mediaRecorder.stop();
+            mediaRecorder.stream.getTracks().forEach(track => track.stop());
+        });
+
+        startButton.addEventListener('click', startRecording);
+    </script>
+</body>
+</html>
