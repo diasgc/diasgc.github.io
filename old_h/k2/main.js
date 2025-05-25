@@ -8,14 +8,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const observacoesInput = document.getElementById('observacoes');
 
     // Front layout elements
-    const ptcEncomenda = document.querySelector('#front .quantity-box:first-child .quantity-value');
-    const qtdEncomenda = document.querySelector('#front .quantity-box:last-child .quantity-value');
+    const ptcEncomenda = document.getElementById('pe-val');
+    const qtdEncomenda = document.getElementById('qe-val');
+    const labFrio = document.getElementById('frio-value');
     const codigoDisplay = document.querySelector('#front .code-number');
     const designacaoDisplay = document.querySelector('#front .designation-value');
     const localizacaoDisplay = document.querySelector('#front .location-value');
     const observacoesDisplay = document.querySelector('#front .notes-value');
     const barcodeImage = document.querySelector('#barcode-img');
 
+    const revision = document.getElementById('revision');
+    if (revision) {
+        revision.textContent = 'Última revisão: ' + new Date().toLocaleDateString('pt-PT');
+    }
     // Update function for each input
     const updateLayout = {
         pe: (value) => ptcEncomenda.textContent = value || '',
@@ -25,7 +30,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update barcode - requires a barcode library
             generateBarcode(value);
         },
-        designacao: (value) => designacaoDisplay.textContent = value || '',
+        designacao: (value) => {
+            designacaoDisplay.textContent = value || '';
+            labFrio.hidden = !value.includes('[frio]');
+        },
         localizacao: (value) => localizacaoDisplay.textContent = value || '',
         observacoes: (value) => observacoesDisplay.textContent = value || ''
     };
