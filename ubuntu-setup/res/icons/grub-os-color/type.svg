@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <path id="bg" d="m16 0c-8.836 0-16 7.164-16 16 0 8.836 7.164 16 16 16 8.836 0 16-7.164 16-16 0-8.836-7.164-16-16-16zm-5.717 8 11.43 0.005859s1.143-2.208e-4 1.143 1.143v6.844h-2.285v-5.699h-9.145v11.42h3.428v2.285h-4.572s-1.143 2.21e-4 -1.143-1.143v-13.72c0-1.143 1.143-1.143 1.143-1.143zm10.29 9.145 2.285 2.285-4.572 4.572h-2.285v-2.285l4.572-4.572z"/>
+  <path id="fg" d="m10.28 8s-1.143 0-1.143 1.143v13.72c0 1.143 1.143 1.143 1.143 1.143h4.572v-2.286h-3.428v-11.42h9.144v5.7h2.286v-6.844c0-1.143-1.143-1.143-1.143-1.143zm10.28 9.144-4.572 4.572v2.286h2.286l4.572-4.572z" color="#565656"/>
+ </defs>
+ <symbol id="color">
+  <use href="#bg" fill="#4d4d4d"/>
+  <use href="#fg" fill="#fff"/>
+ </symbol>
+ <symbol id="light-white"><use href="#fg" fill="#fff"/></symbol>
+ <symbol id="light-black"><use href="#fg"/></symbol>
+ <symbol id="full-white"><use href="#bg" fill="#fff"/></symbol>
+ <symbol id="full-black"><use href="#bg"/></symbol>
+ <use id="main" href="#color"/>
+</svg>

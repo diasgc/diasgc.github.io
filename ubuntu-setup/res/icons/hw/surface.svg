@@ -1,0 +1,9 @@
+<svg version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<g fill="#111" transform="translate(0 0) scale(1)" opacity="1">
+ <path d="m76 189h171v171h-171zm189 0h171v171h-171zm-189-189h171v171h-171zm189 0h171v171h-171z"/>
+ <g font-family="'Segoe UI'" letter-spacing="-1.5px">
+ <text x="76" y="414" font-size="32px" font-weight="bold">Microsoft</text>
+ <text x="76" y="504" font-size="112px" font-weight="200">Surface</text>
+ </g>
+</g>
+</svg>

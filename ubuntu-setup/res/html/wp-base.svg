@@ -1,0 +1,21 @@
+<svg version="1.1" viewBox="0 0 2256 ${opts.wp_h}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+  <pattern id="pattern1" patternTransform="matrix(2.12 2.12 -2.12 2.12 0 0)" preserveAspectRatio="xMidYMid" xlink:href="#Strips1_1"/>
+  <pattern id="Strips1_1" width="2" height="10" fill="${preset.pattern_color}" patternTransform="translate(0) scale(2)" patternUnits="userSpaceOnUse" preserveAspectRatio="xMidYMid">
+    <rect y="-.5" width="1" height="11"/>
+  </pattern>
+  <linearGradient id="linearGradient4" x2="100%" y2="100%" gradientUnits="userSpaceOnUse">
+    <stop stop-color="${preset.grad_top}" offset=".25"/>
+    <stop stop-color="${preset.grad_bot}" offset=".75"/>
+  </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#linearGradient4)" opacity="${preset.grad_alpha}"/>
+  <rect width="100%" height="100%" fill="url(#pattern1)" opacity="${preset.pattern_alpha}"/>
+  <g fill="${preset.logo_color}" opacity="${preset.logo_alpha}" transform="translate(${logo_x} ${logo_y}) scale(${preset.logo_scale})">
+    <!--logo-data-->
+  </g>
+  <g width="100%" height="100%" font-family="${preset.font_family.family}" font-style="${preset.font_family.style}" ${font_stretch} font-weight="${preset.font_family.weight}" fill="${preset.font_color}" opacity="${preset.font_alpha}" text-anchor="middle" dominant-baseline="middle">
+    <text id="title" x="50%" y="${preset.title_y}%" font-size="${preset.font_size_title}px">${title}</text>
+    <text id="footer" x="50%" y="${preset.footer_y}%" font-size="${preset.font_size_footer}px" letter-spacing="0px">${footer}</text>
+  </g>
+</svg>

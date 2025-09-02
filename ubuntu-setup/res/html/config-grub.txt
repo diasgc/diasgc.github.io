@@ -1,0 +1,44 @@
+# Main options
+title-text: ""
+desktop-image: "background.png"
+desktop-color: "#000000"
+terminal-font: "dejavu 36"
+terminal-box: "terminal_box_*.png"
+terminal-left: "0"
+terminal-top: "0"
+terminal-width: "100%"
+terminal-height: "100%"
+terminal-border: "0"
+
+# Boot menu
++ boot_menu {
+  left = ${data.main.grub_menu_x}
+  top = ${data.main.grub_menu_y}
+  width = ${data.main.grub_menu_w}
+  height = ${data.main.grub_menu_h}
+  item_font = "${data.main.font_family} 48"
+  item_color = "#415A64"
+  icon_width = ${data.main.os_iconsize_w}
+  icon_height = ${data.main.os_iconsize}
+  item_height = ${data.main.os_iconsize}
+  item_padding = 20
+  item_icon_space = 20
+  selected_item_color = "#415A64"
+  item_height = ${data.main.os_iconsize}
+  item_spacing = 24
+  selected_item_pixmap_style = "select_*.png"
+}
+
+
+# Countdown label
+# You can change the name of default starting OS here
++ label {
+  top = 82%
+  left = 35%
+  width = 30%
+  align = "center"
+  id = "__timeout__"
+  text = "Booting in %d seconds"
+  color = "#415A64"
+  font = "ubuntu 48"
+}

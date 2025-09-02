@@ -1,0 +1,9 @@
+<svg version="1.1" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+ <g fill="#f0f0f0" transform="translate(0 0) scale(1) opacity="1"">
+  <path id="bg" d="m0 0h512v512h-512z"/>
+  <path d="m22.3 22.3h223v223h-223z" fill="#f35325"/>
+  <path d="m267 22.3h223v223h-223z" fill="#81bc06"/>
+  <path d="m22.3 267h223v223h-223z" fill="#05a6f0"/>
+  <path d="m267 267h223v223h-223z" fill="#ffba08"/>
+ </g>
+</svg>

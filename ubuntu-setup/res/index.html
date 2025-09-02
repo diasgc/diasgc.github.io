@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Theme Creator</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link rel="stylesheet" href="html/style.css?v=1.04">
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script id="wallpaper_svg" type="text/plain">
+<!--wp-base-->
+</script>
+<!--SVGDATA-->
+<script>
+  const opts = {
+    id: '@id',
+    resX: '@resX',
+    resY: '@resY',
+    scaleX: '@scaleX',
+    scaleY: '@scaleY',
+    user: '@user',
+    vendor: '@vendor',
+    type: '@type',
+    defTitle: '@def_title',
+    defFooter: '@def_footer',
+    fontList: '@font_list',
+    grubSet: '@grub_set',
+    vndList: [ "msi","fujitsu","corsair","samsung","xiaomi","hp","dell","acer","vaio","toshiba","minisforum","lenovo","surface","microsoft","gigabyte","asus","lg","razer","apple" ],
+    osList: [ "4MLinux","AlpineLinux","android","anonymous","antergos","archlinux","arcolinux","artix","cancel","centos","chakra","debian","deepin","devuan","driver","edit","efi","elementary","endeavouros","fedora","freebsd","gameros","gentoo","gnu-linux","gpart","haiku","help","kali","kaos","kbd","korora","kubuntu","lang","linuxmint","lubuntu","macosx","mageia","manjaro","mx-linux","neon","opensuse","parrot","peppermint","pop-os","puppy","q4os","recovery","red","regolith","restart","rocky","shutdown","siduction","slackware","solus","sparky","steamos","submenu","SystemRescueCD","type","tz","ubuntubudgie","ubuntumate","ubuntustudio","ubuntu","unset","void","windows","xubuntu","zorin" ],
+    pngList: [ "select_c","select_e","select_w","terminal_box_c","terminal_box_e","terminal_box_ne","terminal_box_n","terminal_box_nw","terminal_box_se","terminal_box_s","terminal_box_sw","terminal_box_w" ],
+    refindList: [ "arrow_left","arrow_right","find.efi","find.none","func_about","func_bootorder","func_csr_rotate","func_exit","func_firmware2","func_firmware3","func_firmware","func_hidden","func_install","func_reset","func_shutdown","reorder-svgrepo-com","tool_fwupdate","tool_memtest","tool_mok_tool","tool_netboot","tool_part","tool_rescue","tool_shell","vol_external","vol_internal" ],
+  };
+</script>
+<body allow="local-fonts">  
+  <div id="preview" height="auto" width="100%" style="position:relative;">
+    <img id="img_preview" alt="preview"/>
+    <div id="intro">
+      <div id="intro-ctrl">
+        <div id="intro-vnd">
+        <label for="ctrl-vendor">Vendor:</label>
+        <select id="ctrl-vendor"></select>
+        </div>
+        <div id="intro-res">
+        <label for="ctrl-ar">Aspect-Ratio:</label>
+        <select id="ctrl-ar">
+          <option value="auto">auto</option>
+          <option value="3:2">3:2</option>
+          <option value="4:3">4:3</option>
+          <option value="16:9">16:9</option>
+          <option value="16:10">16:10</option>
+        </select>
+        </div>
+        <div id="intro-usr">
+          <label for="ctrl-usr">Bottom-Right:</label>
+          <input type="text" id="ctrl-usr" value="user">
+        </div>
+      </div>
+      <p id="intro-text"></p>
+      <button id="intro-ok">ok</button>
+    </div>
+    <div id="preview-extra">
+    <!--preview-extra-->
+    </div>
+  </div>
+  <div id="controls">
+    <div class="control-group">
+      <div class="div-header">Background</div>
+      <details>
+        <summary>Pattern</summary>
+        <div class="flex-end">
+          <div class="flex-1">
+            <label for="pattern_color">Pattern Color:</label>
+            <input type="color" id="pattern_color" value="#000000">
+          </div>
+          <div class="flex-1">
+            <label for="pattern_alpha">Pattern Opacity:</label>
+            <input type="number" id="pattern_alpha" min="0" max="1" step="0.01" value="0.05">
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Gradient</summary>
+        <div class="flex-end">
+          <div class="flex-1">
+            <label for="grad_top">Top-Left:</label>
+            <input type="color" id="grad_top" value="#333333">
+          </div>
+          <div class="flex-1">
+            <label for="grad_bot">Bottom-Right:</label>
+            <input type="color" id="grad_bot" value="#03080c">
+          </div>
+          <div class="flex-1">
+            <label for="grad_alpha">Opacity:</label>
+            <input type="number" id="grad_alpha" min="0" max="1" step="0.01" value="1.0">
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Logo</summary>
+        <div class="flex-1" id="div-vendor">
+          <label for="vendor">Hardware vendor:</label>
+          <select id="vendor"></select>
+        </div>
+        <div class="flex-end">
+          <div class="flex-1">
+            <label for="logo_color">Color:</label>
+            <input type="color" id="logo_color" value="#FFFFFF">
+          </div>
+          <div class="flex-1">
+            <label for="logo_alpha">Opacity:</label>
+            <input type="number" id="logo_alpha" min="0" max="1" step="0.01" value="0.05">
+          </div>
+          <div class="flex-1">
+            <label for="logo_scale">Scale:</label>
+            <input type="number" id="logo_scale" min="0" max="2" step="0.1" value="1.0">
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Title, Subtitle and Font Family</summary>
+        <label for="font_family">Font Family:</label>
+        <select id="font_family">
+          <option value="">Ubuntu</option>
+        </select>
+        <div class="flex-end">
+          <div class="flex-1">
+            <label for="font_color">Font Color:</label>
+            <input type="color" id="font_color" value="#FFFFFF">
+          </div>
+          <div class="flex-1">
+            <label for="font_alpha">Opacity:</label>
+            <input type="number" id="font_alpha" min="0" max="1" step="0.01" value="1.0">
+          </div>
+        </div>
+        <div class="flex-end">
+          <div class="flex-1">
+            <label for="font_size_title">Title Size:</label>
+            <input type="number" id="font_size_title" min="10" max="72" step="1" value="40">
+          </div>
+          <div class="flex-1">
+            <label for="title_y">Title Y:</label>
+            <input type="number" id="title_y" min="0" max="100" step="1" value="13">
+          </div>
+          <div class="flex-1">
+            <label for="font_size_footer">Footer Size:</label>
+            <input type="number" id="font_size_footer" min="8" max="24" step="1" value="14">
+          </div>
+          <div class="flex-1">
+            <label for="footer_y">Footer Y:</label>
+            <input type="number" id="footer_y" min="0" max="100" step="1" value="92">
+          </div>
+        </div>
+        <label for="title">Title Text</label>
+        <textarea id="title" spellcheck="false"></textarea>
+        <label for="footer">Footer Text</label>
+        <textarea id="footer" spellcheck="false"></textarea>
+      </details>
+    </div>
+    <div id="control-extra">
+    <!--control-extra-->
+    </div>
+    <button id="button_export">Export</button>
+  </div>
+</body>
+<script type="text/javascript" src="html/common.js?v=1.08"></script>
+</html>

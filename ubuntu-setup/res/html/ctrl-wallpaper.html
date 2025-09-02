@@ -1,0 +1,67 @@
+<div class="control-group">
+  <div class="div-header">Options</div>
+  <div class="flex-end">
+    <div class="flex-1">
+      <label for="wp_type">Type:</label>
+      <select id="wp_type">
+        <option value="1">single</option>
+        <option value="2" selected>day-night</option>
+        <option value="3">time-shift</option>
+      </select>
+    </div>
+    <div class="flex-1">
+      <label for="out_format">Format:</label>
+      <select id="out_format">
+        <option value="webp">webp</option>
+        <option value="png">png</option>
+        <option value="jpeg">jpeg</option>
+        <option value="svg">svg</option>
+      </select>
+    </div>
+    <div class="flex-1">
+      <label for="wp_options">Placement:</label>
+      <select id="wp_options">
+        <option value="zoom">zoom</option>
+        <option value="wallpaper">wallpaper</option>
+        <option value="centered">centered</option>
+        <option value="scaled">scaled</option>
+        <option value="stretched">stretched</option>
+        <option value="spanned">spanned</option>
+        <option value="none">none</option>
+      </select>
+    </div>
+  </div>
+  <div id="wp_preview_ctrl">
+    <div class="flex-end">
+      <div class="flex-1">
+        <label for="wp_shader">Shader:</label>
+        <select id="wp_shader">
+          <option value="solid">solid</option>
+          <option value="solid">horizontal</option>
+          <option value="solid">vertical</option>
+        </select>
+      </div>
+      <div class="flex-1">
+        <label for="wp_pcolor">Primary:</label>
+        <input type="color" id="wp_pcolor" value="#023c88">
+      </div>
+      <div class="flex-1">
+        <label for="wp_scolor">Secondary:</label>
+        <input type="color" id="wp_scolor" value="#5789ca">
+      </div>
+    </div>
+    <div class="div-header">Preview</div>
+    <div class="wp-grid">
+      <div class="wp-cell-head" id="preset_light">
+        <img class="img-prev" id="img_preview_light" alt="preview" />
+        <div class="wp-cell-label">Light</div>
+      </div>
+      <div class="wp-cell" id="preset_dark">
+        <img class="img-prev" id="img_preview_dark" alt="preview" />
+        <div class="wp-cell-label">Dark</div>
+      </div>
+      <div id="wp-cell-add" style="display: none;"></div>
+    </div>
+  </div>
+</div>
+<script src="html/wallpaper.js?v=1.01" type="text/javascript"></script>
