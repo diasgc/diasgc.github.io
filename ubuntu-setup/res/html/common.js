@@ -394,6 +394,8 @@ const fonts = {
     intro.panel.style.background = '#f008';
     preset.font_family = this.sysFont;
     intro.panel.textContent = err;
+    utils.addOption(fonts.select,JSON.stringify(this.defaultFont),"default");
+    setTimeout(() => document.getElementById('intro').style.display = 'none',2000);
   },
   init: function(){
     fonts.select.innerHTML = '';
