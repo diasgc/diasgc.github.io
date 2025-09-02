@@ -22,9 +22,7 @@ function encodeSvg(svg){
 function spanText(id, y, fontSize, lineHeight) {
   const e = document.getElementById(id);
   return e ? e.value.split('\n')
-    .map(function(a,i){
-      return '<tspan x="50%" y="'+ (y + (fontSize * lineHeight) * (1 + i)) + '">' + a + '</tspan>'
-    })
+    .map((a,i) => '<tspan x="50%" y="'+ (y + (fontSize * lineHeight) * (1 + i)) + '">' + a + '</tspan>')
     .join('\n') : '';
 }
 
@@ -36,8 +34,8 @@ function genSvg(){
   const title = spanText('title', y_title, preset.font_size_title, 1.2);
   const footer = spanText('footer', y_footer, preset.font_size_footer, 1.2);
   const font_stretch = `font-stretch='${preset.font_family.stretch}'`
-  const logo_y = opts.wp_h/2 - wallpaper.logoH / 2 * preset.logo_scale;
-  const logo_x = 2256/2 - wallpaper.logoW / 2 * preset.logo_scale;
+  const logo_y =  (1 + parseInt(preset.logo_dy)/50) * opts.wp_h/2 - wallpaper.logoH / 2 * preset.logo_scale;
+  const logo_x =  (1 + parseInt(preset.logo_dx)/50) * 2256/2 - wallpaper.logoW / 2 * preset.logo_scale;
   return eval("`" + wallpaper.svg + "`");
 }
 
@@ -215,6 +213,8 @@ const data = {
     logo_color: '#ffffff',
     logo_alpha: '0.1',
     logo_scale: '1.0',
+    logo_dx: '0',
+    logo_dy: '0',
     font_color: '#ffffff',
     font_family: {},
     font_size_title: '40',
@@ -233,6 +233,8 @@ const data = {
       grad_alpha: '1.0',
       logo_color: '#000000',
       logo_alpha: '0.1',
+      logo_dx: '0',
+      logo_dy: '0',
       font_color: '#ffffff',
       current: 'dark'
     },
@@ -244,6 +246,8 @@ const data = {
       grad_alpha: '1.0',
       logo_color: '#ffffff',
       logo_alpha: '0.1',
+      logo_dx: '0',
+      logo_dy: '0',
       font_color: '#000000',
       current: 'light'
     },
@@ -396,14 +400,11 @@ const fonts = {
     if ('queryLocalFonts' in window) {
       window.queryLocalFonts()
         .then((fnts) => {
-          const o = [];
+          fnts.sort((a,b) => a.fullName.localeCompare(b.fullName));
           fnts.forEach((font) => {
             const f = fonts.guess(font);
-            o.push(utils.createOption(JSON.stringify(f), f.name));
+            utils.addOption(fonts.select, JSON.stringify(f), f.name );
           });
-          // sort
-          o.sort((a, b) => a.text.localeCompare(b.text));
-          o.forEach(o1 => fonts.select.appendChild(o1));
           fonts.select.value = JSON.stringify(fonts.defaultFont);
           fonts.select.addEventListener('change', renderSvg);
           document.getElementById('intro').style.display = 'none';

@@ -53,7 +53,7 @@
         </select>
         </div>
         <div id="intro-usr">
-          <label for="ctrl-usr">Bottom-Right:</label>
+          <label for="ctrl-usr">User:</label>
           <input type="text" id="ctrl-usr" value="user">
         </div>
       </div>
@@ -101,11 +101,11 @@
 
       <details>
         <summary>Logo</summary>
-        <div class="flex-1" id="div-vendor">
-          <label for="vendor">Hardware vendor:</label>
-          <select id="vendor"></select>
-        </div>
         <div class="flex-end">
+          <div class="flex-1" id="div-vendor">
+            <label for="vendor">Hardware vendor:</label>
+            <select id="vendor"></select>
+          </div>
           <div class="flex-1">
             <label for="logo_color">Color:</label>
             <input type="color" id="logo_color" value="#FFFFFF">
@@ -113,6 +113,16 @@
           <div class="flex-1">
             <label for="logo_alpha">Opacity:</label>
             <input type="number" id="logo_alpha" min="0" max="1" step="0.01" value="0.05">
+          </div>
+        </div>
+        <div class="flex-end">
+          <div class="flex-1">
+            <label for="logo_dx">dx%</label>
+            <input type="number" id="logo_dx" min="-50" max="50" step="1" value="0">
+          </div>
+          <div class="flex-1">
+            <label for="logo_dy">dy%</label>
+            <input type="number" id="logo_dy" min="-50" max="50" step="1" value="0">
           </div>
           <div class="flex-1">
             <label for="logo_scale">Scale:</label>
