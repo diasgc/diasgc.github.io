@@ -449,14 +449,7 @@ if (opts.defTitle.startsWith("@")){
   }
 }
   
+opts.id = opts.id.replace('@id', Date.now().valueOf().toString(16));
+opts.type = urlParams.get('t') || opts.type.replace('@type','wallpaper');
 
-if ( opts.id.startsWith("@")) {
-  opts.id = Date.now().valueOf().toString(16);
-}
-
-if (urlParams.get('t')){
-  opts.type = urlParams.get('t');
-  loadContent(opts.type);
-} else {
-  document.addEventListener('DOMContentLoaded', init);
-}
+loadContent(opts.type);
