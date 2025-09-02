@@ -170,7 +170,7 @@ const intro = {
   input: document.getElementById('intro-ctrl'),
   msgId: document.getElementById('intro-text'),
   ok: document.getElementById('intro-ok'),
-  msg: "After clicking 'EXPORT' and save the zip file in the Downloads folder, you should close the browser to proceed with the installation. Click ok to start and load installed fonts", 
+  msg: "This page needs to access all installed fonts. Click «ok» to proceed. After exporting the zip file, run «install.sh»", 
   init: function(callback){
     this.panel.style.display = 'block';
     if (opts.vendor){
