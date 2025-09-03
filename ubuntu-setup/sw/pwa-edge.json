@@ -1,0 +1,142 @@
+{
+  "AliExpress": {
+    "id": "jmiaicfemicdelgegengpmfebnedeean",
+    "url": "https://pt.aliexpress.com/?spm=a2g0o.home.logo.1.52391c91LHhS6f",
+    "prof": "Default"
+  },
+  "Amazon": {
+    "id": "occblkmjnamffmocbnpgfodnacogmfne",
+    "url": "https://www.amazon.es/?ref_=nav_signin",
+    "prof": "Default"
+  },
+  "Calendário": {
+    "id": "kjbdgfilnfhdoflbpgamdcdgpehopbep",
+    "url": "https://calendar.google.com/calendar/r",
+    "prof": "Default"
+  },
+  "Copilot": {
+    "id": "bnhceeojbohnmbniganikfffbpbemfej",
+    "url": "https://copilot.microsoft.com/chats/iLQGoZM74thbS6AJfXi9f",
+    "prof": "Default"
+  },
+  "DeepSeek": {
+    "id": "ihaceamecmebkkenpfeppakhhifjfded",
+    "url": "https://chat.deepseek.com/authorized?provider=GOOGLE&nonce=b3d5a219a1192d6ebe5a8c76665c6c5596183a70d7535f257777ee2df4e557fc&new=0&case=1",
+    "prof": "Default"
+  },
+  "Disney+": {
+    "id": "mbjafbmjpcimpkkihihoideiofnoalmh",
+    "url": "https://www.disneyplus.com/",
+    "prof": "Default"
+  },
+  "eBay": {
+    "id": "ehjfmploohidchlglfpdlemplhfbhoep",
+    "url": "https://www.ebay.es/",
+    "prof": "Default"
+  },
+  "GitHub": {
+    "id": "mjoklplbddabcmpepnokjaffbmgbkkgg",
+    "url": "https://github.com/",
+    "prof": "Default"
+  },
+  "Gmail": {
+    "id": "fmgjjmmmlfnkbppncabfkddbjimcfncm",
+    "url": "https://mail.google.com/mail/?usp=installed_webapp",
+    "prof": "Default"
+  },
+  "Google Drive": {
+    "id": "aghbiahbpaijignceidepookljebhfak",
+    "url": "https://drive.google.com/?lfhs=2",
+    "prof": "Default"
+  },
+  "Google Keep": {
+    "id": "eilembjdkfgodjkcjnpgpaenohkicgjd",
+    "url": "https://keep.google.com/?usp=installed_webapp",
+    "prof": "Default"
+  },
+  "Google Maps": {
+    "id": "fbdfdldfleefkdfhpemofdggdlmkoama",
+    "url": "https://www.google.pt/maps?force=tt&source=ttpwa",
+    "prof": "Default"
+  },
+  "Google Photos": {
+    "id": "ncmjhecbjeaamljdfahankockkkdmedg",
+    "url": "https://photos.google.com/?lfhs=2",
+    "prof": "Default"
+  },
+  "Instagram": {
+    "id": "akpamiohjfcnimfljfndmaldlcfphjmp",
+    "url": "https://www.instagram.com/?utm_source=pwa_homescreen&__pwa=1",
+    "prof": "Default"
+  },
+  "KuantoKusta": {
+    "id": "emlnggfkpgflbecnneifjhlpgepajffn",
+    "url": "https://www.kuantokusta.pt/",
+    "prof": "Default"
+  },
+  "Microsoft OneDrive": {
+    "id": "bcjpnmnmfhiancemdobdgnjhmdgnkekc",
+    "url": "https://snspt-my.sharepoint.com/",
+    "prof": "Profile"
+  },
+  "MyNOS": {
+    "id": "nofefnfklnjnghnoacbijcomimgjphca",
+    "url": "https://my.nos.pt/WSC/Callback?code=aj0c20Ri&expires_in=599&state=bijofk5d",
+    "prof": "Default"
+  },
+  "Netflix": {
+    "id": "eppojlglocelodeimnohnlnionkobfln",
+    "url": "https://www.netflix.com/browse",
+    "prof": "Default"
+  },
+  "NOS TV": {
+    "id": "bfncpbgehdnhcaoinlfciiagodhkpebo",
+    "url": "https://www.nostv.pt/",
+    "prof": "Default"
+  },
+  "Outlook (PWA)": {
+    "id": "faolnafnngnfdaknnbpnkhgohbobgegn",
+    "url": "https://outlook.office.com/mail/",
+    "prof": "Profile"
+  },
+  "Prime Video": {
+    "id": "imchejbnjahkeklihekeggfdbadpffig",
+    "url": "https://www.primevideo.com/region/eu/storefront",
+    "prof": "Default"
+  },
+  "Reddit": {
+    "id": "lgnggepjiihbfdbedefdhcffnmhcahbm",
+    "url": "https://www.reddit.com/",
+    "prof": "Default"
+  },
+  "Temu": {
+    "id": "fneilkhnhmibmflbikmpimhogeemfobp",
+    "url": "https://www.temu.com/?_x_from=pwa",
+    "prof": "Default"
+  },
+  "Threads": {
+    "id": "aaanfdldlfhmjfdagojbccckmhelibbf",
+    "url": "https://www.threads.net/?utm_source=pwa_homescreen&__pwa=1",
+    "prof": "Default"
+  },
+  "Visual Studio Code Insiders": {
+    "id": "palofmcnanhgonoofkcahkgjepjincgd",
+    "url": "https://insiders.vscode.dev/",
+    "prof": "Default"
+  },
+  "WhatsApp Web": {
+    "id": "hnpfjngllnobngcgfapefoaidbinmjnm",
+    "url": "https://web.whatsapp.com/",
+    "prof": "Default"
+  },
+  "X": {
+    "id": "lodlkdfmihgonocnmddehnfgiljnadcf",
+    "url": "https://x.com/?utm_source=homescreen&utm_medium=shortcut",
+    "prof": "Default"
+  },
+  "YouTube": {
+    "id": "agimnkijcaahngcdmfeangaknmldooml",
+    "url": "https://www.youtube.com/?feature=ytca",
+    "prof": "Default"
+  }
+}

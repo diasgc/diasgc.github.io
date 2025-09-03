@@ -17,7 +17,7 @@
       <select id="llvm"></select>
     </div>
     <div id="d-devel">
-      <label for="sw-devel">Developer Tools (multiple):</label>
+      <label for="sw-devel">Developer:</label>
       <select id="sw-devel" name="Developer" multiple size="6">
         <option value="build-essential">Build Essential</option>
         <option value="cmake cmake-curses-gui">CMake</option>
@@ -28,9 +28,9 @@
       </select>
     </div>
     <div id="d-ui">
-      <label for="sw-ui">Gnome Customizations (multiple):</label>
+      <label for="sw-ui">Gnome:</label>
       <select id="sw-ui" name="Gnome" multiple size="6">
-        <option value="diasgc-dock-ustomization" selected>Gnome Dock custom</option>
+        <option value="diasgc-dock-customization" selected>Gnome Dock custom</option>
         <option value="gnome-shell-extensions" selected>Gnome Shell Extensions</option>
         <option value="gnome-shell-extension-manager" selected>Gnome Shell Extension Manager</option>
         <option value="gnome-tweaks" selected>Gnome Tweaks</option>
@@ -38,15 +38,39 @@
         <option value="grub-customizer" selected>Grub Customizer</option>
       </select>
     </div>
-    <div id="sw-ui">
-        <label for="sw-web">Software (multiple):</label>
-        <select id="sw-web" name="web" multiple size="6">
-          <option value="microsoft-edge-stable" selected>Microsoft Edge</option>
-          <option value="gimp" selected>Gimp</option>
-          <option value="inkscape" selected>Inkscape</option>
-          <option value="libreoffice">LibreOffice</option>
-          <option value="veracrypt">Veracrypt</option>
-        </select>
+    <div id="d-mm">
+      <label for="sw-mm">Multimedia:</label>
+      <select id="sw-mm" name="Multimedia" multiple size="6">
+        <option value="ffmpeg" selected>FFmpeg</option>
+        <option value="libheif-examples" selected>libheif HEIF/AVIF</option>
+        <option value="libheif-plugin-dav1d libheif-plugin-ffmpegdec libheif-plugin-j2kdec libheif-plugin-j2kenc libheif-plugin-jpegdec libheif-plugin-jpegenc libheif-plugin-rav1e libheif-plugin-svtenc libheif-plugin-x265">libheif plugins</option>
+        <option value="fdkaac">fdkaac</option>
+        <option value="yt-dlp" selected>yt-dlp</option>
+      </select>
+    </div>
+    <div id="sw-ap">
+      <label for="sw-app">Apps:</label>
+      <select id="sw-app" name="app" multiple size="6">
+        <option value="microsoft-edge-stable" selected>Microsoft Edge</option>
+        <option value="gimp" selected>Gimp</option>
+        <option value="inkscape" selected>Inkscape</option>
+        <option value="libreoffice">LibreOffice</option>
+        <option value="deb-veracrypt">Veracrypt</option>
+        <option value="flatpak-showtime">Showtime</option>
+      </select>
+    </div>
+    <div id="sw-sc">
+      <label for="sw-scr">Scripts:</label>
+      <select id="sw-scr" name="scr" multiple size="6">
+        <option value="diasgc-nautilus" selected>Nautilus Scripts</option>
+        <option value="diasgc-templates" selected>Templates</option>
+        <option value="diasgc-shortkeys" selected>Shortkeys</option>
+        <option value="diasgc-alias" selected>Alias</option>
+      </select>
+    </div>
+    <div id="sw-pw">
+      <label for="sw-pwa">WebApps:</label>
+      <select id="sw-pwa" name="pwa" multiple size="6"></select>
     </div>
   </div>
   <script type="text/javascript" src="main.js"></script>

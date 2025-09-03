@@ -36,10 +36,26 @@ const llvm_sh = {
     utils.addOption(this.id,'','no llvm');
     this.sh = await utils.fetchText(this.url);
     const st = parseInt(this.sh.match(/CURRENT_LLVM_STABLE=(\d+)/g)[0].match(/\d+/g)[0]);
-    utils.addOption(this.id,st,`current LLVM${st}`);
-    utils.addOption(this.id,(st+1),`stable LLVM${(st+1)}`);
-    utils.addOption(this.id,(st+2),`qualification LLVM${(st+2)}`);
+    utils.addOption(this.id,st,`current (LLVM-${st})`);
+    utils.addOption(this.id,(st+1),`stable (LLVM-${(st+1)})`);
+    utils.addOption(this.id,(st+2),`qualification (LLVM-${(st+2)})`);
   }
 }
 
 llvm_sh.load();
+
+const pwa = {
+  id: document.getElementById('sw-pwa'),
+  data: {},
+  load: async function(){
+    this.data = JSON.parse(await utils.fetchText('pwa-edge.json'));
+    Object.keys(this.data).forEach(k => {
+      utils.addOption(pwa.id, k,k);
+    });
+  },
+  getSelected: function(){
+
+  }
+}
+
+pwa.load();
