@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Ubuntu Install</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="main" class="d-grid">
+    <div id="sw-llvm">
+      <label for="llvm">LLVM version:</label>
+      <select id="llvm"></select>
+    </div>
+    <div id="d-devel">
+      <label for="sw-devel">Developer Tools (multiple):</label>
+      <select id="sw-devel" name="Developer" multiple size="6">
+        <option value="build-essential" selected>Build Essential</option>
+        <option value="cmake cmake-curses-gui" selected>CMake</option>
+        <option value="automake autoconf autogen autopoint libtool-bin m4" selected>Autotools</option>
+        <option value="meson" selected>Meson</option>
+        <option value="snap-vscode" selected>VSCode</option>
+        <option value="snap-androidstudio">Android Studio</option>
+      </select>
+    </div>
+    <div id="d-ui">
+      <label for="sw-ui">Gnome Customizations (multiple):</label>
+      <select id="sw-ui" name="Gnome" multiple size="6">
+        <option value="gnome-shell-extensions" selected>Gnome Shell Extensions</option>
+        <option value="gnome-shell-extension-manager" selected>Gnome Shell Extension Manager</option>
+        <option value="gnome-tweaks" selected>Gnome Tweaks</option>
+        <option value="dconf-editor" selected>DConf Editor</option>
+        <option value="microsoft-edge-stable" selected>Microsoft Edge</option>
+        <option value="grub-customizer" selected>Grub Customizer</option>
+      </select>
+    </div>
+    <div id="sw-ui">
+        <label for="sw-web">Gnome Customizations (multiple):</label>
+        <select id="sw-web" name="web" multiple size="6">
+            <option value="microsoft-edge-stable" selected>Microsoft Edge</option>
+        </select>
+    </div>
+  </div>
+  <script type="text/javascript" src="main.js"></script>
+</body>

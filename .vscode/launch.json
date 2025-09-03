@@ -29,6 +29,13 @@
       "name": "glsl-edit",
       "webRoot": "${workspaceRoot}/glsl",
       "file": "${workspaceFolder}/glsl/editor.html"
-    }
+    },    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "ubuntu-setup",
+      "webRoot": "${workspaceRoot}/ubuntu-setup",
+      "file": "${workspaceFolder}/ubuntu-setup/sw/index.html",
+      "runtimeArgs": ["--disable-web-security"]
+    },
   ]
 }

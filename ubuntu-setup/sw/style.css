@@ -1,0 +1,31 @@
+body {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+input[type="color"],
+input[type="number"],
+input[type="text"],
+select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  outline: none;
+  border: none;
+  background: #f5f5f5;
+}
+
+select {
+  margin-bottom: 16px;
+  margin-top: 2px;
+}
+
+.d-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+}
