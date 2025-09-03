@@ -1,3 +1,6 @@
+body {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
 .clock {
   position: absolute;
   top: 50%;
@@ -6,7 +9,7 @@
   height:50vw;
   width:50vw;
   border-radius: 50%;
-  border: solid 1px #0004;  
+  border: solid 2px #0004;  
 }
 #time {
   position: absolute;
