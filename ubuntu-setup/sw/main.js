@@ -27,6 +27,46 @@ const utils = {
   }
 }
 
+const dmain = {
+  id: document.getElementById('main'),
+  data: {},
+  load: async function(){
+    this.data = JSON.parse(await utils.fetchText('setup.json'));
+    Object.keys(this.data).forEach( group => dmain.addGroup(group));
+  },
+  addGroup: function(group){
+    const g = this.data[group];
+    const d = document.createElement('div');
+    const l = document.createElement('label');
+    const s = document.createElement('select');
+    s.id = g.id;
+    s.name = group;
+    s.setAttribute('multiple',true);
+    s.size = 6;
+    l.for = s.id;
+    l.innerText = group;
+    const none = utils.createOption('none','none');
+    none.addEventListener('click', () => dmain.selectNone(s));
+    s.appendChild(none);
+    const all = utils.createOption('all','all');
+    all.addEventListener('click', () => dmain.selectAll(s));
+    s.appendChild(all);
+    Object.keys(g.pkg).forEach(k => utils.addOption(s, JSON.stringify(g.pkg[k]), k));
+    d.appendChild(l);
+    d.appendChild(s);
+    dmain.id.appendChild(d);
+  },
+  selectAll: function(parent){
+    const excludes = [ 'none', 'all' ];
+    parent.querySelectorAll('option').forEach(opt => opt.selected = excludes.includes(opt.value) ? false : true);
+  },
+  selectNone: function(parent){
+    parent.querySelectorAll('option').forEach(opt => opt.selected = false);
+  }
+}
+
+dmain.load();
+
 const llvm_sh = {
   url: 'https://apt.llvm.org/llvm.sh',
   id: document.getElementById('llvm'),
@@ -41,8 +81,6 @@ const llvm_sh = {
     utils.addOption(this.id,(st+2),`qualification (LLVM-${(st+2)})`);
   }
 }
-
-llvm_sh.load();
 
 const pwa = {
   id: document.getElementById('sw-pwa'),

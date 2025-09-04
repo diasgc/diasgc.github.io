@@ -1,0 +1,48 @@
+{
+  "Basics": {
+    "id": "grp-basics",
+    "pkg": {
+      "curl": { "type": "apt", "args": "curl" },
+      "Gnome scanner": { "type": "apt", "args": "simple-scan" },
+      "Microsoft Edge": { "type": "apt", "args": "microsoft-edge-stable", "ppa": "" },
+      "GIMP": { "type": "apt", "args": "gimp" },
+      "Inkscape": { "type": "apt", "args": "inkscape" },
+      "LibreOffice": { "type": "apt", "args": "libreoffice" },
+      "Veracrypt (legacy)": { "type": "deb", "args": "https://launchpad.net/veracrypt/trunk/1.25.9/+download/veracrypt-1.25.9-Ubuntu-23.04-amd64.deb" },
+      "Veracrypt (latest)": { "type": "apt", "ppa": "unit193/encryption", "args": "veracrypt" },
+      "ShowTime": { "type": "flathub", "args": "showtime" }
+    }
+  },
+  "Devel": {
+    "id": "grp-dev",
+    "pkg": {
+      "Buld Essential": {"type": "apt", "args": "build-essential" },
+      "CMake Tools": {"type": "apt", "args": "cmake cmake-curses-gui"},
+      "Autotools": {"type": "apt", "args": "automake autoconf autogen autopoint libtool-bin m4"},
+      "Meson": {"type": "apt", "args": "meson"},
+      "VSCode": {"type": "snap", "args": "code"},
+      "Android Studio": {"type": "snap", "args": "android-studio"}
+    }
+  },
+  "Gnome": {
+    "id": "grp-gnome",
+    "pkg": {
+      "Dock customizations": {"type": "script", "args": "dock" },
+      "Shell Extensions": {"type": "apt", "args": "gnome-shell-extensions" },
+      "Shell Extension Manager": {"type": "apt", "args": "gnome-shell-extension-manager" }, 
+      "Gnome Tweaks": {"type": "apt", "args": "gnome-tweaks" },
+      "DConf Editor": {"type": "apt", "args": "dconf-editor" },
+      "Grub Customizer": {"type": "apt", "args": "grub-customizer" }
+    }
+  },
+  "Multimedia": {
+    "id": "grp-mm",
+    "pkg": {
+      "FFmeg": {"type": "apt", "args": "ffmpeg" },
+      "yt-dlp": {"type": "apt", "args": "yt-dlp" },
+      "fdkaac codec": {"type": "apt", "args": "fdkaac" },
+      "libheif HEIF/AVIF": {"type": "apt", "args": "libheif-examples" },
+      "libheif plugins": {"type": "apt", "args": "libheif-plugin-dav1d libheif-plugin-ffmpegdec libheif-plugin-j2kdec libheif-plugin-j2kenc libheif-plugin-jpegdec libheif-plugin-jpegenc libheif-plugin-rav1e libheif-plugin-svtenc libheif-plugin-x265" }
+    }
+  }
+}
