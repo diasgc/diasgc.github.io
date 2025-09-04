@@ -3,13 +3,15 @@
 const main = document.getElementById('main');
 
 const utils = {
-  addOption: function(parent, val, txt){
-    parent.appendChild(this.createOption(val, txt));
+  addOption: function(parent, val, txt, selected){
+    parent.appendChild(this.createOption(val, txt, selected));
   },
-  createOption: function(val, txt){
+  createOption: function(val, txt, sel){
     const o = document.createElement('option');
     o.value = val;
     o.textContent = txt;
+    if (sel)
+      o.selected = sel;
     return o;
   },
   downloadBlob: function(blob, filename) {
@@ -30,8 +32,20 @@ const utils = {
 const dmain = {
   id: document.getElementById('main'),
   data: {},
+  pwa: {},
+  size: 6,
   load: async function(){
     this.data = JSON.parse(await utils.fetchText('setup.json'));
+    this.pwa = JSON.parse(await utils.fetchText('pwa-edge.json'));
+    this.data.pwa = { id: "grp-pwa", pkg: {}};
+    Object.keys(this.pwa).forEach(pwa => {
+      dmain.data.pwa.pkg[pwa] = {
+        type: "pwa",
+        args: pwa.url,
+        pwa: pwa.id
+      }
+    });
+    this.size = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--grid-max").trim());
     Object.keys(this.data).forEach( group => dmain.addGroup(group));
   },
   addGroup: function(group){
@@ -42,7 +56,7 @@ const dmain = {
     s.id = g.id;
     s.name = group;
     s.setAttribute('multiple',true);
-    s.size = 6;
+    s.size = dmain.size;
     l.for = s.id;
     l.innerText = group;
     const none = utils.createOption('none','none');
@@ -51,7 +65,7 @@ const dmain = {
     const all = utils.createOption('all','all');
     all.addEventListener('click', () => dmain.selectAll(s));
     s.appendChild(all);
-    Object.keys(g.pkg).forEach(k => utils.addOption(s, JSON.stringify(g.pkg[k]), k));
+    Object.keys(g.pkg).forEach(k => utils.addOption(s, JSON.stringify(g.pkg[k], true), k));
     d.appendChild(l);
     d.appendChild(s);
     dmain.id.appendChild(d);
@@ -81,19 +95,3 @@ const llvm_sh = {
     utils.addOption(this.id,(st+2),`qualification (LLVM-${(st+2)})`);
   }
 }
-
-const pwa = {
-  id: document.getElementById('sw-pwa'),
-  data: {},
-  load: async function(){
-    this.data = JSON.parse(await utils.fetchText('pwa-edge.json'));
-    Object.keys(this.data).forEach(k => {
-      utils.addOption(pwa.id, k,k);
-    });
-  },
-  getSelected: function(){
-
-  }
-}
-
-pwa.load();

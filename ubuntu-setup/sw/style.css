@@ -1,3 +1,16 @@
+:root {
+  --grid-width:  repeat(6, 1fr);
+  --grid-max: 18;
+}
+
+/* Mobile-specific styles for screens up to 600px */
+@media only screen and (orientation:portrait) {
+  :root {
+    --grid-width:  repeat(3, 1fr);
+    --grid-max: 6;
+  }
+}
+
 body {
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
@@ -19,6 +32,7 @@ select {
 select {
   margin-bottom: 16px;
   margin-top: 2px;
+  size: var(--grid-max);
 }
 label {
   display: block;
@@ -31,7 +45,7 @@ label {
 
 .d-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: var(--grid-width);
   justify-content: space-evenly;
   align-items: center;
   gap: 12px;
