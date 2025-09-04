@@ -1,6 +1,6 @@
 {
-  "name": "xlsx",
-  "short_name": "xlsx",
+  "name": "ubuntu-setup",
+  "short_name": "ubuntu",
   "icons": [
     {
       "src": "icon.svg",
