@@ -7,14 +7,14 @@
  </defs>
  <rect width="256" height="256" ry="32" fill="url(#linearGradient15)"/>
  <g transform="translate(0,-12)">
-  <rect x="28" y="40" width="64" height="64" ry="17" fill="#2b6c2b"/>
-  <rect x="96" y="40" width="64" height="64" ry="17" fill="#afdfaf"/>
-  <rect x="164" y="40" width="64" height="64" ry="17" fill="#afdfaf"/>
-  <rect x="96" y="108" width="64" height="64" ry="17" fill="#5b5"/>
-  <rect x="28" y="108" width="64" height="64" ry="17" fill="#afdfaf"/>
-  <rect x="164" y="108" width="64" height="64" ry="17" fill="#7ccb7c"/>
-  <rect x="96" y="176" width="64" height="64" ry="17" fill="#348234"/>
-  <rect x="28" y="176" width="64" height="64" ry="17" fill="#afdfaf"/>
-  <rect x="164" y="176" width="64" height="64" ry="17" fill="#afdfaf"/>
+  <rect x="28" y="40" width="64" height="64" ry="17" fill="#6c2b2b"/>
+  <rect x="96" y="40" width="64" height="64" ry="17" fill="#dfafaf"/>
+  <rect x="164" y="40" width="64" height="64" ry="17" fill="#dfafaf"/>
+  <rect x="96" y="108" width="64" height="64" ry="17" fill="#b55"/>
+  <rect x="28" y="108" width="64" height="64" ry="17" fill="#dfafaf"/>
+  <rect x="164" y="108" width="64" height="64" ry="17" fill="#cb7c7c"/>
+  <rect x="96" y="176" width="64" height="64" ry="17" fill="#823434"/>
+  <rect x="28" y="176" width="64" height="64" ry="17" fill="#dfafaf"/>
+  <rect x="164" y="176" width="64" height="64" ry="17" fill="#dfafaf"/>
  </g>
 </svg>
