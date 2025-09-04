@@ -3,15 +3,15 @@
 const main = document.getElementById('main');
 
 const utils = {
-  addOption: function(parent, val, txt, selected){
+  addOption: function(parent, val, txt, selected=false){
     parent.appendChild(this.createOption(val, txt, selected));
   },
-  createOption: function(val, txt, sel){
+  createOption: function(val, txt, selected=false){
     const o = document.createElement('option');
     o.value = val;
     o.textContent = txt;
-    if (sel)
-      o.selected = sel;
+    if (selected)
+      o.selected = selected;
     return o;
   },
   downloadBlob: function(blob, filename) {
@@ -59,13 +59,7 @@ const dmain = {
     s.size = dmain.size;
     l.for = s.id;
     l.innerText = group;
-    const none = utils.createOption('none','none');
-    none.addEventListener('click', () => dmain.selectNone(s));
-    s.appendChild(none);
-    const all = utils.createOption('all','all');
-    all.addEventListener('click', () => dmain.selectAll(s));
-    s.appendChild(all);
-    Object.keys(g.pkg).forEach(k => utils.addOption(s, JSON.stringify(g.pkg[k], true), k));
+    Object.keys(g.pkg).forEach(k => utils.addOption(s, JSON.stringify(g.pkg[k]), k, true));
     d.appendChild(l);
     d.appendChild(s);
     dmain.id.appendChild(d);
@@ -95,3 +89,5 @@ const llvm_sh = {
     utils.addOption(this.id,(st+2),`qualification (LLVM-${(st+2)})`);
   }
 }
+
+llvm_sh.load();
