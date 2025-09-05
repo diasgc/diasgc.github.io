@@ -37,23 +37,21 @@ select {
 
 
 option {
-  background: transparent;
+  background-color: transparent;
   padding: 8px 32px;
   margin: 2px;
   &:checked {
-    background: #800;
+    background-color: #800;
     border-radius: 4px;
   }
   &:checked::after {
     content: '';
     display: block;
-    position: absolute;
-    top: 2px;
-    bottom: 2px;
     left: 2px;
-    width: 32px;
+    width: 16px;
     border: 1px solid #fff;
     border-radius: 4px;
+    background-color: #084;
     transition: background-color .2s;
   }
 }
@@ -74,4 +72,30 @@ label {
   align-items: center;
   gap: 12px;
   padding: 12px;
+}
+.bottom {
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  bottom: 8px;
+  display: block;
+  align-items: center;
+  margin: 8px;
+  padding: 12px;
+}
+
+button {
+  margin-bottom: 16px;
+  padding: 10px;
+  width: 100%;
+  background: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
