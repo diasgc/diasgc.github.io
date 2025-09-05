@@ -11,13 +11,15 @@
       "LibreOffice": { "type": "apt", "args": "libreoffice" },
       "Veracrypt (legacy)": { "type": "deb", "args": "https://launchpad.net/veracrypt/trunk/1.25.9/+download/veracrypt-1.25.9-Ubuntu-23.04-amd64.deb" },
       "Veracrypt (latest)": { "type": "apt", "ppa": "unit193/encryption", "args": "veracrypt" },
-      "ShowTime": { "type": "flathub", "args": "showtime" }
+      "ShowTime": { "type": "flathub", "args": "showtime" },
+      "Spotify": { "type": "script", "args": "spotify" }
     }
   },
   "Devel": {
     "id": "grp-dev",
     "pkg": {
       "Buld Essential": {"type": "apt", "args": "build-essential" },
+      "LLVM/Clang": {"type": "script", "args": "llvm"},
       "CMake Tools": {"type": "apt", "args": "cmake cmake-curses-gui"},
       "Autotools": {"type": "apt", "args": "automake autoconf autogen autopoint libtool-bin m4"},
       "Meson": {"type": "apt", "args": "meson"},
@@ -44,6 +46,12 @@
       "fdkaac codec": {"type": "apt", "args": "fdkaac" },
       "libheif HEIF/AVIF": {"type": "apt", "args": "libheif-examples" },
       "libheif plugins": {"type": "apt", "args": "libheif-plugin-dav1d libheif-plugin-ffmpegdec libheif-plugin-j2kdec libheif-plugin-j2kenc libheif-plugin-jpegdec libheif-plugin-jpegenc libheif-plugin-rav1e libheif-plugin-svtenc libheif-plugin-x265" }
+    }
+  },
+  "Extras": {
+    "id": "grp-xtra",
+    "pkg": {
+      "Cubic": {"type": "apt", "args": "cubic", "ppa": "cubic-wizard/release"}
     }
   }
 }

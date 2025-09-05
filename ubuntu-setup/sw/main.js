@@ -76,18 +76,18 @@ const dmain = {
   }
 }
 
-const llvm_sh = {
-  url: 'https://apt.llvm.org/llvm.sh',
-  id: document.getElementById('llvm'),
-  sh: '',
+const versions = {
+  llvm_sh: '',
   versions: {},
-  load: async function(){
-    utils.addOption(this.id,'','no llvm');
-    this.sh = await utils.fetchText(this.url);
-    const st = parseInt(this.sh.match(/CURRENT_LLVM_STABLE=(\d+)/g)[0].match(/\d+/g)[0]);
-    utils.addOption(this.id,st,`current (LLVM-${st})`);
-    utils.addOption(this.id,(st+1),`stable (LLVM-${(st+1)})`);
-    utils.addOption(this.id,(st+2),`qualification (LLVM-${(st+2)})`);
+  llvm: async function(){
+    const id  = document.getElementById('llvm');
+    const url = "https://apt.llvm.org/llvm.sh";
+    utils.addOption(id,'','no llvm');
+    this.llvm_sh = await utils.fetchText(this.url);
+    const st = parseInt(this.llvm_sh.match(/CURRENT_LLVM_STABLE=(\d+)/g)[0].match(/\d+/g)[0]);
+    utils.addOption(id,st,`current (LLVM-${st})`);
+    utils.addOption(id,(st+1),`stable (LLVM-${(st+1)})`);
+    utils.addOption(id,(st+2),`qualification (LLVM-${(st+2)})`);
   }
 }
 
@@ -104,7 +104,7 @@ const exec = {
   init: function(){
     this.id.addEventListener('click', this.gen);
     dmain.load();
-    llvm_sh.load();
+    versions.llvm();;
   },
   gen: function(){
     exec.scr = '#!/bin/bash';
@@ -142,9 +142,6 @@ const exec = {
       exec.scr +=`\nsudo pwa install ${exec.pwa.join(' ')}`;
     const blob = new Blob([exec.scr], { type: "text/plain" });
     utils.downloadBlob(blob,"install.sh");
-  },
-  genDeb: function(){
-
   }
 }
 
