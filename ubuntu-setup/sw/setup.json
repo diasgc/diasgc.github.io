@@ -2,9 +2,10 @@
   "Basics": {
     "id": "grp-basics",
     "pkg": {
-      "curl": { "type": "apt", "args": "curl" },
+      "Curl": { "type": "apt", "args": "curl" },
+      "Git": { "type": "apt", "args": "git" },
       "Gnome scanner": { "type": "apt", "args": "simple-scan" },
-      "Microsoft Edge": { "type": "apt", "args": "microsoft-edge-stable", "ppa": "" },
+      "Microsoft Edge": { "type": "deb", "args": "https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb", "pkg": "microsoft-edge-stable"},
       "GIMP": { "type": "apt", "args": "gimp" },
       "Inkscape": { "type": "apt", "args": "inkscape" },
       "LibreOffice": { "type": "apt", "args": "libreoffice" },
