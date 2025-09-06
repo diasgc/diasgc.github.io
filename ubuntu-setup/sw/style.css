@@ -52,9 +52,10 @@ option {
   font-size: 12px;
   color: #0004;
   &::before {
-    content: '•';
+    content: '☐';
     margin: 2px 8px;
     color: #8882;
+    font-size: 22px;
   }
   &:checked {
     background: #29F2;
@@ -62,7 +63,9 @@ option {
     border-radius: 8px;
   }
   &:checked::before {
+    content: '☒'; 
     color: #000;
+    font-size: 22px;
   }
 }
 
