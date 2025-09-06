@@ -1,8 +1,4 @@
-#!/bin/bash
-# Bash Script
-# Created by diasgc
 v=$(gnome-shell --version | grep -oP '\d\d')
-# apt search showtime 2>/dev/null | grep '^showtime'
 if [ "$v" -gt 47 ]; then
     sudo apt install showtime -y
 else

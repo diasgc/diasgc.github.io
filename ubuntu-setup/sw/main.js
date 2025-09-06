@@ -43,9 +43,11 @@ const dmain = {
     this.data.pwa = { id: "grp-pwa", pkg: {}};
     Object.keys(this.pwa).forEach(pwa => {
       dmain.data.pwa.pkg[pwa] = {
+        name: pwa,
         type: "pwa",
-        args: pwa.url,
-        pwa: pwa.id
+        args: dmain.pwa[pwa].url,
+        pwa: dmain.pwa[pwa].id,
+        prof: dmain.pwa[pwa].prof
       }
     });
     this.size = utils.getIntProperty('grid-max');
@@ -93,54 +95,62 @@ const versions = {
 
 const exec = {
   id: document.getElementById('exec'),
-  scr: '',
-  ppa: [],
-  apt: [],
-  deb: [],
-  flathub: [],
-  snap: [],
-  pwa: [],
-  script: [],
+  sh: '',
+  appa: [],
+  aapt: [],
+  adeb: [],
+  aflathub: [],
+  asnap: [],
+  apwa: [],
+  ascript: [],
   init: function(){
     this.id.addEventListener('click', this.gen);
     dmain.load();
-    versions.llvm();;
+    versions.llvm();
+  },
+  apt: function(v){
+    exec.sh +=`\nsudo apt install ${v.args} -y`;
+  },
+  deb: function(v){
+    exec.sh +=`
+name=$(basename ${v.args})
+echo "Downloading $name, please wait..."
+wget -q "${v.args}"
+sudo dpkg -i $name && rm $name
+  `;
+  },
+  snap: function(v){
+    exec.sh +=`\nsudo apt install ${v.args} -y`;
+  },
+  script: function(v){
+    utils.fetchText(`scripts/${v.args}.sh`).then(res => exec.sh +=`\n${res}\n`);
+  },
+  pwa: function(v){
+    exec.sh +=`
+cat <<-EOF >\${HOME}/.local/share/applications/msedge-${v.pwa}-${v.prof}.desktop
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Terminal=false
+Type=Application
+Name=${v.name}
+Exec=/opt/microsoft/msedge/microsoft-edge --profile-directory=${v.prof} --app-id=${v.pwa} "--app-url=${v.args}"
+Icon=msedge-${v.pwa}-${v.prof}
+StartupWMClass=crx__${v.pwa}
+EOF
+`;
   },
   gen: function(){
-    exec.scr = '#!/bin/bash';
+    exec.sh = '#!/bin/bash';
     dmain.id.querySelectorAll('select').forEach(s => {
       if (s.value){
         Array.from(s.selectedOptions).map(({ value }) => {
           const v1 = JSON.parse(value);
-          console.log(`${s.id}: ${value}`);
-          if (exec[v1.type]){
-            exec[v1.type].push(v1.args);
-            if (v1.pkg)
-              exec.apt.push(v1.pkg);
-            if (v1.ppa)
-              exec.ppa.push(v1.ppa);
-          } else
-            console.log(`Unknown type ${v1.type}`);
+          try { exec[v1.type](v1); } catch(ignore){}
         });
       }
     });
-    if (exec.ppa.length > 0)
-      exec.scr +=`\nsudo add-apt-repository ${exec.ppa.join(' ')} -y && sudo apt update`;
-    if (exec.deb.length > 0)
-      exec.deb.forEach(deb => {
-        exec.scr += `\nname=$(basename ${deb})\necho "Downloading $name, please wait..."\nwget -q "${deb}"\nsudo dpkg -i $name && rm $name`;
-      });
-    if (exec.apt.length > 0)
-      exec.scr +=`\nsudo apt install ${exec.apt.join(' ')} -y`;
-    if (exec.snap.length > 0)
-      exec.scr +=`\nsudo snap install ${exec.snap.join(' ')}`;
-    if (exec.script.length > 0)
-      exec.script.forEach(async script => {
-        await utils.fetchText(`scripts/${script}.sh`).then(res => exec.scr +=`\n${res}\n`);
-      });
-    if (exec.pwa.length > 0)
-      exec.scr +=`\nsudo pwa install ${exec.pwa.join(' ')}`;
-    const blob = new Blob([exec.scr], { type: "text/plain" });
+    const blob = new Blob([exec.sh], { type: "text/plain" });
     utils.downloadBlob(blob,"install.sh");
   }
 }

@@ -11,7 +11,7 @@
       "LibreOffice": { "type": "apt", "args": "libreoffice" },
       "Veracrypt (legacy)": { "type": "deb", "args": "https://launchpad.net/veracrypt/trunk/1.25.9/+download/veracrypt-1.25.9-Ubuntu-23.04-amd64.deb" },
       "Veracrypt (latest)": { "type": "apt", "ppa": "unit193/encryption", "args": "veracrypt" },
-      "ShowTime": { "type": "flathub", "args": "showtime" },
+      "ShowTime": { "type": "script", "args": "showtime" },
       "Spotify": { "type": "script", "args": "spotify" }
     }
   },
@@ -19,7 +19,14 @@
     "id": "grp-dev",
     "pkg": {
       "Buld Essential": {"type": "apt", "args": "build-essential" },
-      "LLVM/Clang": {"type": "script", "args": "llvm"},
+      "LLVM/Clang": {"type": "apt", "args": "llvm", "versions": {
+        "LLVM-20": {
+          "cmd": "wget -q https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && ./llvm.sh 20 all && rm llvm.sh"
+        },
+        "LLVM-21": {
+          "cmd": "wget -q https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && ./llvm.sh 21 all && rm llvm.sh"
+        }
+      }},
       "CMake Tools": {"type": "apt", "args": "cmake cmake-curses-gui"},
       "Autotools": {"type": "apt", "args": "automake autoconf autogen autopoint libtool-bin m4"},
       "Meson": {"type": "apt", "args": "meson"},
@@ -41,7 +48,13 @@
   "Multimedia": {
     "id": "grp-mm",
     "pkg": {
-      "FFmeg": {"type": "apt", "args": "ffmpeg" },
+      "FFmpeg": {"type": "apt", "args": "ffmpeg", "versions": {
+        "ffmpeg 8": {
+            "ppa": "ppa:ubuntuhandbook1/ffmpeg8",
+            "args": "-t \"o=LP-PPA-ubuntuhandbook1-ffmpeg8\" ffmpeg"
+          }
+        }
+      },
       "yt-dlp": {"type": "apt", "args": "yt-dlp" },
       "fdkaac codec": {"type": "apt", "args": "fdkaac" },
       "libheif HEIF/AVIF": {"type": "apt", "args": "libheif-examples" },
