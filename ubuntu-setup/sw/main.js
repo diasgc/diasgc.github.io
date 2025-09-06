@@ -96,13 +96,6 @@ const versions = {
 const exec = {
   id: document.getElementById('exec'),
   sh: '',
-  appa: [],
-  aapt: [],
-  adeb: [],
-  aflathub: [],
-  asnap: [],
-  apwa: [],
-  ascript: [],
   init: function(){
     this.id.addEventListener('click', this.gen);
     dmain.load();
@@ -117,7 +110,9 @@ name=$(basename ${v.args})
 echo "Downloading $name, please wait..."
 wget -q "${v.args}"
 sudo dpkg -i $name && rm $name
-  `;
+`;
+    if (v.pkg)
+      exec.sh += `sudo apt update && sudo apt install ${v.pkg} -y`
   },
   snap: function(v){
     exec.sh +=`\nsudo apt install ${v.args} -y`;
