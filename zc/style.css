@@ -11,6 +11,13 @@ body {
   border-radius: 50%;
   border: solid 2px #0004;  
 }
+
+@media (orientation: portrait) {
+  .clock {
+    height:50vh;
+    width:50vh;
+  }
+}
 #time {
   position: absolute;
   top: 50%;
