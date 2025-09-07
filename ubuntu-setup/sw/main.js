@@ -65,8 +65,8 @@ const dmain = {
     s.size = dmain.size;
     l.for = s.id;
     l.innerText = group;
-    utils.addOption(s,'','none',false, dmain.selectNone(s));
-    utils.addOption(s,'','all',false, dmain.selectAll(s));
+    //utils.addOption(s,'','none',false, dmain.selectNone(s));
+    //utils.addOption(s,'','all',false, dmain.selectAll(s));
     Object.keys(g.pkg).forEach(k => utils.addOption(s, JSON.stringify(g.pkg[k]), k, true));
     d.appendChild(l);
     d.appendChild(s);
@@ -88,7 +88,7 @@ const versions = {
     const id  = document.getElementById('llvm');
     const url = "https://apt.llvm.org/llvm.sh";
     utils.addOption(id,'','no llvm');
-    this.llvm_sh = await utils.fetchText(this.url);
+    this.llvm_sh = await utils.fetchText(url);
     const st = parseInt(this.llvm_sh.match(/CURRENT_LLVM_STABLE=(\d+)/g)[0].match(/\d+/g)[0]);
     utils.addOption(id,st,`current (LLVM-${st})`);
     utils.addOption(id,(st+1),`stable (LLVM-${(st+1)})`);
@@ -120,11 +120,13 @@ sudo dpkg -i $name && rm $name
   snap: function(v){
     exec.sh +=`\nsudo apt install ${v.args} -y`;
   },
-  script: function(v){
-    utils.fetchText(`scripts/${v.args}.sh`).then(res => exec.sh +=`\n${res}\n`);
+  script: async function(v){
+    const res = await utils.fetchText(`scripts/${v.args}.sh`);
+    exec.sh += `\n${res}\n`;
   },
   pwa: function(v){
-    exec.sh +=`
+    exec.sh +=`\n
+# PWA ${v.name}
 cat <<-EOF >\${HOME}/.local/share/applications/msedge-${v.pwa}-${v.prof}.desktop
 #!/usr/bin/env xdg-open
 [Desktop Entry]
@@ -135,16 +137,15 @@ Name=${v.name}
 Exec=/opt/microsoft/msedge/microsoft-edge --profile-directory=${v.prof} --app-id=${v.pwa} "--app-url=${v.args}"
 Icon=msedge-${v.pwa}-${v.prof}
 StartupWMClass=crx__${v.pwa}
-EOF
-`;
+EOF`;
   },
   gen: function(){
     exec.sh = '#!/bin/bash';
     dmain.id.querySelectorAll('select').forEach(s => {
       if (s.value){
-        Array.from(s.selectedOptions).map(({ value }) => {
+        Array.from(s.selectedOptions).map(async ({ value }) => {
           const v1 = JSON.parse(value);
-          try { exec[v1.type](v1); } catch(ignore){}
+          try { await exec[v1.type](v1); } catch(ignore){}
         });
       }
     });
