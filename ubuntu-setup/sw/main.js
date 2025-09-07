@@ -120,9 +120,12 @@ sudo dpkg -i $name && rm $name
   snap: function(v){
     exec.sh +=`\nsudo apt install ${v.args} -y`;
   },
-  script: async function(v){
-    const res = await utils.fetchText(`scripts/${v.args}.sh`);
-    exec.sh += `\n${res}\n`;
+  script: function(v){
+    exec.s = false;
+    utils.fetchText(`scripts/${v.args}.sh`).then(res => {
+      exec.sh += `\n\n${res}\n`;
+      exec.s = true;
+    });
   },
   pwa: function(v){
     exec.sh +=`\n
@@ -141,16 +144,22 @@ EOF`;
   },
   gen: function(){
     exec.sh = '#!/bin/bash';
+    exec.s = true;
     dmain.id.querySelectorAll('select').forEach(s => {
       if (s.value){
-        Array.from(s.selectedOptions).map(async ({ value }) => {
+        Array.from(s.selectedOptions).map(({ value }) => {
           const v1 = JSON.parse(value);
-          try { await exec[v1.type](v1); } catch(ignore){}
+          try { exec[v1.type](v1); } catch(ignore){}
         });
       }
     });
-    const blob = new Blob([exec.sh], { type: "text/plain" });
-    utils.downloadBlob(blob,"install.sh");
+    const t = setInterval(()=> {
+      if (exec.s){
+        const blob = new Blob([exec.sh], { type: "text/plain" });
+        utils.downloadBlob(blob,"install.sh");
+        clearInterval(t);
+      };
+    },500);
   }
 }
 
