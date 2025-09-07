@@ -1,15 +1,16 @@
-
-
 const utils = {
-  addOption: function(parent, val, txt, selected=false){
-    parent.appendChild(this.createOption(val, txt, selected));
+  addOption: function(parent, val, txt, sel, click){
+    const opt = utils.createOption(val, txt, sel);
+    if (click)
+      opt.addEventListener('click', click(parent));
+    parent.appendChild(opt);
   },
-  createOption: function(val, txt, selected=false){
+  createOption: function(val, txt, sel){
     const o = document.createElement('option');
     o.value = val;
     o.textContent = txt;
-    if (selected)
-      o.selected = selected;
+    if (sel)
+      o.selected = sel;
     return o;
   },
   downloadBlob: function(blob, filename) {
@@ -64,6 +65,8 @@ const dmain = {
     s.size = dmain.size;
     l.for = s.id;
     l.innerText = group;
+    utils.addOption(s,'','none',false, dmain.selectNone(s));
+    utils.addOption(s,'','all',false, dmain.selectAll(s));
     Object.keys(g.pkg).forEach(k => utils.addOption(s, JSON.stringify(g.pkg[k]), k, true));
     d.appendChild(l);
     d.appendChild(s);
