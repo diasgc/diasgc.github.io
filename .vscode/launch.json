@@ -19,9 +19,10 @@
     {
       "type": "msedge",
       "request": "launch",
-      "name": "arec-c",
-      "webRoot": "${workspaceRoot}/arec-c",
-      "file": "${workspaceFolder}/arec-c/index.html"
+      "name": "arec-z",
+      "webRoot": "${workspaceRoot}/arec-z",
+      "file": "${workspaceFolder}/arec-z/index.html",
+      "runtimeArgs": ["--disable-web-security"]
     },
     {
       "type": "msedge",
