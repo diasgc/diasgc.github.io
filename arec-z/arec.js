@@ -522,12 +522,12 @@ const recorder = {
         const source = audioContext.createMediaStreamSource(stream);
 
         // Step 3: Create stereo routing
-        const splitter = audioContext.createChannelSplitter(1); // Split mono input
+        const splitter = audioContext.createChannelSplitter(2); // Split mono input
         const merger = audioContext.createChannelMerger(2);     // Merge into stereo
 
         // Route mono input to both left and right channels
         splitter.connect(merger, 0, 0); // Left
-        splitter.connect(merger, 0, 1); // Right
+        splitter.connect(merger, 1, 1); // Right
 
         // Step 4: Create MediaStreamDestination
         const destination = audioContext.createMediaStreamDestination();
