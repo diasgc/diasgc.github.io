@@ -479,29 +479,8 @@ const recorder = {
   mediaRecorder: '',
   chunks: [],
   chunkTimeout: 5000,
-  add: function(data){
-    recorder.chunks.push(data);
-    logger.addSize(data.size);
-    logger.log(`size: ${logger.dataSize.strSI('B')}`);
-  },
-  getTimestampFilename() {
-    return "rec-" + new Date(Date.now())
-      .toISOString()
-      .slice(0, 19)
-      .replace(/-|:/g,'')
-      .replace(/T/g,'-');
-  },
-  save: function() {
-    let blob = new Blob(this.chunks, { type: outputCtl.mimeType });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = this.getTimestampFilename() + "." + outputCtl.options.container.replace('mp4','m4a');
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    this.chunks = [];
-    logger.log("idle");
-  },
+  type: 'audio/webm',
+  ext: 'webm',
   constraints: {
     audio: {
       channelCount: 2,
@@ -510,20 +489,52 @@ const recorder = {
     },
     video: false
   },
+  add: function(data){
+    recorder.chunks.push(data);
+    logger.addSize(data.size);
+    logger.log(`size: ${logger.dataSize.strSI('B')}`);
+  },
+  getTimestampFilename: function() {
+    return "rec-" + new Date(Date.now())
+      .toISOString()
+      .slice(0, 19)
+      .replace(/-|:/g,'')
+      .replace(/T/g,'-');
+  },
+  save: function() {
+    let blob = new Blob(this.chunks, { type: recorder.type });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${this.getTimestampFilename()}.${recorder.ext}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this.chunks = [];
+    logger.log("idle");
+  },
   start: function(){
     navigator.mediaDevices
       .getUserMedia(recorder.constraints)
       .then(stream => {
+       
         // Step 2: Create an AudioContext for stereo processing
         const audioContext = new AudioContext();
         const source = audioContext.createMediaStreamSource(stream);
 
-        // Optional: Connect to a stereo node for processing
-        const stereoNode = audioContext.createChannelSplitter(2);
-        source.connect(stereoNode);
+        // Step 3: Create stereo routing
+        const splitter = audioContext.createChannelSplitter(1); // Split mono input
+        const merger = audioContext.createChannelMerger(2);     // Merge into stereo
 
-        // Step 3: Record the audio using MediaRecorder
-        recorder.mediaRecorder = new MediaRecorder(stream);
+        // Route mono input to both left and right channels
+        splitter.connect(merger, 0, 0); // Left
+        splitter.connect(merger, 0, 1); // Right
+
+        // Step 4: Create MediaStreamDestination
+        const destination = audioContext.createMediaStreamDestination();
+        merger.connect(destination);
+
+        // Step 5: Record with MediaRecorder
+        recorder.mediaRecorder = new MediaRecorder(destination.stream);
         recorder.mediaRecorder.ondataavailable = event => recorder.add(event.data);
         recorder.mediaRecorder.onstop = () => recorder.save();
         
