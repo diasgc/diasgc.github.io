@@ -502,9 +502,17 @@ const recorder = {
     this.chunks = [];
     logger.log("idle");
   },
+  constraints: {
+    audio: {
+      channelCount: 2,
+      sampleRate: 48000,
+      sampleSize: 16,
+    },
+    video: false
+  },
   start: function(){
-    // Step 1: Request microphone access
-    navigator.mediaDevices.getUserMedia({ audio: { channelCount: 2 }, video: false })
+    navigator.mediaDevices
+      .getUserMedia(recorder.constrains)
       .then(stream => {
         // Step 2: Create an AudioContext for stereo processing
         const audioContext = new AudioContext();
