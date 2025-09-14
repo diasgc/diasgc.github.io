@@ -11,9 +11,7 @@ const touchEvent = 'click'; //'ontouchstart' in window ? 'touchstart' : 'click';
 const divMain = document.getElementById('div-main');
 const startStopButton = document.getElementById('startStop');
 const micButton = document.getElementById('startStop');
-const { createFFmpeg, fetchFile } = FFmpeg;
 const urlParams = new URLSearchParams(window.location.search);
-const useFFmpeg = urlParams.get('ffmpeg') !== null;
 
 startStopButton.onchange = startStop;
 document.getElementById('rec-mc0').onchange = rmic;
@@ -375,8 +373,6 @@ const outputCtl = {
   init: function(){
     this.loadSupportedTypes();
     this.fsi.replaceChildren();
-    if (useFFmpeg)
-      this.registerEncoder("flac","flac");
     let fs = document.getElementById('fso');
     fs.addEventListener(touchEvent, this.toggleView);
     this.fsi.appendChild(fsBuilder.build("radio", this.audioBitsPerSecond, this.options, "audioBitsPerSecond"));
@@ -565,32 +561,3 @@ rmic();
 inputCtl.init();
 outputCtl.init();
 graph2.init();
-
-
-
-/*
-
-var txt = document.getElementById('log');
-const { createFFmpeg } = FFmpeg;
-const ffmpeg = createFFmpeg({ log, logger: ({ message }) => { txt.value += "\n" + message; } });
-const transcode = async ({ target: { files } }) => {
-  const message = document.getElementById('message');
-  const { name } = files[0];
-  message.innerHTML = 'Loading ffmpeg-core.js';
-  await ffmpeg.load();
-  await ffmpeg.write(name, files[0]);
-  message.innerHTML = 'Start transcoding';
-  await ffmpeg.transcode(name, 'output.mp4');
-  message.innerHTML = 'Transcoding completed';
-  const data = ffmpeg.read('output.mp4');
-  ffmpeg.remove('output.mp4');
-
-  const video = document.getElementById('output-video');
-  video.src = URL.createObjectURL(new Blob([data.buffer], {
-    type: 'video/mp4'
-  }));
-}
-const elm = document.getElementById('uploader');
-elm.addEventListener('change', transcode);
-
-*/
