@@ -512,7 +512,7 @@ const recorder = {
   },
   start: function(){
     navigator.mediaDevices
-      .getUserMedia(recorder.constrains)
+      .getUserMedia(recorder.constraints)
       .then(stream => {
         // Step 2: Create an AudioContext for stereo processing
         const audioContext = new AudioContext();
