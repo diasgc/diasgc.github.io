@@ -1,9 +1,9 @@
 const staticApp = "static-app"
 const assetsApp = [
-  "/arec/",
-  "/arec/index.html",
-  "/arec/arec.css",
-  "/arec/arec.js"
+  "/arec-z/",
+  "/arec-z/index.html",
+  "/arec-z/arec.css",
+  "/arec-z/arecz.js"
 ]
 
 self.addEventListener("install", installEvent => {

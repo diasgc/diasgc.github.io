@@ -44,6 +44,70 @@ const logger = {
   }
 }
 
+const graphStereo = {
+  container: document.getElementById('graph'),
+  canvasSize: '',
+  fftSize: 256,
+  centered: true,
+  ctx: '',
+  audioContext: '',
+  source: '',
+  analyser: '',
+  init: function(){
+    let canvas = document.getElementById('canvas');
+    this.canvasSize = { width: canvas.width, height: canvas.height}
+    this.ctx = canvas.getContext("2d");
+    const body = window.getComputedStyle(document.body, null);
+    this.ctx.fillStyle = body.backgroundColor;
+    this.ctx.strokeStyle = body.accentColor;
+    this.ctx.lineCap = "round";
+  },
+  start: function(stream){
+    this.container.style.display = 'flex';
+    this.audioContext = new(window.AudioContext || window.webkitAudioContext);
+    this.source = this.audioContext.createMediaStreamSource(stream);
+    const splitter = this.audioContext.createChannelSplitter(2);
+    this.aR = this.audioContext.createAnalyser();
+    this.aL = this.audioContext.createAnalyser();
+    splitter.connect(this.aR, 0);
+    splitter.connect(this.aL, 1);
+    this.aR.fftSize = this.fftSize / 2;
+    this.aL.fftSize = this.fftSize / 2;
+    this.buffLen = this.aR.frequencyBinCount;
+    this.dataArrayR = new Uint8Array(this.buffLen);
+    this.dataArrayL = new Uint8Array(this.buffLen);
+    this.barWidth = Math.round(this.canvasSize.width / this.buffLen / 2);//(500 - 2 * this.buffLen - 4) / this.buffLen * 2.5;
+    this.ctx.lineWidth = this.barWidth;
+    this.isEnabled = true;
+    console.dir(this);
+    this.draw();
+  },
+  stop: function(){
+    this.isEnabled = false;
+    this.container.style.display = 'none';
+    this.audioContext.close;
+    this.source.disconnect;
+    
+  },
+  draw: function(){
+    graphStereo.ctx.fillRect(0, 0, graphStereo.canvasSize.width, graphStereo.canvasSize.height);
+    graphStereo.aL.getByteFrequencyData(graphStereo.dataArrayL);
+    graphStereo.aR.getByteFrequencyData(graphStereo.dataArrayR);
+    const ay = graphStereo.canvasSize.height - graphStereo.barWidth / 2;
+    var kx, ky = ay / 2, dyL, dyR;
+    for (var i = 0; i < graphStereo.buffLen; i++) {
+      kx = 4 + 2 * i * graphStereo.barWidth + graphStereo.barWidth / 2 + 0.5;
+      dyL = graphStereo.dataArrayL[i] * 0.25;
+      dyR = graphStereo.dataArrayR[i] * 0.25;
+      graphStereo.ctx.beginPath();
+      graphStereo.ctx.moveTo(kx, ky + dyR);
+      graphStereo.ctx.lineTo(kx, ky - dyL);
+      graphStereo.ctx.stroke();
+    }
+    requestAnimationFrame(graphStereo.draw);
+  }
+}
+
 const graph = {
   container: document.getElementById('graph'),
   canvasSize: '',
@@ -71,9 +135,10 @@ const graph = {
     this.analyser.fftSize = this.fftSize;
     this.buffLen = this.analyser.frequencyBinCount;
     this.dataArray = new Uint8Array(this.buffLen);
-    this.barWidth = (500 - 2 * this.buffLen - 4) / this.buffLen * 2.5;
+    this.barWidth = Math.round(this.canvasSize.width / this.buffLen / 2);//(500 - 2 * this.buffLen - 4) / this.buffLen * 2.5;
     this.ctx.lineWidth = graph.barWidth;
     this.isEnabled = true;
+    console.dir(this);
     this.draw();
   },
   stop: function(){
@@ -91,7 +156,7 @@ const graph = {
       if (graph.centered){
         var kx, ky = ay / 2, dy;
         for (var i = 0; i < graph.buffLen; i++) {
-          kx = 4 + 2 * i * graph.barWidth + graph.barWidth / 2;
+          kx = 4 + 2 * i * graph.barWidth + graph.barWidth / 2 + 0.5;
           dy = graph.dataArray[i] * 0.25;
           graph.ctx.beginPath();
           graph.ctx.moveTo(kx, ky + dy);
@@ -308,8 +373,8 @@ const outputCtl = {
   options: {
     audioBitsPerSecond : "256000",
     audioBitrateMode : "variable",
-    mimeType: "audio/mp4;codecs=opus",
-    container: 'mp4',
+    mimeType: "audio/webm;codecs=opus",
+    container: 'webm',
     codec: 'opus',
     timer: "300000",
     graph: "true",
@@ -426,7 +491,7 @@ const outputCtl = {
       this.transcode = true;
     }
     opts.audioBitsPerSecond = parseInt(opts.audioBitsPerSecond);
-    delete opts.audioBitsPerSecond;
+    //delete opts.audioBitsPerSecond;
     delete opts.container;
     delete opts.codec;
     delete opts.timer;
@@ -438,41 +503,6 @@ const outputCtl = {
 
 const micCtl = {
   micOn: document.getElementById('rec-mc1')
-}
-
-const dataManager = {
-  chunks: [],
-  chunkTimeout: 5000,
-  add: function(data){
-    this.chunks.push(data);
-    logger.addSize(data.size);
-    logger.log(`size: ${logger.dataSize.strSI('B')}`);
-  },
-  getTimestampFilename() {
-    return "rec-" + new Date(Date.now())
-      .toISOString()
-      .slice(0, 19)
-      .replace(/-|:/g,'')
-      .replace(/T/g,'-');
-  },
-  save: function() {
-    let blob = new Blob(this.chunks, { type: outputCtl.mimeType });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = this.getTimestampFilename() + "." + outputCtl.options.container.replace('mp4','m4a');
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    this.chunks = [];
-    logger.log("idle");
-  }
-}
-
-function startStop(){
-  if (startStopButton.checked)
-    startRecording();
-  else
-    stopRecording();
 }
 
 const recorder = {
@@ -494,7 +524,7 @@ const recorder = {
     logger.addSize(data.size);
     logger.log(`size: ${logger.dataSize.strSI('B')}`);
   },
-  getTimestampFilename: function() {
+  timeStamp: function() {
     return "rec-" + new Date(Date.now())
       .toISOString()
       .slice(0, 19)
@@ -505,7 +535,7 @@ const recorder = {
     let blob = new Blob(this.chunks, { type: recorder.type });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `${this.getTimestampFilename()}.${recorder.ext}`;
+    a.download = `${this.timeStamp()}.${recorder.ext}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -513,6 +543,10 @@ const recorder = {
     logger.log("idle");
   },
   start: function(){
+    // merge constraints
+    const inOpts = inputCtl.getOptions();
+    console.dir(inOpts);
+    recorder.constraints = {...recorder.constraints, ...inOpts};
     navigator.mediaDevices
       .getUserMedia(recorder.constraints)
       .then(stream => {
@@ -522,19 +556,24 @@ const recorder = {
         const source = audioContext.createMediaStreamSource(stream);
 
         // Step 3: Create stereo routing
+        
         const splitter = audioContext.createChannelSplitter(2); // Split mono input
-        const merger = audioContext.createChannelMerger(2);     // Merge into stereo
+        source.connect(splitter);
 
+        const merger = audioContext.createChannelMerger(2);     // Merge into stereo
         // Route mono input to both left and right channels
         splitter.connect(merger, 0, 0); // Left
         splitter.connect(merger, 0, 1); // Right
 
         // Step 4: Create MediaStreamDestination
+        
         const destination = audioContext.createMediaStreamDestination();
         merger.connect(destination);
 
         // Step 5: Record with MediaRecorder
-        recorder.mediaRecorder = new MediaRecorder(destination.stream);
+        const outOpts = outputCtl.getOptions();
+        console.dir(outOpts);
+        recorder.mediaRecorder = new MediaRecorder(destination.stream, outOpts);
         recorder.mediaRecorder.ondataavailable = event => recorder.add(event.data);
         recorder.mediaRecorder.onstop = () => recorder.save();
         
@@ -571,6 +610,13 @@ async function stopRecording(){
   }
   inputCtl.setDisabled(false);
   outputCtl.setDisabled(false);
+}
+
+function startStop(){
+  if (startStopButton.checked)
+    startRecording();
+  else
+    stopRecording();
 }
 
 let stream;

@@ -1,16 +1,35 @@
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function() {
     navigator.serviceWorker
-      .register("/arec/serviceWorker.js")
+      .register("/arec-z/serviceWorker.js")
       .then(res => console.log("service worker registered"))
       .catch(err => console.log("service worker not registered", err))
   })
+}
+
+const logger = {
+  id: document.getElementById('log-stat'),
+  did: document.getElementById('code'),
+  dataSize: 0,
+  log: function(msg){
+    this.id.innerText = msg;
+  },
+  d: function(msg){
+    if (msg === null)
+      this.did.innerText = "";
+    else  
+      this.did.innerText += msg;
+  },
+  addSize: function(size){
+    this.dataSize += size;
+  }
 }
 
 const timer = {
   id: document.getElementById('timer'),
   startTime: 0,
   timerInterval: '',
+  timeout: 300000,
   start: function(){
     this.startTime = Date.now();
     this.timerInterval = setInterval(timer.update.bind(timer), 1000);
@@ -18,7 +37,7 @@ const timer = {
   update: function(){
     const elapsedTime = Date.now() - this.startTime;
     this.id.innerText = new Date(elapsedTime).toISOString().slice(11, 19);
-    if (elapsedTime > outputCtl.timeout)
+    if (elapsedTime > this.timeout)
       document.getElementById('startStop').click();
   },
   stop: function(){
@@ -47,6 +66,7 @@ const graph = {
     this.ctx.lineCap = "round";
   },
   connectChannel(audioContext, splitter, channel = 0){
+    this.container.style.display = 'flex';
     const analyser = audioContext.createAnalyser();
     splitter.connect(analyser, channel);
     analyser.fftSize = this.fftSize;
@@ -59,20 +79,18 @@ const graph = {
   drawChannel: function(analyser, barWidth, dataArray, buffLen, channel){
     const p = channel * 2 - 1; // (0,1) => (-1,1)
     graph.ctx.fillRect(0, 0, graph.canvasSize.width, graph.canvasSize.height);
-    if (graph.isEnabled){
-      analyser.getByteFrequencyData(dataArray);
-      const ay = graph.canvasSize.height - barWidth / 2;
-      var kx, ky = ay, dy;
-      for (var i = 0; i < buffLen; i++) {
-        kx = 4 + 2 * i * barWidth + barWidth / 2;
-        dy = dataArray[i] * 0.5;
-        graph.ctx.beginPath();
-        graph.ctx.moveTo(kx, ky);
-        graph.ctx.lineTo(kx, ky - dy * p);
-        graph.ctx.stroke();
-      }
-      requestAnimationFrame(graph.draw);
+    analyser.getByteFrequencyData(dataArray);
+    const ay = graph.canvasSize.height - barWidth / 2;
+    var kx, ky = ay, dy;
+    for (var i = 0; i < buffLen; i++) {
+      kx = 4 + 2 * i * barWidth + barWidth / 2;
+      dy = dataArray[i] * 0.5;
+      graph.ctx.beginPath();
+      graph.ctx.moveTo(kx, ky);
+      graph.ctx.lineTo(kx, ky - dy * p);
+      graph.ctx.stroke();
     }
+    requestAnimationFrame(graph.drawChannel(analyser,barWidth,dataArray,buffLen,channel));
   },
   start: function(audioContext, stream){
     this.container.style.display = 'flex';
@@ -198,3 +216,38 @@ const recorder = {
     graph.stop();
   }
 }
+
+
+function startStop(){
+  if (startStopButton.checked)
+    recorder.start();
+  else {
+    recorder.stop();
+    if (lock != null){
+      lock.release();
+      lock = null;
+    }
+  }
+}
+
+Number.prototype.strSI = function(unit, fixed=2, mul=1024){
+  const sfx = ['', 'K', 'M', 'G', 'T'];
+  let i = 0;
+  let v = this;
+  while (v >= mul && i++ < 4)
+    v /= 1024;
+  return `${v.toFixed(fixed)} ${sfx[i]}${unit}`;
+}
+
+const touchEvent = 'click'; //'ontouchstart' in window ? 'touchstart' : 'click';
+const divMain = document.getElementById('div-main');
+const startStopButton = document.getElementById('startStop');
+const micButton = document.getElementById('startStop');
+const urlParams = new URLSearchParams(window.location.search);
+
+startStopButton.onchange = startStop;
+
+let stream;
+let lock;
+
+graph.init();
