@@ -44,7 +44,7 @@ const logger = {
   }
 }
 
-const graph2 = {
+const graph = {
   container: document.getElementById('graph'),
   canvasSize: '',
   fftSize: 256,
@@ -72,7 +72,7 @@ const graph2 = {
     this.buffLen = this.analyser.frequencyBinCount;
     this.dataArray = new Uint8Array(this.buffLen);
     this.barWidth = (500 - 2 * this.buffLen - 4) / this.buffLen * 2.5;
-    this.ctx.lineWidth = graph2.barWidth;
+    this.ctx.lineWidth = graph.barWidth;
     this.isEnabled = true;
     this.draw();
   },
@@ -84,32 +84,32 @@ const graph2 = {
     
   },
   draw: function(){
-    graph2.ctx.fillRect(0, 0, graph2.canvasSize.width, graph2.canvasSize.height);
-    if (graph2.isEnabled){
-      graph2.analyser.getByteFrequencyData(graph2.dataArray);
-      const ay = graph2.canvasSize.height - graph2.barWidth / 2;
-      if (graph2.centered){
+    graph.ctx.fillRect(0, 0, graph.canvasSize.width, graph.canvasSize.height);
+    if (graph.isEnabled){
+      graph.analyser.getByteFrequencyData(graph.dataArray);
+      const ay = graph.canvasSize.height - graph.barWidth / 2;
+      if (graph.centered){
         var kx, ky = ay / 2, dy;
-        for (var i = 0; i < graph2.buffLen; i++) {
-          kx = 4 + 2 * i * graph2.barWidth + graph2.barWidth / 2;
-          dy = graph2.dataArray[i] * 0.25;
-          graph2.ctx.beginPath();
-          graph2.ctx.moveTo(kx, ky + dy);
-          graph2.ctx.lineTo(kx, ky - dy);
-          graph2.ctx.stroke();
+        for (var i = 0; i < graph.buffLen; i++) {
+          kx = 4 + 2 * i * graph.barWidth + graph.barWidth / 2;
+          dy = graph.dataArray[i] * 0.25;
+          graph.ctx.beginPath();
+          graph.ctx.moveTo(kx, ky + dy);
+          graph.ctx.lineTo(kx, ky - dy);
+          graph.ctx.stroke();
         }
       } else {
         var kx, ky = ay, dy;
-        for (var i = 0; i < graph2.buffLen; i++) {
-          kx = 4 + 2 * i * graph2.barWidth + graph2.barWidth / 2;
-          dy = graph2.dataArray[i] * 0.5;
-          graph2.ctx.beginPath();
-          graph2.ctx.moveTo(kx, ky);
-          graph2.ctx.lineTo(kx, ky - dy);
-          graph2.ctx.stroke();
+        for (var i = 0; i < graph.buffLen; i++) {
+          kx = 4 + 2 * i * graph.barWidth + graph.barWidth / 2;
+          dy = graph.dataArray[i] * 0.5;
+          graph.ctx.beginPath();
+          graph.ctx.moveTo(kx, ky);
+          graph.ctx.lineTo(kx, ky - dy);
+          graph.ctx.stroke();
         }
       }
-      requestAnimationFrame(graph2.draw);
+      requestAnimationFrame(graph.draw);
     }
   }
 
@@ -541,7 +541,7 @@ const recorder = {
         // Start recording
         recorder.mediaRecorder.start(recorder.chunkTimeout);
         timer.start();
-        graph2.start(stream);
+        graph.start(stream);
       })
       .catch(error => {
         console.error('Error accessing microphone:', error);
@@ -550,7 +550,7 @@ const recorder = {
   stop: function(){
     recorder.mediaRecorder.stop();
     timer.stop();
-    graph2.stop();
+    graph.stop();
   }
 }
 
@@ -579,4 +579,4 @@ let lock;
 rmic();
 inputCtl.init();
 outputCtl.init();
-graph2.init();
+graph.init();
