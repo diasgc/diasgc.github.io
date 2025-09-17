@@ -509,6 +509,7 @@ const recorder = {
   mediaRecorder: '',
   chunks: [],
   chunkTimeout: 5000,
+  lock: null,
   type: 'audio/webm',
   ext: 'webm',
   constraints: {
@@ -527,9 +528,26 @@ const recorder = {
   timeStamp: function() {
     return "rec-" + new Date(Date.now())
       .toISOString()
-      .slice(0, 19)
+      .slice(0,wakeLock 19)
       .replace(/-|:/g,'')
       .replace(/T/g,'-');
+  },
+  screenLock: async function (state=true) {
+    if ("wakeLock" in navigator && state){
+      try {
+        this.lock = await navigator.wakeLock.request('screen');
+        console.log('Wake lock is active');
+        this.lock.addEventListener('release', () => {
+          console.log('Wake lock was released');
+        });
+      } catch (err) {
+        console.error(`Failed to acquire wake lock: ${err.message}`);
+      }
+    } else if (this.lock){
+      this.lock.release();
+      this.lock = null;
+      console.log('Wake lock released manually');
+    }
   },
   save: function() {
     let blob = new Blob(this.chunks, { type: recorder.type });
@@ -578,6 +596,7 @@ const recorder = {
         recorder.mediaRecorder.onstop = () => recorder.save();
         
         // Start recording
+        recorder.screenLock(true);
         recorder.mediaRecorder.start(recorder.chunkTimeout);
         timer.start();
         graph.start(stream);
@@ -587,6 +606,7 @@ const recorder = {
       });
   },
   stop: function(){
+    recorder.screenLock(false);
     recorder.mediaRecorder.stop();
     timer.stop();
     graph.stop();
@@ -604,10 +624,6 @@ async function startRecording(){
 async function stopRecording(){
   // Stop the recording.
   recorder.stop();
-  if (lock != null){
-    await lock.release();
-    lock = null;
-  }
   inputCtl.setDisabled(false);
   outputCtl.setDisabled(false);
 }
@@ -620,7 +636,6 @@ function startStop(){
 }
 
 let stream;
-let lock;
 
 rmic();
 inputCtl.init();
