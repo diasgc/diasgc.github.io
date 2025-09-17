@@ -154,13 +154,15 @@ const graph = {
       graph.analyser.getByteFrequencyData(graph.dataArray);
       const ay = graph.canvasSize.height - graph.barWidth / 2;
       if (graph.centered){
-        var kx, ky = ay / 2, dy;
+        var kx, ky = ay / 2, dy, cx = graph.canvasSize.width / 2 + 0.5;
         for (var i = 0; i < graph.buffLen; i++) {
-          kx = 4 + 2 * i * graph.barWidth + graph.barWidth / 2 + 0.5;
+          kx = i * graph.barWidth + graph.barWidth * 0.25 + 0.5;
           dy = graph.dataArray[i] * 0.25;
           graph.ctx.beginPath();
-          graph.ctx.moveTo(kx, ky + dy);
-          graph.ctx.lineTo(kx, ky - dy);
+          graph.ctx.moveTo(cx + kx, ky + dy);
+          graph.ctx.lineTo(cx + kx, ky - dy);
+          graph.ctx.moveTo(cx - kx, ky + dy);
+          graph.ctx.lineTo(cx - kx, ky - dy);
           graph.ctx.stroke();
         }
       } else {
@@ -528,7 +530,7 @@ const recorder = {
   timeStamp: function() {
     return "rec-" + new Date(Date.now())
       .toISOString()
-      .slice(0,wakeLock 19)
+      .slice(0, 19)
       .replace(/-|:/g,'')
       .replace(/T/g,'-');
   },
