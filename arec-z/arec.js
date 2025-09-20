@@ -34,10 +34,7 @@ const logger = {
     this.id.innerText = msg;
   },
   d: function(msg){
-    if (msg === null)
-      this.did.innerText = "";
-    else  
-      this.did.innerText += msg;
+    this.did.innerText = msg === null ? "" : `${this.did.innerText}\n${msg}`;
   },
   addSize: function(size){
     this.dataSize += size;

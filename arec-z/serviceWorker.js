@@ -3,7 +3,7 @@ const assetsApp = [
   "/arec-z/",
   "/arec-z/index.html",
   "/arec-z/arec.css",
-  "/arec-z/arecz.js"
+  "/arec-z/arec.js"
 ]
 
 self.addEventListener("install", installEvent => {
