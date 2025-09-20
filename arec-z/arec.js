@@ -508,7 +508,7 @@ const recorder = {
         const source = audioContext.createMediaStreamSource(stream);
         const destination = audioContext.createMediaStreamDestination();
         
-        const splitter = audioContext.createChannelSplitter(recorder.constraints.channelCount);
+        const splitter = audioContext.createChannelSplitter(recorder.constraints.audio.channelCount);
         source.connect(splitter);
 
         
