@@ -41,147 +41,6 @@ const logger = {
   }
 }
 
-const graphStereo = {
-  container: document.getElementById('graph'),
-  canvasSize: '',
-  fftSize: 256,
-  centered: true,
-  ctx: '',
-  audioContext: '',
-  source: '',
-  analyser: '',
-  init: function(){
-    let canvas = document.getElementById('canvas');
-    this.canvasSize = { width: canvas.width, height: canvas.height}
-    this.ctx = canvas.getContext("2d");
-    const body = window.getComputedStyle(document.body, null);
-    this.ctx.fillStyle = body.backgroundColor;
-    this.ctx.strokeStyle = body.accentColor;
-    this.ctx.lineCap = "round";
-  },
-  start: function(audioContext, splitter){
-    this.container.style.display = 'flex';
-    //this.audioContext = new(window.AudioContext || window.webkitAudioContext);
-    //this.source = this.audioContext.createMediaStreamSource(stream);
-    //const splitter = this.audioContext.createChannelSplitter(2);
-    this.aR = audioContext.createAnalyser();
-    this.aL = audioContext.createAnalyser();
-    //this.source.connect(splitter);
-    splitter.connect(this.aR, 0);
-    splitter.connect(this.aL, 1);
-    this.aR.fftSize = this.fftSize / 2;
-    this.aL.fftSize = this.fftSize / 2;
-    this.buffLen = this.aR.frequencyBinCount;
-    this.dataArrayR = new Uint8Array(this.buffLen);
-    this.dataArrayL = new Uint8Array(this.buffLen);
-    this.barWidth = Math.round(this.canvasSize.width / this.buffLen / 2);//(500 - 2 * this.buffLen - 4) / this.buffLen * 2.5;
-    this.ctx.lineWidth = this.barWidth;
-    this.isEnabled = true;
-    console.dir(this);
-    this.draw();
-  },
-  stop: function(){
-    this.isEnabled = false;
-    this.container.style.display = 'none';
-    //this.audioContext.close();
-    //this.source.disconnect();
-    
-  },
-  draw: function(){
-    graphStereo.ctx.fillRect(0, 0, graphStereo.canvasSize.width, graphStereo.canvasSize.height);
-    graphStereo.aL.getByteFrequencyData(graphStereo.dataArrayL);
-    graphStereo.aR.getByteFrequencyData(graphStereo.dataArrayR);
-    const ay = graphStereo.canvasSize.height - graphStereo.barWidth / 2;
-    var kx, ky = ay / 2, dyL, dyR, cx = graphStereo.canvasSize.width / 2 + 0.5;
-    for (var i = 0; i < graphStereo.buffLen; i++) {
-      kx = i * graphStereo.barWidth + graphStereo.barWidth * 0.25 + 0.5;
-      dyL = graphStereo.dataArrayL[i] * 0.25;
-      dyR = graphStereo.dataArrayR[i] * 0.25;
-      graphStereo.ctx.beginPath();
-      graphStereo.ctx.moveTo(cx + kx, ky + dyR);
-      graphStereo.ctx.lineTo(cx + kx, ky - dyR);
-      graphStereo.ctx.moveTo(cx - kx, ky + dyL);
-      graphStereo.ctx.lineTo(cx - kx, ky - dyL);
-      graphStereo.ctx.stroke();
-    }
-    requestAnimationFrame(graphStereo.draw);
-  }
-}
-
-const graph = {
-  container: document.getElementById('graph'),
-  canvasSize: '',
-  fftSize: 256,
-  centered: true,
-  ctx: '',
-  audioContext: '',
-  source: '',
-  analyser: '',
-  init: function(){
-    let canvas = document.getElementById('canvas');
-    this.canvasSize = { width: canvas.width, height: canvas.height}
-    this.ctx = canvas.getContext("2d");
-    const body = window.getComputedStyle(document.body, null);
-    this.ctx.fillStyle = body.backgroundColor;
-    this.ctx.strokeStyle = body.accentColor;
-    this.ctx.lineCap = "round";
-  },
-  start: function(stream){
-    this.container.style.display = 'flex';
-    this.audioContext = new(window.AudioContext || window.webkitAudioContext);
-    this.source = this.audioContext.createMediaStreamSource(stream);
-    this.analyser = this.audioContext.createAnalyser();
-    this.source.connect(this.analyser);
-    this.analyser.fftSize = this.fftSize;
-    this.buffLen = this.analyser.frequencyBinCount;
-    this.dataArray = new Uint8Array(this.buffLen);
-    this.barWidth = Math.round(this.canvasSize.width / this.buffLen / 2);//(500 - 2 * this.buffLen - 4) / this.buffLen * 2.5;
-    this.ctx.lineWidth = graph.barWidth;
-    this.isEnabled = true;
-    console.dir(this);
-    this.draw();
-  },
-  stop: function(){
-    this.isEnabled = false;
-    this.container.style.display = 'none';
-    this.audioContext.close;
-    this.source.disconnect;
-    
-  },
-  draw: function(){
-    graph.ctx.fillRect(0, 0, graph.canvasSize.width, graph.canvasSize.height);
-    if (graph.isEnabled){
-      graph.analyser.getByteFrequencyData(graph.dataArray);
-      const ay = graph.canvasSize.height - graph.barWidth / 2;
-      if (graph.centered){
-        var kx, ky = ay / 2, dy, cx = graph.canvasSize.width / 2 + 0.5;
-        for (var i = 0; i < graph.buffLen; i++) {
-          kx = i * graph.barWidth + graph.barWidth * 0.25 + 0.5;
-          dy = graph.dataArray[i] * 0.25;
-          graph.ctx.beginPath();
-          graph.ctx.moveTo(cx + kx, ky + dy);
-          graph.ctx.lineTo(cx + kx, ky - dy);
-          graph.ctx.moveTo(cx - kx, ky + dy);
-          graph.ctx.lineTo(cx - kx, ky - dy);
-          graph.ctx.stroke();
-        }
-      } else {
-        var kx, ky = ay, dy;
-        for (var i = 0; i < graph.buffLen; i++) {
-          kx = 4 + 2 * i * graph.barWidth + graph.barWidth / 2;
-          dy = graph.dataArray[i] * 0.5;
-          graph.ctx.beginPath();
-          graph.ctx.moveTo(kx, ky);
-          graph.ctx.lineTo(kx, ky - dy);
-          graph.ctx.stroke();
-        }
-      }
-      requestAnimationFrame(graph.draw);
-    }
-  }
-
-}
-
 const timer = {
   id: document.getElementById('timer'),
   startTime: 0,
@@ -507,13 +366,79 @@ const micCtl = {
   micOn: document.getElementById('rec-mc1')
 }
 
+const graph = {
+  container: document.getElementById('graph'),
+  fftSize: 256,  
+  init: function(){
+    let canvas = document.getElementById('canvas');
+    this.size = { width: canvas.width, height: canvas.height}
+    this.ctx = canvas.getContext("2d");
+    const body = window.getComputedStyle(document.body, null);
+    this.ctx.fillStyle = body.backgroundColor;
+    this.ctx.strokeStyle = body.accentColor;
+    this.ctx.lineCap = "round";
+  },
+  stop: function(){
+    this.isEnabled = false;
+    this.container.style.display = 'none';
+  },
+  start: function(){
+    // show graph
+    this.container.style.display = 'flex';
+    
+    const audioContext = recorder.audioContext;
+    const splitter = recorder.splitter;
+    this.dim = recorder.constraints.audio.channelCount;
+    this.analyser = [];
+    this.buffLen = [];
+    this.data = [];
+    
+    for (var a = 0; a < this.dim; a++){
+      let analyser = audioContext.createAnalyser();
+      splitter.connect(analyser, a);
+      analyser.fftSize = this.fftSize / 2;
+      let buffLen = analyser.frequencyBinCount;
+      graph.buffLen = buffLen;
+      graph.data[a] = new Uint8Array(buffLen);
+      graph.analyser[a] = analyser;
+    }
+    
+    this.barWidth = Math.round(this.size.width / this.buffLen / 2);
+    this.ctx.lineWidth = this.barWidth;
+    this.isEnabled = true;
+    
+    console.dir(this);
+    this.draw();
+  },
+  draw: function(){
+    graph.ctx.fillRect(0, 0, graph.size.width, graph.size.height);
+    
+    const ay = graph.size.height - graph.barWidth / 2;
+    var kx, ky = ay / 2, dyL, dyR, cx = graph.size.width / 2 + 0.5;
+
+    for (var c = 0 ; c < graph.dim; c++){
+      graph.analyser[c].getByteFrequencyData(graph.data[c]);
+      let fc = c * 2 - 1;
+      for (var i = 0; i < graph.buffLen; i++) {
+        kx = fc * (i * graph.barWidth + graph.barWidth * 0.25 + 0.5);
+        dy = graph.data[c][i] * 0.25;
+        graph.ctx.beginPath();
+        graph.ctx.moveTo(cx + kx, ky + dy);
+        graph.ctx.lineTo(cx + kx, ky - dy);
+        graph.ctx.stroke();
+      }
+    }
+    requestAnimationFrame(graph.draw);
+  }
+}
+
 const recorder = {
   mediaRecorder: '',
   chunks: [],
   chunkTimeout: 5000,
   lock: null,
-  type: 'audio/webm',
-  ext: 'webm',
+  type: 'audio/ogg',
+  ext: 'ogg',
   constraints: {
     audio: {
       channelCount: 2,
@@ -521,6 +446,11 @@ const recorder = {
       sampleSize: 16,
     },
     video: false
+  },
+  outSpecs: {
+    audioBitsPerSecond : "128000",
+    //audioBitrateMode : "variable",
+    mimeType: "audio/ogg;codecs=opus",
   },
   add: function(data){
     recorder.chunks.push(data);
@@ -562,52 +492,44 @@ const recorder = {
     this.chunks = [];
     logger.log("idle");
   },
+  // https://stackoverflow.com/questions/73665100/using-web-api-audioencoder-to-output-opus-frames
   start: function(){
     // merge constraints
     const inOpts = inputCtl.getOptions();
     console.dir(inOpts);
-    recorder.constraints = {...recorder.constraints, ...inOpts};
+    recorder.constraints = { audio: { channelCount: 2 } };//{...recorder.constraints, ...inOpts};
     navigator.mediaDevices
       .getUserMedia(recorder.constraints)
       .then(stream => {
         const tracks = stream.getAudioTracks();
         const caps = tracks[0].getCapabilities(); 
         console.dir(caps);
-        // Step 2: Create an AudioContext for stereo processing
         const audioContext = new AudioContext();
         const source = audioContext.createMediaStreamSource(stream);
         const destination = audioContext.createMediaStreamDestination();
         
-        // Step 3: Create stereo routing
-        
-        const splitter = audioContext.createChannelSplitter(2); // Split mono input
+        const splitter = audioContext.createChannelSplitter(recorder.constraints.channelCount);
         source.connect(splitter);
 
-        /*
-        const merger = audioContext.createChannelMerger(2);     // Merge into stereo
-        // Route mono input to both left and right channels
-        splitter.connect(merger, 0, 0); // Left
-        splitter.connect(merger, 0, 1); // Right
-        // Step 4: Create MediaStreamDestination
-        merger.connect(destination);
-        */
-       if (caps.channelCount.max !== caps.channelCount.min)
-        destination.channelCount = recorder.constraints.channelCount;
-       source.connect(destination);
-        // Step 5: Record with MediaRecorder
+        
+        if (caps.channelCount.max !== caps.channelCount.min)
+          destination.channelCount = recorder.constraints.audio.channelCount;
+        source.connect(destination);
+
         const outOpts = outputCtl.getOptions();
         console.dir(outOpts);
-        recorder.mediaRecorder = new MediaRecorder(destination.stream, outOpts);
+        recorder.mediaRecorder = new MediaRecorder(destination.stream, graph.outSpecs);
         recorder.mediaRecorder.ondataavailable = event => recorder.add(event.data);
         recorder.mediaRecorder.onstop = () => recorder.save();
         
         // Start recording
         recorder.screenLock(true);
+        recorder.audioContext = audioContext;
+        recorder.splitter = splitter;
+        recorder.source = source;
         recorder.mediaRecorder.start(recorder.chunkTimeout);
         timer.start();
-        graphStereo.start(audioContext, splitter);
-        recorder.actx = audioContext;
-        recorder.source = source;
+        graph.start();
       })
       .catch(error => {
         console.error('Error accessing microphone:', error);
@@ -617,9 +539,9 @@ const recorder = {
     recorder.screenLock(false);
     recorder.mediaRecorder.stop();
     timer.stop();
-    graphStereo.stop();
-    if (recorder.actx)
-      recorder.actx.close();
+    graph.stop();
+    if (recorder.audioContext)
+      recorder.audioContext.close();
     if (recorder.source)
       recorder.source.disconnect();
   }
@@ -652,4 +574,4 @@ let stream;
 rmic();
 inputCtl.init();
 outputCtl.init();
-graphStereo.init();
+graph.init();
