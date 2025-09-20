@@ -345,18 +345,16 @@ const inputCtl = {
   },
   getOptions: function(){
     return {
-      mandatory: {
-        echoCancellation: this.options.echoCancellation === "true" ? true : false,
-        noiseSuppression: this.options.noiseSuppression === "true" ? true : false,
-        autoGainControl: this.options.autoGainControl === "true" ? true : false,
-        voiceIsolation: this.options.voiceIsolation === "true" ? true : false,
-        suppressLocalAudioPlayback: this.options.suppressLocalAudioPlayback === "true" ? true : false,
-        sampleRate: parseInt(this.options.sampleRate),
-        channelCount: parseInt(this.options.channelCount),
-        sampleSize: parseInt(this.options.sampleSize)
-      }
+      echoCancellation: this.options.echoCancellation === "true" ? true : false,
+      noiseSuppression: this.options.noiseSuppression === "true" ? true : false,
+      autoGainControl: this.options.autoGainControl === "true" ? true : false,
+      voiceIsolation: this.options.voiceIsolation === "true" ? true : false,
+      //suppressLocalAudioPlayback: this.options.suppressLocalAudioPlayback === "true" ? true : false,
+      sampleRate: parseInt(this.options.sampleRate),
+      channelCount: parseInt(this.options.channelCount),
+      sampleSize: parseInt(this.options.sampleSize)
     }
-  },
+  }
 }
 
 const outputCtl = {
@@ -575,26 +573,30 @@ const recorder = {
     navigator.mediaDevices
       .getUserMedia(recorder.constraints)
       .then(stream => {
-       
+        const tracks = stream.getAudioTracks();
+        const caps = tracks[0].getCapabilities(); 
+        console.dir(caps);
         // Step 2: Create an AudioContext for stereo processing
         const audioContext = new AudioContext();
         const source = audioContext.createMediaStreamSource(stream);
-
+        const destination = audioContext.createMediaStreamDestination();
+        
         // Step 3: Create stereo routing
         
         const splitter = audioContext.createChannelSplitter(2); // Split mono input
         source.connect(splitter);
 
+        /*
         const merger = audioContext.createChannelMerger(2);     // Merge into stereo
         // Route mono input to both left and right channels
         splitter.connect(merger, 0, 0); // Left
         splitter.connect(merger, 0, 1); // Right
-
         // Step 4: Create MediaStreamDestination
-        
-        const destination = audioContext.createMediaStreamDestination();
         merger.connect(destination);
-
+        */
+       if (caps.channelCount.max !== caps.channelCount.min)
+        destination.channelCount = recorder.constraints.channelCount;
+       source.connect(destination);
         // Step 5: Record with MediaRecorder
         const outOpts = outputCtl.getOptions();
         console.dir(outOpts);
