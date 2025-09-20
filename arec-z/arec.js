@@ -62,13 +62,14 @@ const graphStereo = {
     this.ctx.strokeStyle = body.accentColor;
     this.ctx.lineCap = "round";
   },
-  start: function(stream){
+  start: function(audioContext, splitter){
     this.container.style.display = 'flex';
-    this.audioContext = new(window.AudioContext || window.webkitAudioContext);
-    this.source = this.audioContext.createMediaStreamSource(stream);
-    const splitter = this.audioContext.createChannelSplitter(2);
-    this.aR = this.audioContext.createAnalyser();
-    this.aL = this.audioContext.createAnalyser();
+    //this.audioContext = new(window.AudioContext || window.webkitAudioContext);
+    //this.source = this.audioContext.createMediaStreamSource(stream);
+    //const splitter = this.audioContext.createChannelSplitter(2);
+    this.aR = audioContext.createAnalyser();
+    this.aL = audioContext.createAnalyser();
+    //this.source.connect(splitter);
     splitter.connect(this.aR, 0);
     splitter.connect(this.aL, 1);
     this.aR.fftSize = this.fftSize / 2;
@@ -85,8 +86,8 @@ const graphStereo = {
   stop: function(){
     this.isEnabled = false;
     this.container.style.display = 'none';
-    this.audioContext.close;
-    this.source.disconnect;
+    //this.audioContext.close();
+    //this.source.disconnect();
     
   },
   draw: function(){
@@ -94,14 +95,16 @@ const graphStereo = {
     graphStereo.aL.getByteFrequencyData(graphStereo.dataArrayL);
     graphStereo.aR.getByteFrequencyData(graphStereo.dataArrayR);
     const ay = graphStereo.canvasSize.height - graphStereo.barWidth / 2;
-    var kx, ky = ay / 2, dyL, dyR;
+    var kx, ky = ay / 2, dyL, dyR, cx = graphStereo.canvasSize.width / 2 + 0.5;
     for (var i = 0; i < graphStereo.buffLen; i++) {
-      kx = 4 + 2 * i * graphStereo.barWidth + graphStereo.barWidth / 2 + 0.5;
+      kx = i * graphStereo.barWidth + graphStereo.barWidth * 0.25 + 0.5;
       dyL = graphStereo.dataArrayL[i] * 0.25;
       dyR = graphStereo.dataArrayR[i] * 0.25;
       graphStereo.ctx.beginPath();
-      graphStereo.ctx.moveTo(kx, ky + dyR);
-      graphStereo.ctx.lineTo(kx, ky - dyL);
+      graphStereo.ctx.moveTo(cx + kx, ky + dyR);
+      graphStereo.ctx.lineTo(cx + kx, ky - dyR);
+      graphStereo.ctx.moveTo(cx - kx, ky + dyL);
+      graphStereo.ctx.lineTo(cx - kx, ky - dyL);
       graphStereo.ctx.stroke();
     }
     requestAnimationFrame(graphStereo.draw);
@@ -342,14 +345,16 @@ const inputCtl = {
   },
   getOptions: function(){
     return {
-      echoCancellation: this.options.echoCancellation === "true" ? true : false,
-      noiseSuppression: this.options.noiseSuppression === "true" ? true : false,
-      autoGainControl: this.options.autoGainControl === "true" ? true : false,
-      voiceIsolation: this.options.voiceIsolation === "true" ? true : false,
-      suppressLocalAudioPlayback: this.options.suppressLocalAudioPlayback === "true" ? true : false,
-      sampleRate: parseInt(this.options.sampleRate),
-      channelCount: parseInt(this.options.channelCount),
-      sampleSize: parseInt(this.options.sampleSize)
+      mandatory: {
+        echoCancellation: this.options.echoCancellation === "true" ? true : false,
+        noiseSuppression: this.options.noiseSuppression === "true" ? true : false,
+        autoGainControl: this.options.autoGainControl === "true" ? true : false,
+        voiceIsolation: this.options.voiceIsolation === "true" ? true : false,
+        suppressLocalAudioPlayback: this.options.suppressLocalAudioPlayback === "true" ? true : false,
+        sampleRate: parseInt(this.options.sampleRate),
+        channelCount: parseInt(this.options.channelCount),
+        sampleSize: parseInt(this.options.sampleSize)
+      }
     }
   },
 }
@@ -601,7 +606,9 @@ const recorder = {
         recorder.screenLock(true);
         recorder.mediaRecorder.start(recorder.chunkTimeout);
         timer.start();
-        graph.start(stream);
+        graphStereo.start(audioContext, splitter);
+        recorder.actx = audioContext;
+        recorder.source = source;
       })
       .catch(error => {
         console.error('Error accessing microphone:', error);
@@ -611,7 +618,11 @@ const recorder = {
     recorder.screenLock(false);
     recorder.mediaRecorder.stop();
     timer.stop();
-    graph.stop();
+    graphStereo.stop();
+    if (recorder.actx)
+      recorder.actx.close();
+    if (recorder.source)
+      recorder.source.disconnect();
   }
 }
 
@@ -642,4 +653,4 @@ let stream;
 rmic();
 inputCtl.init();
 outputCtl.init();
-graph.init();
+graphStereo.init();
