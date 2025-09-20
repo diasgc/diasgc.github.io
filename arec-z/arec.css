@@ -58,13 +58,18 @@ body {
   text-align: center;
 }
 
-#btn {
+#btn, #vinfo {
   position: absolute;
   bottom: 24px;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+#vinfo {
+  font-size: 9px;
+  bottom: 12px;
 }
 
 .container {
