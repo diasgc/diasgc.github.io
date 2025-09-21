@@ -7,6 +7,10 @@ Number.prototype.strSI = function(unit, fixed=2, mul=1024){
   return `${v.toFixed(fixed)} ${sfx[i]}${unit}`;
 }
 
+// set version
+const vrs = new URL(document.currentScript.src).searchParams.get("v");
+document.getElementById('vinfo').innerText = `version ${vrs}`;
+
 const touchEvent = 'click'; //'ontouchstart' in window ? 'touchstart' : 'click';
 const divMain = document.getElementById('div-main');
 const startStopButton = document.getElementById('startStop');
@@ -128,16 +132,17 @@ const inputCtl = {
   channelCount:     { name: "channels", lab: "", sfx: "", entries: { "mono": "1", "stereo*": "2" } },
   sampleSize:       { name: "bits", lab: "", sfx: "-bits", entries: { "8": "8", "16*": "16"} },
   sampleRate:       { name: "samplerate", lab: "", sfx: "Hz", entries: {"8k": "8000", "11k": "11025", "44k": "44100", "48k*": "48000", "96k": "96000" } },
-  autoGainControl:  { name: "agc", lab: "agc ", sfx: "", entries: { "off": "false", "on*": "true" } },
+  autoGainControl:  { name: "agc", lab: "agc ", sfx: "", entries: { "off*": "false", "on": "true" } },
   noiseSuppression: { name: "noise", lab: "nr ", sfx: "", entries: { "off*": "false", "on": "true" } },
   echoCancellation: { name: "echo", lab: "echo ", sfx: "", entries: { "off*": "false", "on": "true" } },
   voiceIsolation:   { name: "voice", lab: "voice ", sfx: "", entries: { "off*": "false", "on": "true" } },
   suppressLocalAudioPlayback: { name: "local ", lab: "local ", sfx: "", entries: { "off*": "false", "on": "true" } },
+  audioGain:        { name: "gain", lab: "gain", sfx: "", entries: { "off*": "1", "1.5x": "1.5", "2x": "2", "2.5x": "2.5", "3x": "3"}},
   
   options: {
     echoCancellation: "false",
     noiseSuppression: "false",
-    autoGainControl: "true",
+    autoGainControl: "false",
     voiceIsolation: "false",
     suppressLocalAudioPlayback: "false",
     sampleRate: "48000",
@@ -511,16 +516,23 @@ const recorder = {
         console.dir(caps);
         const audioContext = new AudioContext();
         const source = audioContext.createMediaStreamSource(stream);
-        const destination = audioContext.createMediaStreamDestination();
-        
-        const splitter = audioContext.createChannelSplitter(recorder.constraints.audio.channelCount);
-        source.connect(splitter);
 
-        
+        const destination = audioContext.createMediaStreamDestination();
         if (caps.channelCount.max !== caps.channelCount.min)
           destination.channelCount = recorder.constraints.audio.channelCount;
-        source.connect(destination);
-
+        
+        const splitter = audioContext.createChannelSplitter(recorder.constraints.audio.channelCount);
+        
+        const gain = parseFloat(inputCtl.options.audioGain)
+        if (gain > 1){
+          const audioGain = audioContext.createGain();
+          audioGain.gain = gain;
+          splitter.connect(audioGain);
+        }
+        
+        source.connect(splitter);
+        splitter.connect(destination);
+        
         const outOpts = outputCtl.getOptions();
         console.dir(outOpts);
         recorder.mediaRecorder = new MediaRecorder(destination.stream, graph.outSpecs);
