@@ -65,7 +65,7 @@ const dmain = {
     s.size = dmain.size;
     l.for = s.id;
     l.innerText = group;
-    //utils.addOption(s,'','none',false, dmain.selectNone(s));
+    utils.addOption(s,'none','none',false, dmain.selectNone(s));
     //utils.addOption(s,'','all',false, dmain.selectAll(s));
     Object.keys(g.pkg).forEach(k => utils.addOption(s, JSON.stringify(g.pkg[k]), k, true));
     d.appendChild(l);
@@ -146,7 +146,7 @@ EOF`;
     exec.sh = '#!/bin/bash';
     exec.s = true;
     dmain.id.querySelectorAll('select').forEach(s => {
-      if (s.value){
+      if (s.value && s.value !== 'none'){
         Array.from(s.selectedOptions).map(({ value }) => {
           const v1 = JSON.parse(value);
           try { exec[v1.type](v1); } catch(ignore){}
