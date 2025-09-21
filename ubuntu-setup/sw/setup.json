@@ -42,7 +42,7 @@
       "Shell Extension Manager": {"type": "apt", "args": "gnome-shell-extension-manager" }, 
       "Gnome Tweaks": {"type": "apt", "args": "gnome-tweaks" },
       "DConf Editor": {"type": "apt", "args": "dconf-editor" },
-      "Grub Customizer": {"type": "apt", "args": "grub-customizer" }
+      "Grub Customizer": {"type": "apt", "args": "grub-customizer", "ppa": "ppa:danielrichter2007/grub-customizer" }
     }
   },
   "Multimedia": {

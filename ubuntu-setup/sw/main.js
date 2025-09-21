@@ -29,7 +29,7 @@ const utils = {
   fetchText: async function(url){
     const res = await fetch(url);
     const text = await res.text();
-    return text;
+    return text;ppa:danielrichter2007/grub-customizer
   }
 }
 
@@ -105,6 +105,8 @@ const exec = {
     versions.llvm();
   },
   apt: function(v){
+    if (v.ppa)
+      exec.sh +=`\nsudo add-apt-repository ppa:danielrichter2007/grub-customizer -y\nsudo apt update`;
     exec.sh +=`\nsudo apt install ${v.args} -y`;
   },
   deb: function(v){

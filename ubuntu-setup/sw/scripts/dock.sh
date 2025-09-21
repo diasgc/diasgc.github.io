@@ -1,21 +1,21 @@
-gsettings org.gnome.shell.extensions.dash-to-dock transparency-mode 'FIXED'
-gsettings org.gnome.shell.extensions.dash-to-dock apply-glossy-effect false
-gsettings org.gnome.shell.extensions.dash-to-dock autohide-in-fullscreen true
-gsettings org.gnome.shell.extensions.dash-to-dock background-color '#202030'
-gsettings org.gnome.shell.extensions.dash-to-dock background-opacity 0
-gsettings org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 32
-gsettings org.gnome.shell.extensions.dash-to-dock dock-fixed false
-gsettings org.gnome.shell.extensions.dash-to-dock dock-position 'BOTTOM'
-gsettings org.gnome.shell.extensions.dash-to-dock extend-height false
-gsettings org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
-gsettings org.gnome.shell.extensions.dash-to-dock show-mounts false
-gsettings org.gnome.shell.extensions.dash-to-dock show-trash false
+gsettings set org.gnome.shell.extensions.dash-to-dock transparency-mode 'FIXED'
+gsettings set org.gnome.shell.extensions.dash-to-dock apply-glossy-effect false
+gsettings set org.gnome.shell.extensions.dash-to-dock autohide-in-fullscreen true
+gsettings set org.gnome.shell.extensions.dash-to-dock background-color '#202030'
+gsettings set org.gnome.shell.extensions.dash-to-dock background-opacity 0
+gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size 32
+gsettings set org.gnome.shell.extensions.dash-to-dock dock-fixed false
+gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'BOTTOM'
+gsettings set org.gnome.shell.extensions.dash-to-dock extend-height false
+gsettings set org.gnome.shell.extensions.dash-to-dock isolate-workspaces true
+gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts false
+gsettings set org.gnome.shell.extensions.dash-to-dock show-trash false
 
-gsettings org.gnome.shell.extensions.ding icon-size 'tiny'
-gsettings org.gnome.shell.extensions.ding keep-arranged true
-gsettings org.gnome.shell.extensions.ding keep-stacked true
-gsettings org.gnome.shell.extensions.ding show-network-volumes true
-gsettings org.gnome.shell.extensions.ding show-trash true
-gsettings org.gnome.shell.extensions.ding show-volumes true
-gsettings org.gnome.shell.extensions.ding start-corner 'top-right'
-gsettings org.gnome.shell.extensions.ding use-nemo true
+gsettings set org.gnome.shell.extensions.ding icon-size 'tiny'
+gsettings set org.gnome.shell.extensions.ding keep-arranged true
+gsettings set org.gnome.shell.extensions.ding keep-stacked true
+gsettings set org.gnome.shell.extensions.ding show-network-volumes true
+gsettings set org.gnome.shell.extensions.ding show-trash true
+gsettings set org.gnome.shell.extensions.ding show-volumes true
+gsettings set org.gnome.shell.extensions.ding start-corner 'top-right'
+gsettings set org.gnome.shell.extensions.ding use-nemo true
