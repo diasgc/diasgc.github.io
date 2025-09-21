@@ -201,14 +201,16 @@ const inputCtl = {
   },
   getOptions: function(){
     return {
-      echoCancellation: this.options.echoCancellation === "true" ? true : false,
-      noiseSuppression: this.options.noiseSuppression === "true" ? true : false,
-      autoGainControl: this.options.autoGainControl === "true" ? true : false,
-      voiceIsolation: this.options.voiceIsolation === "true" ? true : false,
-      //suppressLocalAudioPlayback: this.options.suppressLocalAudioPlayback === "true" ? true : false,
-      sampleRate: parseInt(this.options.sampleRate),
-      channelCount: parseInt(this.options.channelCount),
-      sampleSize: parseInt(this.options.sampleSize)
+      audio: {
+        echoCancellation: this.options.echoCancellation === "true" ? true : false,
+        noiseSuppression: this.options.noiseSuppression === "true" ? true : false,
+        autoGainControl: this.options.autoGainControl === "true" ? true : false,
+        voiceIsolation: this.options.voiceIsolation === "true" ? true : false,
+        //suppressLocalAudioPlayback: this.options.suppressLocalAudioPlayback === "true" ? true : false,
+        sampleRate: parseInt(this.options.sampleRate),
+        channelCount: parseInt(this.options.channelCount),
+        sampleSize: parseInt(this.options.sampleSize)
+      }
     }
   }
 }
@@ -444,6 +446,9 @@ const recorder = {
       channelCount: 2,
       sampleRate: 48000,
       sampleSize: 16,
+      noiseSuppression: false,
+      echoCancellation: false,
+      autoGainControl: false
     },
     video: false
   },
@@ -496,8 +501,8 @@ const recorder = {
   start: function(){
     // merge constraints
     const inOpts = inputCtl.getOptions();
-    console.dir(inOpts);
-    recorder.constraints = { audio: { channelCount: 2 } };//{...recorder.constraints, ...inOpts};
+    recorder.constraints = {...recorder.constraints, ...inOpts};
+    console.dir(recorder.constraints);
     navigator.mediaDevices
       .getUserMedia(recorder.constraints)
       .then(stream => {
