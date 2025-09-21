@@ -111,7 +111,7 @@ pre {
   color: var(--accent);
   margin: 4px;
   text-align: center;
-  transition: 1s;
+  transition: 0.5s;
 }
 
 .fs-main:disabled {

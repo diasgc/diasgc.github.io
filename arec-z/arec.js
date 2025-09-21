@@ -137,7 +137,7 @@ const inputCtl = {
   echoCancellation: { name: "echo", lab: "echo ", sfx: "", entries: { "off*": "false", "on": "true" } },
   voiceIsolation:   { name: "voice", lab: "voice ", sfx: "", entries: { "off*": "false", "on": "true" } },
   suppressLocalAudioPlayback: { name: "local ", lab: "local ", sfx: "", entries: { "off*": "false", "on": "true" } },
-  audioGain:        { name: "gain", lab: "gain", sfx: "", entries: { "off*": "1", "1.5x": "1.5", "2x": "2", "2.5x": "2.5", "3x": "3"}},
+  audioGain:        { name: "gain", lab: "gain", sfx: "", entries: { "off*": "1", "1.5x": "1.5", "2x": "2", "2.5x": "2.5", "5x": "5"}},
   
   options: {
     echoCancellation: "false",
@@ -411,7 +411,7 @@ const graph = {
     }
     
     this.barWidth = Math.round(this.size.width / this.buffLen / 2);
-    this.ctx.lineWidth = this.barWidth;
+    this.ctx.lineWidth = 1.5; //this.barWidth;
     this.isEnabled = true;
     
     console.dir(this);
@@ -421,13 +421,13 @@ const graph = {
     graph.ctx.fillRect(0, 0, graph.size.width, graph.size.height);
     
     const ay = graph.size.height - graph.barWidth / 2;
-    var kx, ky = ay / 2, dyL, dyR, cx = graph.size.width / 2 + 0.5;
+    var kx, ky = ay / 2, dyL, dyR, cx = graph.size.width / 2;
 
     for (var c = 0 ; c < graph.dim; c++){
       graph.analyser[c].getByteFrequencyData(graph.data[c]);
       let fc = c * 2 - 1;
       for (var i = 0; i < graph.buffLen; i++) {
-        kx = fc * (i * graph.barWidth + graph.barWidth * 0.25 + 0.5);
+        kx = fc * graph.barWidth * (i + 0.25);
         dy = graph.data[c][i] * 0.25;
         graph.ctx.beginPath();
         graph.ctx.moveTo(cx + kx, ky + dy);
@@ -512,27 +512,32 @@ const recorder = {
       .getUserMedia(recorder.constraints)
       .then(stream => {
         const tracks = stream.getAudioTracks();
-        const caps = tracks[0].getCapabilities(); 
+        const caps = tracks[0].getCapabilities();
+        const channelCount = recorder.constraints.audio.channelCount;
         console.dir(caps);
         const audioContext = new AudioContext();
         const source = audioContext.createMediaStreamSource(stream);
 
         const destination = audioContext.createMediaStreamDestination();
         if (caps.channelCount.max !== caps.channelCount.min)
-          destination.channelCount = recorder.constraints.audio.channelCount;
+          destination.channelCount = channelCount;
         
-        const splitter = audioContext.createChannelSplitter(recorder.constraints.audio.channelCount);
-        
+        const merger = audioContext.createChannelMerger(channelCount);
+
+        const splitter = audioContext.createChannelSplitter(channelCount);
+        source.connect(splitter);
+
         const gain = parseFloat(inputCtl.options.audioGain)
-        if (gain > 1){
-          const audioGain = audioContext.createGain();
-          audioGain.gain = gain;
-          splitter.connect(audioGain);
+
+        for (var c = 0 ; c < channelCount; c++){
+          const g = audioContext.createGain();
+          splitter.connect(g,c);
+          g.gain = gain;
+          g.connect(merger,0, c);
         }
         
-        source.connect(splitter);
-        splitter.connect(destination);
-        
+        merger.connect(destination);
+
         const outOpts = outputCtl.getOptions();
         console.dir(outOpts);
         recorder.mediaRecorder = new MediaRecorder(destination.stream, graph.outSpecs);
