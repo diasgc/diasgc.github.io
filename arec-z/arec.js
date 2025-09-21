@@ -121,6 +121,60 @@ const fsBuilder = {
   }
 }
 
+const audioInput_new = {
+  panelId: document.getElementById('fs-input'),
+  summaryId: document.getElementById('fs-input-summary'),
+  isCollapsed: true,
+  constrains: {
+    deviceId:         { name: "source", lab: "src ", sfx: "", entries: {} },
+    channelCount:     { name: "channels", lab: "", sfx: "", entries: { "mono": "1", "stereo*": "2" } },
+    sampleSize:       { name: "bits", lab: "", sfx: "-bits", entries: { "8": "8", "16*": "16"} },
+    sampleRate:       { name: "samplerate", lab: "", sfx: "Hz", entries: {"8k": "8000", "11k": "11025", "44k": "44100", "48k*": "48000", "96k": "96000" } },
+    autoGainControl:  { name: "agc", lab: "agc ", sfx: "", entries: { "off*": "false", "on": "true" } },
+    noiseSuppression: { name: "noise", lab: "nr ", sfx: "", entries: { "off*": "false", "on": "true" } },
+    echoCancellation: { name: "echo", lab: "echo ", sfx: "", entries: { "off*": "false", "on": "true" } },
+    voiceIsolation:   { name: "voice", lab: "voice ", sfx: "", entries: { "off*": "false", "on": "true" } },
+    suppressLocalAudioPlayback: { name: "local ", lab: "local ", sfx: "", entries: { "off*": "false", "on": "true" } },  
+  },
+  effects: {
+    audioGain: { name: "gain", lab: "", sfx: "", entries: { "off*": "1", "1.5x": "1.5", "2x": "2", "2.5x": "2.5", "5x": "5"}},
+  },
+  init: function(){
+    let fs = document.getElementById('fsi');
+    fs.addEventListener(touchEvent, this.toggleView);
+    this.fsi.replaceChildren();
+    this.enumerateDevices();
+    this.supportedConstraints = this.loadSupportedConstraints();
+    Object.keys(audioInput.constrains).forEach(key => {
+      const v = audioInput.constrains[key];
+      if (v && JSON.stringify(v.entries).length > 8){
+        const e = fsBuilder.build("radio", v, audioInput.options, key);
+        audioInput.fsi.appendChild(e);
+      }
+    })
+    this.collapse();
+  },
+  loadSupportedConstraints: function(){
+    const c = navigator.mediaDevices.getSupportedConstraints();
+    Object.keys(c).forEach((key) => {
+      if (audioInput.constrains[key] === 'undefined') delete c[key];
+    });
+    return c;
+  },
+  enumerateDevices: function(){
+    navigator.mediaDevices.enumerateDevices()
+      .then((devices) => {
+      devices.forEach((device) => {
+        if (device.kind === 'audioinput'){
+          let lab = device.label.substring(0,7) + (device.deviceId === 'default' ? "*" : "");
+          this.deviceId.entries[lab] = device.deviceId;
+        }
+      });
+    });
+  }
+}
+
+
 const inputCtl = {
   fsi: document.getElementById('fs-input'),
   isCollapsed: true,
