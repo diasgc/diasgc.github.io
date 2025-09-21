@@ -125,7 +125,7 @@ const inputCtl = {
   fsi: document.getElementById('fs-input'),
   isCollapsed: true,
   summary: document.getElementById('fs-input-summary'),
-  audioConstraints: [ 'deviceId', 'channelCount', 'sampleSize', 'sampleRate','autoGainControl', 'echoCancellation', 'latency', 'noiseSuppression', 'pan', 'suppressLocalAudioPlayback','voiceIsolation' ],
+  audioConstraints: [ 'deviceId', 'channelCount', 'sampleSize', 'sampleRate','autoGainControl', 'echoCancellation', 'latency', 'noiseSuppression', 'pan', 'suppressLocalAudioPlayback','voiceIsolation','audioGain' ],
   supportedConstraints: {},
 
   deviceId:         { name: "source", lab: "src ", sfx: "", entries: {} },
