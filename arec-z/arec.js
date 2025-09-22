@@ -125,7 +125,7 @@ const audioInput_new = {
   panelId: document.getElementById('fs-input'),
   summaryId: document.getElementById('fs-input-summary'),
   isCollapsed: true,
-  constrains: {
+  constraints: {
     deviceId:         { name: "source", lab: "src ", sfx: "", entries: {} },
     channelCount:     { name: "channels", lab: "", sfx: "", entries: { "mono": "1", "stereo*": "2" } },
     sampleSize:       { name: "bits", lab: "", sfx: "-bits", entries: { "8": "8", "16*": "16"} },
@@ -134,7 +134,7 @@ const audioInput_new = {
     noiseSuppression: { name: "noise", lab: "nr ", sfx: "", entries: { "off*": "false", "on": "true" } },
     echoCancellation: { name: "echo", lab: "echo ", sfx: "", entries: { "off*": "false", "on": "true" } },
     voiceIsolation:   { name: "voice", lab: "voice ", sfx: "", entries: { "off*": "false", "on": "true" } },
-    suppressLocalAudioPlayback: { name: "local ", lab: "local ", sfx: "", entries: { "off*": "false", "on": "true" } },  
+    suppressLocalAudioPlayback: { name: "local ", lab: "lap ", sfx: "", entries: { "off*": "false", "on": "true" } },  
   },
   effects: {
     audioGain: { name: "gain", lab: "", sfx: "", entries: { "off*": "1", "1.5x": "1.5", "2x": "2", "2.5x": "2.5", "5x": "5"}},
@@ -142,32 +142,25 @@ const audioInput_new = {
   init: function(){
     let fs = document.getElementById('fsi');
     fs.addEventListener(touchEvent, this.toggleView);
-    this.fsi.replaceChildren();
+    fs.replaceChildren();
     this.enumerateDevices();
-    this.supportedConstraints = this.loadSupportedConstraints();
-    Object.keys(audioInput.constrains).forEach(key => {
-      const v = audioInput.constrains[key];
-      if (v && JSON.stringify(v.entries).length > 8){
-        const e = fsBuilder.build("radio", v, audioInput.options, key);
-        audioInput.fsi.appendChild(e);
+    const c = navigator.mediaDevices.getSupportedConstraints();
+    Object.keys(c).forEach(key => {
+      if (audioInput_new.constraints[key]){
+        const e = fsBuilder.build("radio", audioInput_new.constraints[key], audioInput_new.options, key);
+        fs.appendChild(e);
+      } else {
+        delete audioInput_new.constraints[key];
       }
     })
-    this.collapse();
-  },
-  loadSupportedConstraints: function(){
-    const c = navigator.mediaDevices.getSupportedConstraints();
-    Object.keys(c).forEach((key) => {
-      if (audioInput.constrains[key] === 'undefined') delete c[key];
-    });
-    return c;
+    //this.collapse();
   },
   enumerateDevices: function(){
-    navigator.mediaDevices.enumerateDevices()
-      .then((devices) => {
-      devices.forEach((device) => {
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+      devices.forEach(device => {
         if (device.kind === 'audioinput'){
           let lab = device.label.substring(0,7) + (device.deviceId === 'default' ? "*" : "");
-          this.deviceId.entries[lab] = device.deviceId;
+          audioInput_new.constraints.deviceId.entries[lab] = device.deviceId;
         }
       });
     });
@@ -649,5 +642,7 @@ let stream;
 
 rmic();
 inputCtl.init();
+//audioInput_new.init();
+console.dir(audioInput_new);
 outputCtl.init();
 graph.init();

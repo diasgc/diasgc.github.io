@@ -106,7 +106,7 @@ const exec = {
   },
   apt: function(v){
     if (v.ppa)
-      exec.sh +=`\nsudo add-apt-repository ppa:danielrichter2007/grub-customizer -y\nsudo apt update`;
+      exec.sh +=`\nsudo add-apt-repository ${v.ppa} -y\nsudo apt update`;
     exec.sh +=`\nsudo apt install ${v.args} -y`;
   },
   deb: function(v){
