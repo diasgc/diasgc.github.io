@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Audio Recorder Z</title>
+  <link rel="manifest" href="site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎙️</text></svg>"/>
+  <link rel="stylesheet" href="arec.css">
+  <script src="https://cdn.jsdelivr.net/npm/@google-cloud/speech@7.2.0/build/protos/protos.min.js"></script>
+</head>
+<body>
+  <div class="div-center" style="margin-top: 24px;">
+    <fieldset class="fs-mic"><legend>microphone</legend>
+      <input type="radio" id="rec-mc0" name="mic" value="0" checked/><label id="r0" for="rec-mc0">off</label>
+      <input type="radio" id="rec-mc1" name="mic" value="1" /><label id="r1" for="rec-mc1">on</label>
+    </fieldset>
+  </div>
+  <div id="timer" class="div-center">00:00:00</div>
+  <div id="log-stat" class="div-center"></div>
+  <div id="graph" class="div-center"><canvas id="canvas"></canvas></div>
+  <div id="div-main" class="container" disabled>
+      <pre id="logs"><code id="code"></code></pre>
+  </div>
+  <div id="btn">
+    <label class="div-start div-center">
+      <input id="startStop" type="checkbox"/>
+      <span class="start-button"></span>
+    </label>
+  </div>
+  <div id="vinfo"></div>
+  <script src="arec.js?v=250923"></script>
+</body>
+</html>
