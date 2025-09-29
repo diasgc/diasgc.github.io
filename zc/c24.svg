@@ -10,7 +10,6 @@
  </style>
  <circle cx="512" cy="512" r="512" fill="#fff" fill-opacity=".05" opacity=".5" stroke="#000"/>
  <circle cx="512" cy="512" r="388" fill="#fff" fill-opacity=".05" opacity=".5" stroke="#000" stroke-width="2"/>
-
  <g stroke="#000">
   <path id="L1" fill="none" d="m512 108-0.5 16"/>
   <path id="L10" fill="none" d="m512 92-0.4 32"/>

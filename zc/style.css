@@ -1,21 +1,30 @@
 body {
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-family: "Zalando Sans Expanded", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 200;
+  font-style: normal;
 }
 .clock {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
-  height:50vw;
-  width:50vw;
+  height:45vw;
+  width:45vw;
   border-radius: 50%;
   border: solid 2px #0004;  
+}
+.sqr {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
 }
 
 @media (orientation: portrait) {
   .clock {
-    height:50vh;
-    width:50vh;
+    height:45vh;
+    width:45vh;
   }
 }
 #time {
