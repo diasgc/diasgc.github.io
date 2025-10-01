@@ -29,7 +29,7 @@
     <use transform="rotate(10,512,512)" xlink:href="#LM10"/>
     <use transform="rotate(12.5,512,512)" xlink:href="#LM10"/>
   </g>
-  <g id="LH1" font-family="'DejaVu Sans'" font-size="18" font-weight="bold" text-anchor="middle">
+  <g id="LH1" font-size="18" font-weight="bold" text-anchor="middle">
     <text transform="rotate(0,512,512)" x="512" y="48" class="f1">XXIV</text>
     <use transform="rotate(15,512,512)" xlink:href="#LG"/>
     <use transform="rotate(30,512,512)" xlink:href="#LG"/>

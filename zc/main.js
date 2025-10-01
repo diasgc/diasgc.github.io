@@ -2,10 +2,29 @@ function rotate(d){
   //const dd = d.getTime()/1000 % 86400 / 86400 * 360;
   const dd = (d.getHours()*60 + d.getMinutes()) / 1440 * 360;
   img.style.transform = `rotate(${-dd}deg)`;
+  options.date = d;
+  const zmanim = KosherZmanim.getZmanimJson(options);
+  document.getElementById('zman').innerHTML = JSON.stringify(zmanim).replace(/,/g,'<br/>').replace(/{|}/g,'');  
 }
 
 
-const img = document.getElementById('iclock')
+const options = {
+  date: new Date(),
+  latitude: 32.0853,
+  longitude: 34.7818,
+  timeZoneId: 'Asia/Jerusalem',
+  elevation: 0,
+  locationName: 'Tel Aviv'
+};
+
+navigator.geolocation.getCurrentPosition(position => {
+  options.latitude = position.coords.latitude;
+  options.longitude = position.coords.longitude;
+  options.elevation = position.coords.altitude || 0;
+  options.timeZoneId = d.toString().match(/\(([^)]+)\)/)[1];
+});
+
+const img = document.getElementById('iclock');
 rotate(new Date());
 
 setInterval(()=>{
