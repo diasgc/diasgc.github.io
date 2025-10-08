@@ -1,0 +1,39 @@
+body {
+  font-family: "Zalando Sans Expanded", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 200;
+  font-style: normal;
+  background: #103;
+}
+@font-face {
+  font-family: stmVelish;
+  src:url('./stmvelish.ttf') format('truetype');
+}
+
+#heb-content {
+  font-size: 2vw;
+  text-align: right;
+  color: white;
+  font-family: stmVelish;
+  padding: 1vw;
+}
+#eng-content {
+  font-size: 4vw;
+  text-align: left;
+  color: white;
+  margin-top: -1vw;
+}
+#verse {
+  position: fixed;
+  bottom: 1vw;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90vw;
+  font-size: 2vw;
+  padding: 0.5vw;
+  border-radius: 1vw;
+  border: none;
+  outline: none;
+  background: rgba(255,255,255,0.8);
+  text-align: center;
+}

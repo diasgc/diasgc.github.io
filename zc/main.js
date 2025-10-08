@@ -32,8 +32,7 @@ rotate(new Date());
 setInterval(()=>{
     const t = document.getElementById('time');
     const d = new Date();
-    rotate(d);KosherZmanim.getZmanimJson(options);
-  document.getEle
+    rotate(d);
     t.innerText = `${d.getHours()}:${d.getMinutes()}`;
 },5000);
 
