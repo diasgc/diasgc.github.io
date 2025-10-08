@@ -1,20 +1,16 @@
-body {
-  font-family: "Zalando Sans Expanded", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 200;
-  font-style: normal;
-  background: #103;
-}
 @font-face {
-  font-family: 'stmVelish';
-  src:url('./stmvelish.ttf') format('truetype');
+  font-family: stmVelish;
+  src:url(stmvelish.ttf) format('truetype');
+}
+body {
+  background: #103;
 }
 
 #heb-content {
   font-size: 26px;
   text-align: right;
   color: white;
-  font-family: 'stmVelish';
+  font-family: stmVelish;
   padding: 24px;
 }
 #eng-content {
