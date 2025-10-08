@@ -6,19 +6,19 @@ body {
   background: #103;
 }
 @font-face {
-  font-family: stmVelish;
+  font-family: 'stmVelish';
   src:url('./stmvelish.ttf') format('truetype');
 }
 
 #heb-content {
-  font-size: 2vw;
+  font-size: 26px;
   text-align: right;
   color: white;
-  font-family: stmVelish;
-  padding: 1vw;
+  font-family: 'stmVelish';
+  padding: 24px;
 }
 #eng-content {
-  font-size: 4vw;
+  font-size: 18px;
   text-align: left;
   color: white;
   margin-top: -1vw;
@@ -29,7 +29,7 @@ body {
   left: 50%;
   transform: translateX(-50%);
   width: 90vw;
-  font-size: 2vw;
+  font-size: 26px;
   padding: 0.5vw;
   border-radius: 1vw;
   border: none;
