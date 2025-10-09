@@ -130,9 +130,10 @@ function fetchData(ref,id,lang){
 
 function loadData(data,id){
   if (data && data.versions && data.versions[0] && data.versions[0].text){
+    var text = data.versions[0].text;
+    text = text.replace(/{.*}/g,(match) => `<sup><sup><small>${match}</small></sup></sup>`);
     const e = document.getElementById(id);
-    console.log(data);
-    e.innerHTML = data.versions[0].text;
+    e.innerHTML = text;
   }
 }
 

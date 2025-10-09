@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'stmVelish';
-  src:url('https://diasgc.github.io/zc/tnk/fonts/stmvelish.ttf') format('truetype');
+  src:url('fonts/stmvelish.woff') format('woff');
 }
 
 body {
