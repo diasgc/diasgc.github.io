@@ -1,13 +1,10 @@
-body {
-  font-family: "Zalando Sans Expanded", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 200;
-  font-style: normal;
-  background: #103;
-}
 @font-face {
   font-family: 'stmVelish';
-  src:url('./stmvelish.ttf') format('truetype');
+  src:url('fonts/stmvelish.woff2') format('woff2');
+}
+
+body {
+  background: #003;
 }
 
 #heb-content {
@@ -15,13 +12,49 @@ body {
   text-align: right;
   color: white;
   font-family: 'stmVelish';
-  padding: 24px;
+  padding: 32px 24px;
+  flex: 1;
 }
 #eng-content {
   font-size: 18px;
   text-align: left;
   color: white;
-  margin-top: -1vw;
+  padding: 32px 24px;
+}
+#pasuk-ref {
+  font-size: 10px;
+  text-align: right;
+  padding: 0px 24px;
+}
+#pasuk-prev {
+  position: static;
+  margin: 0 12px;
+  width: 42px;
+  height: 42px;
+  color: white;
+  font-size: 12px;
+  border-radius: 50%;
+  border: 1px solid #fff2;
+  outline: none;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#pasuk-next {
+  position: static;
+  margin: 0 12px;
+  width: 42px;
+  height: 42px;
+  color: white;
+  font-size: 12px;
+  border-radius: 50%;
+  border: 1px solid #fff2;
+  outline: none;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 #verse {
   position: fixed;
@@ -36,4 +69,13 @@ body {
   outline: none;
   background: rgba(255,255,255,0.8);
   text-align: center;
+}
+
+#heb-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  margin-top: 32px;
 }
