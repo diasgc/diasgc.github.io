@@ -4,7 +4,8 @@
 }
 
 body {
-  background: #003;
+  background: #001;
+  font-family: sans-serif;
 }
 
 #heb-content {
@@ -19,23 +20,24 @@ body {
   font-size: 18px;
   text-align: left;
   color: white;
-  padding: 32px 24px;
+  padding: 32px 12px;
 }
 #pasuk-ref {
   font-size: 10px;
+  font-style: italic;
   text-align: right;
   padding: 0px 24px;
 }
 
 #pasuk-prev, #pasuk-next {
   position: static;
-  margin: 0 12px;
+  margin: 0 4px;
   width: 42px;
   height: 42px;
   color: white;
-  font-size: 12px;
+  font-size: 10px;
   border-radius: 50%;
-  background: #fff2;
+  background: #fff1;
   outline: none;
   text-align: center;
   display: flex;
