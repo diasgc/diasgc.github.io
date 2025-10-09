@@ -38,6 +38,8 @@ const tnk = {
   ]
 }
 
+const refId = document.getElementById('pasuk-ref');
+
 const options = {
   date: new Date(),
   latitude: 32.0853,
@@ -116,6 +118,7 @@ upd(i.value);
 function upd(d){
   fetchData(d,'heb-content','source');
   fetchData(d,'eng-content','translation');
+  refId.innerText = d;
 }
 
 function fetchData(ref,id,lang){
