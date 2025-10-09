@@ -9,11 +9,11 @@ body {
 }
 
 #heb-content {
-  font-size: 26px;
+  font-size: 28px;
   text-align: right;
   color: white;
   font-family: 'stmVelish';
-  padding: 32px 24px;
+  padding: 32px 12px;
   flex: 1;
 }
 #eng-content {
@@ -24,14 +24,13 @@ body {
 }
 #pasuk-ref {
   font-size: 10px;
-  font-style: italic;
   text-align: right;
-  padding: 0px 24px;
+  padding: 8px 24px;
 }
 
 #pasuk-prev, #pasuk-next {
   position: static;
-  margin: 0 4px;
+  padding: 0 4px;
   width: 42px;
   height: 42px;
   color: white;
