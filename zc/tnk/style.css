@@ -39,18 +39,15 @@ body {
   font-size: 12px;
   text-align: right;
   direction: ltr;
-  padding: 18px 72px;
+  padding: 18px 42px;
 }
 
 #pasuk-prev, #pasuk-next {
   position: static;
-  width: 42px;
-  height: 42px;
-  margin: 0 12px;
-  color: white;
-  font-size: 10px;
-  border-radius: 50%;
-  background: #fff1;
+  margin: 2px;
+  color: #fff2;
+  font-size: 48px;
+  font-weight: bold;
   outline: none;
   text-align: center;
   display: flex;
@@ -76,11 +73,11 @@ button:focus, input:focus, select:focus, textarea:focus {
 button,input {
   cursor: pointer;
   outline: none;
-  border: 1px solid #ccc;
+  border: 1px solid #ccc4;
   background: transparent;
   border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 16px;
+  padding: 8px;
+  font-size: 13px;
   margin: 8px;
   color: white;
 }
