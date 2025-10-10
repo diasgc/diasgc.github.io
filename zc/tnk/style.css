@@ -13,13 +13,14 @@ body {
   text-align: right;
   color: white;
   font-family: 'stmVelish';
-  padding: 32px 12px;
+  padding: 32px 8px;
   flex: 1;
 }
 #eng-content {
-  font-size: 18px;
+  font-size: 16px;
   text-align: left;
   color: white;
+  font-style: italic;
   padding: 32px 12px;
 }
 #pasuk-ref {

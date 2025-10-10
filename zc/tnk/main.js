@@ -173,12 +173,13 @@ upd(i.value);
 
 function upd(d){
   fetchData(d,'heb-content','source');
-  fetchData(d,'eng-content','translation');
+  fetchData(d,'eng-content','portuguese');
   refId.innerText = d;
 }
 
 function fetchData(ref,id,lang){
   const url = `https://www.sefaria.org/api/v3/texts/${ref}?version=${lang}`;
+  //const url = `https://www.sefaria.org/api/texts/${ref}?lang=${lang}`;
   const options = {method: 'GET', headers: {accept: 'application/json'}};
   fetch(url, options)
     .then(res => res.json())
