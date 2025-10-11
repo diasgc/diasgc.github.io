@@ -102,33 +102,64 @@ const tnk = {
     this.text[2] = KBLH.removeTaamim(t);
   },
   getText: function(){
-    return this.text[this.txtMode];
+    return this.text[this.txtMode].replace(/{.*}/g,(match) => `<sup><small><small>${match}</small></small></sup>`);;
   },
   txtMode: 1
 }
 
+const localCache = {
+  cache: null,
+  load: function(){
+    if (window.localStorage){
+      const c = window.localStorage.getItem('tnk');
+      this.cache = c ? JSON.parse(c) : {}; 
+    }
+  },
+  update: function(){
+    if (window.localStorage){
+      this.cache[tnk.ref] = {"heb": tnk.text[0], "transl": tnk.transl};
+      localStorage.setItem("tnk", JSON.stringify(this.cache)); 
+    }
+  },
+  hasRef: function(ref){
+    return this.cache && this.cache[ref];
+  },
+  setTnk: function(ref){
+    if (this.hasRef(ref)){
+      tnk.setText(this.cache[ref].heb);
+      tnk.transl = this.cache[ref].transl;
+    }
+  }
+}
+
+localCache.load();
 //const cache = window.localStorage ? window.localStorage.getItem('tnk') || {} : null;
 
 
 const refId = document.getElementById('pasuk-ref');
 
-const options = {
-  date: new Date(),
-  latitude: 32.0853,
-  longitude: 34.7818,
-  timeZoneID: 'Europe/Lisbon',
-  elevation: 0,
-  locationName: 'Porto',
-  complexZmanim: false
-};
-
-navigator.geolocation.getCurrentPosition(position => {
-  options.latitude = position.coords.latitude;
-  options.longitude = position.coords.longitude;
-  options.elevation = position.coords.altitude || 0;
-  options.timeZoneID = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  options.locationName = 'Current Location';
-});
+const zmanim = {
+  options: {
+    date: new Date(),
+    latitude: 32.0853,
+    longitude: 34.7818,
+    timeZoneID: 'Europe/Lisbon',
+    elevation: 0,
+    locationName: 'Porto',
+    complexZmanim: false  
+  },
+  refresh: function(callback){
+    navigator.geolocation.getCurrentPosition(position => {
+      zmanim.options.latitude = position.coords.latitude;
+      zmanim.options.longitude = position.coords.longitude;
+      zmanim.options.elevation = position.coords.altitude || 0;
+      zmanim.options.timeZoneID = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      zmanim.options.locationName = 'Current Location';
+      if (callback)
+        callback();
+    });
+  }
+}
 
 let cache = null;
 if (window.localStorage){
@@ -182,11 +213,24 @@ function next(){
 
 const i = document.getElementById('verse2');
 const he = document.getElementById('heb-content');
+const lg =  document.getElementById('eng-content');
 const info = document.getElementById('info-content');
 
 function refresh(){
   tnk.book = tnk.seferim[tnk.sefer];
   tnk.ref = `${tnk.book} ${tnk.perek}.${tnk.pasuk}`;
+  i.innerText = tnk.ref;
+  upd(tnk.ref);
+}
+
+function refresh2(){
+  tnk.book = tnk.seferim[tnk.sefer];
+  tnk.ref = `${tnk.book} ${tnk.perek}.${tnk.pasuk}`;
+  if (localCache.hasRef()){
+    localCache.setTnk(tnk.ref);
+  } else {
+
+  }
   i.innerText = tnk.ref;
   upd(tnk.ref);
 }
@@ -205,21 +249,38 @@ function upd(ref){
   if (cache && cache[ref]){
     tnk.transl = cache[ref].transl;
     tnk.setText(cache[ref].heb);
-    document.getElementById('heb-content').innerHTML = tnk.getText();
+    const t = tnk.getText();
+    document.getElementById('heb-content').innerHTML = t;
     document.getElementById('eng-content').innerHTML = tnk.transl;
     refId.innerText = ref;
     return;
   }
   downloadData(ref);
-  //fetchData(ref,'heb-content','source');
-  //fetchData(ref,'eng-content','portuguese');
   refId.innerText = ref;
 }
 
 function saveCache(){
-  if (cache)
+  if (cache){
     cache[ref] = {"heb": tnk.text[0], "transl": tnk.transl};
+    localStorage.setItem("tnk", JSON.stringify(cache));
+  }
+}
 
+function fetchSefaria(ref, v, callback){
+  const opts = {method: 'GET', headers: {accept: 'application/json'}};
+  fetch(`https://www.sefaria.org/api/v3/texts/${ref}?version=${v}`, opts)
+    .then(res => res.json())
+    .then(json => callback(json));
+}
+
+function downloadData2(ref, callback){
+  fetchSefaria(ref, 'source', (j) => {
+    tnk.setText(j.versions[0].text);
+    fetchSefaria(ref, tnk.lang, (k) => {
+      tnk.transl = k.versions[0].text;
+      callback();
+    });
+  });
 }
 
 function downloadData(ref){
@@ -232,9 +293,7 @@ function downloadData(ref){
       fetch(url, options).then(res => res.json()).then(json => {
         loadData(json, 'eng-content', tnk.transLang);
         tnk.transl = json.versions[0].text;
-        if (cache){
-          cache[ref] = {"heb": tnk.text[0], "transl": tnk.transl};
-        }
+        saveCache();
       });
     }).catch(err => console.error(err));
 }
