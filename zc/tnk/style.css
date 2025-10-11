@@ -7,6 +7,92 @@ body {
   background: #333;
   color: white;
   font-family: sans-serif;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* App Bar Styling */
+.app-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #222; /* Material Design Purple */
+  color: white;
+  padding: 10px 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif;
+}
+
+/* Title Styling */
+.app-bar .title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Icon Styling */
+.app-bar .icons {
+  display: flex;
+  gap: 16px;
+}
+
+.app-bar .icon {
+  cursor: pointer;
+  font-size: 24px;
+  transition: transform 0.2s ease;
+}
+
+.app-bar .icon:hover {
+  transform: scale(1.2);
+}
+
+/* Optional: Responsive Design */
+@media (max-width: 600px) {
+  .app-bar .title {
+    font-size: 16px;
+  }
+  .app-bar .icon {
+    font-size: 20px;
+  }
+}
+/* Navigation bar container */
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #222; /* Dark background */
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Navigation bar items */
+.nav-bar a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  text-align: center;
+  flex: 1; 
+}
+
+/* Highlight effect on hover */
+.nav-bar a:hover {
+  color: #00bcd4; /* Light blue */
+}
+
+/* Active link styling */
+.nav-bar a.active {
+  color: #00bcd4;
+  font-weight: bold;
+}
+
+/* Icon styling (optional) */
+.nav-bar a i {
+  display: block;
+  font-size: 24px;
+  margin-bottom: 5px;
 }
 
 #heb-row {
@@ -62,7 +148,7 @@ body {
 
 #nav-buttons {
   position: fixed;
-  bottom: 1vw;
+  bottom: 5vh;
   right: 1vw;
 }
 

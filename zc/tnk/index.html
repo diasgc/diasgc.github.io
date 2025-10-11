@@ -7,10 +7,26 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="site.webmanifest">
-  <link rel="stylesheet" href="style.css?v=251010c">
+  <link rel="stylesheet" href="style.css?v=251010d">
   <script src="https://unpkg.com/kosher-zmanim/dist/kosher-zmanim.min.js"></script>
 </head>
 <body>
+  <!-- App Bar -->
+  <div class="app-bar">
+    <div class="icons">
+      <span class="icon" onclick="menuClicked()">☰</span> <!-- Menu Icon -->
+    </div>
+    <div id="verse2" class="title">TN"K app</div>
+    <div class="icons">
+      <span class="icon" onclick="searchClicked()">&vellip;</span> <!-- Search Icon -->
+    </div>
+  </div>
+  <!-- Navigation Bar -->
+  <div class="nav-bar">
+    <a href="#" class="active"><i class="fas fa-home"></i>Home</a>
+    <a href="#"><i class="fas fa-search"></i>Search</a>
+    <a href="#"><i class="fas fa-user"></i>Profile</a>
+  </div>
   <div id="container">
     <div id="heb-row">
       <div id="pasuk-next">⏴</div>
@@ -23,11 +39,9 @@
   <div id="nav-buttons">
     <input type="text" id="verse" value="Bereshit 1.1"/>
     <button id="nav-home">Home</button>
-    <button id="nav-toc">Table of Contents</button>
     <button id="nav-search">Search</button>
-    <button id="nav-bookmark">Bookmark</button>
     <button id="nav-settings">Settings</button>
     </div>
-  <script type="text/javascript" src="main.js?v=251010c"></script>
+  <script type="text/javascript" src="main.js?v=251010d"></script>
 </body>
 </html>

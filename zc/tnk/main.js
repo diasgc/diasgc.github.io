@@ -170,8 +170,13 @@ const i = document.getElementById('verse');
 i.addEventListener('change',()=> upd(i.value));
 upd(i.value);
 
+document.getElementById('nav-home').addEventListener('click',() => {
+  i.value = 'Bereshit 1.1'
+  upd(i.value);
+});
 
 function upd(d){
+  document.getElementById('verse2').innerText = d;
   fetchData(d,'heb-content','source');
   fetchData(d,'eng-content','portuguese');
   refId.innerText = d;
