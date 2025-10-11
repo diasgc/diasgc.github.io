@@ -92,6 +92,8 @@ const tnk = {
     { "Haazinu": "4;32:1–52" },
     { "Vezot Haberakhah": "4;33:1–34:12" }
   ],
+  transLang: 'portuguese',
+  ref: 'Bereshit 1.1',
   text: [],
   transl: '',
   setText: function(t){
@@ -183,31 +185,58 @@ const he = document.getElementById('heb-content');
 const info = document.getElementById('info-content');
 
 function refresh(){
-  tnk.book = tnk.seferim[tnk.sefer];  
-  i.innerText = `${tnk.book} ${tnk.perek}.${tnk.pasuk}`;
-  upd(i.innerText);
+  tnk.book = tnk.seferim[tnk.sefer];
+  tnk.ref = `${tnk.book} ${tnk.perek}.${tnk.pasuk}`;
+  i.innerText = tnk.ref;
+  upd(tnk.ref);
 }
 
 refresh();
 
 document.getElementById('nav-home').addEventListener('click',() => {
-  i.innerText = 'Bereshit 1.1'
-  upd(i.innerText);
+  tnk.sefer = 0;
+  tnk.perek = 1;
+  tnk.pasuk = 1;
+  refresh();
 });
 
-function upd(d){
-  document.getElementById('verse2').innerText = d;
-  if (cache && cache[d]){
-    loadData(cache[d].heb,'heb-content','source');
-    loadData(cache[d].transl,'eng-content','portuguese');
-    refId.innerText = d;
+function upd(ref){
+  document.getElementById('verse2').innerText = ref;
+  if (cache && cache[ref]){
+    tnk.transl = cache[ref].transl;
+    tnk.setText(cache[ref].heb);
+    document.getElementById('heb-content').innerHTML = tnk.getText();
+    document.getElementById('eng-content').innerHTML = tnk.transl;
+    refId.innerText = ref;
     return;
   }
-  fetchData(d,'heb-content','source');
-  fetchData(d,'eng-content','portuguese');
-  if (cache) cache[d] = {heb: tnk.text[0], transl: tnk.transl};
-  if (window.localStorage) window.localStorage.setItem('tnk',JSON.stringify(cache));
-  refId.innerText = d;
+  downloadData(ref);
+  //fetchData(ref,'heb-content','source');
+  //fetchData(ref,'eng-content','portuguese');
+  refId.innerText = ref;
+}
+
+function saveCache(){
+  if (cache)
+    cache[ref] = {"heb": tnk.text[0], "transl": tnk.transl};
+
+}
+
+function downloadData(ref){
+  let url = `https://www.sefaria.org/api/v3/texts/${ref}?version=source`;
+  const options = {method: 'GET', headers: {accept: 'application/json'}};
+  fetch(url, options).then(res => res.json()).then(json => {
+      loadData(json, 'heb-content', 'source');
+      tnk.setText(json.versions[0].text);
+      url = `https://www.sefaria.org/api/v3/texts/${ref}?version=${tnk.transLang}`;
+      fetch(url, options).then(res => res.json()).then(json => {
+        loadData(json, 'eng-content', tnk.transLang);
+        tnk.transl = json.versions[0].text;
+        if (cache){
+          cache[ref] = {"heb": tnk.text[0], "transl": tnk.transl};
+        }
+      });
+    }).catch(err => console.error(err));
 }
 
 function fetchData(ref,id,lang){
@@ -224,7 +253,7 @@ function fetchData(ref,id,lang){
 function loadData(data,id,lang){
   if (data && data.versions && data.versions[0] && data.versions[0].text){
     let text = data.versions[0].text;
-    text = text.replace(/{.*}/g,(match) => `<sup><sup><small>${match}</small></sup></sup>`);
+    text = text.replace(/{.*}/g,(match) => `<sup><small><small>${match}</small></small></sup>`);
     if (lang === 'source'){
       tnk.setText(text);
       text = tnk.getText();
