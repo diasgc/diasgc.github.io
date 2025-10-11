@@ -8,7 +8,6 @@ const KBLH = {
     }
     return out;
   },
-  
   heFormatNikud: function(s){
     let out = '';
     for (let i=0; i < s.length; i++){
@@ -16,6 +15,22 @@ const KBLH = {
       if (c === 0x20 || (c > 0x05af && c < 0x05eb && c != 0x05bd && c != 0x05c0)) {
         out += String.fromCharCode(c);
       }
+    }
+    return out;
+  },
+  removeTaamim: function(s){
+    let out = '';
+    for (let i=0; i < s.length; i++){
+      let c = s.charCodeAt(i);
+      out += c > 0x0590 && c < 0x05b0 ? '' : String.fromCharCode(c);
+    }
+    return out;
+  },
+  removeNikud: function(s){
+    let out = '';
+    for (let i=0; i < s.length; i++){
+      let c = s.charCodeAt(i);
+      out += c !== 0x05c6 && c > 0x0590 && c < 0x05c8 ? '' : String.fromCharCode(c);
     }
     return out;
   }

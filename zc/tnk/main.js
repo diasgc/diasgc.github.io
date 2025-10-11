@@ -95,14 +95,17 @@ const tnk = {
   text: [],
   setText: function(t){
     this.text[0] = t;
-    this.text[1] = KBLH.heFormatOtiot(t);
-    this.text[2] = KBLH.heFormatNikud(t);
+    this.text[1] = KBLH.removeNikud(t);
+    this.text[2] = KBLH.removeTaamim(t);
   },
   getText: function(){
     return this.text[this.txtMode];
   },
   txtMode: 0
 }
+
+//const cache = window.localStorage ? window.localStorage.getItem('tnk') || {} : null;
+
 
 const refId = document.getElementById('pasuk-ref');
 
@@ -185,6 +188,7 @@ document.getElementById('nav-home').addEventListener('click',() => {
 
 function upd(d){
   document.getElementById('verse2').innerText = d;
+
   fetchData(d,'heb-content','source');
   fetchData(d,'eng-content','portuguese');
   refId.innerText = d;
