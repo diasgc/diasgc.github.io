@@ -93,6 +93,7 @@ const tnk = {
     { "Vezot Haberakhah": "4;33:1–34:12" }
   ],
   text: [],
+  transl: '',
   setText: function(t){
     this.text[0] = t;
     this.text[1] = KBLH.removeNikud(t);
@@ -101,7 +102,7 @@ const tnk = {
   getText: function(){
     return this.text[this.txtMode];
   },
-  txtMode: 0
+  txtMode: 1
 }
 
 //const cache = window.localStorage ? window.localStorage.getItem('tnk') || {} : null;
@@ -127,11 +128,18 @@ navigator.geolocation.getCurrentPosition(position => {
   options.locationName = 'Current Location';
 });
 
+let cache = null;
+if (window.localStorage){
+  const c = window.localStorage.getItem('tnk');
+  cache = c ? JSON.parse(c) : {};
+}
+
 document.getElementById('pasuk-prev').addEventListener('click',prev);
 document.getElementById('pasuk-next').addEventListener('click',next);
 document.getElementById('nav-prev').addEventListener('click',prev);
 document.getElementById('nav-next').addEventListener('click',next);
 document.getElementById('nav-search').addEventListener('click',search);
+document.getElementById('verse2').addEventListener('click',search);
 document.getElementById('nav-neq').addEventListener('click',neq);
 
 function prev(){
@@ -172,6 +180,7 @@ function next(){
 
 const i = document.getElementById('verse2');
 const he = document.getElementById('heb-content');
+const info = document.getElementById('info-content');
 
 function refresh(){
   tnk.book = tnk.seferim[tnk.sefer];  
@@ -188,9 +197,16 @@ document.getElementById('nav-home').addEventListener('click',() => {
 
 function upd(d){
   document.getElementById('verse2').innerText = d;
-
+  if (cache && cache[d]){
+    loadData(cache[d].heb,'heb-content','source');
+    loadData(cache[d].transl,'eng-content','portuguese');
+    refId.innerText = d;
+    return;
+  }
   fetchData(d,'heb-content','source');
   fetchData(d,'eng-content','portuguese');
+  if (cache) cache[d] = {heb: tnk.text[0], transl: tnk.transl};
+  if (window.localStorage) window.localStorage.setItem('tnk',JSON.stringify(cache));
   refId.innerText = d;
 }
 
@@ -212,6 +228,8 @@ function loadData(data,id,lang){
     if (lang === 'source'){
       tnk.setText(text);
       text = tnk.getText();
+    } else {
+      tnk.transl = text;
     }
     const e = document.getElementById(id);
     e.innerHTML = text;
