@@ -104,7 +104,7 @@ const tnk = {
   getText: function(){
     return this.text[this.txtMode].replace(/{.*}/g,(match) => `<sup><small><small>${match}</small></small></sup>`);;
   },
-  txtMode: 1
+  txtMode: 2
 }
 
 const localCache = {
@@ -132,12 +132,6 @@ const localCache = {
   }
 }
 
-localCache.load();
-//const cache = window.localStorage ? window.localStorage.getItem('tnk') || {} : null;
-
-
-const refId = document.getElementById('pasuk-ref');
-
 const zmanim = {
   options: {
     date: new Date(),
@@ -160,20 +154,6 @@ const zmanim = {
     });
   }
 }
-
-let cache = null;
-if (window.localStorage){
-  const c = window.localStorage.getItem('tnk');
-  cache = c ? JSON.parse(c) : {};
-}
-
-document.getElementById('pasuk-prev').addEventListener('click',prev);
-document.getElementById('pasuk-next').addEventListener('click',next);
-document.getElementById('nav-prev').addEventListener('click',prev);
-document.getElementById('nav-next').addEventListener('click',next);
-document.getElementById('nav-search').addEventListener('click',search);
-document.getElementById('verse2').addEventListener('click',search);
-document.getElementById('nav-neq').addEventListener('click',neq);
 
 function prev(){
   if (tnk.pasuk > 1){
@@ -211,61 +191,6 @@ function next(){
   refresh();
 }
 
-const i = document.getElementById('verse2');
-const he = document.getElementById('heb-content');
-const lg =  document.getElementById('eng-content');
-const info = document.getElementById('info-content');
-
-function refresh(){
-  tnk.book = tnk.seferim[tnk.sefer];
-  tnk.ref = `${tnk.book} ${tnk.perek}.${tnk.pasuk}`;
-  i.innerText = tnk.ref;
-  upd(tnk.ref);
-}
-
-function refresh2(){
-  tnk.book = tnk.seferim[tnk.sefer];
-  tnk.ref = `${tnk.book} ${tnk.perek}.${tnk.pasuk}`;
-  if (localCache.hasRef()){
-    localCache.setTnk(tnk.ref);
-  } else {
-
-  }
-  i.innerText = tnk.ref;
-  upd(tnk.ref);
-}
-
-refresh();
-
-document.getElementById('nav-home').addEventListener('click',() => {
-  tnk.sefer = 0;
-  tnk.perek = 1;
-  tnk.pasuk = 1;
-  refresh();
-});
-
-function upd(ref){
-  document.getElementById('verse2').innerText = ref;
-  if (cache && cache[ref]){
-    tnk.transl = cache[ref].transl;
-    tnk.setText(cache[ref].heb);
-    const t = tnk.getText();
-    document.getElementById('heb-content').innerHTML = t;
-    document.getElementById('eng-content').innerHTML = tnk.transl;
-    refId.innerText = ref;
-    return;
-  }
-  downloadData(ref);
-  refId.innerText = ref;
-}
-
-function saveCache(){
-  if (cache){
-    cache[ref] = {"heb": tnk.text[0], "transl": tnk.transl};
-    localStorage.setItem("tnk", JSON.stringify(cache));
-  }
-}
-
 function fetchSefaria(ref, v, callback){
   const opts = {method: 'GET', headers: {accept: 'application/json'}};
   fetch(`https://www.sefaria.org/api/v3/texts/${ref}?version=${v}`, opts)
@@ -273,55 +198,30 @@ function fetchSefaria(ref, v, callback){
     .then(json => callback(json));
 }
 
-function downloadData2(ref, callback){
+function download(ref, callback){
   fetchSefaria(ref, 'source', (j) => {
     tnk.setText(j.versions[0].text);
-    fetchSefaria(ref, tnk.lang, (k) => {
+    fetchSefaria(ref, tnk.transLang, (k) => {
       tnk.transl = k.versions[0].text;
       callback();
     });
   });
 }
 
-function downloadData(ref){
-  let url = `https://www.sefaria.org/api/v3/texts/${ref}?version=source`;
-  const options = {method: 'GET', headers: {accept: 'application/json'}};
-  fetch(url, options).then(res => res.json()).then(json => {
-      loadData(json, 'heb-content', 'source');
-      tnk.setText(json.versions[0].text);
-      url = `https://www.sefaria.org/api/v3/texts/${ref}?version=${tnk.transLang}`;
-      fetch(url, options).then(res => res.json()).then(json => {
-        loadData(json, 'eng-content', tnk.transLang);
-        tnk.transl = json.versions[0].text;
-        saveCache();
-      });
-    }).catch(err => console.error(err));
-}
-
-function fetchData(ref,id,lang){
-  const url = `https://www.sefaria.org/api/v3/texts/${ref}?version=${lang}`;
-  //const url = `https://www.sefaria.org/api/texts/${ref}?lang=${lang}`;
-  const options = {method: 'GET', headers: {accept: 'application/json'}};
-  fetch(url, options)
-    .then(res => res.json())
-    .then(json => {
-      loadData(json,id,lang)
-    }).catch(err => console.error(err));
-}
-
-function loadData(data,id,lang){
-  if (data && data.versions && data.versions[0] && data.versions[0].text){
-    let text = data.versions[0].text;
-    text = text.replace(/{.*}/g,(match) => `<sup><small><small>${match}</small></small></sup>`);
-    if (lang === 'source'){
-      tnk.setText(text);
-      text = tnk.getText();
-    } else {
-      tnk.transl = text;
-    }
-    const e = document.getElementById(id);
-    e.innerHTML = text;
-  }
+function refresh(){
+  tnk.book = tnk.seferim[tnk.sefer];
+  tnk.ref = `${tnk.book} ${tnk.perek}.${tnk.pasuk}`;
+  if (localCache.hasRef()){
+    localCache.setTnk(tnk.ref);
+  } else {
+    download(tnk.ref,() => {
+      localCache.update();
+      he.innerHTML = tnk.getText();
+      lg.innerHTML = tnk.transl;
+      i.innerText = tnk.ref;
+      rf.innerText = tnk.ref;
+    });
+  };
 }
 
 
@@ -335,7 +235,46 @@ function settings(){
   const shaaZmanit = zmanim.getShaahZmanit();
 }
 
+
+
+
+localCache.load();
+
+document.getElementById('pasuk-prev').addEventListener('click',prev);
+document.getElementById('pasuk-next').addEventListener('click',next);
+document.getElementById('nav-prev').addEventListener('click',prev);
+document.getElementById('nav-next').addEventListener('click',next);
+document.getElementById('nav-search').addEventListener('click',search);
+document.getElementById('verse2').addEventListener('click',search);
+document.getElementById('nav-neq').addEventListener('click',neq);
+
+const i = document.getElementById('verse2');
+const he = document.getElementById('heb-content');
+const lg =  document.getElementById('eng-content');
+const rf = document.getElementById('pasuk-ref');;
+const refId = document.getElementById('pasuk-ref');
+const info = document.getElementById('info-content');
+
+refresh();
+
+document.getElementById('nav-home').addEventListener('click',() => {
+  tnk.sefer = 0;
+  tnk.perek = 1;
+  tnk.pasuk = 1;
+  refresh();
+});
+
+
+function search(){
+  const box = document.getElementById('pan-search');
+  box.style.display = 'block';
+}
+
 const panSearch = document.getElementById('pan-search');
+
+const selSefer = document.getElementById('sel-sefer');
+const selPerek = document.getElementById('sel-perek');
+const selPasuk = document.getElementById('sel-pasuk');
 
 const selParsha = document.getElementById('sel-parsha');
 selParsha.addEventListener('change',() => {
@@ -348,10 +287,6 @@ selParsha.addEventListener('change',() => {
     populateSefer();
   }
 });
-
-const selSefer = document.getElementById('sel-sefer');
-const selPerek = document.getElementById('sel-perek');
-const selPasuk = document.getElementById('sel-pasuk');
 
 const btnGo = document.getElementById('pan-go');
 btnGo.addEventListener('click',() => {
@@ -427,9 +362,87 @@ selPasuk.addEventListener('change',() => {
 
 populateSefer();
 
-function search(){
-  const box = document.getElementById('pan-search');
-  box.style.display = 'block';
-}
 //https://developers.sefaria.org/reference/get-v3-texts
 //https://www.hebcal.com/home/1663/zmanim-halachic-times-api
+
+
+
+
+/*
+function _downloadData(ref){
+  let url = `https://www.sefaria.org/api/v3/texts/${ref}?version=source`;
+  const options = {method: 'GET', headers: {accept: 'application/json'}};
+  fetch(url, options).then(res => res.json()).then(json => {
+      loadData(json, 'heb-content', 'source');
+      tnk.setText(json.versions[0].text);
+      url = `https://www.sefaria.org/api/v3/texts/${ref}?version=${tnk.transLang}`;
+      fetch(url, options).then(res => res.json()).then(json => {
+        loadData(json, 'eng-content', tnk.transLang);
+        tnk.transl = json.versions[0].text;
+        saveCache();
+      });
+    }).catch(err => console.error(err));
+}
+
+function _fetchData(ref,id,lang){
+  const url = `https://www.sefaria.org/api/v3/texts/${ref}?version=${lang}`;
+  //const url = `https://www.sefaria.org/api/texts/${ref}?lang=${lang}`;
+  const options = {method: 'GET', headers: {accept: 'application/json'}};
+  fetch(url, options)
+    .then(res => res.json())
+    .then(json => {
+      loadData(json,id,lang)
+    }).catch(err => console.error(err));
+}
+
+function _loadData(data,id,lang){
+  if (data && data.versions && data.versions[0] && data.versions[0].text){
+    let text = data.versions[0].text;
+    text = text.replace(/{.*}/g,(match) => `<sup><small><small>${match}</small></small></sup>`);
+    if (lang === 'source'){
+      tnk.setText(text);
+      text = tnk.getText();
+    } else {
+      tnk.transl = text;
+    }
+    const e = document.getElementById(id);
+    e.innerHTML = text;
+  }
+}
+
+function _upd(ref){
+  document.getElementById('verse2').innerText = ref;
+  if (cache && cache[ref]){
+    tnk.transl = cache[ref].transl;
+    tnk.setText(cache[ref].heb);
+    const t = tnk.getText();
+    document.getElementById('heb-content').innerHTML = t;
+    document.getElementById('eng-content').innerHTML = tnk.transl;
+    refId.innerText = ref;
+    return;
+  }
+  downloadData(ref);
+  refId.innerText = ref;
+}
+
+function _saveCache(){
+  if (cache){
+    cache[ref] = {"heb": tnk.text[0], "transl": tnk.transl};
+    localStorage.setItem("tnk", JSON.stringify(cache));
+  }
+}
+
+function _refresh2(){
+  tnk.book = tnk.seferim[tnk.sefer];
+  tnk.ref = `${tnk.book} ${tnk.perek}.${tnk.pasuk}`;
+  i.innerText = tnk.ref;
+  rf.innerText = tnk.ref;
+  upd(tnk.ref);
+}
+
+let cache = null;
+if (window.localStorage){
+  const c = window.localStorage.getItem('tnk');
+  cache = c ? JSON.parse(c) : {};
+}
+*/
