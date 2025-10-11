@@ -91,7 +91,17 @@ const tnk = {
     { "Vayelech": "4;31:1–30" },
     { "Haazinu": "4;32:1–52" },
     { "Vezot Haberakhah": "4;33:1–34:12" }
-  ]
+  ],
+  text: [],
+  setText: function(t){
+    this.text[0] = t;
+    this.text[1] = KBLH.heFormatOtiot(t);
+    this.text[2] = KBLH.heFormatNikud(t);
+  },
+  getText: function(){
+    return this.text[this.txtMode];
+  },
+  txtMode: 0
 }
 
 const refId = document.getElementById('pasuk-ref');
@@ -119,7 +129,7 @@ document.getElementById('pasuk-next').addEventListener('click',next);
 document.getElementById('nav-prev').addEventListener('click',prev);
 document.getElementById('nav-next').addEventListener('click',next);
 document.getElementById('nav-search').addEventListener('click',search);
-document.getElementById('nav-settings').addEventListener('click',settings);
+document.getElementById('nav-neq').addEventListener('click',neq);
 
 function prev(){
   if (tnk.pasuk > 1){
@@ -157,22 +167,20 @@ function next(){
   refresh();
 }
 
+const i = document.getElementById('verse2');
+const he = document.getElementById('heb-content');
 
 function refresh(){
-  tnk.book = tnk.seferim[tnk.sefer];
-  const i = document.getElementById('verse');
-  i.value = `${tnk.book} ${tnk.perek}.${tnk.pasuk}`;
-  upd(i.value);
+  tnk.book = tnk.seferim[tnk.sefer];  
+  i.innerText = `${tnk.book} ${tnk.perek}.${tnk.pasuk}`;
+  upd(i.innerText);
 }
-
-const i = document.getElementById('verse');
-i.addEventListener('change',()=> upd(i.value));
 
 refresh();
 
 document.getElementById('nav-home').addEventListener('click',() => {
-  i.value = 'Bereshit 1.1'
-  upd(i.value);
+  i.innerText = 'Bereshit 1.1'
+  upd(i.innerText);
 });
 
 function upd(d){
@@ -189,17 +197,27 @@ function fetchData(ref,id,lang){
   fetch(url, options)
     .then(res => res.json())
     .then(json => {
-      loadData(json,id)
+      loadData(json,id,lang)
     }).catch(err => console.error(err));
 }
 
-function loadData(data,id){
+function loadData(data,id,lang){
   if (data && data.versions && data.versions[0] && data.versions[0].text){
-    var text = data.versions[0].text;
+    let text = data.versions[0].text;
     text = text.replace(/{.*}/g,(match) => `<sup><sup><small>${match}</small></sup></sup>`);
+    if (lang === 'source'){
+      tnk.setText(text);
+      text = tnk.getText();
+    }
     const e = document.getElementById(id);
     e.innerHTML = text;
   }
+}
+
+
+function neq(){
+  tnk.txtMode = (tnk.txtMode + 1) % 3;
+  he.innerHTML = tnk.getText();
 }
 
 function settings(){

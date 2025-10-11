@@ -6,9 +6,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#f0f0f0">
   <link rel="manifest" href="site.webmanifest">
   <link rel="stylesheet" href="style.css?v=251011a">
   <script src="https://unpkg.com/kosher-zmanim/dist/kosher-zmanim.min.js"></script>
+  <script src="kblh.js"></script>
 </head>
 <body>
   <!-- App Bar -->
@@ -23,9 +25,9 @@
   </div>
   <!-- Navigation Bar -->
   <div class="nav-bar">
-    <a href="#" class="active"><i class="fas fa-home"></i>Home</a>
-    <a href="#"><i class="fas fa-search"></i>Search</a>
-    <a href="#"><i class="fas fa-user"></i>Profile</a>
+    <div class="a" id="nav-home"><i class="fas fa-home"></i>Home</div>
+    <div class="a" id="nav-search"><i class="fas fa-search"></i>Search</div>
+    <div class="a" id="nav-neq"><i class="fas fa-user"></i>Neq</div>
   </div>
   <div id="container">
     <div id="heb-row">
@@ -35,13 +37,10 @@
     </div>
     <div id="pasuk-ref">reference</div>
     <div id="eng-content"></div>
+    <div id="info-content"></div>
   </div>
   <div id="nav-buttons">
-    <button id="nav-settings">more</button>
-    <input type="text" id="verse" value="Bereshit 1.1"/>
-    <button id="nav-search">search</button>
     <button id="nav-next">next</button>
-    <button id="nav-home">home</button>
     <button id="nav-prev">prev</button>
   </div>
   <div id="pan-search">

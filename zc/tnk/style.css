@@ -77,7 +77,7 @@ body {
 }
 
 /* Navigation bar items */
-.nav-bar a {
+.nav-bar .a {
   color: white;
   text-decoration: none;
   font-size: 16px;
@@ -86,18 +86,18 @@ body {
 }
 
 /* Highlight effect on hover */
-.nav-bar a:hover {
+.nav-bar .a:hover {
   color: var(--accent);
 }
 
 /* Active link styling */
-.nav-bar a.active {
+.nav-bar .a.active {
   color: var(--accent);
   font-weight: bold;
 }
 
 /* Icon styling (optional) */
-.nav-bar a i {
+.nav-bar .a i {
   display: block;
   font-size: 24px;
   margin-bottom: 5px;
@@ -126,6 +126,13 @@ body {
   direction: ltr;
   text-align: left;
   font-style: italic;
+  padding: 32px 12px;
+}
+
+#info-content {
+  font-size: 12px;
+  direction: ltr;
+  text-align: left;
   padding: 32px 12px;
 }
 
