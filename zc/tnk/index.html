@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="site.webmanifest">
-  <link rel="stylesheet" href="style.css?v=251010d">
+  <link rel="stylesheet" href="style.css?v=251011a">
   <script src="https://unpkg.com/kosher-zmanim/dist/kosher-zmanim.min.js"></script>
 </head>
 <body>
@@ -29,19 +29,30 @@
   </div>
   <div id="container">
     <div id="heb-row">
-      <div id="pasuk-next">⏴</div>
+      <div id="pasuk-next">&lt;</div>
       <div id="heb-content"></div>
-      <div id="pasuk-prev">⏵</div>
+      <div id="pasuk-prev">&gt;</div>
     </div>
     <div id="pasuk-ref">reference</div>
     <div id="eng-content"></div>
   </div>
   <div id="nav-buttons">
+    <button id="nav-settings">more</button>
     <input type="text" id="verse" value="Bereshit 1.1"/>
-    <button id="nav-home">Home</button>
-    <button id="nav-search">Search</button>
-    <button id="nav-settings">Settings</button>
+    <button id="nav-search">search</button>
+    <button id="nav-next">next</button>
+    <button id="nav-home">home</button>
+    <button id="nav-prev">prev</button>
+  </div>
+  <div id="pan-search">
+    <fieldset class="fs-search"><legend>Parsha</legend><select id="sel-parsha"></select></fieldset>
+    <fieldset class="fs-search"><legend>Sefer</legend><select id="sel-sefer"></select></fieldset>
+    <div class="box-1">
+      <fieldset class="fs-search b1"><legend>Perek</legend><select id="sel-perek"></select></fieldset>
+      <fieldset class="fs-search b1"><legend>Pasuk</legend><select id="sel-pasuk"></select></fieldset>
     </div>
-  <script type="text/javascript" src="main.js?v=251010d"></script>
+    <button id="pan-go">go</button>
+  </div>
+  <script type="text/javascript" src="main.js?v=251011a"></script>
 </body>
 </html>

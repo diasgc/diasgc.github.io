@@ -1,11 +1,19 @@
+:root {
+  --accent: #00bcd4;
+  --main-bg: #333;
+  --bar-bg: #222;
+  --main-fg: #fff;
+  --fade-border: #fff2;
+}
+
 @font-face {
   font-family: 'stmVelish';
   src:url('fonts/stmvelish.woff') format('woff');
 }
 
 body {
-  background: #333;
-  color: white;
+  background: var(--main-bg);
+  color: var(--main-fg);
   font-family: sans-serif;
   overflow: hidden;
   margin: 0;
@@ -16,8 +24,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #222; /* Material Design Purple */
-  color: white;
+  background-color: var(--bar-bg);
+  color: var(--main-fg);
   padding: 10px 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   font-family: Arial, sans-serif;
@@ -37,7 +45,7 @@ body {
 
 .app-bar .icon {
   cursor: pointer;
-  font-size: 24px;
+  font-size: 28px;
   transition: transform 0.2s ease;
 }
 
@@ -60,7 +68,7 @@ body {
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: #222; /* Dark background */
+  background-color: var(--main-bg); /* Dark background */
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -79,12 +87,12 @@ body {
 
 /* Highlight effect on hover */
 .nav-bar a:hover {
-  color: #00bcd4; /* Light blue */
+  color: var(--accent);
 }
 
 /* Active link styling */
 .nav-bar a.active {
-  color: #00bcd4;
+  color: var(--accent);
   font-weight: bold;
 }
 
@@ -131,7 +139,7 @@ body {
 #pasuk-prev, #pasuk-next {
   position: static;
   margin: 2px;
-  color: #fff2;
+  color: var(--fade-border);
   font-size: 48px;
   font-weight: bold;
   outline: none;
@@ -142,7 +150,7 @@ body {
 }
 
 #pasuk-prev:hover, #pasuk-next:hover {
-  background: #fff4;
+  background: var(--fade-border);
   cursor: pointer;
 }
 
@@ -152,18 +160,60 @@ body {
   right: 1vw;
 }
 
+#pan-search {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(50%,100%);
+  margin: 16px;
+  padding: 32px;
+  border-radius: 8px;;
+  background: #222e;
+}
+
+.fs-search {
+  display: block;
+  border: 1px solid var(--fade-border);
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 4px;
+  text-align: center;
+  transition: 0.5s;
+}
+
+.box-1 {
+  display: flex;
+  flex-direction: row;
+}
+
+.b1 {
+  flex: 1;
+}
+
 button:focus, input:focus, select:focus, textarea:focus {
   outline: none;
 }
 
-button,input {
+button,input,select {
   cursor: pointer;
   outline: none;
-  border: 1px solid #ccc4;
+  border: 1px solid var(--fade-border);
   background: transparent;
   border-radius: 8px;
   padding: 8px;
   font-size: 13px;
   margin: 8px;
-  color: white;
+  color: var(--main-fg);
+}
+
+select {
+  border: none;
+}
+
+select option {
+  background: var(--main-bg);
+  color: var(--main-fg);
 }

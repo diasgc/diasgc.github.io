@@ -114,19 +114,12 @@ navigator.geolocation.getCurrentPosition(position => {
   options.locationName = 'Current Location';
 });
 
-document.getElementById('pasuk-prev').addEventListener('click',() => {
-  prev();
-  const i = document.getElementById('verse');
-  i.value = `${tnk.book} ${tnk.perek}.${tnk.pasuk}`;
-  upd(i.value);
-});
-
-document.getElementById('pasuk-next').addEventListener('click',() => {
-  next();
-  const i = document.getElementById('verse');
-  i.value = `${tnk.book} ${tnk.perek}.${tnk.pasuk}`;
-  upd(i.value);
-});
+document.getElementById('pasuk-prev').addEventListener('click',prev);
+document.getElementById('pasuk-next').addEventListener('click',next);
+document.getElementById('nav-prev').addEventListener('click',prev);
+document.getElementById('nav-next').addEventListener('click',next);
+document.getElementById('nav-search').addEventListener('click',search);
+document.getElementById('nav-settings').addEventListener('click',settings);
 
 function prev(){
   if (tnk.pasuk > 1){
@@ -143,7 +136,7 @@ function prev(){
       }
     }
   }
-  tnk.book = tnk.seferim[tnk.sefer];
+  refresh();
 }
 
 function next(){
@@ -161,14 +154,21 @@ function next(){
       }
     }
   }
-  tnk.book = tnk.seferim[tnk.sefer];
+  refresh();
 }
 
-tnk.book = tnk.seferim[tnk.sefer];
+
+function refresh(){
+  tnk.book = tnk.seferim[tnk.sefer];
+  const i = document.getElementById('verse');
+  i.value = `${tnk.book} ${tnk.perek}.${tnk.pasuk}`;
+  upd(i.value);
+}
 
 const i = document.getElementById('verse');
 i.addEventListener('change',()=> upd(i.value));
-upd(i.value);
+
+refresh();
 
 document.getElementById('nav-home').addEventListener('click',() => {
   i.value = 'Bereshit 1.1'
@@ -202,5 +202,106 @@ function loadData(data,id){
   }
 }
 
+function settings(){
+  const zmanim = new Zmanim(options);
+  const shaaZmanit = zmanim.getShaahZmanit();
+}
+
+const panSearch = document.getElementById('pan-search');
+
+const selParsha = document.getElementById('sel-parsha');
+selParsha.addEventListener('change',() => {
+  const p = tnk.parshiot.find(p => Object.keys(p)[0] === selParsha.value);
+  if (p){
+    const [sefer,perek,pasuk] = p[selParsha.value].split(/[:;.-]/).map(x => parseInt(x));
+    tnk.sefer = sefer;
+    tnk.perek = perek;
+    tnk.pasuk = pasuk;
+    populateSefer();
+  }
+});
+
+const selSefer = document.getElementById('sel-sefer');
+const selPerek = document.getElementById('sel-perek');
+const selPasuk = document.getElementById('sel-pasuk');
+
+const btnGo = document.getElementById('pan-go');
+btnGo.addEventListener('click',() => {
+  refresh();
+  panSearch.style.display = 'none';
+});
+
+populateParshiot();
+
+function populateParshiot(){
+  tnk.parshiot.forEach(p => {
+    const name = Object.keys(p)[0];
+    const option = document.createElement('option');
+    option.value = name;
+    option.text = name;
+    selParsha.add(option);
+  });
+}
+
+function populateSefer(){
+  selSefer.innerHTML = '';
+  tnk.seferim.forEach((s,i) => {
+    const option = document.createElement('option');
+    option.value = i;
+    option.text = s;
+    selSefer.add(option);
+  });
+  selSefer.value = tnk.sefer;
+  populatePerek();
+}
+
+function populatePerek(){
+  selPerek.innerHTML = '';
+  const numPerekim = tnk.psukim[tnk.sefer].length;
+  for (let i=1; i<=numPerekim; i++){
+    const option = document.createElement('option');
+    option.value = i;
+    option.text = i;
+    selPerek.add(option);
+  }
+  selPerek.value = tnk.perek;
+  populatePasuk();
+}
+
+function populatePasuk(){
+  selPasuk.innerHTML = '';
+  const numPsukim = tnk.psukim[tnk.sefer][tnk.perek-1][0];
+  for (let i=1; i<=numPsukim; i++){
+    const option = document.createElement('option');
+    option.value = i;
+    option.text = i;
+    selPasuk.add(option);
+  }
+  selPasuk.value = tnk.pasuk;
+}
+
+selSefer.addEventListener('change',() => {
+  tnk.sefer = parseInt(selSefer.value);
+  tnk.perek = 1;
+  tnk.pasuk = 1;
+  populatePerek();
+});
+
+selPerek.addEventListener('change',() => {
+  tnk.perek = parseInt(selPerek.value);
+  tnk.pasuk = 1;
+  populatePasuk();
+});
+
+selPasuk.addEventListener('change',() => {
+  tnk.pasuk = parseInt(selPasuk.value);
+});
+
+populateSefer();
+
+function search(){
+  const box = document.getElementById('pan-search');
+  box.style.display = 'block';
+}
 //https://developers.sefaria.org/reference/get-v3-texts
 //https://www.hebcal.com/home/1663/zmanim-halachic-times-api
