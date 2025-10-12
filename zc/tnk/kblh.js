@@ -11,30 +11,10 @@ const KBLH = {
     'ס': 60, 'ע': 70, 'פ': 80, 'ף': 80, 'צ': 90, 'ץ': 90, 'ק': 100,
     'ר': 200, 'ש': 300, 'ת': 400
   },
-  heFormatOtiot: function(s){
-   let out = '';
-   for (let i=0; i < s.length; i++){
-    let c = s.charCodeAt(i);  
-    if ((c > 0x05cf && c < 0x05eb || c === 0x20))
-      out += String.fromCharCode(c);
-    }
-    return out;
-  },
-  heFormatNikud: function(s){
-    let out = '';
-    for (let i=0; i < s.length; i++){
-      let c = s.charCodeAt(i);  
-      if (c === 0x20 || (c > 0x05af && c < 0x05eb && c != 0x05bd && c != 0x05c0)) {
-        out += String.fromCharCode(c);
-      }
-    }
-    return out;
-  },
   removeSep: function(s){
-    return s.replaceAll('־'," ");
+    return s.replace(/[׀־]/g,' ');
   },
   removeTaamim: function(s){
-    s = s.replaceAll('־'," ");
     let out = '';
     for (let i=0; i < s.length; i++){
       let c = s.charCodeAt(i);
@@ -44,15 +24,30 @@ const KBLH = {
   },
   removeNikud: function(s){
     let out = '';
-    s = s.replaceAll('־'," ");
+    s = this.removeSep(s);
     for (let i=0; i < s.length; i++){
       let c = s.charCodeAt(i);
       out += c !== 0x05c6 && c > 0x0590 && c < 0x05c8 ? '' : String.fromCharCode(c);
     }
     return out;
   },
+  getMilim: function(s){
+    s = this.removeNikud(s).replace(/\s+/g,' ').trim();
+    return s.length === 0 ? [] : s.split(' ');
+  },
+  countMilim: function(s){
+    return this.getMilim(s).length;
+  },
   getOtiot: function(s){
-    return this.heFormatOtiot(s).replace(/\s+/g,'');
+    let out = '';
+    for (let i=0; i < s.length; i++){
+      let c = s.charCodeAt(i);
+      out += c > 0x05cf && c < 0x05eb ? String.fromCharCode(c) : '';
+    }
+    return out;
+  },
+  countOtiot: function(s){
+    return this.getOtiot(s).length;
   },
   getGematria: function(s, useSofit=false){
     let out = 0;

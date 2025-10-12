@@ -235,21 +235,64 @@ function refresh(){
 }
 
 function updateUi(){
-  he.innerHTML = tnk.getText();
-  lg.innerHTML = tnk.transl;
+  fadeInText(he, tnk.getText());
+  fadeInText(lg, tnk.transl);
   i.innerText = tnk.ref;
   rf.innerText = tnk.ref;
   let nfo =`milim: ${tnk.countMilim()}`;
   nfo += ` · ot: ${tnk.countOtiot()}`;
   nfo += ` · gematria: ${KBLH.getGematria(tnk.otSeq)}`;
-  let m = KBLH.getMatrixDimArray(3, tnk.otSeq).str || '';
-  if (m) nfo += ` · matrix: ${m}`;
+  nfo += addMatrixInfo();
   info.innerHTML = nfo;
 }
 
+function addMatrixInfo(){
+  const matrix = KBLH.getMatrixDimArray(3, tnk.otSeq);
+  let out = '';
+  const e = document.getElementById('matrix');
+  e.replaceChildren();
+  if (matrix.str){
+    for (let i=0; i < matrix.array.length; i++){
+      out += `<span class="matrix-span" onclick="showMatrix(this, event)">${matrix.array[i][0]}x${matrix.array[i][1]}</span>`;
+      if (matrix.array[i][0] !== matrix.array[i][1])
+        out += `<span class="matrix-span" onclick="showMatrix(this, event)">${matrix.array[i][1]}x${matrix.array[i][0]}</span>`;
+    }
+    return ` · matrix: ${out}`;
+  }
+  return '';
+}
+
+function showMatrix(element, event){
+  event.stopPropagation();
+  const m = element.innerText.split('x').map(x => parseInt(x));
+  const e = document.getElementById('matrix');
+  e.replaceChildren();
+  const grid = document.createElement('div');
+  grid.className = 'matrix-grid';
+  grid.style.gridTemplateColumns = `repeat(${m[1]}, auto)`;
+  for (let i=0; i < tnk.otSeq.length; i++){
+    const span = document.createElement('span');
+    span.className = 'matrix-span-cell';
+    span.innerText = tnk.otSeq[i];
+    grid.appendChild(span);
+  }
+  e.appendChild(grid);
+  e.style.display = 'block';
+}
+
+function fadeInText(element, newText){
+  element.style.opacity = 0;
+  element.style.animation = 'none';
+  void element.offsetWidth;
+  element.innerHTML = newText;
+  element.style.animation = 'fadeIn 0.5s ease-in-out forwards';
+}
 
 function neq(){
+  const cap = [ 'אָ֗','אֱ','א' ];
+  const id = document.getElementById('nav-neq');
   tnk.txtMode = (tnk.txtMode + 1) % 3;
+  id.innerText = `${cap[tnk.txtMode]}`;
   he.innerHTML = tnk.getText();
 }
 

@@ -4,6 +4,7 @@
   --bar-bg: #222;
   --main-fg: #fff;
   --fade-border: #fff2;
+  --fade-cell: #fff1;
 }
 
 @font-face {
@@ -42,6 +43,7 @@ body {
   display: flex;
   gap: 16px;
 }
+
 #web-stat {
   position: absolute;
   top:12px;
@@ -51,6 +53,7 @@ body {
   text-align: center;
   width: 20px;
   opacity: 0;
+  transition: opacity 0.5s ease;
 }
 .app-bar .icon {
   cursor: pointer;
@@ -82,7 +85,6 @@ body {
   justify-content: space-around;
   align-items: center;
   padding: 12px 0;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* Navigation bar items */
@@ -111,6 +113,11 @@ body {
   font-size: 24px;
   margin-bottom: 5px;
 }
+#nav-neq {
+  font-size: 24px;
+  font-weight: bold;
+  font-family: 'stmVelish';
+}
 
 #heb-row {
   display: flex;
@@ -128,16 +135,22 @@ body {
   font-family: 'stmVelish';
   padding: 32px 8px 12px 8px;
   flex: 1;
-  transition: 0.5s;
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in-out forwards;
 }
 
 #eng-content {
   font-size: 16px;
-  direction: ltr;
   text-align: left;
   font-style: italic;
   padding: 32px 12px;
-  transition: 0.5s;
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  0%   { opacity: 0;}
+  100% { opacity: 1; }
 }
 
 #info-content {
@@ -174,7 +187,7 @@ body {
 
 #nav-buttons {
   position: fixed;
-  bottom: 5vh;
+  bottom: 72px;
   right: 1vw;
 }
 
@@ -209,6 +222,42 @@ body {
 
 .b1 {
   flex: 1;
+}
+
+.matrix-span {
+  background: var(--fade-border);
+  color: var(--main-fg);
+  border-radius: 2px;
+  padding: 2px 4px;
+  margin: 0 4px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.matrix-grid {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  direction: rtl;
+  overflow-y: auto;
+  max-height: 50vh;
+  &::-webkit-scrollbar {
+    display: none; /* Hides scrollbar for WebKit browsers */
+  }
+}
+  
+.matrix-span-cell {
+  color: var(--main-fg);
+  background: var(--fade-cell);
+  aspect-ratio: 1 / 1;
+  max-width: 72px;
+  padding: 8px;
+  font-family: 'stmVelish';
+  font-size: 28px;
+  user-select: none;
+  text-align: center;
+  
 }
 
 button:focus, input:focus, select:focus, textarea:focus {
