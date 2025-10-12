@@ -1,10 +1,11 @@
 :root {
-  --accent: #00bcd4;
-  --main-bg: #333;
-  --bar-bg: #222;
-  --main-fg: #fff;
-  --fade-border: #fff2;
-  --fade-cell: #fff1;
+  color-scheme: dark light;
+  --accent:  light-dark(#07b,#07b);
+  --main-bg: light-dark(#eee,#333);
+  --main-fg: light-dark(#111,#eee);
+  --bar-bg:  light-dark(#aaa,#222);
+  --fade-border: light-dark(#1112,#fff2);
+  --fade-cell:   light-dark(#1111,#fff1);
 }
 
 @font-face {
