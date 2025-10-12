@@ -96,15 +96,25 @@ const tnk = {
   ref: 'Bereshit 1.1',
   text: [],
   transl: '',
+  otSeq: '',
   setText: function(t){
     this.text[0] = t;
-    this.text[1] = KBLH.removeNikud(t);
-    this.text[2] = KBLH.removeTaamim(t);
+    this.text[1] = KBLH.removeTaamim(t);
+    this.text[2] = KBLH.removeNikud(t);
+    this.otSeq = KBLH.getOtiot(t);
   },
-  getText: function(){
-    return this.text[this.txtMode].replace(/{.*}/g,(match) => `<sup><small><small>${match}</small></small></sup>`);;
+  getText: function(mode=this.txtMode){
+    return this.text[mode].replace(/{.*}/g,(match) => `<sup><small><small>${match}</small></small></sup>`);;
   },
-  txtMode: 2
+  countMilim: function(){
+    if (!this.text[0]) return 0;
+    const words = this.text[0].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(/\s+/);
+    return words.length;
+  },
+  countOtiot: function(){
+    return this.otSeq.length;
+  },
+  txtMode: 1
 }
 
 const localCache = {
@@ -121,7 +131,7 @@ const localCache = {
       localStorage.setItem("tnk", JSON.stringify(this.cache)); 
     }
   },
-  hasRef: function(ref){
+  hasRef: function(ref=tnk.ref){
     return this.cache && this.cache[ref];
   },
   setTnk: function(ref){
@@ -199,11 +209,13 @@ function fetchSefaria(ref, v, callback){
 }
 
 function download(ref, callback){
+  webStat.style.opacity = 1;
   fetchSefaria(ref, 'source', (j) => {
     tnk.setText(j.versions[0].text);
     fetchSefaria(ref, tnk.transLang, (k) => {
       tnk.transl = k.versions[0].text;
       callback();
+      webStat.style.opacity = 0;
     });
   });
 }
@@ -213,15 +225,21 @@ function refresh(){
   tnk.ref = `${tnk.book} ${tnk.perek}.${tnk.pasuk}`;
   if (localCache.hasRef()){
     localCache.setTnk(tnk.ref);
+    updateUi();
   } else {
     download(tnk.ref,() => {
       localCache.update();
-      he.innerHTML = tnk.getText();
-      lg.innerHTML = tnk.transl;
-      i.innerText = tnk.ref;
-      rf.innerText = tnk.ref;
+      updateUi();
     });
   };
+}
+
+function updateUi(){
+  he.innerHTML = tnk.getText();
+  lg.innerHTML = tnk.transl;
+  i.innerText = tnk.ref;
+  rf.innerText = tnk.ref;
+  info.innerHTML = `milim: ${tnk.countMilim()} · otiot: ${tnk.countOtiot()} · gematria: ${KBLH.getGematria(tnk.otSeq)}`;
 }
 
 
@@ -254,6 +272,7 @@ const lg =  document.getElementById('eng-content');
 const rf = document.getElementById('pasuk-ref');;
 const refId = document.getElementById('pasuk-ref');
 const info = document.getElementById('info-content');
+const webStat = document.getElementById('web-stat');
 
 refresh();
 

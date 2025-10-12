@@ -1,4 +1,16 @@
 const KBLH = {
+  gematriaMap: {
+    'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9,
+    'י': 10, 'כ': 20, 'ך': 20, 'ל': 30, 'מ': 40, 'ם': 40, 'נ': 50, 'ן': 50,
+    'ס': 60, 'ע': 70, 'פ': 80, 'ף': 80, 'צ': 90, 'ץ': 90, 'ק': 100,
+    'ר': 200, 'ש': 300, 'ת': 400
+  },
+  gematriaMapSof: {
+    'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9,
+    'י': 10, 'כ': 20, 'ך': 20, 'ל': 30, 'מ': 40, 'ם': 40, 'נ': 50, 'ן': 50,
+    'ס': 60, 'ע': 70, 'פ': 80, 'ף': 80, 'צ': 90, 'ץ': 90, 'ק': 100,
+    'ר': 200, 'ש': 300, 'ת': 400
+  },
   heFormatOtiot: function(s){
    let out = '';
    for (let i=0; i < s.length; i++){
@@ -31,6 +43,17 @@ const KBLH = {
     for (let i=0; i < s.length; i++){
       let c = s.charCodeAt(i);
       out += c !== 0x05c6 && c > 0x0590 && c < 0x05c8 ? '' : String.fromCharCode(c);
+    }
+    return out;
+  },
+  getOtiot: function(s){
+    return this.heFormatOtiot(s).replace(/\s+/g,'');
+  },
+  getGematria: function(s, useSofit=false){
+    let out = 0;
+    const map = useSofit ? this.gematriaMapSof : this.gematriaMap;
+    for (let i=0; i < s.length; i++){
+      out += map[s[i]] || 0;
     }
     return out;
   }
