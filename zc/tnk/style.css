@@ -195,10 +195,10 @@ body {
 #pan-search {
   display: none;
   position: absolute;
-  top: 0;
-  left: 0;
-  transform: translate(50%,100%);
-  margin: 16px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  margin: 0;
   padding: 32px;
   border-radius: 8px;;
   background: #222e;
@@ -230,7 +230,7 @@ body {
   color: var(--main-fg);
   border-radius: 2px;
   padding: 2px 4px;
-  margin: 0 4px;
+  margin: 12px 4px;
   cursor: pointer;
   user-select: none;
 }
@@ -255,7 +255,20 @@ body {
   max-width: 72px;
   padding: 8px;
   font-family: 'stmVelish';
-  font-size: 28px;
+  font-size: 26px;
+  user-select: none;
+  text-align: center;
+  
+}
+
+.matrix-span-cell-small {
+  color: var(--main-fg);
+  background: var(--fade-cell);
+  aspect-ratio: 1 / 1;
+  max-width: 56px;
+  padding: 4px;
+  font-family: 'stmVelish';
+  font-size: 20px;
   user-select: none;
   text-align: center;
   

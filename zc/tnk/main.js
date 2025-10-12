@@ -270,9 +270,11 @@ function showMatrix(element, event){
   const grid = document.createElement('div');
   grid.className = 'matrix-grid';
   grid.style.gridTemplateColumns = `repeat(${m[1]}, auto)`;
+  let clz = 'matrix-span-cell';
+  if (Math.max(m[1],m[0]) > 12) clz +="-small";
   for (let i=0; i < tnk.otSeq.length; i++){
     const span = document.createElement('span');
-    span.className = 'matrix-span-cell';
+    span.className = clz;
     span.innerText = tnk.otSeq[i];
     grid.appendChild(span);
   }
