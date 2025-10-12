@@ -192,7 +192,7 @@ body {
   right: 1vw;
 }
 
-#pan-search {
+.panel {
   display: none;
   position: absolute;
   top: 50%;
@@ -242,13 +242,13 @@ body {
   gap: 2px;
   direction: rtl;
   overflow-y: auto;
-  max-height: 50vh;
+  max-height: 90vh;
   &::-webkit-scrollbar {
     display: none; /* Hides scrollbar for WebKit browsers */
   }
 }
   
-.matrix-span-cell {
+.matrix-span-cell, .matrix-span-cell-small{
   color: var(--main-fg);
   background: var(--fade-cell);
   aspect-ratio: 1 / 1;
@@ -262,16 +262,19 @@ body {
 }
 
 .matrix-span-cell-small {
-  color: var(--main-fg);
-  background: var(--fade-cell);
-  aspect-ratio: 1 / 1;
   max-width: 56px;
   padding: 4px;
-  font-family: 'stmVelish';
-  font-size: 20px;
-  user-select: none;
-  text-align: center;
-  
+  font-size: 22px;  
+}
+
+#pan-matrix-head {
+  font-size: 12px;
+  font-weight: bold;
+  margin: 12px 4px;
+}
+
+#pan-matrix-dismiss {
+  margin: 24px 4px;
 }
 
 button:focus, input:focus, select:focus, textarea:focus {
@@ -297,4 +300,9 @@ select {
 select option {
   background: var(--main-bg);
   color: var(--main-fg);
+}
+
+.sel-search {
+  font-size: 18px;
+  padding: 2px 8px;
 }

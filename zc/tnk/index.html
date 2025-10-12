@@ -45,14 +45,19 @@
     <button id="nav-next">next</button>
     <button id="nav-prev">prev</button>
   </div>
-  <div id="pan-search">
-    <fieldset class="fs-search"><legend>Parsha</legend><select id="sel-parsha"></select></fieldset>
-    <fieldset class="fs-search"><legend>Sefer</legend><select id="sel-sefer"></select></fieldset>
+  <div id="pan-search" class="panel">
+    <fieldset class="fs-search"><legend>Parsha</legend><select id="sel-parsha" class="sel-search"></select></fieldset>
+    <fieldset class="fs-search"><legend>Sefer</legend><select id="sel-sefer" class="sel-search"></select></fieldset>
     <div class="box-1">
-      <fieldset class="fs-search b1"><legend>Perek</legend><select id="sel-perek"></select></fieldset>
-      <fieldset class="fs-search b1"><legend>Pasuk</legend><select id="sel-pasuk"></select></fieldset>
+      <fieldset class="fs-search b1"><legend>Perek</legend><select id="sel-perek" class="sel-search"></select></fieldset>
+      <fieldset class="fs-search b1"><legend>Pasuk</legend><select id="sel-pasuk" class="sel-search"></select></fieldset>
     </div>
     <button id="pan-go">go</button>
+  </div>
+  <div id="pan-matrix" class="panel">
+    <div id="pan-matrix-head"></div>
+    <div id="pan-matrix-body"></div>
+    <button id="pan-matrix-dismiss">dismiss</button>
   </div>
   <script type="text/javascript" src="main.js?v=251011b"></script>
 </body>

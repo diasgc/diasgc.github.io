@@ -265,8 +265,19 @@ function addMatrixInfo(){
 function showMatrix(element, event){
   event.stopPropagation();
   const m = element.innerText.split('x').map(x => parseInt(x));
-  const e = document.getElementById('matrix');
+
+  const pid = document.getElementById('pan-matrix');
+  pid.style.display = 'block';
+
+  const btn = document.getElementById('pan-matrix-dismiss');
+  btn.addEventListener('click', () => pid.style.display = 'none');
+  
+  const hdr = document.getElementById('pan-matrix-head');
+  hdr.innerHTML = `${tnk.ref} matrix ${m[0]}x${m[1]}`;
+  
+  const e = document.getElementById('pan-matrix-body');
   e.replaceChildren();
+  
   const grid = document.createElement('div');
   grid.className = 'matrix-grid';
   grid.style.gridTemplateColumns = `repeat(${m[1]}, auto)`;
