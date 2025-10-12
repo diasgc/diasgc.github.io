@@ -190,8 +190,8 @@ body {
 }
 
 #info-content {
-  font-size: 12px;
-  direction: ltr;
+  font-size: 10px;
+  font-weight: bold;
   text-align: center;
   padding: 32px 12px;
 }
