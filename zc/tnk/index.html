@@ -17,18 +17,26 @@
   <div id="web-stat">●</div>
   <div class="app-bar">
     <div class="icons">
-      <span class="icon" onclick="menuClicked()">☰</span> <!-- Menu Icon -->
+      <span class="icon" onclick="openNav()">☰</span> <!-- Menu Icon -->
     </div>
     <div id="verse2" class="title">TN"K app</div>
     <div class="icons">
       <span class="icon" onclick="searchClicked()">&vellip;</span> <!-- Search Icon -->
     </div>
   </div>
+  <!-- Side Nav -->
+  <div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="https://www.unityzohar.com/unity-zohar">Unity Zohar</a>
+    <a href="https://www.sefaria.org/Genesis.1?lang=bi&with=Translations&lang2=en" id="href-sefaria">Sefaria.org</a>
+    <a href="#">About</a>
+  </div>
   <!-- Navigation Bar -->
   <div class="nav-bar">
-    <div class="a" id="nav-home"><i class="fas fa-home"></i>Home</div>
-    <div class="a" id="nav-search"><i class="fas fa-search"></i>Search</div>
-    <div class="a" id="nav-neq"><i class="fas fa-user"></i>אֱ</div>
+    <div class="a" id="nav-home">Home</div>
+    <div class="a" id="nav-search">Search</div>
+    <a class="a" >UZ</a>
+    <div class="a" id="nav-neq">אֱ</div>
   </div>
   <div id="container">
     <div id="heb-row">
@@ -52,12 +60,12 @@
       <fieldset class="fs-search b1"><legend>Perek</legend><select id="sel-perek" class="sel-search"></select></fieldset>
       <fieldset class="fs-search b1"><legend>Pasuk</legend><select id="sel-pasuk" class="sel-search"></select></fieldset>
     </div>
-    <button id="pan-go">go</button>
+    <button id="pan-go" class="btn-center">go</button>
   </div>
   <div id="pan-matrix" class="panel">
     <div id="pan-matrix-head"></div>
     <div id="pan-matrix-body"></div>
-    <button id="pan-matrix-dismiss">dismiss</button>
+    <button id="pan-matrix-dismiss" class="btn-center">dismiss</button>
   </div>
   <script type="text/javascript" src="main.js?v=251011b"></script>
 </body>

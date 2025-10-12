@@ -6,6 +6,7 @@
   --bar-bg:  light-dark(#aaa,#222);
   --fade-border: light-dark(#1112,#fff2);
   --fade-cell:   light-dark(#1111,#fff1);
+  --accent-cell: light-dark(#07ba,#07b);
 }
 
 @font-face {
@@ -19,6 +20,41 @@ body {
   font-family: sans-serif;
   overflow: hidden;
   margin: 0;
+}
+
+/* Side Navigation Styling */
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: var(--bar-bg);
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: var(--main-fg);
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: var(--accent);
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
 }
 
 /* App Bar Styling */
@@ -68,13 +104,12 @@ body {
 
 /* Optional: Responsive Design */
 @media (max-width: 600px) {
-  .app-bar .title {
-    font-size: 16px;
-  }
-  .app-bar .icon {
-    font-size: 24px;
-  }
+  .app-bar .title { font-size: 16px;}
+  .app-bar .icon { font-size: 24px; }
+  .sidenav { padding-top: 15px; }
+  .sidenav a { font-size: 18px; }
 }
+
 /* Navigation bar container */
 .nav-bar {
   position: fixed;
@@ -144,7 +179,7 @@ body {
   font-size: 16px;
   text-align: left;
   font-style: italic;
-  padding: 32px 12px;
+  padding: 32px;
   opacity: 0;
   animation: fadeIn 0.5s ease-in-out forwards;
 }
@@ -199,9 +234,9 @@ body {
   left: 50%;
   transform: translate(-50%,-50%);
   margin: 0;
-  padding: 32px;
+  padding: 16px;
   border-radius: 8px;;
-  background: #222e;
+  background: #202020f8;
 }
 
 .fs-search {
@@ -228,9 +263,10 @@ body {
 .matrix-span {
   background: var(--fade-border);
   color: var(--main-fg);
-  border-radius: 2px;
+  border-radius: 4px;
   padding: 2px 4px;
   margin: 12px 4px;
+  font-weight: bold;
   cursor: pointer;
   user-select: none;
 }
@@ -253,17 +289,21 @@ body {
   background: var(--fade-cell);
   aspect-ratio: 1 / 1;
   max-width: 72px;
-  padding: 8px;
+  padding: 0px 8px;
   font-family: 'stmVelish';
   font-size: 26px;
   user-select: none;
   text-align: center;
-  
+  cursor: pointer;
+}
+
+.matrix-span-cell:hover, .matrix-span-cell-small:hover{
+  background: var(--accent-cell);
 }
 
 .matrix-span-cell-small {
   max-width: 56px;
-  padding: 4px;
+  padding: 0px 4px;
   font-size: 22px;  
 }
 
@@ -291,6 +331,11 @@ button,input,select {
   font-size: 13px;
   margin: 8px;
   color: var(--main-fg);
+}
+
+.btn-center {
+  display: block;
+  justify-self: center;
 }
 
 select {

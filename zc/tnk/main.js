@@ -237,6 +237,9 @@ function refresh(){
 function updateUi(){
   fadeInText(he, tnk.getText());
   fadeInText(lg, tnk.transl);
+  const sef = document.getElementById('href-sefaria');
+  sef.href = `https://www.sefaria.org/${tnk.book}.${tnk.perek}?lang=bi&with=Translations&lang2=en`;
+  fadeInText(refId, tnk.ref);
   i.innerText = tnk.ref;
   rf.innerText = tnk.ref;
   let nfo =`milim: ${tnk.countMilim()}`;
@@ -273,7 +276,7 @@ function showMatrix(element, event){
   btn.addEventListener('click', () => pid.style.display = 'none');
   
   const hdr = document.getElementById('pan-matrix-head');
-  hdr.innerHTML = `${tnk.ref} matrix ${m[0]}x${m[1]}`;
+  hdr.innerHTML = `matrix ${m[0]}x${m[1]}`;
   
   const e = document.getElementById('pan-matrix-body');
   e.replaceChildren();
@@ -314,7 +317,13 @@ function settings(){
   const shaaZmanit = zmanim.getShaahZmanit();
 }
 
+function openNav() {
+  document.getElementById("mySidenav").style.width = "250px";
+}
 
+function closeNav() {
+  document.getElementById("mySidenav").style.width = "0";
+}
 
 
 localCache.load();
