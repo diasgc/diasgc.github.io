@@ -242,8 +242,8 @@ function updateUi(){
   let nfo =`milim: ${tnk.countMilim()}`;
   nfo += ` · ot: ${tnk.countOtiot()}`;
   nfo += ` · gematria: ${KBLH.getGematria(tnk.otSeq)}`;
-  let m = KBLH.getMatrixDimArray(3, tnk.otSeq).str || 'n/a';
-  nfo += ` · matrix: ${m}`;
+  let m = KBLH.getMatrixDimArray(3, tnk.otSeq).str || '';
+  if (m) nfo += ` · matrix: ${m}`;
   info.innerHTML = nfo;
 }
 

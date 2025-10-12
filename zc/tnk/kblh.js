@@ -30,7 +30,11 @@ const KBLH = {
     }
     return out;
   },
+  removeSep: function(s){
+    return s.replaceAll('־'," ");
+  },
   removeTaamim: function(s){
+    s = s.replaceAll('־'," ");
     let out = '';
     for (let i=0; i < s.length; i++){
       let c = s.charCodeAt(i);
@@ -40,6 +44,7 @@ const KBLH = {
   },
   removeNikud: function(s){
     let out = '';
+    s = s.replaceAll('־'," ");
     for (let i=0; i < s.length; i++){
       let c = s.charCodeAt(i);
       out += c !== 0x05c6 && c > 0x0590 && c < 0x05c8 ? '' : String.fromCharCode(c);
