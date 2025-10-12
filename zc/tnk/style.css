@@ -59,7 +59,7 @@ body {
     font-size: 16px;
   }
   .app-bar .icon {
-    font-size: 20px;
+    font-size: 24px;
   }
 }
 /* Navigation bar container */
@@ -117,8 +117,9 @@ body {
   text-align: right;
   direction: rtl;
   font-family: 'stmVelish';
-  padding: 32px 8px;
+  padding: 32px 8px 12px 8px;
   flex: 1;
+  transition: 0.5s;
 }
 
 #eng-content {
@@ -127,6 +128,7 @@ body {
   text-align: left;
   font-style: italic;
   padding: 32px 12px;
+  transition: 0.5s;
 }
 
 #info-content {
@@ -183,10 +185,10 @@ body {
   display: block;
   border: 1px solid var(--fade-border);
   border-radius: 12px;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--accent);
-  margin: 4px;
+  margin: 8px;
   text-align: center;
   transition: 0.5s;
 }
