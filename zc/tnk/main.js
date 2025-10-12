@@ -239,7 +239,11 @@ function updateUi(){
   lg.innerHTML = tnk.transl;
   i.innerText = tnk.ref;
   rf.innerText = tnk.ref;
-  info.innerHTML = `milim: ${tnk.countMilim()} · otiot: ${tnk.countOtiot()} · gematria: ${KBLH.getGematria(tnk.otSeq)}`;
+  let nfo =`milim: ${tnk.countMilim()}`;
+  nfo += ` · ot: ${tnk.countOtiot()}`;
+  nfo += ` · gematria: ${KBLH.getGematria(tnk.otSeq)}`;
+  nfo += ` · matrix: ${KBLH.getMatrixDimArray(3, tnk.otSeq).str}`;
+  info.innerHTML = nfo;
 }
 
 

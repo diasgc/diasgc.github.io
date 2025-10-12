@@ -56,5 +56,17 @@ const KBLH = {
       out += map[s[i]] || 0;
     }
     return out;
+  },
+  getMatrixDimArray: function(minDim, seq){
+    let out = [];
+    let str = '';
+    let c = seq.length;
+    for (let i = minDim; i <= Math.ceil(Math.sqrt(c)); i++){
+      if (c % i === 0){
+        out.push([i, c/i]);
+        str += `${i}x${c/i} `;
+      }
+    }
+    return {"array": out, "str": str.trim()};
   }
 }
