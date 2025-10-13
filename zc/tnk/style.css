@@ -92,6 +92,12 @@ body {
   opacity: 0;
   transition: opacity 0.5s ease;
 }
+
+.text-s {
+  font-size: 14px;
+  font-weight: bold;
+}
+
 .app-bar .icon {
   cursor: pointer;
   font-size: 28px;

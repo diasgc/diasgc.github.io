@@ -159,9 +159,17 @@ const zmanim = {
       zmanim.options.elevation = position.coords.altitude || 0;
       zmanim.options.timeZoneID = Intl.DateTimeFormat().resolvedOptions().timeZone;
       zmanim.options.locationName = 'Current Location';
+      zmanJS.locations(position.coords.latitude, position.coords.longitude, position.coords.altitude || 0)
       if (callback)
         callback();
     });
+  },
+  getParshaOfTheWeek: function(){
+    zmanJS.hdate();
+    zmanJS.convertDate(new Date());
+    var parshaIndex = zmanJS.getparshaHashavua();
+    parshaIndex = parshaIndex % tnk.parshiot.length;
+    return Object.keys(tnk.parshiot[parshaIndex])[0];
   }
 }
 
@@ -345,6 +353,25 @@ const info = document.getElementById('info-content');
 const webStat = document.getElementById('web-stat');
 
 refresh();
+
+zmanim.refresh(() => {
+  const parsha = document.getElementById('parsha-hashavua');
+  const i = zmanim.getParshaOfTheWeek();
+  const m = zmanJS.getHebrewDate();
+  parsha.value = i;
+  parsha.innerHTML = `Parshat ${i}<p class='text-s'>${m}</p>`;
+  parsha.addEventListener('click',() => {
+    const p = tnk.parshiot.find(p => Object.keys(p)[0] === i);
+    if (p){
+      const [sefer,perek,pasuk] = p[i].split(/[:;.-]/).map(x => parseInt(x));
+      tnk.sefer = sefer;
+      tnk.perek = perek;
+      tnk.pasuk = pasuk;
+      populateSefer();
+      refresh();
+    }
+  });
+});
 
 document.getElementById('nav-home').addEventListener('click',() => {
   tnk.sefer = 0;
