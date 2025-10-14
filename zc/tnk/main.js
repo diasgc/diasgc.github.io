@@ -242,8 +242,12 @@ function refresh(){
   };
 }
 
+const wgem = document.getElementById('gem-content');
+
 function updateUi(){
-  fadeInText(he, tnk.getText());
+  wgem.innerText = '';
+  let heTxt = KBLH.htmlSpanWords(tnk.getText(),'hewClick');
+  fadeInText(he, heTxt);
   fadeInText(lg, tnk.transl);
   const sef = document.getElementById('href-sefaria');
   sef.href = `https://www.sefaria.org/${tnk.book}.${tnk.perek}?lang=bi&with=Translations&lang2=en`;
@@ -255,6 +259,23 @@ function updateUi(){
   nfo += ` · gematria: ${KBLH.getGematria(tnk.otSeq)}`;
   nfo += addMatrixInfo();
   info.innerHTML = nfo;
+}
+
+function hewClick(element, event){  
+  const v = KBLH.removeNikud(element.innerText);
+  wgem.innerHTML = `<span class='heb-text'>${v}</span><br><span>ot: ${KBLH.countOtiot(v)} gematria: ${KBLH.getGematria(v)}`;
+  if (1)
+    return;
+  fetch("https://libretranslate.com/translate", {
+    method: "POST",
+    body: JSON.stringify({
+      q: v,
+      source: "he",
+      target: "en"
+    }),
+    headers: { "Content-Type": "application/json" }
+  }).then(res => res.json())
+    .then(json => wgem.innerHTML += JSON.stringify(json));
 }
 
 function addMatrixInfo(){
@@ -298,6 +319,7 @@ function showMatrix(element, event){
     const span = document.createElement('span');
     span.className = clz;
     span.innerText = tnk.otSeq[i];
+    span.addEventListener('click',()=> hdr.innerHTML = `matrix ${m[0]}x${m[1]} pos: ${i} gem: ${KBLH.mispar[tnk.otSeq[i]]}`);
     grid.appendChild(span);
   }
   e.appendChild(grid);
@@ -317,7 +339,7 @@ function neq(){
   const id = document.getElementById('nav-neq');
   tnk.txtMode = (tnk.txtMode + 1) % 3;
   id.innerText = `${cap[tnk.txtMode]}`;
-  he.innerHTML = tnk.getText();
+  refresh();
 }
 
 function settings(){
@@ -359,7 +381,7 @@ zmanim.refresh(() => {
   const i = zmanim.getParshaOfTheWeek();
   const m = zmanJS.getHebrewDate();
   parsha.value = i;
-  parsha.innerHTML = `Parshat ${i}<p class='text-s'>${m}</p>`;
+  parsha.innerHTML = `Parshat ${i}<br><span class='text-s'>${m}</span>`;
   parsha.addEventListener('click',() => {
     const p = tnk.parshiot.find(p => Object.keys(p)[0] === i);
     if (p){

@@ -1,15 +1,27 @@
 const KBLH = {
-  gematriaMap: {
+  mispar: {
     'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9,
     'י': 10, 'כ': 20, 'ך': 20, 'ל': 30, 'מ': 40, 'ם': 40, 'נ': 50, 'ן': 50,
     'ס': 60, 'ע': 70, 'פ': 80, 'ף': 80, 'צ': 90, 'ץ': 90, 'ק': 100,
     'ר': 200, 'ש': 300, 'ת': 400
   },
-  gematriaMapSof: {
+  misparGadol: {
     'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9,
-    'י': 10, 'כ': 20, 'ך': 20, 'ל': 30, 'מ': 40, 'ם': 40, 'נ': 50, 'ן': 50,
-    'ס': 60, 'ע': 70, 'פ': 80, 'ף': 80, 'צ': 90, 'ץ': 90, 'ק': 100,
+    'י': 10, 'כ': 20, 'ך': 500, 'ל': 30, 'מ': 40, 'ם': 600, 'נ': 50, 'ן': 700,
+    'ס': 60, 'ע': 70, 'פ': 80, 'ף': 800, 'צ': 90, 'ץ': 900, 'ק': 100,
     'ר': 200, 'ש': 300, 'ת': 400
+  },
+  misparSiduri: {
+    'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9,
+    'י': 10, 'כ': 11, 'ך': 11, 'ל': 12, 'מ': 13, 'ם': 13, 'נ': 14, 'ן': 14,
+    'ס': 15, 'ע': 16, 'פ': 17, 'ף': 17, 'צ': 18, 'ץ': 18, 'ק': 19,
+    'ר': 20, 'ש': 21, 'ת': 22
+  },
+  misparKatan: {
+    'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9,
+    'י': 1, 'כ': 2, 'ך': 2, 'ל': 3, 'מ': 4, 'ם': 4, 'נ': 5, 'ן': 5,
+    'ס': 6, 'ע': 7, 'פ': 8, 'ף': 8, 'צ': 9, 'ץ': 9, 'ק': 1,
+    'ר': 2, 'ש': 3, 'ת': 4
   },
   removeSep: function(s){
     return s.replace(/[׀־]/g,' ');
@@ -49,9 +61,24 @@ const KBLH = {
   countOtiot: function(s){
     return this.getOtiot(s).length;
   },
-  getGematria: function(s, useSofit=false){
+  htmlSpanWords: function(s, callbackName){
+    const span = `<span onclick='${callbackName}(this,event)'>`;
+    let out = span;
+    for (let i=0; i < s.length; i++){
+      let c = s.charAt(i);
+      if (c === ' ' || c === '׀' || c === '־'){
+        out += `</span>${c}`;
+        if (i < s.length - 2)
+          out += span;
+      } else {
+        out += c;
+      }
+    }
+    return out;
+  },
+  getGematria: function(s, gemMap='mispar'){
     let out = 0;
-    const map = useSofit ? this.gematriaMapSof : this.gematriaMap;
+    const map = this[gemMap] || this.mispar;
     for (let i=0; i < s.length; i++){
       out += map[s[i]] || 0;
     }
