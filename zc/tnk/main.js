@@ -263,19 +263,14 @@ function updateUi(){
 
 function hewClick(element, event){  
   const v = KBLH.removeNikud(element.innerText);
-  wgem.innerHTML = `<span class='heb-text'>${v}</span><br><span>ot: ${KBLH.countOtiot(v)} gematria: ${KBLH.getGematria(v)}`;
-  if (1)
-    return;
-  fetch("https://libretranslate.com/translate", {
-    method: "POST",
-    body: JSON.stringify({
-      q: v,
-      source: "he",
-      target: "en"
-    }),
-    headers: { "Content-Type": "application/json" }
-  }).then(res => res.json())
-    .then(json => wgem.innerHTML += JSON.stringify(json));
+  const g = KBLH.getGematria(v);
+  let html = `<span class='gem-text'>${v}</span><br><span>ot: ${KBLH.countOtiot(v)} gematria: ${g}</span><br>`;
+  const a = KBLH.gem[g];
+  if (a.length > 0){
+    html += "<p>Words matching gematria</p>"
+    a.forEach(e => html += `<span class='gem-text-small'>${e} </span>`)
+  }
+  wgem.innerHTML = html;
 }
 
 function addMatrixInfo(){

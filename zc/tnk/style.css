@@ -170,7 +170,11 @@ body {
   margin-top: 32px;
 }
 
-.heb-text {
+#gem-content {
+  padding: 32px;
+}
+
+.heb-text, .gem-text, .gem-text-small {
   font-size: 28px;
   text-align: right;
   direction: rtl;
@@ -180,6 +184,17 @@ body {
   opacity: 0;
   animation: fadeIn 0.5s ease-in-out forwards;
 }
+
+.gem-text, .gem-text-small {
+  font-size: 22px;
+  opacity: 1;
+  animation: none;
+}
+
+.gem-text-small {
+  font-size: 18px;
+}
+
 
 #eng-content {
   font-size: 16px;
