@@ -31,7 +31,7 @@
     <a href="javascript:void(0)" id="parsha-hashavua">Parshat Hashavua</a>
     <a href="https://www.unityzohar.com/unity-zohar">Unity Zohar</a>
     <a href="https://www.sefaria.org/Genesis.1?lang=bi&with=Translations&lang2=en" id="href-sefaria">Sefaria.org</a>
-    <a href="#">About</a>
+    <a href="javascript:void(0)" onclick="about()">About</a>
   </div>
   <!-- Navigation Bar -->
   <div class="nav-bar">
@@ -68,7 +68,11 @@
   <div id="pan-matrix" class="panel">
     <div id="pan-matrix-head"></div>
     <div id="pan-matrix-body"></div>
-    <button id="pan-matrix-dismiss" class="btn-center">dismiss</button>
+    <button class="pan-dismiss btn-center" onclick='btDismiss("pan-matrix");'>dismiss</button>
+  </div>
+  <div id="pan-about" class="panel">
+    <div class="about-text">Powered by Sefaria.org and TorahCalc.com</div>
+    <button class="pan-dismiss btn-center" onclick='btDismiss("pan-about");'>dismiss</button>
   </div>
   <script type="text/javascript" src="main.js?v=251011b"></script>
 </body>

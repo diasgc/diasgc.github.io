@@ -154,6 +154,77 @@ const zmanim = {
   },
   refresh: function(callback){
     navigator.geolocation.getCurrentPosition(position => {
+      fetchJson(`https://www.torahcalc.com/api/zmanim?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}`, (j) => {
+        zmanim.data = j;
+        console.dir(j);
+        /*
+        data
+: 
+durations
+: 
+{shaahZmanisMGA: {…}, shaahZmanisGRA: {…}}
+events
+: 
+{havdalah: {…}}
+timezone
+: 
+"Europe/Lisbon"
+zmanim
+: 
+alos16Point1
+: 
+{name: 'Alos (16.1°)', hebrewName: 'עלות השחר (16.1°)', description: 'Halachic dawn - when the Sun is 16.1° below the horizon in the morning', time: '2025-10-15T06:24:21+01:00'}
+alos72
+: 
+{name: 'Alos (72 minutes)', hebrewName: 'עלות השחר (72 דקות)', description: 'Halachic dawn - 72 minutes before sunrise', time: '2025-10-15T06:33:52+01:00'}
+chatzos
+: 
+{name: 'Chatzos', hebrewName: 'חצות', description: 'Midday - 6 halachic hours after sunrise', icon: '<svg fill="currentColor" height="1em" viewBox="0 0…120c0-13.3 10.7-24 24-24s24 10.7 24 24z" /></svg>', time: '2025-10-15T13:19:33+01:00'}
+minchaGedola
+: 
+{name: 'Mincha Gedola', hebrewName: 'מנחה גדולה', description: 'Earliest time to recite Mincha - 6.5 halachic hours after sunrise', time: '2025-10-15T13:47:21+01:00'}
+minchaKetana
+: 
+{name: 'Mincha Ketana', hebrewName: 'מנחה קטנה', description: 'Latest time to recite Mincha - 9.5 halachic hours after sunrise', time: '2025-10-15T16:34:12+01:00'}
+misheyakir
+: 
+{name: 'Misheyakir', hebrewName: 'משיכיר', description: 'Earliest time to put on tallis and tefillin - when the Sun is 11.5° below the horizon in the morning', time: '2025-10-15T06:48:48+01:00'}
+misheyakirMachmir
+: 
+{name: 'Misheyakir Machmir', hebrewName: 'משיכיר מחמיר', description: 'Earliest time to put on tallis and tefillin - when the Sun is 10.2° below the horizon in the morning', time: '2025-10-15T06:55:43+01:00'}
+plagHamincha
+: 
+{name: 'Plag Hamincha', hebrewName: 'פלג המנחה', description: 'Plag hamincha - 10.75 halachic hours after sunrise', time: '2025-10-15T17:43:42+01:00'}
+sofZmanShmaGRA
+: 
+{name: 'Sof Zman Shma (GRA)', hebrewName: 'סוף זמן שמע (גר"א)', description: 'Latest time to recite Shema according to the Vilna Gaon - 3 halachic hours after sunrise', time: '2025-10-15T10:32:42+01:00'}
+sofZmanShmaMGA
+: 
+{name: 'Sof Zman Shma (MGA)', hebrewName: 'סוף זמן שמע (מג"א)', description: 'Latest time to recite Shema according to the Magen Avraham - 3 halachic hours after sunrise', time: '2025-10-15T09:56:42+01:00'}
+sofZmanTefillaGRA
+: 
+{name: 'Sof Zman Tefilla (GRA)', hebrewName: 'סוף זמן תפילה (גר"א)', description: 'Latest time to recite Shacharit according to the Vilna Gaon - 4 halachic hours after sunrise', time: '2025-10-15T11:28:19+01:00'}
+sofZmanTefillaMGA
+: 
+{name: 'Sof Zman Tefilla (MGA)', hebrewName: 'סוף זמן תפילה (מג"א)', description: 'Latest time to recite Shacharit according to the Magen Avraham - 4 halachic hours after sunrise', time: '2025-10-15T11:04:19+01:00'}
+sunrise
+: 
+{name: 'Sunrise', hebrewName: 'נץ החמה', description: 'Upper edge of the sun appears over the eastern horizon in the morning (0.833° above horizon)', icon: '<svg fill="currentColor" height="1em" viewBox="0 0…10.7 24-24 24H24c-13.3 0-24-10.7-24-24z" /></svg>', time: '2025-10-15T07:45:52+01:00'}
+sunset
+: 
+{name: 'Sunset', hebrewName: 'שקיעת החמה', description: 'When the upper edge of the sun disappears below the horizon (0.833° below horizon)', icon: '<svg fill="currentColor" height="1em" viewBox="0 0…10.7-24-24-24H24c-13.3 0-24 10.7-24 24z" /></svg>', time: '2025-10-15T18:53:13+01:00'}
+tzeis3MediumStars
+: 
+{name: 'Tzeis (3 medium stars)', hebrewName: 'צאת הכוכבים (3 כוכבים בינוניים)', description: 'When 3 medium-sized stars are visible in the sky (sun is 7.083° below horizon)', icon: '<svg fill="currentColor" height="1em" viewBox="0 0….7-19.9-25.7-21.7L381.2 150.3 316.9 18z" /></svg>', time: '2025-10-15T19:26:44+01:00'}
+tzeis3Stars
+: 
+{name: 'Tzeis (3 stars)', hebrewName: 'צאת הכוכבים (3 כוכבים)', description: 'When 3 small-sized stars are visible in the sky (sun is 8.5° below horizon)', icon: '<svg fill="currentColor" height="1em" viewBox="0 0….2 4.4-6.2 8.2s2.5 7.1 6.2 8.2l38.6 11z" /></svg>', time: '2025-10-15T19:34:17+01:00'}
+tzeis72
+: 
+{name: 'Tzeis (72 minutes)', hebrewName: 'צאת הכוכבים (72 דקות)', description: '72 minutes after sunset', icon: '<svg fill="currentColor" height="1em" viewBox="0 0…6-7.5-10.8-7.5s-9.1 3-10.8 7.5L384 384z" /></svg>', time: '2025-10-15T20:05:13+01:00'}
+
+        */
+      });
       zmanim.options.latitude = position.coords.latitude;
       zmanim.options.longitude = position.coords.longitude;
       zmanim.options.elevation = position.coords.altitude || 0;
@@ -171,6 +242,12 @@ const zmanim = {
     parshaIndex = parshaIndex % tnk.parshiot.length;
     return Object.keys(tnk.parshiot[parshaIndex])[0];
   }
+}
+
+function fetchJson(url, callback){
+  fetch(url, {method: 'GET', headers: {accept: 'application/json'}})
+    .then(res => res.json())
+    .then(json => callback(json));
 }
 
 function prev(){
@@ -264,13 +341,16 @@ function updateUi(){
 function hewClick(element, event){  
   const v = KBLH.removeNikud(element.innerText);
   const g = KBLH.getGematria(v);
-  let html = `<span class='gem-text'>${v}</span><br><span>ot: ${KBLH.countOtiot(v)} gematria: ${g}</span><br>`;
+  let html = `<span class='gem-text'>${v}</span><span class='gem-eng'><b>ot:</b> ${KBLH.countOtiot(v)} <b>gematria:</b> ${g}</span><br>`;
   const a = KBLH.gem[g];
-  if (a.length > 0){
-    html += "<p>Words matching gematria</p>"
-    a.forEach(e => html += `<span class='gem-text-small'>${e} </span>`)
-  }
-  wgem.innerHTML = html;
+  fetchJson(`https://www.torahcalc.com/api/gematriasearch?value=${g}`,(j)=>{
+    if (j.data['TORAH_WORDS']){
+      html += `<p class='gem-eng'>Other Torah words matching gematria of ${g}</p>`
+      j.data['TORAH_WORDS'].forEach(e => html += `<span class='gem-text-small'>${e} </span>`)  
+    }
+    wgem.innerHTML = html;
+    //console.dir(j);
+  });
 }
 
 function addMatrixInfo(){
@@ -289,15 +369,22 @@ function addMatrixInfo(){
   return '';
 }
 
+function btDismiss(id){
+  const e = document.getElementById(id)
+  e.style.display = 'none';
+}
+
+function about(){
+  const pid = document.getElementById('pan-about');
+  pid.style.display = 'block';
+}
+
 function showMatrix(element, event){
   event.stopPropagation();
   const m = element.innerText.split('x').map(x => parseInt(x));
 
   const pid = document.getElementById('pan-matrix');
   pid.style.display = 'block';
-
-  const btn = document.getElementById('pan-matrix-dismiss');
-  btn.addEventListener('click', () => pid.style.display = 'none');
   
   const hdr = document.getElementById('pan-matrix-head');
   hdr.innerHTML = `matrix ${m[0]}x${m[1]}`;

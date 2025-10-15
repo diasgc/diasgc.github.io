@@ -174,6 +174,10 @@ body {
   padding: 32px;
 }
 
+.about-text {
+  font-size: 14px;
+}
+
 .heb-text, .gem-text, .gem-text-small {
   font-size: 28px;
   text-align: right;
@@ -193,6 +197,11 @@ body {
 
 .gem-text-small {
   font-size: 18px;
+}
+
+.gem-eng {
+  font-size: 14px;
+  padding: 0 8px;
 }
 
 
