@@ -45,6 +45,15 @@ body {
   transition: 0.3s;
 }
 
+.zm {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: var(--main-fg);
+  display: block;
+  transition: 0.3s;
+}
+
 .sidenav a:hover {
   color: var(--accent);
 }
@@ -262,12 +271,17 @@ body {
   right: 1vw;
 }
 
+.zm {
+  font-size: 12px;
+}
+
 .panel {
   display: none;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
+  font-size: 12px;
   margin: 0;
   padding: 16px;
   border-radius: 8px;;
@@ -369,11 +383,12 @@ button,input,select {
   font-size: 13px;
   margin: 8px;
   color: var(--main-fg);
-}
+}2025-10-17T13:19:08+01:00
 
 .btn-center {
   display: block;
   justify-self: center;
+  margin: 32px;
 }
 
 select {
