@@ -331,26 +331,15 @@ function updateUi(){
   fadeInText(refId, tnk.ref);
   i.innerText = tnk.ref;
   rf.innerText = tnk.ref;
+  info.innerHTML = gemGetPerekInfo();
+}
+
+function gemGetPerekInfo(){
   let nfo =`milim: ${tnk.countMilim()}`;
   nfo += ` · ot: ${tnk.countOtiot()}`;
   nfo += ` · gematria: ${KBLH.getGematria(tnk.otSeq)}`;
   nfo += addMatrixInfo();
-  info.innerHTML = nfo;
-}
-
-function hewClick(element, event){  
-  const v = KBLH.removeNikud(element.innerText);
-  const g = KBLH.getGematria(v);
-  let html = `<span class='gem-text'>${v}</span><span class='gem-eng'><b>ot:</b> ${KBLH.countOtiot(v)} <b>gematria:</b> ${g}</span><br>`;
-  const a = KBLH.gem[g];
-  fetchJson(`https://www.torahcalc.com/api/gematriasearch?value=${g}`,(j)=>{
-    if (j.data['TORAH_WORDS']){
-      html += `<p class='gem-eng'>Other Torah words matching gematria of ${g}</p>`
-      j.data['TORAH_WORDS'].forEach(e => html += `<span class='gem-text-small'>${e} </span>`)  
-    }
-    wgem.innerHTML = html;
-    //console.dir(j);
-  });
+  return nfo;
 }
 
 function addMatrixInfo(){
@@ -367,6 +356,20 @@ function addMatrixInfo(){
     return ` · matrix: ${out}`;
   }
   return '';
+}
+
+function hewClick(element, event){  
+  const v = KBLH.removeNikud(element.innerText);
+  const g = KBLH.getGematria(v);
+  let html = `<span class='gem-text'>${v}</span><span class='gem-eng'><b>ot:</b> ${KBLH.countOtiot(v)} <b>gematria:</b> ${g}</span><br>`;
+  fetchJson(`https://www.torahcalc.com/api/gematriasearch?value=${g}`,(j)=>{
+    if (j.data['TORAH_WORDS']){
+      html += `<p class='gem-eng'>Other Torah words matching gematria of ${g}</p>`
+      j.data['TORAH_WORDS'].forEach(e => html += `<span class='gem-text-small'>${e} </span>`)  
+    }
+    wgem.innerHTML = html;
+    //console.dir(j);
+  });
 }
 
 function btDismiss(id){

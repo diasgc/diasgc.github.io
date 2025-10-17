@@ -175,7 +175,8 @@ body {
 }
 
 .about-text {
-  font-size: 14px;
+  font-size: 12px;
+  text-align: center;
 }
 
 .heb-text, .gem-text, .gem-text-small {
@@ -202,6 +203,10 @@ body {
 .gem-eng {
   font-size: 14px;
   padding: 0 8px;
+}
+
+.table-flex {
+  display: flex;
 }
 
 
@@ -288,6 +293,9 @@ body {
 
 .b1 {
   flex: 1;
+}
+.b3 {
+  flex: 3;
 }
 
 .matrix-span {
