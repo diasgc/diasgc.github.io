@@ -66,6 +66,8 @@ const KBLH = {
     let out = span;
     for (let i=0; i < s.length; i++){
       let c = s.charAt(i);
+      if (c === '׃')
+        return `${out}</span>${s.substring(i)}`;
       if (c === ' ' || c === '׀' || c === '־'){
         out += `</span>${c}`;
         if (i < s.length - 2)

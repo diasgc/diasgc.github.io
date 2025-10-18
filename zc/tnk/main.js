@@ -114,7 +114,39 @@ const tnk = {
   countOtiot: function(){
     return this.otSeq.length;
   },
-  txtMode: 1
+  txtMode: 1,
+  nextPasuk: function(){
+    if (tnk.pasuk < tnk.psukim[tnk.sefer][tnk.perek-1][0]){
+      tnk.pasuk++;
+    } else {
+      if (tnk.perek < tnk.psukim[tnk.sefer].length){
+        tnk.perek++;
+        tnk.pasuk = 1;
+      } else {
+        if (tnk.sefer < tnk.seferim.length-1){
+          tnk.sefer++;
+          tnk.perek = 1;
+          tnk.pasuk = 1;
+        }
+      }
+    }
+  },
+  prevPasuk: function(){
+    if (tnk.pasuk > 1){
+      tnk.pasuk--;
+    } else {
+      if (tnk.perek > 1){
+        tnk.perek--;
+        tnk.pasuk = tnk.psukim[tnk.sefer][tnk.perek-1][0];
+      } else {
+        if (tnk.sefer > 0){
+          tnk.sefer--;
+          tnk.perek = tnk.psukim[tnk.sefer].length;
+          tnk.pasuk = tnk.psukim[tnk.sefer][tnk.perek-1][0];
+        }
+      }
+    }
+  }
 }
 
 const localCache = {
@@ -143,16 +175,25 @@ const localCache = {
 }
 
 const zmanim = {
-  options: {
-    date: new Date(),
-    latitude: 32.0853,
-    longitude: 34.7818,
-    timeZoneID: 'Europe/Lisbon',
-    elevation: 0,
-    locationName: 'Porto',
-    complexZmanim: false  
-  },
+  latitude: 0,
+  longitude: 0,
+  elevation: 0,
+  data: {},
   refresh: function(callback){
+    const d = new Date();
+    fetchJson(`https://www.hebcal.com/converter/?cfg=json&gd=${d.getDay()}&gm=${d.getMonth()}&gy=${d.getFullYear()}&g2h=1`, (j) => {
+      if (j){
+        if (j.events){
+          j.events.forEach((ev) => {
+            if (ev.includes('Parashat'))
+              zmanim.parsha = ev.replace('Parashat ',' ');
+          })
+        }
+        zmanim.heb_day = j['hd'];
+        zmanim.heb_month = j['hm'];
+        zmanim.heb_year = j['hy'];
+      }
+    });
     navigator.geolocation.getCurrentPosition(position => {
       fetchJson(`https://www.torahcalc.com/api/zmanim?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}`, (j) => {
         zmanim.data = j;
@@ -160,12 +201,9 @@ const zmanim = {
         zmanim.addNavZmanim('nav-zmanim',j);
         
       });
-      zmanim.options.latitude = position.coords.latitude;
-      zmanim.options.longitude = position.coords.longitude;
-      zmanim.options.elevation = position.coords.altitude || 0;
-      zmanim.options.timeZoneID = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      zmanim.options.locationName = 'Current Location';
-      zmanJS.locations(position.coords.latitude, position.coords.longitude, position.coords.altitude || 0)
+      zmanim.latitude = position.coords.latitude;
+      zmanim.longitude = position.coords.longitude;
+      zmanim.elevation = position.coords.altitude || 0;
       if (callback)
         callback();
     });
@@ -198,38 +236,12 @@ function fetchJson(url, callback){
 }
 
 function prev(){
-  if (tnk.pasuk > 1){
-    tnk.pasuk--;
-  } else {
-    if (tnk.perek > 1){
-      tnk.perek--;
-      tnk.pasuk = tnk.psukim[tnk.sefer][tnk.perek-1][0];
-    } else {
-      if (tnk.sefer > 0){
-        tnk.sefer--;
-        tnk.perek = tnk.psukim[tnk.sefer].length;
-        tnk.pasuk = tnk.psukim[tnk.sefer][tnk.perek-1][0];
-      }
-    }
-  }
+  tnk.prevPasuk();
   refresh();
 }
 
 function next(){
-  if (tnk.pasuk < tnk.psukim[tnk.sefer][tnk.perek-1][0]){
-    tnk.pasuk++;
-  } else {
-    if (tnk.perek < tnk.psukim[tnk.sefer].length){
-      tnk.perek++;
-      tnk.pasuk = 1;
-    } else {
-      if (tnk.sefer < tnk.seferim.length-1){
-        tnk.sefer++;
-        tnk.perek = 1;
-        tnk.pasuk = 1;
-      }
-    }
-  }
+  tnk.nextPasuk();
   refresh();
 }
 
