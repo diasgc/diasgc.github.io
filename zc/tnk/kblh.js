@@ -23,6 +23,13 @@ const KBLH = {
     'ס': 6, 'ע': 7, 'פ': 8, 'ף': 8, 'צ': 9, 'ץ': 9, 'ק': 1,
     'ר': 2, 'ש': 3, 'ת': 4
   },
+  sofit: {
+    'ך': 'כ',
+    'ם': 'מ',
+    'ן': 'נ',
+    'ף': 'פ',
+    'ץ': 'צ'
+  },
   removeSep: function(s){
     return s.replace(/[׀־]/g,' ');
   },
@@ -42,6 +49,9 @@ const KBLH = {
       out += c !== 0x05c6 && c > 0x0590 && c < 0x05c8 ? '' : String.fromCharCode(c);
     }
     return out;
+  },
+  removeSofit: function(c){
+    return this.sofit[c] || c;
   },
   getMilim: function(s){
     s = this.removeNikud(s).replace(/\s+/g,' ').trim();
@@ -66,7 +76,7 @@ const KBLH = {
     let out = span;
     for (let i=0; i < s.length; i++){
       let c = s.charAt(i);
-      if (c === '׃')
+      if (c === '׃') // break at the end of perek
         return `${out}</span>${s.substring(i)}`;
       if (c === ' ' || c === '׀' || c === '־'){
         out += `</span>${c}`;
@@ -76,7 +86,7 @@ const KBLH = {
         out += c;
       }
     }
-    return out;
+    return out; // probably not reached
   },
   getGematria: function(s, gemMap='mispar'){
     let out = 0;

@@ -151,16 +151,36 @@ const tnk = {
 
 const localCache = {
   cache: null,
+  zman: {},
   load: function(){
     if (window.localStorage){
       const c = window.localStorage.getItem('tnk');
       this.cache = c ? JSON.parse(c) : {}; 
+      const z = window.localStorage.getItem('zman');
+      if (z){
+        this.zman = z;
+        zmanim.loadCache();
+      }
     }
   },
   update: function(){
     if (window.localStorage){
       this.cache[tnk.ref] = {"heb": tnk.text[0], "transl": tnk.transl};
       localStorage.setItem("tnk", JSON.stringify(this.cache)); 
+    }
+  },
+  updateZmanim: function(){
+    if (window.localStorage){
+      this.zman = {
+        lat: zmanim.latitude,
+        lng: zmanim.longitude,
+        alt: zmanim.elevation,
+        hd: zmanim.heb_day,
+        hm: zmanim.heb_month,
+        hy: zmanim.heb_year,
+        prsh: zmanim.parsha
+      }  
+      localStorage.setItem("zman", JSON.stringify(this.zman)); 
     }
   },
   hasRef: function(ref=tnk.ref){
@@ -179,9 +199,19 @@ const zmanim = {
   longitude: 0,
   elevation: 0,
   data: {},
+  parsha: 'Bereshit',
+  loadCache: function(){
+    this.latitude = localCache.zman.lat || 0;
+    this.longitude = localCache.zman.lng || 0;
+    this.elevation = localCache.zman.alt || 0;
+    this.parsha = localCache.zman.prsh || 'Bereshit';
+    this.heb_day = localCache.zman.hd || 1;
+    this.heb_month = localCache.zman.hm || 'Tishrei';
+    this.heb_year = localCache.zman.hy || 5786;
+  },
   refresh: function(callback){
     const d = new Date();
-    fetchJson(`https://www.hebcal.com/converter/?cfg=json&gd=${d.getDay()}&gm=${d.getMonth()}&gy=${d.getFullYear()}&g2h=1`, (j) => {
+    fetchJson(`https://www.hebcal.com/converter/?cfg=json&gd=${d.getDate()}&gm=${d.getMonth()+1}&gy=${d.getFullYear()}&g2h=1`, (j) => {
       if (j){
         if (j.events){
           j.events.forEach((ev) => {
@@ -192,6 +222,7 @@ const zmanim = {
         zmanim.heb_day = j['hd'];
         zmanim.heb_month = j['hm'];
         zmanim.heb_year = j['hy'];
+        localCache.updateZmanim();
       }
     });
     navigator.geolocation.getCurrentPosition(position => {
@@ -209,11 +240,10 @@ const zmanim = {
     });
   },
   getParshaOfTheWeek: function(){
-    zmanJS.hdate();
-    zmanJS.convertDate(new Date());
-    var parshaIndex = zmanJS.getparshaHashavua();
-    parshaIndex = parshaIndex % tnk.parshiot.length;
-    return Object.keys(tnk.parshiot[parshaIndex])[0];
+    return zmanim.parsha;
+  },
+  getHebrewDate: function(){
+    return `${this.heb_day} ${this.heb_month} ${this.heb_year}`;
   },
   addNavZmanim: function(id, json){
     const d = document.getElementById(id);
@@ -278,6 +308,79 @@ function refresh(){
   };
 }
 
+const gematria = {
+  idMatrix: document.getElementById('matrix'),
+  perekInfo: function(){
+    this.idMatrix.replaceChildren();
+    let nfo =`words: ${tnk.countMilim()}`;
+    nfo += ` · letters: ${tnk.countOtiot()}`;
+    nfo += ` · gematria: ${KBLH.getGematria(tnk.otSeq)}`;
+    nfo += this.matrixInfo();
+    return nfo;
+  },
+  matrixInfo: function(){
+    const matrix = KBLH.getMatrixDimArray(3, tnk.otSeq);
+    let out = '';
+    if (matrix.str){
+      for (let i=0; i < matrix.array.length; i++){
+        out += `<span class="matrix-span" onclick="sm(this, event)">${matrix.array[i][0]}x${matrix.array[i][1]}</span>`;
+      }
+      return ` · matrix: ${out}`;
+    }
+    return '';
+  },
+  matrixShowSofit: false,
+  showMatrix: function(element, event){
+    const rootVars = getComputedStyle(document.documentElement); 
+    const rootSpanBg = rootVars.getPropertyValue('--fade-border').trim();
+    const rootAccent = rootVars.getPropertyValue('--accent').trim();
+    
+    event.stopPropagation();
+    const m = element.innerText.split('x').map(x => parseInt(x));
+
+    const pid = document.getElementById('pan-matrix');
+    pid.style.display = 'block';
+    
+    const hdr = document.getElementById('pan-matrix-head');
+    hdr.innerHTML = `<span id="matrix-sofit" class="matrix-span">sofit</span>  `
+    hdr.innerHTML += `matrix <span class="matrix-span" onclick="sm(this, event)">${m[0]}x${m[1]}</span>`;
+    if (m[0] !== m[1])
+      hdr.innerHTML += `<span class="matrix-span" onclick="sm(this, event)">${m[1]}x${m[0]}</span>`;
+    hdr.innerHTML += `<p id="matrix-span-info"></p>`;
+
+    const idinfo = document.getElementById('matrix-span-info');
+    const igtgSofit = document.getElementById('matrix-sofit');
+    igtgSofit.addEventListener('click', () => {
+      gematria.matrixShowSofit = !gematria.matrixShowSofit;
+      igtgSofit.style.background = gematria.matrixShowSofit ? rootSpanBg : rootAccent;
+      this.showMatrix(element, event);
+    });
+
+
+    const e = document.getElementById('pan-matrix-body');
+    e.replaceChildren();
+    
+    const grid = document.createElement('div');
+    grid.className = 'matrix-grid';
+    grid.style.gridTemplateColumns = `repeat(${m[1]}, auto)`;
+    let clz = 'matrix-span-cell';
+    if (Math.max(m[1],m[0]) > 12) clz +="-small";
+    for (let i=0; i < tnk.otSeq.length; i++){
+      const span = document.createElement('span');
+      span.className = clz;
+      span.innerText = gematria.matrixShowSofit ? tnk.otSeq[i] : KBLH.removeSofit(tnk.otSeq[i]);
+      span.addEventListener('click',()=> idinfo.innerHTML = `pos: ${i + 1} of ${tnk.otSeq.length} gem: ${KBLH.mispar[tnk.otSeq[i]]}`);
+      grid.appendChild(span);
+    }
+    e.appendChild(grid);
+    e.style.display = 'block';
+  }
+}
+
+function sm(id,ev){
+  gematria.showMatrix(id,ev)
+}
+
 const wgem = document.getElementById('gem-content');
 
 function updateUi(){
@@ -290,31 +393,7 @@ function updateUi(){
   fadeInText(refId, tnk.ref);
   i.innerText = tnk.ref;
   rf.innerText = tnk.ref;
-  info.innerHTML = gemGetPerekInfo();
-}
-
-function gemGetPerekInfo(){
-  let nfo =`milim: ${tnk.countMilim()}`;
-  nfo += ` · ot: ${tnk.countOtiot()}`;
-  nfo += ` · gematria: ${KBLH.getGematria(tnk.otSeq)}`;
-  nfo += addMatrixInfo();
-  return nfo;
-}
-
-function addMatrixInfo(){
-  const matrix = KBLH.getMatrixDimArray(3, tnk.otSeq);
-  let out = '';
-  const e = document.getElementById('matrix');
-  e.replaceChildren();
-  if (matrix.str){
-    for (let i=0; i < matrix.array.length; i++){
-      out += `<span class="matrix-span" onclick="showMatrix(this, event)">${matrix.array[i][0]}x${matrix.array[i][1]}</span>`;
-      if (matrix.array[i][0] !== matrix.array[i][1])
-        out += `<span class="matrix-span" onclick="showMatrix(this, event)">${matrix.array[i][1]}x${matrix.array[i][0]}</span>`;
-    }
-    return ` · matrix: ${out}`;
-  }
-  return '';
+  info.innerHTML = gematria.perekInfo();
 }
 
 function hewClick(element, event){  
@@ -341,34 +420,7 @@ function about(){
   pid.style.display = 'block';
 }
 
-function showMatrix(element, event){
-  event.stopPropagation();
-  const m = element.innerText.split('x').map(x => parseInt(x));
 
-  const pid = document.getElementById('pan-matrix');
-  pid.style.display = 'block';
-  
-  const hdr = document.getElementById('pan-matrix-head');
-  hdr.innerHTML = `matrix ${m[0]}x${m[1]}`;
-  
-  const e = document.getElementById('pan-matrix-body');
-  e.replaceChildren();
-  
-  const grid = document.createElement('div');
-  grid.className = 'matrix-grid';
-  grid.style.gridTemplateColumns = `repeat(${m[1]}, auto)`;
-  let clz = 'matrix-span-cell';
-  if (Math.max(m[1],m[0]) > 12) clz +="-small";
-  for (let i=0; i < tnk.otSeq.length; i++){
-    const span = document.createElement('span');
-    span.className = clz;
-    span.innerText = tnk.otSeq[i];
-    span.addEventListener('click',()=> hdr.innerHTML = `matrix ${m[0]}x${m[1]} pos: ${i} gem: ${KBLH.mispar[tnk.otSeq[i]]}`);
-    grid.appendChild(span);
-  }
-  e.appendChild(grid);
-  e.style.display = 'block';
-}
 
 function fadeInText(element, newText){
   element.style.opacity = 0;
@@ -423,7 +475,7 @@ refresh();
 zmanim.refresh(() => {
   const parsha = document.getElementById('parsha-hashavua');
   const i = zmanim.getParshaOfTheWeek();
-  const m = zmanJS.getHebrewDate();
+  const m = zmanim.getHebrewDate();
   parsha.value = i;
   parsha.innerHTML = `Parshat ${i}<br><span class='text-s'>${m}</span>`;
   parsha.addEventListener('click',() => {

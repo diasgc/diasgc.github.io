@@ -328,6 +328,7 @@ body {
   justify-content: center;
   align-items: center;
   gap: 2px;
+  margin: 12px 0px;
   direction: rtl;
   overflow-y: auto;
   max-height: 90vh;
