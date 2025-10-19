@@ -217,6 +217,7 @@ const zmanim = {
           j.events.forEach((ev) => {
             if (ev.includes('Parashat'))
               zmanim.parsha = ev.replace('Parashat ','').trim();
+              navToParsha(zmanim.parsha);
           })
         }
         zmanim.heb_day = j['hd'];
@@ -229,6 +230,7 @@ const zmanim = {
       fetchJson(`https://www.torahcalc.com/api/zmanim?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}`, (j) => {
         zmanim.data = j;
         console.dir(j);
+        zmanim.timezone = j.data.timezone;
         zmanim.addNavZmanim('nav-zmanim',j);
         
       });
@@ -247,14 +249,13 @@ const zmanim = {
   },
   addNavZmanim: function(id, json){
     const d = document.getElementById(id);
-    d.innerHTML = "<a href='#'>Zmanim</a>"
-      + this.getZmanimHtml('alos72') 
-      + this.getZmanimHtml('chatzos')
-      + this.getZmanimHtml('tzeis72');
+    d.innerHTML = this.getZmanimHtml('Alot','alos72') 
+      + this.getZmanimHtml('Chatzot','chatzos')
+      + this.getZmanimHtml('Tzeit', 'tzeis72');
   },
-  getZmanimHtml: function(field){
+  getZmanimHtml: function(name, field){
     const d = new Date(zmanim.data.data.zmanim[field].time);
-    return `<p class='zm'>${field}: ${d.toTimeString().split(' ')[0]}</p>`;
+    return `<span class='zm'>${name}: ${d.toTimeString().split(' ')[0]}</span>`;
   }
   
 }
@@ -593,88 +594,3 @@ selPasuk.addEventListener('change',() => {
 });
 
 populateSefer();
-
-//https://developers.sefaria.org/reference/get-v3-texts
-//https://www.hebcal.com/home/1663/zmanim-halachic-times-api
-
-
-
-
-/*
-function _downloadData(ref){
-  let url = `https://www.sefaria.org/api/v3/texts/${ref}?version=source`;
-  const options = {method: 'GET', headers: {accept: 'application/json'}};
-  fetch(url, options).then(res => res.json()).then(json => {
-      loadData(json, 'heb-content', 'source');
-      tnk.setText(json.versions[0].text);
-      url = `https://www.sefaria.org/api/v3/texts/${ref}?version=${tnk.transLang}`;
-      fetch(url, options).then(res => res.json()).then(json => {
-        loadData(json, 'eng-content', tnk.transLang);
-        tnk.transl = json.versions[0].text;
-        saveCache();
-      });
-    }).catch(err => console.error(err));
-}
-
-function _fetchData(ref,id,lang){
-  const url = `https://www.sefaria.org/api/v3/texts/${ref}?version=${lang}`;
-  //const url = `https://www.sefaria.org/api/texts/${ref}?lang=${lang}`;
-  const options = {method: 'GET', headers: {accept: 'application/json'}};
-  fetch(url, options)
-    .then(res => res.json())
-    .then(json => {
-      loadData(json,id,lang)
-    }).catch(err => console.error(err));
-}
-
-function _loadData(data,id,lang){
-  if (data && data.versions && data.versions[0] && data.versions[0].text){
-    let text = data.versions[0].text;
-    text = text.replace(/{.*}/g,(match) => `<sup><small><small>${match}</small></small></sup>`);
-    if (lang === 'source'){
-      tnk.setText(text);
-      text = tnk.getText();
-    } else {
-      tnk.transl = text;
-    }
-    const e = document.getElementById(id);
-    e.innerHTML = text;
-  }
-}
-
-function _upd(ref){
-  document.getElementById('verse2').innerText = ref;
-  if (cache && cache[ref]){
-    tnk.transl = cache[ref].transl;
-    tnk.setText(cache[ref].heb);
-    const t = tnk.getText();
-    document.getElementById('heb-content').innerHTML = t;
-    document.getElementById('eng-content').innerHTML = tnk.transl;
-    refId.innerText = ref;
-    return;
-  }
-  downloadData(ref);
-  refId.innerText = ref;
-}
-
-function _saveCache(){
-  if (cache){
-    cache[ref] = {"heb": tnk.text[0], "transl": tnk.transl};
-    localStorage.setItem("tnk", JSON.stringify(cache));
-  }
-}
-
-function _refresh2(){
-  tnk.book = tnk.seferim[tnk.sefer];
-  tnk.ref = `${tnk.book} ${tnk.perek}.${tnk.pasuk}`;
-  i.innerText = tnk.ref;
-  rf.innerText = tnk.ref;
-  upd(tnk.ref);
-}
-
-let cache = null;
-if (window.localStorage){
-  const c = window.localStorage.getItem('tnk');
-  cache = c ? JSON.parse(c) : {};
-}
-*/
