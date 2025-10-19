@@ -216,7 +216,7 @@ const zmanim = {
         if (j.events){
           j.events.forEach((ev) => {
             if (ev.includes('Parashat'))
-              zmanim.parsha = ev.replace('Parashat ',' ');
+              zmanim.parsha = ev.replace('Parashat ','').trim();
           })
         }
         zmanim.heb_day = j['hd'];
@@ -310,6 +310,7 @@ function refresh(){
 
 const gematria = {
   idMatrix: document.getElementById('matrix'),
+  matrixShowSofit: false,
   perekInfo: function(){
     this.idMatrix.replaceChildren();
     let nfo =`words: ${tnk.countMilim()}`;
@@ -329,7 +330,6 @@ const gematria = {
     }
     return '';
   },
-  matrixShowSofit: false,
   showMatrix: function(element, event){
     const rootVars = getComputedStyle(document.documentElement); 
     const rootSpanBg = rootVars.getPropertyValue('--fade-border').trim();
@@ -439,8 +439,7 @@ function neq(){
 }
 
 function settings(){
-  const zmanim = new Zmanim(options);
-  const shaaZmanit = zmanim.getShaahZmanit();
+
 }
 
 function openNav() {
@@ -472,24 +471,32 @@ const webStat = document.getElementById('web-stat');
 
 refresh();
 
-zmanim.refresh(() => {
-  const parsha = document.getElementById('parsha-hashavua');
+zmanim.refresh(() => {  
   const i = zmanim.getParshaOfTheWeek();
   const m = zmanim.getHebrewDate();
+  const parsha = document.getElementById('parsha-hashavua');
   parsha.value = i;
   parsha.innerHTML = `Parshat ${i}<br><span class='text-s'>${m}</span>`;
   parsha.addEventListener('click',() => {
-    const p = tnk.parshiot.find(p => Object.keys(p)[0] === i);
-    if (p){
-      const [sefer,perek,pasuk] = p[i].split(/[:;.-]/).map(x => parseInt(x));
-      tnk.sefer = sefer;
-      tnk.perek = perek;
-      tnk.pasuk = pasuk;
-      populateSefer();
-      refresh();
-    }
+    navToParsha(i);
+    closeNav();
   });
 });
+
+function navToParsha(i){
+  const p = tnk.parshiot.find(p => Object.keys(p)[0] === i);
+  if (p){
+    const [sefer,perek,pasuk] = p[i].split(/[:;.-]/).map(x => parseInt(x));
+    tnk.sefer = sefer;
+    tnk.perek = perek;
+    tnk.pasuk = pasuk;
+    populateSefer();
+    refresh();
+  }
+}
+
+
+
 
 document.getElementById('nav-home').addEventListener('click',() => {
   tnk.sefer = 0;
@@ -511,16 +518,7 @@ const selPerek = document.getElementById('sel-perek');
 const selPasuk = document.getElementById('sel-pasuk');
 
 const selParsha = document.getElementById('sel-parsha');
-selParsha.addEventListener('change',() => {
-  const p = tnk.parshiot.find(p => Object.keys(p)[0] === selParsha.value);
-  if (p){
-    const [sefer,perek,pasuk] = p[selParsha.value].split(/[:;.-]/).map(x => parseInt(x));
-    tnk.sefer = sefer;
-    tnk.perek = perek;
-    tnk.pasuk = pasuk;
-    populateSefer();
-  }
-});
+selParsha.addEventListener('change',() => navToParsha(selParsha.value));
 
 const btnGo = document.getElementById('pan-go');
 btnGo.addEventListener('click',() => {
