@@ -97,14 +97,20 @@ const tnk = {
   text: [],
   transl: '',
   otSeq: '',
+  txtMode: 1,
   setText: function(t){
     this.text[0] = t;
     this.text[1] = KBLH.removeTaamim(t);
     this.text[2] = KBLH.removeNikud(t);
-    this.otSeq = KBLH.getOtiot(t);
+    let tt = t.lastIndexOf('׃');
+    this.otSeq = KBLH.getOtiot(tt > 0 ? t.substring(0,tt) : t);
+  },
+  wrapNotes: function(t){
+    // span substrings between parentisis
+    return t.replace(/\(.*?\)/gs,(match) => `<span class="span-notes">${match}</span>`);;
   },
   getText: function(mode=this.txtMode){
-    return this.text[mode].replace(/{.*}/g,(match) => `<sup><small><small>${match}</small></small></sup>`);;
+    return this.text[mode].replace(/{.*}/g,(match) => `<span class="span-sup">${match}</span>`);;
   },
   countMilim: function(){
     if (!this.text[0]) return 0;
@@ -114,7 +120,6 @@ const tnk = {
   countOtiot: function(){
     return this.otSeq.length;
   },
-  txtMode: 1,
   nextPasuk: function(){
     if (tnk.pasuk < tnk.psukim[tnk.sefer][tnk.perek-1][0]){
       tnk.pasuk++;
@@ -189,7 +194,7 @@ const localCache = {
   setTnk: function(ref){
     if (this.hasRef(ref)){
       tnk.setText(this.cache[ref].heb);
-      tnk.transl = this.cache[ref].transl;
+      tnk.transl = tnk.wrapNotes(this.cache[ref].transl);
     }
   }
 }
@@ -327,7 +332,7 @@ const gematria = {
       for (let i=0; i < matrix.array.length; i++){
         out += `<span class="matrix-span" onclick="sm(this, event)">${matrix.array[i][0]}x${matrix.array[i][1]}</span>`;
       }
-      return ` · matrix: ${out}`;
+      return `<p>matrix: ${out}</p>`;
     }
     return '';
   },
@@ -344,9 +349,8 @@ const gematria = {
     
     const hdr = document.getElementById('pan-matrix-head');
     hdr.innerHTML = `<span id="matrix-sofit" class="matrix-span">sofit</span>  `
-    hdr.innerHTML += `matrix <span class="matrix-span" onclick="sm(this, event)">${m[0]}x${m[1]}</span>`;
     if (m[0] !== m[1])
-      hdr.innerHTML += `<span class="matrix-span" onclick="sm(this, event)">${m[1]}x${m[0]}</span>`;
+      hdr.innerHTML += `transpose <span class="matrix-span" onclick="sm(this, event)">${m[1]}x${m[0]}</span>`;
     hdr.innerHTML += `<p id="matrix-span-info"></p>`;
 
     const idinfo = document.getElementById('matrix-span-info');
@@ -364,8 +368,7 @@ const gematria = {
     const grid = document.createElement('div');
     grid.className = 'matrix-grid';
     grid.style.gridTemplateColumns = `repeat(${m[1]}, auto)`;
-    let clz = 'matrix-span-cell';
-    if (Math.max(m[1],m[0]) > 12) clz +="-small";
+    let clz = 'matrix-span-cell-'+(Math.max(m[1],m[0])/7 & 0xff);
     for (let i=0; i < tnk.otSeq.length; i++){
       const span = document.createElement('span');
       span.className = clz;
