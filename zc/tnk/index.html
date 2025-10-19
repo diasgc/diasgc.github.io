@@ -22,7 +22,11 @@
     </div>
     <div id="verse2" class="title">TN"K app</div>
     <div class="icons">
-      <span class="icon" onclick="searchClicked()">&vellip;</span> <!-- Search Icon -->
+      <span class="icon" onclick="showAppBarMenu(this,event,true)">&vellip;</span> <!-- Search Icon -->
+    </div>
+    <div class="app-bar-menu" id="app-bar-menu">
+      <div class="app-bar-menu-item" id="abmi-settings">Settings</div>
+      <div class="app-bar-menu-item" id="abmi-refresh" onclick="refreshEntry()">Refresh</div>
     </div>
   </div>
   <!-- Side Nav -->

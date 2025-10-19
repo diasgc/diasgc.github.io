@@ -91,6 +91,21 @@ body {
   gap: 16px;
 }
 
+.app-bar-menu {
+  position: absolute;
+  display: none;
+  top: 48px;
+  right: 0;
+  padding: 12px;
+  font-size: 16px;
+  background: var(--bar-bg);
+  z-index: 9;
+}
+
+.app-bar-menu-item {
+  margin: 22px;
+}
+
 #web-stat {
   position: absolute;
   top:12px;
@@ -141,7 +156,7 @@ body {
 
 /* Navigation bar items */
 .nav-bar .a {
-  color: white;
+  color: var(--main-fg);
   text-decoration: none;
   font-size: 16px;
   text-align: center;

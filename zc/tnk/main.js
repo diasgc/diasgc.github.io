@@ -307,11 +307,16 @@ function refresh(){
     localCache.setTnk(tnk.ref);
     updateUi();
   } else {
-    download(tnk.ref,() => {
-      localCache.update();
-      updateUi();
-    });
+    refreshEntry();  
   };
+}
+
+function refreshEntry(){
+  showAppBarMenu(false);
+  download(tnk.ref,() => {
+    localCache.update();
+    updateUi();
+  });
 }
 
 const gematria = {
@@ -572,7 +577,7 @@ function populatePasuk(){
   const numPsukim = tnk.psukim[tnk.sefer][tnk.perek-1][0];
   for (let i=1; i<=numPsukim; i++){
     const option = document.createElement('option');
-    option.value = i;
+    option.value = i;refreshEntry
     option.text = i;
     selPasuk.add(option);
   }
@@ -597,3 +602,23 @@ selPasuk.addEventListener('change',() => {
 });
 
 populateSefer();
+
+//document.getElementById('app-bar-menu-icon').addEventListener('click', (el,ev) => showAppBarMenu(el,ev,true));
+
+function showAppBarMenu(el, ev, show){
+  ev.stopPropagation();
+  const id = document.getElementById('app-bar-menu');
+  if (show){
+    id.style.display = 'block';
+    window.addEventListener('click', () => showAppBarMenu(el,ev,false));
+  } else {
+    id.style.display = 'none';
+    window.removeEventListener('click', () => showAppBarMenu(el,ev,false));
+  }
+}
+
+function closeAll(){
+  showAppBarMenu(false);
+  document.getElementById("mySidenav").style.width = "0";
+}
+
