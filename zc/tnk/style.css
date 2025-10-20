@@ -453,6 +453,7 @@ button,input,select {
   margin: 8px;
   color: var(--main-fg);
 }
+
 .button-nav {
   width: 48px;
   height: 48px;
