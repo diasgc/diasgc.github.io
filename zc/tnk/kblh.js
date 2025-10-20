@@ -1,6 +1,6 @@
 const KBLH = {
   m_hechr: [1,2,3,4,5,6,7,8,9,10,20,20,30,40,40,50,50,60,70,80,80,90,90,100,200,300,400],
-  m_gadol: [1,2,3,4,5,6,7,8,9,10,20,500,30,40,600,50,700,60,70,80,800,90,900,100,200,300,400],
+  m_gadol: [1,2,3,4,5,6,7,8,9,10,500,20,30,600,40,700,50,60,70,800,80,900,90,100,200,300,400],
   m_sidur: [1,2,3,4,5,6,7,8,9,10,11,11,12,13,13,14,14,15,16,17,17,18,18,19,20,21,22],
   m_katan: [1,2,3,4,5,6,7,8,9,1,2,2,3,4,4,5,5,6,7,8,8,9,9,1,2,3,4],
   mispar: {
@@ -21,7 +21,12 @@ const KBLH = {
     'ס': 15, 'ע': 16, 'פ': 17, 'ף': 17, 'צ': 18, 'ץ': 18, 'ק': 19,
     'ר': 20, 'ש': 21, 'ת': 22
   },
-  misparKatan: {
+  misparKatan: {getGematria: function(s, gemMap='mispar'){
+    let out = 0;
+    const map = this[gemMap] || this.mispar;
+    for (let i=0; i < s.length; i++){
+      out += map[s[i]] || 0;}return out;
+  },
     'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9,
     'י': 1, 'כ': 2, 'ך': 2, 'ל': 3, 'מ': 4, 'ם': 4, 'נ': 5, 'ן': 5,
     'ס': 6, 'ע': 7, 'פ': 8, 'ף': 8, 'צ': 9, 'ץ': 9, 'ק': 1,
@@ -96,7 +101,17 @@ const KBLH = {
     let out = 0;
     const map = this[gemMap] || this.mispar;
     for (let i=0; i < s.length; i++){
-      out += map[s[i]] || 0;}return out;
+      out += map[s[i]] || 0;
+    }
+    return out;
+  },
+  getGematria2: function(s, gemMap='m_hechr'){
+    let out = 0;
+    const map = this[gemMap] || this.m_hechr;
+    for (let i=0; i < s.length; i++){
+      out += map[s.charCodeAt(i) - 0x05D0] || 0;
+    }
+    return out;
   },
   getMatrixDimArray: function(minDim, seq){
     let out = [];
