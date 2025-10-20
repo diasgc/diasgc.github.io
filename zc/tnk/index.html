@@ -17,16 +17,12 @@
   <!-- App Bar -->
   <div id="web-stat">●</div>
   <div class="app-bar">
-    <div class="icons">
-      <span class="icon" onclick="openNav()">☰</span> <!-- Menu Icon -->
-    </div>
+    <div class="icons"><span class="icon" onclick="openNav()">☰</span></div>
     <div id="verse2" class="title">TN"K app</div>
-    <div class="icons">
-      <span class="icon" onclick="showAppBarMenu(this,event,true)">&vellip;</span> <!-- Search Icon -->
-    </div>
-    <div class="app-bar-menu" id="app-bar-menu">
-      <div class="app-bar-menu-item" id="abmi-settings">Settings</div>
-      <div class="app-bar-menu-item" id="abmi-refresh" onclick="refreshEntry()">Refresh</div>
+    <div class="icons"><span class="icon" id="app-bar-menu-button">&vellip;</span></div>
+    <div class="dropdown" id="app-bar-menu">
+      <div id="abmi-settings">Settings</div>
+      <div id="abmi-refresh" onclick="refreshEntry()">Refresh</div>
     </div>
   </div>
   <!-- Side Nav -->
@@ -49,9 +45,9 @@
   </div>
   <div id="container">
     <div id="heb-row">
-      <div id="pasuk-next">&lt;</div>
+      <div class="pasuk-nav" id="pasuk-next">&lt;</div>
       <div id="heb-content" class='heb-text'></div>
-      <div id="pasuk-prev">&gt;</div>
+      <div class="pasuk-nav" id="pasuk-prev">&gt;</div>
     </div>
     <div id="pasuk-ref">reference</div>
     <div id="eng-content"></div>
@@ -60,8 +56,8 @@
     <div id="matrix"></div>
   </div>
   <div id="nav-buttons">
-    <button id="nav-next">next</button>
-    <button id="nav-prev">prev</button>
+    <button class="button-nav" id="nav-next">next</button>
+    <button class="button-nav" id="nav-prev">prev</button>
   </div>
   <div id="pan-search" class="panel">
     <fieldset class="fs-search"><legend>Parsha</legend><select id="sel-parsha" class="sel-search"></select></fieldset>

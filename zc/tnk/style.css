@@ -91,19 +91,39 @@ body {
   gap: 16px;
 }
 
-.app-bar-menu {
-  position: absolute;
-  display: none;
+#app-bar-menu {
+  position: absolute;  
   top: 48px;
   right: 0;
   padding: 12px;
   font-size: 16px;
   background: var(--bar-bg);
-  z-index: 9;
+  z-index: 2;
 }
 
-.app-bar-menu-item {
-  margin: 22px;
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  color: var(--bar-bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.dropdown div {
+  display: block;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: var(--main-fg);
+}
+
+.dropdown div:hover {
+  color: var(--accent);
+}
+
+.dropdown.show {
+  display: block;
 }
 
 #web-stat {
@@ -263,7 +283,7 @@ body {
   padding: 18px 42px;
 }
 
-#pasuk-prev, #pasuk-next {
+.pasuk-nav {
   position: static;
   margin: 2px;
   color: var(--fade-border);
@@ -274,11 +294,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-#pasuk-prev:hover, #pasuk-next:hover {
-  background: var(--fade-border);
-  cursor: pointer;
+  &:hover {
+    background: var(--fade-border);
+    cursor: pointer;
+  }
 }
 
 #nav-buttons {
@@ -433,6 +452,17 @@ button,input,select {
   font-size: 13px;
   margin: 8px;
   color: var(--main-fg);
+}
+.button-nav {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  margin: 0;
+  border-radius: 50%;
+  font-weight: normal;
+  &:hover{
+    font-weight: bold;
+  }
 }
 
 .btn-center {

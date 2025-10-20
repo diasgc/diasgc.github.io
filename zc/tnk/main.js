@@ -312,7 +312,6 @@ function refresh(){
 }
 
 function refreshEntry(){
-  showAppBarMenu(false);
   download(tnk.ref,() => {
     localCache.update();
     updateUi();
@@ -605,20 +604,21 @@ populateSefer();
 
 //document.getElementById('app-bar-menu-icon').addEventListener('click', (el,ev) => showAppBarMenu(el,ev,true));
 
-function showAppBarMenu(el, ev, show){
-  ev.stopPropagation();
-  const id = document.getElementById('app-bar-menu');
-  if (show){
-    id.style.display = 'block';
-    window.addEventListener('click', () => showAppBarMenu(el,ev,false));
-  } else {
-    id.style.display = 'none';
-    window.removeEventListener('click', () => showAppBarMenu(el,ev,false));
+const appBarMenuButton = document.getElementById('app-bar-menu-button');
+const dropdown = document.getElementById('app-bar-menu');
+
+appBarMenuButton.addEventListener('click', () => {
+  dropdown.classList.toggle('show');
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (event) => {
+  if (!appBarMenuButton.contains(event.target) && !dropdown.contains(event.target)) {
+    dropdown.classList.remove('show');
   }
-}
+});
 
 function closeAll(){
-  showAppBarMenu(false);
   document.getElementById("mySidenav").style.width = "0";
 }
 
