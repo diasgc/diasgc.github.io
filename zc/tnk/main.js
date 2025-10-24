@@ -114,8 +114,7 @@ const tnk = {
   },
   countMilim: function(){
     if (!this.text[0]) return 0;
-    const words = this.text[0].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(/\s+/);
-    return words.length;
+    return KBLH.countMilim(this.text[2]);
   },
   countOtiot: function(){
     return this.otSeq.length;
@@ -404,7 +403,7 @@ function updateUi(){
   info.innerHTML = gematria.perekInfo();
 }
 
-function hewClick(element, event){  
+function wordClick(element, event){  
   const v = KBLH.removeNikud(element.innerText);
   const g = KBLH.getGematria(v);
   let html = `<span class='gem-text'>${v}</span><span class='gem-eng'><b>ot:</b> ${KBLH.countOtiot(v)} <b>gematria:</b> ${g}</span><br>`;
@@ -427,8 +426,6 @@ function about(){
   const pid = document.getElementById('pan-about');
   pid.style.display = 'block';
 }
-
-
 
 function fadeInText(element, newText){
   element.style.opacity = 0;
@@ -503,16 +500,12 @@ function navToParsha(i){
   }
 }
 
-
-
-
 document.getElementById('nav-home').addEventListener('click',() => {
   tnk.sefer = 0;
   tnk.perek = 1;
   tnk.pasuk = 1;
   refresh();
 });
-
 
 function search(){
   const box = document.getElementById('pan-search');
@@ -613,12 +606,9 @@ appBarMenuButton.addEventListener('click', () => {
 
 // Close dropdown when clicking outside
 document.addEventListener('click', (event) => {
-  if (!appBarMenuButton.contains(event.target) && !dropdown.contains(event.target)) {
+  if (!appBarMenuButton.contains(event.target))
     dropdown.classList.remove('show');
+  if (!document.getElementById("app-bar-menu-side").contains(event.target)){
+    closeNav();
   }
 });
-
-function closeAll(){
-  document.getElementById("mySidenav").style.width = "0";
-}
-

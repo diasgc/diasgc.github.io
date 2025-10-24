@@ -71,7 +71,7 @@ const KBLH = {
     return s.length === 0 ? [] : s.split(' ');
   },
   countMilim: function(s){
-    return this.removeSep(s).length;
+    return this.removeSep(s).split(/\s+/).length;
   },
   getOtiot: function(s){
     let out = '';
