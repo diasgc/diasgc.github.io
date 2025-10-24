@@ -1,4 +1,5 @@
 const KBLH = {
+  // https://www.unicode.org/charts/PDF/U0590.pdf
   m_hechr: [1,2,3,4,5,6,7,8,9,10,20,20,30,40,40,50,50,60,70,80,80,90,90,100,200,300,400],
   m_gadol: [1,2,3,4,5,6,7,8,9,10,500,20,30,600,40,700,50,60,70,800,80,900,90,100,200,300,400],
   m_sidur: [1,2,3,4,5,6,7,8,9,10,11,11,12,13,13,14,14,15,16,17,17,18,18,19,20,21,22],
@@ -21,12 +22,7 @@ const KBLH = {
     'ס': 15, 'ע': 16, 'פ': 17, 'ף': 17, 'צ': 18, 'ץ': 18, 'ק': 19,
     'ר': 20, 'ש': 21, 'ת': 22
   },
-  misparKatan: {getGematria: function(s, gemMap='mispar'){
-    let out = 0;
-    const map = this[gemMap] || this.mispar;
-    for (let i=0; i < s.length; i++){
-      out += map[s[i]] || 0;}return out;
-  },
+  misparKatan: {
     'א': 1, 'ב': 2, 'ג': 3, 'ד': 4, 'ה': 5, 'ו': 6, 'ז': 7, 'ח': 8, 'ט': 9,
     'י': 1, 'כ': 2, 'ך': 2, 'ל': 3, 'מ': 4, 'ם': 4, 'נ': 5, 'ן': 5,
     'ס': 6, 'ע': 7, 'פ': 8, 'ף': 8, 'צ': 9, 'ץ': 9, 'ק': 1,
@@ -42,9 +38,16 @@ const KBLH = {
   removeSep: function(s){
     return s.replace(/[׀־]/g,' ');
   },
+  strip: function(input, keepNikud=true, keepTaamim=true){
+    const i0 = keepTaamim ? 
+      input.match(/[\u0590-\u05FF]+/g) : 
+      keepNikud ? input.match(/[\u05B0-\u05FF]+/g) :
+      input.match(/[\u05D0-\u05FF]+/g);
+    return i0[0] || '';
+  },
   removeTaamim: function(s){
     let out = '';
-    for (let i=0; i < s.length; i++){
+    for (let i = 0; i < s.length; i++){
       let c = s.charCodeAt(i);
       out += c > 0x0590 && c < 0x05b0 ? '' : String.fromCharCode(c);
     }
@@ -53,7 +56,7 @@ const KBLH = {
   removeNikud: function(s){
     let out = '';
     s = this.removeSep(s);
-    for (let i=0; i < s.length; i++){
+    for (let i = 0; i < s.length; i++){
       let c = s.charCodeAt(i);
       out += c !== 0x05c6 && c > 0x0590 && c < 0x05c8 ? '' : String.fromCharCode(c);
     }
@@ -63,11 +66,12 @@ const KBLH = {
     return this.sofit[c] || c;
   },
   getMilim: function(s){
+    s = this.removeSep(s);
     s = this.removeNikud(s).replace(/\s+/g,' ').trim();
     return s.length === 0 ? [] : s.split(' ');
   },
   countMilim: function(s){
-    return this.getMilim(s).length;
+    return this.removeSep(s).length;
   },
   getOtiot: function(s){
     let out = '';
