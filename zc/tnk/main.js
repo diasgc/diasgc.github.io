@@ -113,11 +113,10 @@ const tnk = {
     return this.text[mode].replace(/{.*}/g,(match) => `<span class="span-sup">${match}</span>`);;
   },
   countMilim: function(){
-    if (!this.text[0]) return 0;
-    return KBLH.countMilim(this.text[2]);
+    return this.text[2] ? KBLH.countMilim(this.text[2]) : 0;
   },
   countOtiot: function(){
-    return this.otSeq.length;
+    return this.otSeq ? this.otSeq.length : 0;
   },
   nextPasuk: function(){
     if (tnk.pasuk < tnk.psukim[tnk.sefer][tnk.perek-1][0]){
