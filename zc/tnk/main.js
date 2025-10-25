@@ -212,36 +212,47 @@ const zmanim = {
     this.heb_month = localCache.zman.hm || 'Tishrei';
     this.heb_year = localCache.zman.hy || 5786;
   },
-  refresh: function(callback){
-    const d = new Date();
-    fetchJson(`https://www.hebcal.com/converter/?cfg=json&gd=${d.getDate()}&gm=${d.getMonth()+1}&gy=${d.getFullYear()}&g2h=1`, (j) => {
+  queryHebCal: function(d, sunsetTime, callback){
+    const s = new Date(sunsetTime);
+    const gs = d > s ? '1': '0';
+    const q = `gd=${d.getDate()}&gm=${d.getMonth()+1}&gy=${d.getFullYear()}&g2h=1&gs=${gs}`;
+    fetchJson(`https://www.hebcal.com/converter/?cfg=json&${q}`, (j) => {
       if (j){
+        console.dir(j);
         if (j.events){
           j.events.forEach((ev) => {
             if (ev.includes('Parashat'))
               zmanim.parsha = ev.replace('Parashat ','').trim();
               navToParsha(zmanim.parsha);
+              zmanim.addNavZmanim('nav-zmanim',j);
           })
         }
         zmanim.heb_day = j['hd'];
         zmanim.heb_month = j['hm'];
         zmanim.heb_year = j['hy'];
         localCache.updateZmanim();
+        if (callback)
+          callback();
       }
     });
+  },
+  updatePosition: function(position){
+    zmanim.latitude = position.coords.latitude;
+    zmanim.longitude = position.coords.longitude;
+    zmanim.elevation = position.coords.altitude || 0;
+  },
+  fetchZmanim: function(callback){
+    fetchJson(`https://www.torahcalc.com/api/zmanim?latitude=${zmanim.latitude}&longitude=${zmanim.longitude}`, (j) => {
+      zmanim.data = j;
+      console.dir(j);
+      zmanim.timezone = j.data.timezone;
+      zmanim.queryHebCal(new Date(), new Date(j.data.zmanim.sunset.time), callback);
+    });
+  },
+  refresh: function(callback){
     navigator.geolocation.getCurrentPosition(position => {
-      fetchJson(`https://www.torahcalc.com/api/zmanim?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}`, (j) => {
-        zmanim.data = j;
-        console.dir(j);
-        zmanim.timezone = j.data.timezone;
-        zmanim.addNavZmanim('nav-zmanim',j);
-        
-      });
-      zmanim.latitude = position.coords.latitude;
-      zmanim.longitude = position.coords.longitude;
-      zmanim.elevation = position.coords.altitude || 0;
-      if (callback)
-        callback();
+      zmanim.updatePosition(position);  
+      zmanim.fetchZmanim(callback);
     });
   },
   getParshaOfTheWeek: function(){
@@ -406,18 +417,13 @@ function wordClick(element, event){
   const g = KBLH.getGematria(v);
   let html = `<span class='gem-text'>${v}</span><span class='gem-eng'><b>ot:</b> ${KBLH.countOtiot(v)} <b>gematria:</b> ${g}</span><br>`;
   fetchJson(`https://www.torahcalc.com/api/gematriasearch?value=${g}`,(j)=>{
-    if (j.data['TORAH_WORDS']){
+    if (j.data['TORAH_WORDS']){tl
       html += `<p class='gem-eng'>Other Torah words matching gematria of ${g}</p>`
       j.data['TORAH_WORDS'].forEach(e => html += `<span class='gem-text-small'>${e} </span>`)  
     }
     wgem.innerHTML = html;
     //console.dir(j);
   });
-}
-
-function btDismiss(id){
-  const e = document.getElementById(id)
-  e.style.display = 'none';
 }
 
 function about(){
@@ -475,11 +481,10 @@ const bkgBlur = document.getElementById('bkg-blur');
 refresh();
 
 zmanim.refresh(() => {  
-  const i = zmanim.getParshaOfTheWeek();
   const m = zmanim.getHebrewDate();
   const parsha = document.getElementById('parsha-hashavua');
-  parsha.value = i;
-  parsha.innerHTML = `Parshat ${i}<br><span class='text-s'>${m}</span>`;
+  parsha.value = zmanim.parsha;
+  parsha.innerHTML = `${zmanim.parsha}<br><span class='text-s'>${m}</span>`;
   parsha.addEventListener('click',() => {
     navToParsha(i);
     closeNav();

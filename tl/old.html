@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Timelapse Recorder</title>
+  <link rel="manifest" href="site.webmanifest" crossorigin="use-credentials">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📷</text></svg>"/>
+  <link rel="stylesheet" href="tljs.css">
+</head>
+<body>
+  <canvas id="tl-canvas"></canvas>
+  <video id="tl-video" autoplay={true} playsInline={true} muted={true}></video>
+  <div id='log'>
+    <div class="stats">
+      <div id="timer">00:00:00</div>
+      <div id="timer-info">paused</div>
+    </div>
+  </div>
+  <div id='panel-bottom'>
+    <div id="div-input" width="100%">
+      <input id="v-input" type="range" min="0" max="48" step="1" list="steplist"><datalist id="steplist"></datalist>
+    </div>
+    <div id='div-table'>
+      <table id='table-caps'>
+        <thead id="thead"></thead>
+        <tbody id='tdata'"></tbody>
+      </table>
+    </div>
+    <div id="record-btn-div" onclick="startStop()">
+      <input id="startStop" type="checkbox"/><label for="startStop"></label>
+    </div>
+  </div>
+  <div id='p-input'>
+    <div>label</div>
+    <div id="ival">0</div>
+  </div>
+  <script src="../widgets/ruler.js"></script>
+  <script src="timelapse.min.js"></script>
+  <script src="tljs.js?v=2412242300"></script>
+</body>
+</html>
