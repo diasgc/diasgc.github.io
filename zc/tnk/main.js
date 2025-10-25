@@ -274,6 +274,156 @@ const zmanim = {
   
 }
 
+const searchPanel = {
+  panSearch: document.getElementById('pan-search'),
+  selSefer: document.getElementById('sel-sefer'),
+  selPerek: document.getElementById('sel-perek'),
+  selPasuk: document.getElementById('sel-pasuk'),
+  selParsha: document.getElementById('sel-parsha'),
+  btnGo: document.getElementById('pan-go'),
+  init: function(){
+    document.getElementById('nav-search').addEventListener('click',() => this.show());
+    document.getElementById('verse2').addEventListener('click', () => this.show());
+    this.selParsha.addEventListener('change',() => navToParsha(this.selParsha.value));
+    this.btnGo.addEventListener('click',() => {
+      refresh();
+      closeDialog('pan-search');
+    });
+
+    this.selSefer.addEventListener('change',() => {
+      tnk.sefer = parseInt(searchPanel.selSefer.value);
+      tnk.perek = 1;
+      tnk.pasuk = 1;
+      this.populatePerek();
+    });
+
+    this.selPerek.addEventListener('change',() => {
+      tnk.perek = parseInt(searchPanel.selPerek.value);
+      tnk.pasuk = 1;
+      this.populatePasuk();
+    });
+
+    this.selPasuk.addEventListener('change',() => {
+      tnk.pasuk = parseInt(searchPanel.selPasuk.value);
+    });
+
+    this.populateParshiot();
+    this.populateSefer();
+  },
+  show: function(){
+    showDialog('pan-search');
+  },
+  populateParshiot: function (){
+    tnk.parshiot.forEach(p => {
+      const name = Object.keys(p)[0];
+      const option = document.createElement('option');
+      option.value = name;
+      option.text = name;
+      searchPanel.selParsha.add(option);
+    });
+  },
+  populateSefer: function(){
+    this.selSefer.innerHTML = '';
+    tnk.seferim.forEach((s,i) => {
+      const option = document.createElement('option');
+      option.value = i;
+      option.text = s;
+      searchPanel.selSefer.add(option);
+    });
+    this.selSefer.value = tnk.sefer;
+    this.populatePerek();
+  },
+  populatePerek: function(){
+    this.selPerek.innerHTML = '';
+    const numPerekim = tnk.psukim[tnk.sefer].length;
+    for (let i = 1; i <= numPerekim; i++){
+      const option = document.createElement('option');
+      option.value = i;
+      option.text = i;
+      this.selPerek.add(option);
+    }
+    this.selPerek.value = tnk.perek;
+    this.populatePasuk();
+  },
+  populatePasuk: function(){
+    this.selPasuk.innerHTML = '';
+    const numPsukim = tnk.psukim[tnk.sefer][tnk.perek-1][0];
+    for (let i = 1; i <= numPsukim; i++){
+      const option = document.createElement('option');
+      option.value = i;refreshEntry
+      option.text = i;
+      this.selPasuk.add(option);
+    }
+    this.selPasuk.value = tnk.pasuk;
+  }
+}
+
+const gematria = {
+  idMatrix: document.getElementById('matrix'),
+  matrixShowSofit: false,
+  perekInfo: function(){
+    this.idMatrix.replaceChildren();
+    let nfo =`words: ${tnk.countMilim()}`;
+    nfo += ` · letters: ${tnk.countOtiot()}`;
+    nfo += ` · gematria: ${KBLH.getGematria(tnk.otSeq)}`;
+    nfo += this.matrixInfo();
+    return nfo;
+  },
+  matrixInfo: function(){
+    const matrix = KBLH.getMatrixDimArray(3, tnk.otSeq);
+    let out = '';
+    if (matrix.str){
+      for (let i=0; i < matrix.array.length; i++){
+        out += `<span class="matrix-span" onclick="sm(this, event)">${matrix.array[i][0]}x${matrix.array[i][1]}</span>`;
+      }
+      return `<p>matrix: ${out}</p>`;
+    }
+    return '';
+  },
+  showMatrix: function(element, event){
+    const rootVars = getComputedStyle(document.documentElement); 
+    const rootSpanBg = rootVars.getPropertyValue('--fade-border').trim();
+    const rootAccent = rootVars.getPropertyValue('--accent').trim();
+    
+    event.stopPropagation();
+    const m = element.innerText.split('x').map(x => parseInt(x));
+
+    showDialog('pan-matrix');
+    
+    const hdr = document.getElementById('pan-matrix-head');
+    hdr.innerHTML = `<span id="matrix-sofit" class="matrix-span">sofit</span>  `
+    if (m[0] !== m[1])
+      hdr.innerHTML += `transpose <span class="matrix-span" onclick="sm(this, event)">${m[1]}x${m[0]}</span>`;
+    hdr.innerHTML += `<p id="matrix-span-info"></p>`;
+
+    const idinfo = document.getElementById('matrix-span-info');
+    const igtgSofit = document.getElementById('matrix-sofit');
+    igtgSofit.addEventListener('click', () => {
+      gematria.matrixShowSofit = !gematria.matrixShowSofit;
+      igtgSofit.style.background = gematria.matrixShowSofit ? rootSpanBg : rootAccent;
+      this.showMatrix(element, event);
+    });
+
+    const e = document.getElementById('pan-matrix-body');
+    e.replaceChildren();
+    
+    const grid = document.createElement('div');
+    grid.className = 'matrix-grid';
+    grid.style.gridTemplateColumns = `repeat(${m[1]}, auto)`;
+    let clz = 'matrix-span-cell-'+(Math.max(m[1],m[0])/7 & 0xff);
+    for (let i=0; i < tnk.otSeq.length; i++){
+      const span = document.createElement('span');
+      span.className = clz;
+      span.innerText = gematria.matrixShowSofit ? tnk.otSeq[i] : KBLH.removeSofit(tnk.otSeq[i]);
+      span.addEventListener('click',()=> idinfo.innerHTML = `pos: ${i + 1} of ${tnk.otSeq.length} gem: ${KBLH.mispar[tnk.otSeq[i]]}`);
+      grid.appendChild(span);
+    }
+    e.appendChild(grid);
+    e.style.display = 'block';
+  }
+}
+
+
 function fetchJson(url, callback){
   fetch(url, {method: 'GET', headers: {accept: 'application/json'}})
     .then(res => res.json())
@@ -327,72 +477,6 @@ function refreshEntry(){
   });
 }
 
-const gematria = {
-  idMatrix: document.getElementById('matrix'),
-  matrixShowSofit: false,
-  perekInfo: function(){
-    this.idMatrix.replaceChildren();
-    let nfo =`words: ${tnk.countMilim()}`;
-    nfo += ` · letters: ${tnk.countOtiot()}`;
-    nfo += ` · gematria: ${KBLH.getGematria(tnk.otSeq)}`;
-    nfo += this.matrixInfo();
-    return nfo;
-  },
-  matrixInfo: function(){
-    const matrix = KBLH.getMatrixDimArray(3, tnk.otSeq);
-    let out = '';
-    if (matrix.str){
-      for (let i=0; i < matrix.array.length; i++){
-        out += `<span class="matrix-span" onclick="sm(this, event)">${matrix.array[i][0]}x${matrix.array[i][1]}</span>`;
-      }
-      return `<p>matrix: ${out}</p>`;
-    }
-    return '';
-  },
-  showMatrix: function(element, event){
-    const rootVars = getComputedStyle(document.documentElement); 
-    const rootSpanBg = rootVars.getPropertyValue('--fade-border').trim();
-    const rootAccent = rootVars.getPropertyValue('--accent').trim();
-    
-    event.stopPropagation();
-    const m = element.innerText.split('x').map(x => parseInt(x));
-
-    showDialog('pan-matrix');
-    
-    const hdr = document.getElementById('pan-matrix-head');
-    hdr.innerHTML = `<span id="matrix-sofit" class="matrix-span">sofit</span>  `
-    if (m[0] !== m[1])
-      hdr.innerHTML += `transpose <span class="matrix-span" onclick="sm(this, event)">${m[1]}x${m[0]}</span>`;
-    hdr.innerHTML += `<p id="matrix-span-info"></p>`;
-
-    const idinfo = document.getElementById('matrix-span-info');
-    const igtgSofit = document.getElementById('matrix-sofit');
-    igtgSofit.addEventListener('click', () => {
-      gematria.matrixShowSofit = !gematria.matrixShowSofit;
-      igtgSofit.style.background = gematria.matrixShowSofit ? rootSpanBg : rootAccent;
-      this.showMatrix(element, event);
-    });
-
-
-    const e = document.getElementById('pan-matrix-body');
-    e.replaceChildren();
-    
-    const grid = document.createElement('div');
-    grid.className = 'matrix-grid';
-    grid.style.gridTemplateColumns = `repeat(${m[1]}, auto)`;
-    let clz = 'matrix-span-cell-'+(Math.max(m[1],m[0])/7 & 0xff);
-    for (let i=0; i < tnk.otSeq.length; i++){
-      const span = document.createElement('span');
-      span.className = clz;
-      span.innerText = gematria.matrixShowSofit ? tnk.otSeq[i] : KBLH.removeSofit(tnk.otSeq[i]);
-      span.addEventListener('click',()=> idinfo.innerHTML = `pos: ${i + 1} of ${tnk.otSeq.length} gem: ${KBLH.mispar[tnk.otSeq[i]]}`);
-      grid.appendChild(span);
-    }
-    e.appendChild(grid);
-    e.style.display = 'block';
-  }
-}
-
 function sm(id,ev){
   gematria.showMatrix(id,ev)
 }
@@ -412,7 +496,7 @@ function updateUi(){
   info.innerHTML = gematria.perekInfo();
 }
 
-function wordClick(element, event){  
+function hewClick(element, event){  
   const v = KBLH.removeNikud(element.innerText);
   const g = KBLH.getGematria(v);
   let html = `<span class='gem-text'>${v}</span><span class='gem-eng'><b>ot:</b> ${KBLH.countOtiot(v)} <b>gematria:</b> ${g}</span><br>`;
@@ -465,8 +549,6 @@ document.getElementById('pasuk-prev').addEventListener('click',prev);
 document.getElementById('pasuk-next').addEventListener('click',next);
 document.getElementById('nav-prev').addEventListener('click',prev);
 document.getElementById('nav-next').addEventListener('click',next);
-document.getElementById('nav-search').addEventListener('click',search);
-document.getElementById('verse2').addEventListener('click',search);
 document.getElementById('nav-neq').addEventListener('click',neq);
 
 const i = document.getElementById('verse2');
@@ -498,7 +580,7 @@ function navToParsha(i){
     tnk.sefer = sefer;
     tnk.perek = perek;
     tnk.pasuk = pasuk;
-    populateSefer();
+    searchPanel.populateSefer();
     refresh();
   }
 }
@@ -512,104 +594,21 @@ document.getElementById('nav-home').addEventListener('click',() => {
 
 function showDialog(id){
   bkgBlur.style.display = 'block';
+  bkgBlur.style.opacity = 1;
   const pid = document.getElementById(id);
   pid.style.display = 'block';
 }
 
 function closeDialog(id){
-  bkgBlur.style.display = 'none';
+  bkgBlur.style.opacity = 0;
   const pid = document.getElementById(id);
   pid.style.display = 'none';
+  setTimeout(() => {
+    bkgBlur.style.display = 'none';
+  }, 700);
 }
 
-function search(){
-  showDialog('pan-search');
-}
-
-const panSearch = document.getElementById('pan-search');
-
-const selSefer = document.getElementById('sel-sefer');
-const selPerek = document.getElementById('sel-perek');
-const selPasuk = document.getElementById('sel-pasuk');
-
-const selParsha = document.getElementById('sel-parsha');
-selParsha.addEventListener('change',() => navToParsha(selParsha.value));
-
-const btnGo = document.getElementById('pan-go');
-btnGo.addEventListener('click',() => {
-  refresh();
-  closeDialog('pan-search');
-});
-
-populateParshiot();
-
-function populateParshiot(){
-  tnk.parshiot.forEach(p => {
-    const name = Object.keys(p)[0];
-    const option = document.createElement('option');
-    option.value = name;
-    option.text = name;
-    selParsha.add(option);
-  });
-}
-
-function populateSefer(){
-  selSefer.innerHTML = '';
-  tnk.seferim.forEach((s,i) => {
-    const option = document.createElement('option');
-    option.value = i;
-    option.text = s;
-    selSefer.add(option);
-  });
-  selSefer.value = tnk.sefer;
-  populatePerek();
-}
-
-function populatePerek(){
-  selPerek.innerHTML = '';
-  const numPerekim = tnk.psukim[tnk.sefer].length;
-  for (let i=1; i<=numPerekim; i++){
-    const option = document.createElement('option');
-    option.value = i;
-    option.text = i;
-    selPerek.add(option);
-  }
-  selPerek.value = tnk.perek;
-  populatePasuk();
-}
-
-function populatePasuk(){
-  selPasuk.innerHTML = '';
-  const numPsukim = tnk.psukim[tnk.sefer][tnk.perek-1][0];
-  for (let i=1; i<=numPsukim; i++){
-    const option = document.createElement('option');
-    option.value = i;refreshEntry
-    option.text = i;
-    selPasuk.add(option);
-  }
-  selPasuk.value = tnk.pasuk;
-}
-
-selSefer.addEventListener('change',() => {
-  tnk.sefer = parseInt(selSefer.value);
-  tnk.perek = 1;
-  tnk.pasuk = 1;
-  populatePerek();
-});
-
-selPerek.addEventListener('change',() => {
-  tnk.perek = parseInt(selPerek.value);
-  tnk.pasuk = 1;
-  populatePasuk();
-});
-
-selPasuk.addEventListener('change',() => {
-  tnk.pasuk = parseInt(selPasuk.value);
-});
-
-populateSefer();
-
-//document.getElementById('app-bar-menu-icon').addEventListener('click', (el,ev) => showAppBarMenu(el,ev,true));
+searchPanel.init();
 
 const appBarMenuButton = document.getElementById('app-bar-menu-button');
 const dropdown = document.getElementById('app-bar-menu');
