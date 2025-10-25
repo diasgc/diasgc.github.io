@@ -10,10 +10,10 @@
   <link rel="manifest" href="site.webmanifest">
   <link rel="stylesheet" href="style.css?v=251011b">
   <!--<script src="https://unpkg.com/kosher-zmanim/dist/kosher-zmanim.min.js"></script>-->
-  <script src="hebrewcalendar.js?v=1"></script>
   <script src="kblh.js"></script>
 </head>
 <body>
+  <div id="bkg-blur"></div>
   <!-- App Bar -->
   <div id="web-stat">●</div>
   <div class="app-bar">
@@ -71,11 +71,12 @@
   <div id="pan-matrix" class="panel">
     <div id="pan-matrix-head"></div>
     <div id="pan-matrix-body"></div>
-    <button class="pan-dismiss btn-center" onclick='btDismiss("pan-matrix");'>dismiss</button>
+    <button class="pan-dismiss btn-center" onclick='closeDialog("pan-matrix");'>dismiss</button>
   </div>
   <div id="pan-about" class="panel">
+    
     <div class="about-text">Powered by Sefaria.org and TorahCalc.com</div>
-    <button class="pan-dismiss btn-center" onclick='btDismiss("pan-about");'>dismiss</button>
+    <button class="pan-dismiss btn-center" onclick='closeDialog("pan-about");'>dismiss</button>
   </div>
   <script type="text/javascript" src="main.js?v=251011b"></script>
 </body>

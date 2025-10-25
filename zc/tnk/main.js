@@ -346,8 +346,7 @@ const gematria = {
     event.stopPropagation();
     const m = element.innerText.split('x').map(x => parseInt(x));
 
-    const pid = document.getElementById('pan-matrix');
-    pid.style.display = 'block';
+    showDialog('pan-matrix');
     
     const hdr = document.getElementById('pan-matrix-head');
     hdr.innerHTML = `<span id="matrix-sofit" class="matrix-span">sofit</span>  `
@@ -422,8 +421,7 @@ function btDismiss(id){
 }
 
 function about(){
-  const pid = document.getElementById('pan-about');
-  pid.style.display = 'block';
+  showDialog('pan-about');
 }
 
 function fadeInText(element, newText){
@@ -472,6 +470,7 @@ const rf = document.getElementById('pasuk-ref');;
 const refId = document.getElementById('pasuk-ref');
 const info = document.getElementById('info-content');
 const webStat = document.getElementById('web-stat');
+const bkgBlur = document.getElementById('bkg-blur');
 
 refresh();
 
@@ -506,9 +505,20 @@ document.getElementById('nav-home').addEventListener('click',() => {
   refresh();
 });
 
+function showDialog(id){
+  bkgBlur.style.display = 'block';
+  const pid = document.getElementById(id);
+  pid.style.display = 'block';
+}
+
+function closeDialog(id){
+  bkgBlur.style.display = 'none';
+  const pid = document.getElementById(id);
+  pid.style.display = 'none';
+}
+
 function search(){
-  const box = document.getElementById('pan-search');
-  box.style.display = 'block';
+  showDialog('pan-search');
 }
 
 const panSearch = document.getElementById('pan-search');
@@ -523,7 +533,7 @@ selParsha.addEventListener('change',() => navToParsha(selParsha.value));
 const btnGo = document.getElementById('pan-go');
 btnGo.addEventListener('click',() => {
   refresh();
-  panSearch.style.display = 'none';
+  closeDialog('pan-search');
 });
 
 populateParshiot();
