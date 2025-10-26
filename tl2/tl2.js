@@ -54,7 +54,7 @@ function captureFrame() {
     const dataURL = captureCanvas.toDataURL('image/jpeg', 0.8); // 0.8 is quality
     capturedImages.push(dataURL);
     
-    statusDisplay.textContent = `Status: Captured ${capturedImages.length} frame(s).`;
+    statusDisplay.textContent = `Status: ${capturedImages.length} frame(s). ${capturedImages.length / settings.FRAME_RATE} seconds`;
 }
 
 function startCapture() {
