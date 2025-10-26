@@ -14,18 +14,24 @@
   <link rel="stylesheet" href="tl2.css">
 </head>
 <body>
-    <h2>Live Camera Feed</h2>
-    <video id="videoFeed" width="640" height="480" autoplay></video>
+    <video id="videoFeed" width="1280" height="720" autoplay></video>
 
     <div class="controls">
+      <div class="div-range">
         <label for="interval">Capture Interval (seconds):</label>
-        <input type="number" id="interval" value="5" min="1">
-        <button id="startStopBtn">Start Capture</button>
+        <input type="number" id="interval" value="2" min="1">
+      </div>
+      <div class="rec-btn">
+        <div id="record-btn-div">
+          <label for="startStop"></label>
+          <input id="startStop" type="checkbox" onclick="startStop()"/>
+        </div>
+      </div>
     </div>
 
     <canvas id="captureCanvas" style="display: none;"></canvas>
 
-    <h2 id="status">Status: Waiting to start...</h2>
+    <div id="status">Status: Waiting to start...</div>
     
     <video id="timelapseVideo" controls style="display: none; max-width: 640px;"></video>
 

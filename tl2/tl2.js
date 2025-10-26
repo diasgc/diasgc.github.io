@@ -1,7 +1,7 @@
 const videoFeed = document.getElementById('videoFeed');
 const captureCanvas = document.getElementById('captureCanvas');
 const timelapseVideo = document.getElementById('timelapseVideo');
-const startStopBtn = document.getElementById('startStopBtn');
+const startStopBtn = document.getElementById('startStop');
 const intervalInput = document.getElementById('interval');
 const statusDisplay = document.getElementById('status');
 const ctx = captureCanvas.getContext('2d');
@@ -12,10 +12,17 @@ const capturedImages = [];
 let mediaRecorder;
 const recordedChunks = [];
 
+const videoConstraints = {
+    video: {
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
+        facingMode: "environment"
+    }
+};
 // --- 1. Initialize Camera Stream ---
 async function setupCamera() {
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await navigator.mediaDevices.getUserMedia(videoConstraints);
         videoFeed.srcObject = stream;
         statusDisplay.textContent = 'Status: Camera ready.';
     } catch (err) {
@@ -48,7 +55,6 @@ function startCapture() {
     }
 
     isCapturing = true;
-    startStopBtn.textContent = 'Stop Capture and Generate Video';
     intervalInput.disabled = true;
     timelapseVideo.style.display = 'none';
     capturedImages.length = 0; // Clear previous images
@@ -63,7 +69,7 @@ function startCapture() {
 function stopCaptureAndGenerate() {
     isCapturing = false;
     clearInterval(captureTimer);
-    startStopBtn.textContent = 'Start Capture';
+    //startStopBtn.textContent = 'Start Capture';
     intervalInput.disabled = false;
 
     if (capturedImages.length < 2) {
@@ -135,13 +141,13 @@ function drawNextFrame(frameIndex) {
 }
 
 // --- 4. Event Listeners ---
-startStopBtn.addEventListener('click', () => {
+function startStop() {
     if (!isCapturing) {
         startCapture();
     } else {
         stopCaptureAndGenerate();
     }
-});
+}
 
 // Start camera setup when the video feed metadata is loaded
 videoFeed.addEventListener('loadedmetadata', () => {
