@@ -14,14 +14,20 @@
   <link rel="stylesheet" href="tl2.css">
 </head>
 <body>
-    <h2>Timelapse Generator</h2>
-    <input type="file" id="imageInput" multiple accept="image/*">
-    <button id="recordBtn" disabled>Start Timelapse Recording</button>
+    <h2>Live Camera Feed</h2>
+    <video id="videoFeed" width="640" height="480" autoplay></video>
 
-    <canvas id="timelapseCanvas" width="800" height="600" style="display: none;"></canvas>
+    <div class="controls">
+        <label for="interval">Capture Interval (seconds):</label>
+        <input type="number" id="interval" value="5" min="1">
+        <button id="startStopBtn">Start Capture</button>
+    </div>
 
-    <h3>Result:</h3>
-    <video id="timelapseVideo" controls style="display: none; max-width: 100%;"></video>
+    <canvas id="captureCanvas" style="display: none;"></canvas>
+
+    <h2 id="status">Status: Waiting to start...</h2>
+    
+    <video id="timelapseVideo" controls style="display: none; max-width: 640px;"></video>
 
     <script src="tl2.js"></script>
 </body>

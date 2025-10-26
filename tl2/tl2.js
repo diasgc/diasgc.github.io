@@ -1,57 +1,93 @@
-const imageInput = document.getElementById('imageInput');
-const recordBtn = document.getElementById('recordBtn');
-const canvas = document.getElementById('timelapseCanvas');
-const videoElement = document.getElementById('timelapseVideo');
-const ctx = canvas.getContext('2d');
+const videoFeed = document.getElementById('videoFeed');
+const captureCanvas = document.getElementById('captureCanvas');
+const timelapseVideo = document.getElementById('timelapseVideo');
+const startStopBtn = document.getElementById('startStopBtn');
+const intervalInput = document.getElementById('interval');
+const statusDisplay = document.getElementById('status');
+const ctx = captureCanvas.getContext('2d');
 
-let images = [];
+let isCapturing = false;
+let captureTimer;
+const capturedImages = [];
 let mediaRecorder;
 const recordedChunks = [];
-const FRAME_RATE = 10; // Frames per second for the final video (adjust for speed)
-const INTERVAL = 1000 / FRAME_RATE; // Time delay between frames in ms
 
-// --- 1. Load Images ---
-imageInput.addEventListener('change', async (e) => {
-    images = [];
-    recordBtn.disabled = true;
+// --- 1. Initialize Camera Stream ---
+async function setupCamera() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        videoFeed.srcObject = stream;
+        statusDisplay.textContent = 'Status: Camera ready.';
+    } catch (err) {
+        statusDisplay.textContent = 'Status: Error accessing camera. Please ensure permissions are granted.';
+        console.error("Error accessing camera: ", err);
+    }
+}
+
+// --- 2. Camera Capture Functions ---
+function captureFrame() {
+    // 1. Ensure canvas matches video size for clean capture
+    captureCanvas.width = videoFeed.videoWidth;
+    captureCanvas.height = videoFeed.videoHeight;
+
+    // 2. Draw the current video frame onto the canvas
+    ctx.drawImage(videoFeed, 0, 0, captureCanvas.width, captureCanvas.height);
+
+    // 3. Get the image data URL and store it
+    const dataURL = captureCanvas.toDataURL('image/jpeg', 0.8); // 0.8 is quality
+    capturedImages.push(dataURL);
     
-    // Load each file as an Image object
-    for (const file of e.target.files) {
-        if (file.type.startsWith('image/')) {
-            const img = new Image();
-            img.src = URL.createObjectURL(file);
-            // Wait for the image to load before pushing to array
-            await new Promise(resolve => img.onload = resolve);
-            images.push(img);
-        }
+    statusDisplay.textContent = `Status: Captured ${capturedImages.length} frame(s).`;
+}
+
+function startCapture() {
+    const intervalSeconds = parseInt(intervalInput.value);
+    if (isNaN(intervalSeconds) || intervalSeconds < 1) {
+        alert("Please set a valid capture interval (min 1 second).");
+        return;
     }
 
-    if (images.length > 0) {
-        recordBtn.disabled = false;
-        // Optionally set canvas size to the first image's dimensions
-        canvas.width = images[0].width;
-        canvas.height = images[0].height;
-    }
-});
+    isCapturing = true;
+    startStopBtn.textContent = 'Stop Capture and Generate Video';
+    intervalInput.disabled = true;
+    timelapseVideo.style.display = 'none';
+    capturedImages.length = 0; // Clear previous images
 
-// --- 2. Recording Functions ---
-recordBtn.addEventListener('click', () => {
-    if (images.length === 0) {
-        alert('Please select images first.');
+    // Capture the first frame immediately
+    captureFrame(); 
+
+    // Set the timer to capture frames repeatedly
+    captureTimer = setInterval(captureFrame, intervalSeconds * 1000);
+}
+
+function stopCaptureAndGenerate() {
+    isCapturing = false;
+    clearInterval(captureTimer);
+    startStopBtn.textContent = 'Start Capture';
+    intervalInput.disabled = false;
+
+    if (capturedImages.length < 2) {
+        statusDisplay.textContent = 'Status: Need at least 2 frames to create a video.';
         return;
     }
     
-    startRecording();
-    recordBtn.disabled = true;
-    recordBtn.textContent = 'Recording...';
-});
+    // Start the video generation process
+    generateTimelapseVideo();
+}
 
-function startRecording() {
-    const stream = canvas.captureStream(FRAME_RATE);
+// --- 3. MediaRecorder (Video Generation) ---
+const FRAME_RATE = 20; // FPS for the final timelapse video (speed)
+const DRAW_INTERVAL = 1000 / FRAME_RATE; 
+
+async function generateTimelapseVideo() {
+    statusDisplay.textContent = 'Status: Generating video... Do not close window.';
+    recordedChunks.length = 0;
+
+    // 1. Create a stream from the canvas
+    const stream = captureCanvas.captureStream(FRAME_RATE); 
     
-    // Choose the MIME type. 'video/webm' is widely supported.
-    const options = { mimeType: 'video/webm' }; 
-    mediaRecorder = new MediaRecorder(stream, options);
+    // 2. Setup the MediaRecorder
+    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
 
     mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -60,32 +96,59 @@ function startRecording() {
     };
 
     mediaRecorder.onstop = () => {
+        // 4. Combine chunks into a video blob and display
         const blob = new Blob(recordedChunks, { type: 'video/webm' });
-        videoElement.src = URL.createObjectURL(blob);
-        videoElement.style.display = 'block';
-        recordBtn.textContent = 'Recording Complete';
+        timelapseVideo.src = URL.createObjectURL(blob);
+        timelapseVideo.style.display = 'block';
+        statusDisplay.textContent = `Status: Video generated! Total frames: ${capturedImages.length}.`;
+        
+        // Clean up the in-memory images to free resources
+        capturedImages.length = 0; 
     };
 
+    // 3. Start recording and animation loop
     mediaRecorder.start();
-    animateFrames(0); // Start the canvas animation
+    drawNextFrame(0);
 }
 
-// --- 3. Animation Loop ---
-function animateFrames(frameIndex) {
-    if (frameIndex >= images.length) {
-        // Stop recording once all frames have been processed
+function drawNextFrame(frameIndex) {
+    if (frameIndex >= capturedImages.length) {
+        // Stop recording when all stored frames have been drawn
         mediaRecorder.stop();
         return;
     }
 
-    // Draw the current image to the canvas
-    ctx.drawImage(images[frameIndex], 0, 0, canvas.width, canvas.height);
-
-    // Schedule the next frame draw
-    setTimeout(() => {
-        // Ensure the recorder is still active before continuing
-        if (mediaRecorder.state === 'recording') {
-            animateFrames(frameIndex + 1);
-        }
-    }, INTERVAL);
+    // Load and draw the stored Data URL image onto the canvas
+    const img = new Image();
+    img.onload = () => {
+        // Redraw canvas with the new frame
+        ctx.drawImage(img, 0, 0, captureCanvas.width, captureCanvas.height); 
+        
+        // Schedule the next frame drawing based on the video's FRAME_RATE
+        setTimeout(() => {
+            if (mediaRecorder.state === 'recording') {
+                drawNextFrame(frameIndex + 1);
+            }
+        }, DRAW_INTERVAL);
+    };
+    img.src = capturedImages[frameIndex];
 }
+
+// --- 4. Event Listeners ---
+startStopBtn.addEventListener('click', () => {
+    if (!isCapturing) {
+        startCapture();
+    } else {
+        stopCaptureAndGenerate();
+    }
+});
+
+// Start camera setup when the video feed metadata is loaded
+videoFeed.addEventListener('loadedmetadata', () => {
+    // Set the canvas size based on the live feed resolution
+    captureCanvas.width = videoFeed.videoWidth;
+    captureCanvas.height = videoFeed.videoHeight;
+});
+
+// Initial camera setup
+setupCamera();
