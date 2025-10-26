@@ -132,3 +132,14 @@ body {
     text-align: center;
     font-size: 12px;
 }
+
+.flex-input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 0;
+}
+.flex-1 {
+  flex: 1;
+}

@@ -19,6 +19,16 @@ const videoConstraints = {
         facingMode: "environment"
     }
 };
+
+const settings = {
+    FRAME_RATE: 20, // FPS for the final timelapse video (speed)
+    DRAW_INTERVAL: 1000 / 20, // Interval between frames in ms
+    update: function(){
+        this.FRAME_RATE = document.getElementById('fps').value;
+        this.DRAW_INTERVAL = 1000 / this.FRAME_RATE;
+    }
+}
+
 // --- 1. Initialize Camera Stream ---
 async function setupCamera() {
     try {
@@ -48,6 +58,7 @@ function captureFrame() {
 }
 
 function startCapture() {
+    settings.update();
     const intervalSeconds = parseInt(intervalInput.value);
     if (isNaN(intervalSeconds) || intervalSeconds < 1) {
         alert("Please set a valid capture interval (min 1 second).");
@@ -82,15 +93,14 @@ function stopCaptureAndGenerate() {
 }
 
 // --- 3. MediaRecorder (Video Generation) ---
-const FRAME_RATE = 20; // FPS for the final timelapse video (speed)
-const DRAW_INTERVAL = 1000 / FRAME_RATE; 
+//const FRAME_RATE = 20; // FPS for the final timelapse video (speed)
+//const DRAW_INTERVAL = 1000 / FRAME_RATE; 
 
 async function generateTimelapseVideo() {
     statusDisplay.textContent = 'Status: Generating video... Do not close window.';
     recordedChunks.length = 0;
-
     // 1. Create a stream from the canvas
-    const stream = captureCanvas.captureStream(FRAME_RATE); 
+    const stream = captureCanvas.captureStream(settings.FRAME_RATE); 
     
     // 2. Setup the MediaRecorder
     mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
@@ -110,6 +120,7 @@ async function generateTimelapseVideo() {
         
         // Clean up the in-memory images to free resources
         capturedImages.length = 0; 
+        downloadVideo(blob);
     };
 
     // 3. Start recording and animation loop
@@ -135,7 +146,7 @@ function drawNextFrame(frameIndex) {
             if (mediaRecorder.state === 'recording') {
                 drawNextFrame(frameIndex + 1);
             }
-        }, DRAW_INTERVAL);
+        }, settings.DRAW_INTERVAL);
     };
     img.src = capturedImages[frameIndex];
 }
@@ -147,6 +158,20 @@ function startStop() {
     } else {
         stopCaptureAndGenerate();
     }
+}
+
+function downloadVideo(blob) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = `TL-${Date.now()}.webm`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, 100);
 }
 
 // Start camera setup when the video feed metadata is loaded
