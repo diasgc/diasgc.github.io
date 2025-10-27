@@ -21,12 +21,34 @@ const videoConstraints = {
   }
 };
 
+const camSettings = {
+  constraints: {},
+  init: function(){
+    this.constraints = {
+      width: videoFeed.videoWidth,
+      height: videoFeed.videoHeight,
+      facingMode: "environment",
+      resizeMode: "crop-and-scale",
+      frameRate: { ideal: 30.0, max: 60.0 }
+    };
+  }
+}
 const settings = {
   FRAME_RATE: 20, // FPS for the final timelapse video (speed)
   DRAW_INTERVAL: 1000 / 20, // Interval between frames in ms
   update: function(){
     this.FRAME_RATE = document.getElementById('fps').value;
     this.DRAW_INTERVAL = 1000 / this.FRAME_RATE;
+    this.setConstraint('exptime','exposureTime',0);
+    this.setConstraint('temperature','colorTemperature', 2700);
+  },
+  setConstraint: function(inputId, constraintName, defaultValue){
+    const value = parseInt(document.getElementById(inputId).value);
+    if (isNaN(value) || value <= defaultValue){
+      delete videoConstraints.video[constraintName];
+    } else {
+      videoConstraints.video[constraintName] = value;
+    }
   }
 }
 

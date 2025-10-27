@@ -211,7 +211,7 @@ const settings = {
     def: "5000",
     type: "int",
     step: 10,
-    fmt: (c) => c + "°K",
+    fmt: (c) => c.toFixed(0) + "°K",
   },
   contrast: { 
     abr: "Cnt",
@@ -225,7 +225,7 @@ const settings = {
     fmt: (c) => parseFloat(c).toFixed(1),
   },
   exposureMode: { 
-    abr: "EM",
+    abr: "E-Mode",
     def: "manual",
     type: "str",
     fmt: (c) => c.substring(0,3),
@@ -250,7 +250,7 @@ const settings = {
     fmt: (c) => parseFloat(c).toFixed(1),
   },
   focusMode: { 
-    abr: "FocM",
+    abr: "F-Mode",
     def: "manual",
     type: "str",
     fmt: (c) => c.substring(0,3),
@@ -319,7 +319,7 @@ const settings = {
     let h = document.createElement('th');
     h.innerHTML = this[key].abr;
     const d = document.createElement('td');
-    d.id = "td-" + key;
+    d.id = "td-" + key;&pm
     d.innerHTML = "def";
     d.onclick = (e) => input.show(key, v => {
       d.innerHTML = settings[key].fmt
@@ -332,7 +332,7 @@ const settings = {
       if (stream[key]){
         videoOpts[key] = v;
         stream.reset(s => video.srcObject = s)
-      }
+      }&pm
     });
     this.th.appendChild(h);
     this.td.appendChild(d);
