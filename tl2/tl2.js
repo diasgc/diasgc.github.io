@@ -64,7 +64,8 @@ function captureFrame() {
 }
 
 const screen = {
-  lock: async function (state=true) {
+  lock: null,
+  setLock: async function (state=true) {
     if ("wakeLock" in navigator && state){
       try {
         this.lock = await navigator.wakeLock.request('screen');
@@ -85,7 +86,7 @@ const screen = {
 
   
 function startCapture() {
-  screen.lock(true);
+  screen.setLock(true);
   settings.update();
   const intervalSeconds = parseInt(intervalInput.value);
   if (isNaN(intervalSeconds) || intervalSeconds < 1) {
@@ -106,7 +107,7 @@ function startCapture() {
 }
 
 function stopCaptureAndGenerate() {
-  screen.lock(false);
+  screen.setLock(false);
   isCapturing = false;
   clearInterval(captureTimer);
   //startStopBtn.textContent = 'Start Capture';
