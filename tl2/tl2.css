@@ -8,14 +8,13 @@ body {
 
 #videoFeed {
     position: absolute;
-    align-self: center;
+    width: 100%;
+    height: auto;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
-    width: 100%;
-    height: auto;
-    transform: rotate(90deg); /* Adjust if needed for orientation */
+    align-self: center;
     object-fit: cover;
     z-index: -1;
     margin: 0;
@@ -25,15 +24,15 @@ body {
 #timelapseVideo {
     position: absolute;
     display: none;
-    align-self: center;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
+    align-self: center;
     object-fit: contain;
-    z-index: 0;
     margin: 0;
     background: #020;
+    z-index: 5;
 }
 
 .controls {
