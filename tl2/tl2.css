@@ -38,6 +38,7 @@ body {
 .controls {
     position: absolute;
     display: block;
+    background: #2002;
     width: 100%;
     left: 0;
     right: 0;
@@ -47,6 +48,26 @@ body {
     align-self: center;
     align-items: center;
     z-index: 10;
+}
+
+.controls input {
+    width: 95%;
+    left: 0;
+    right: 0;
+    margin: 24px 8px;
+    background: transparent;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+    border: none;
+    border: none;
+}
+
+.controls label {
+    display: block;
+    align-self: center;
+    text-align: center;
+    font-size: 12px;
 }
 
 .rec-btn {
@@ -119,26 +140,6 @@ body {
     align-items: center;
     justify-content: center;
     margin: 0;
-}
-
-.controls input {
-    width: 95%;
-    left: 0;
-    right: 0;
-    margin: 24px 8px;
-    background: transparent;
-    color: white;
-    font-size: 18px;
-    text-align: center;
-    border: none;
-    border: none;
-}
-
-.controls label {
-    display: block;
-    align-self: center;
-    text-align: center;
-    font-size: 12px;
 }
 
 .flex-input {

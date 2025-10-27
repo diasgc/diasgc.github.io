@@ -5,6 +5,7 @@ const startStopBtn = document.getElementById('startStop');
 const intervalInput = document.getElementById('interval');
 const statusDisplay = document.getElementById('status');
 const ctx = captureCanvas.getContext('2d');
+const duration = document.getElementById('duration');
 
 let isCapturing = false;
 let captureTimer;
@@ -41,6 +42,8 @@ async function setupCamera() {
   }
 }
 
+
+
 // --- 2. Camera Capture Functions ---
 function captureFrame() {
   // 1. Ensure canvas matches video size for clean capture
@@ -55,6 +58,9 @@ function captureFrame() {
   capturedImages.push(dataURL);
   const secs = capturedImages.length / settings.FRAME_RATE;
   statusDisplay.textContent = `Status: ${capturedImages.length} frame(s). ${secs.toFixed(1)} seconds`;
+  if (secs > duration.value){
+    stopCaptureAndGenerate();
+  }
 }
 
 const screen = {
