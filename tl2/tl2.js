@@ -108,6 +108,7 @@ const screen = {
 
   
 function startCapture() {
+  setupCamera();
   screen.setLock(true);
   settings.update();
   const intervalSeconds = parseInt(intervalInput.value);
