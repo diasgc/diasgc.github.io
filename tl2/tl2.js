@@ -53,8 +53,8 @@ function captureFrame() {
   // 3. Get the image data URL and store it
   const dataURL = captureCanvas.toDataURL('image/jpeg', 0.8); // 0.8 is quality
   capturedImages.push(dataURL);
-  
-  statusDisplay.textContent = `Status: ${capturedImages.length} frame(s). ${capturedImages.length / settings.FRAME_RATE} seconds`;
+  const secs = capturedImages.length / settings.FRAME_RATE;
+  statusDisplay.textContent = `Status: ${capturedImages.length} frame(s). ${secs.toFixed(1)} seconds`;
 }
 
 const screen = {
