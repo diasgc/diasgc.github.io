@@ -108,9 +108,9 @@ const screen = {
 
   
 function startCapture() {
-  setupCamera();
   screen.setLock(true);
   settings.update();
+  setupCamera();
   const intervalSeconds = parseInt(intervalInput.value);
   if (isNaN(intervalSeconds) || intervalSeconds < 1) {
     alert("Please set a valid capture interval (min 1 second).");
