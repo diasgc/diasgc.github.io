@@ -24,7 +24,11 @@ const videoConstraints = {
 const camSettings = {
   availableCaps: [ 'exposureTime', 'colorTemperature', 'focusDistance' ],
   constraints: {
-    video: {  },
+    video: {
+       width: { ideal: 1280 },
+       height: { ideal: 720 },
+       facingMode: "environment
+    },
     audio: false
   },
   caps: {},
