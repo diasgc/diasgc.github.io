@@ -69,9 +69,7 @@ const ui = {
   },
   setupCap: function(capName){
     const id = document.getElementById(capName);
-    if (camSettings.caps[capName]){
-      id.addEventListener('click', () => ui.showDialog(capName));
-    }
+    id.addEventListener('click', () => ui.showDialog(capName));
   },
   showDialog: function(capName){
     const uiEl = document.getElementById(capName);
