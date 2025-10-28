@@ -28,6 +28,7 @@ const camSettings = {
     audio: false
   },
   caps: {},
+  interval: 1,
   track: null,
   init: function(stream){
     this.track = stream.getVideoTracks()[0];
@@ -43,7 +44,8 @@ const camSettings = {
       if (this.caps[cap]){
         ui.setupCap(cap);
       }
-    })
+    });
+    ui.setupCap('timelapse');
   },
   refresh: function(){
     if (!this.track) return;
@@ -66,19 +68,50 @@ const ui = {
     }
   },
   showDialog: function(capName){
-    const cap = camSettings.caps[capName];
     const uiEl = document.getElementById(capName);
-    this.dialogEl.style.display = 'block';
-    const currentValue = camSettings.track.getSettings()[capName] || 0;
-    const userValue = prompt(`<h2>Set ${capName} value:</h2>\nMin: ${cap.min}\nMax: ${cap.max}\nStep: ${cap.step}\nCurrent: ${currentValue}`, currentValue);
-    const numValue = parseInt(userValue);
-    if (!isNaN(numValue) && numValue >= cap.min && numValue <= cap.max){
-      camSettings.constraints.video[capName] = numValue;
-      camSettings.refresh();
-      uiEl.querySelector('.ico-label').textContent = `${numValue}`;
+    let p = `Set ${capName} value:\n`;
+    if (camSettings.caps[capName]){
+      const cap = camSettings.caps[capName];
+      const currentValue = camSettings.track.getSettings()[capName] || 0;
+      if (cap.min && cap.max)
+        p += `Min: ${cap.min}\nMax: ${cap.max}\n`;
+      if (cap.step)
+        p += `Step: ${cap.step}\n`;
+      if (cap instanceof Array){
+        p += `Options: ${cap.join(', ')}\n`;
+      }
+      p += `Current: ${currentValue}`;
+      const userValue = prompt(p, currentValue);
+      this.applyCapValue(capName, userValue, uiEl);
     } else {
-      alert("Invalid value.");
+      const userValue = prompt(p, currentValue);
     }
+  },
+  swithMode: function(capName, capMode, autoValue, manualValue, numValue){
+    if (numValue === 'auto'){
+      camSettings.constraints.video[capMode] = autoValue;
+      delete camSettings.constraints.video[capName];
+    } else {
+      camSettings.constraints.video[capName] = manualValue;
+      camSettings.constraints.video[capName] = numValue;
+    }
+  },
+  applyCapValue: function(capName, userValue, uiEl){
+    const numValue = parseInt(userValue);
+    this.applyModeValue(capName)
+    if (capName === 'colorTemperature')
+      this.swithMode(capName, "whiteBalanceMode", 'continuous', 'manual', numValue);
+    else if (capName === 'exposureTime')
+      this.swithMode(capName, "exposureMode", 'continuous', 'manual', numValue);        
+    else if (capName === 'focusDistance')
+      this.swithMode(capName, "focusMode", 'continuous', 'manual', numValue);
+    else if (numValue === 'auto'){
+      delete camSettings.constraints.video[capName];
+    } else {
+      camSettings.constraints.video[capName] = numValue;
+    }
+    camSettings.refresh();
+    uiEl.querySelector('.ico-label').textContent = `${numValue}`;
   }
 }
 
