@@ -60,9 +60,9 @@ const ui = {
     });
   },
   setupCap: function(capName){
-    const ui = document.getElementById(capName);const uiEl = document.getElementById(capName);
+    const id = document.getElementById(capName);
     if (camSettings.caps[capName]){
-      ui.addEventListener('click', () => ui.showDialog(capName));
+      id.addEventListener('click', () => ui.showDialog(capName));
     }
   },
   showDialog: function(capName){
