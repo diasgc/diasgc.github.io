@@ -2,7 +2,7 @@ const videoFeed = document.getElementById('videoFeed');
 const captureCanvas = document.getElementById('captureCanvas');
 const timelapseVideo = document.getElementById('timelapseVideo');
 const startStopBtn = document.getElementById('startStop');
-const intervalInput = document.getElementById('interval');
+//const intervalInput = document.getElementById('interval');
 const statusDisplay = document.getElementById('status');
 const ctx = captureCanvas.getContext('2d');
 const duration = document.getElementById('duration');
@@ -28,7 +28,9 @@ const camSettings = {
     audio: false
   },
   caps: {},
-  interval: 1,
+  fps: 30,
+  timelapse: 1,
+  drawInterval: 1000 / 30,
   track: null,
   init: function(stream){
     this.track = stream.getVideoTracks()[0];
@@ -84,7 +86,9 @@ const ui = {
       const userValue = prompt(p, currentValue);
       this.applyCapValue(capName, userValue, uiEl);
     } else {
+      currentValue = this[capName] || 1;
       const userValue = prompt(p, currentValue);
+      this[capName] = parseInt(userValue);
     }
   },
   swithMode: function(capName, capMode, autoValue, manualValue, numValue){
@@ -115,6 +119,7 @@ const ui = {
   }
 }
 
+/*
 const settings = {
   FRAME_RATE: 20, // FPS for the final timelapse video (speed)
   DRAW_INTERVAL: 1000 / 20, // Interval between frames in ms
@@ -133,11 +138,12 @@ const settings = {
     }
   }
 }
+*/
 
 // --- 1. Initialize Camera Stream ---
 async function setupCamera() {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia(videoConstraints);
+    const stream = await navigator.mediaDevices.getUserMedia(camSettings.constraints);
     videoFeed.srcObject = stream;
     camSettings.init(stream);
     statusDisplay.textContent = 'Status: Camera ready.';
@@ -161,7 +167,7 @@ function captureFrame() {
   // 3. Get the image data URL and store it
   const dataURL = captureCanvas.toDataURL('image/jpeg', 0.8); // 0.8 is quality
   capturedImages.push(dataURL);
-  const secs = capturedImages.length / settings.FRAME_RATE;
+  const secs = capturedImages.length / camSettings.fps;
   statusDisplay.textContent = `Status: ${capturedImages.length} frame(s). ${secs.toFixed(1)} seconds`;
   if (secs > duration.value){
     stopCaptureAndGenerate();
@@ -192,16 +198,17 @@ const screen = {
   
 function startCapture() {
   screen.setLock(true);
-  settings.update();
+  camSettings.refresh();
+  //settings.update();
   setupCamera();
-  const intervalSeconds = parseInt(intervalInput.value);
+  const intervalSeconds = parseInt(camSettings.timelapse);
   if (isNaN(intervalSeconds) || intervalSeconds < 1) {
     alert("Please set a valid capture interval (min 1 second).");
     return;
   }
 
   isCapturing = true;
-  intervalInput.disabled = true;
+  //intervalInput.disabled = true;
   timelapseVideo.style.display = 'none';
   capturedImages.length = 0; // Clear previous images
 
@@ -217,7 +224,7 @@ function stopCaptureAndGenerate() {
   isCapturing = false;
   clearInterval(captureTimer);
   //startStopBtn.textContent = 'Start Capture';
-  intervalInput.disabled = false;
+  //intervalInput.disabled = false;
 
   if (capturedImages.length < 2) {
     statusDisplay.textContent = 'Status: Need at least 2 frames to create a video.';
@@ -236,7 +243,7 @@ async function generateTimelapseVideo() {
   statusDisplay.textContent = 'Status: Generating video... Do not close window.';
   recordedChunks.length = 0;
   // 1. Create a stream from the canvas
-  const stream = captureCanvas.captureStream(settings.FRAME_RATE); 
+  const stream = captureCanvas.captureStream(camSettings.fps); 
   
   // 2. Setup the MediaRecorder
   mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
@@ -282,7 +289,7 @@ function drawNextFrame(frameIndex) {
       if (mediaRecorder.state === 'recording') {
         drawNextFrame(frameIndex + 1);
       }
-    }, settings.DRAW_INTERVAL);
+    }, camSettings.drawInterval);
   };
   img.src = capturedImages[frameIndex];
 }
