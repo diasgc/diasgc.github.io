@@ -88,9 +88,9 @@ const ui = {
       const userValue = prompt(p, currentValue);
       this.applyCapValue(capName, userValue, uiEl);
     } else {
-      currentValue = this[capName] || 1;
+      currentValue = camSettings[capName] || 1;
       const userValue = prompt(p, currentValue);
-      this[capName] = parseInt(userValue);
+      camSettings[capName] = parseInt(userValue);
     }
   },
   swithMode: function(capName, capMode, autoValue, manualValue, numValue){
