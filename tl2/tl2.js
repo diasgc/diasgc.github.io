@@ -27,7 +27,7 @@ const camSettings = {
     video: {
        width: { ideal: 1280 },
        height: { ideal: 720 },
-       facingMode: "environment
+       facingMode: "environment"
     },
     audio: false
   },
