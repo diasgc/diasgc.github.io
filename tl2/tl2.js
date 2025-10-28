@@ -70,12 +70,12 @@ const ui = {
     const uiEl = document.getElementById(capName);
     this.dialogEl.style.display = 'block';
     const currentValue = camSettings.track.getSettings()[capName] || 0;
-    const userValue = prompt(`Set ${capName} value:\nMin: ${cap.min}\nMax: ${cap.max}\nStep: ${cap.step}\nCurrent: ${currentValue}`, currentValue);
+    const userValue = prompt(`<h2>Set ${capName} value:</h2>\nMin: ${cap.min}\nMax: ${cap.max}\nStep: ${cap.step}\nCurrent: ${currentValue}`, currentValue);
     const numValue = parseInt(userValue);
     if (!isNaN(numValue) && numValue >= cap.min && numValue <= cap.max){
       camSettings.constraints.video[capName] = numValue;
       camSettings.refresh();
-      uiEl.querySelector('.ico-label').textContent = `${capName}: ${numValue}`;
+      uiEl.querySelector('.ico-label').textContent = `${numValue}`;
     } else {
       alert("Invalid value.");
     }
