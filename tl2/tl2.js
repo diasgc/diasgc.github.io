@@ -22,17 +22,66 @@ const videoConstraints = {
 };
 
 const camSettings = {
-  constraints: {},
-  init: function(){
-    this.constraints = {
+  availableCaps: [ 'exposureTime', 'colorTemperature', 'focusDistance' ],
+  constraints: {
+    video: {  },
+    audio: false
+  },
+  caps: {},
+  track: null,
+  init: function(stream){
+    this.track = stream.getVideoTracks()[0];
+    this.caps = this.track.getCapabilities();
+    this.constraints.video = {
       width: videoFeed.videoWidth,
       height: videoFeed.videoHeight,
       facingMode: "environment",
       resizeMode: "crop-and-scale",
       frameRate: { ideal: 30.0, max: 60.0 }
     };
+    this.availableCaps.forEach(cap => {
+      if (this.caps[cap]){
+        ui.setupCap(cap);
+      }
+    })
+  },
+  refresh: function(){
+    if (!this.track) return;
+    this.track.applyConstraints(this.constraints);
   }
 }
+
+const ui = {
+  dialogEl: document.getElementById('dialog'),
+  init: function(){
+    const close = document.getElementById('dialog-close');
+    close.addEventListener('click', () => {
+      this.dialogEl.style.display = 'none';
+    });
+  },
+  setupCap: function(capName){
+    const ui = document.getElementById(capName);const uiEl = document.getElementById(capName);
+    if (camSettings.caps[capName]){
+      ui.addEventListener('click', () => ui.showDialog(capName));
+    }
+  },
+  showDialog: function(capName){
+    const cap = camSettings.caps[capName];
+    const uiEl = document.getElementById(capName);
+    this.dialogEl.style.display = 'block';
+    const currentValue = camSettings.track.getSettings()[capName] || 0;
+    const userValue = prompt(`Set ${capName} value:\nMin: ${cap.min}\nMax: ${cap.max}\nStep: ${cap.step}\nCurrent: ${currentValue}`, currentValue);
+    const numValue = parseInt(userValue);
+    if (!isNaN(numValue) && numValue >= cap.min && numValue <= cap.max){
+      camSettings.constraints.video[capName] = numValue;
+      camSettings.refresh();
+      uiEl.querySelector('.ico-label').textContent = `${capName}: ${numValue}`;
+    } else {
+      alert("Invalid value.");
+    }
+  }
+}
+
 const settings = {
   FRAME_RATE: 20, // FPS for the final timelapse video (speed)
   DRAW_INTERVAL: 1000 / 20, // Interval between frames in ms
@@ -57,6 +106,7 @@ async function setupCamera() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia(videoConstraints);
     videoFeed.srcObject = stream;
+    camSettings.init(stream);
     statusDisplay.textContent = 'Status: Camera ready.';
   } catch (err) {
     statusDisplay.textContent = 'Status: Error accessing camera. Please ensure permissions are granted.';
@@ -234,5 +284,6 @@ videoFeed.addEventListener('loadedmetadata', () => {
   captureCanvas.height = videoFeed.videoHeight;
 });
 
+ui.init();
 // Initial camera setup
 setupCamera();
