@@ -60,6 +60,7 @@ const camSettings = {
   refresh: function(){
     if (!this.track) return;
     this.track.applyConstraints(this.constraints);
+    this.drawInterval = 1000 / this.fps;
   }
 }
 
@@ -95,8 +96,8 @@ const ui = {
     }
   },
   applyCap: function(capName, userValue, uiEl){
-    if (this.keys[capName]){
-      const key = this.keys[capName];
+    if (camSettings.keys[capName]){
+      const key = camSettings.keys[capName];
       if (userValue === 'auto' && key.auto){
         camSettings.constraints.video[key.mode] = key.auto;
         delete camSettings.constraints.video[capName];
