@@ -13,14 +13,6 @@ const capturedImages = [];
 let mediaRecorder;
 const recordedChunks = [];
 
-const videoConstraints = {
-  video: {
-    width: { ideal: 1280 },
-    height: { ideal: 720 },
-    facingMode: "environment"
-  }
-};
-
 const camSettings = {
   keys: {
     exposureTime:     { abr: 'exp', mode: 'exposureMode', auto: 'continuous', manual: 'manual' },
@@ -29,9 +21,10 @@ const camSettings = {
   },
   constraints: {
     video: {
-       width: { ideal: 720 },
-       height: { ideal: 1280 },
-       facingMode: "environment"
+      width: { ideal: 720 },
+      height: { ideal: 1280 },
+      facingMode: "environment",
+      frameRate: { ideal: 30.0, max: 60.0 }
     },
     audio: false
   },
@@ -43,12 +36,6 @@ const camSettings = {
   init: function(stream){
     this.track = stream.getVideoTracks()[0];
     this.caps = this.track.getCapabilities();
-    this.constraints.video = {
-      width: { ideal: 720 },
-      height: { ideal: 1280 },
-      facingMode: "environment",
-      frameRate: { ideal: 30.0, max: 60.0 }
-    };
     Object.keys(this.keys).forEach(cap => {
       if (this.caps[cap]){
         ui.setupCap(cap);
@@ -116,7 +103,7 @@ const ui = {
       camSettings[capName] = parseInt(userValue);
     }
     camSettings.refresh();
-    uiEl.querySelector('.ico-label').textContent = `${numValue}`;
+    uiEl.querySelector('.ico-label').textContent = `${userValue}`;
   }
 }
 
