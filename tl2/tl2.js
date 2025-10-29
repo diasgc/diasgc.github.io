@@ -202,7 +202,7 @@ function startCapture() {
     alert("Please set a valid capture interval (min 1 second).");
     return;
   }
-
+  console.dir(camSettings);
   isCapturing = true;
   //intervalInput.disabled = true;
   timelapseVideo.style.display = 'none';
