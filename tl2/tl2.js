@@ -22,7 +22,7 @@ const camSettings = {
   constraints: {
     video: {
       width: { ideal: 720 },
-      height: { ideal: 1280 },
+      height: { ideal: 720 },
       facingMode: "environment",
       frameRate: { ideal: 30.0, max: 60.0 }
     },
