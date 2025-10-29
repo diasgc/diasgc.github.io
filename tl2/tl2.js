@@ -22,11 +22,15 @@ const videoConstraints = {
 };
 
 const camSettings = {
-  availableCaps: [ 'exposureTime', 'colorTemperature', 'focusDistance' ],
+  keys: {
+    exposureTime:     { abr: 'exp', mode: 'exposureMode', auto: 'continuous', manual: 'manual' },
+    colorTemperature: { abr: 'TºK', mode: 'whiteBalanceMode', auto: 'continuous', manual: 'manual' },
+    focusDistance:    { abr: 'foc', mode: 'focusMode', auto: 'continuous', manual: 'manual' },
+  },
   constraints: {
     video: {
-       width: { ideal: 1280 },
-       height: { ideal: 720 },
+       width: { ideal: 720 },
+       height: { ideal: 1280 },
        facingMode: "environment"
     },
     audio: false
@@ -46,7 +50,7 @@ const camSettings = {
       resizeMode: "crop-and-scale",
       frameRate: { ideal: 30.0, max: 60.0 }
     };
-    this.availableCaps.forEach(cap => {
+    Object.keys(this.keys).forEach(cap => {
       if (this.caps[cap]){
         ui.setupCap(cap);
       }
@@ -77,44 +81,33 @@ const ui = {
     if (camSettings.caps[capName]){
       const cap = camSettings.caps[capName];
       const currentValue = camSettings.track.getSettings()[capName] || 0;
-      if (cap.min && cap.max)
-        p += `Min: ${cap.min}\nMax: ${cap.max}\n`;
-      if (cap.step)
-        p += `Step: ${cap.step}\n`;
-      if (cap instanceof Array){
-        p += `Options: ${cap.join(', ')}\n`;
-      }
+      p += cap.min ? `Min: ${cap.min}\n` : '';
+      p += cap.max ? `Max: ${cap.max}\n` : '';
+      p += cap.step ? `Step: ${cap.step}\n` : '';
+      p += cap instanceof Array ? `Options: ${cap.join(', ')}\n` : '';
       p += `Current: ${currentValue}`;
       const userValue = prompt(p, currentValue);
-      this.applyCapValue(capName, userValue, uiEl);
+      this.applyCap(capName, userValue, uiEl);
     } else {
       currentValue = camSettings[capName] || 1;
       const userValue = prompt(p, currentValue);
       camSettings[capName] = parseInt(userValue);
     }
   },
-  swithMode: function(capName, capMode, autoValue, manualValue, numValue){
-    if (numValue === 'auto'){
-      camSettings.constraints.video[capMode] = autoValue;
-      delete camSettings.constraints.video[capName];
+  applyCap: function(capName, userValue, uiEl){
+    if (this.keys[capName]){
+      const key = this.keys[capName];
+      if (userValue === 'auto' && key.auto){
+        camSettings.constraints.video[key.mode] = key.auto;
+        delete camSettings.constraints.video[capName];
+      } else if (key.manual){
+        camSettings.constraints.video[key.mode] = key.manual;
+        camSettings.constraints.video[capName] = parseInt(userValue);
+      } else {
+        camSettings.constraints.video[capName] = parseInt(userValue);
+      }
     } else {
-      camSettings.constraints.video[capName] = manualValue;
-      camSettings.constraints.video[capName] = numValue;
-    }
-  },
-  applyCapValue: function(capName, userValue, uiEl){
-    const numValue = parseInt(userValue);
-    this.applyModeValue(capName)
-    if (capName === 'colorTemperature')
-      this.swithMode(capName, "whiteBalanceMode", 'continuous', 'manual', numValue);
-    else if (capName === 'exposureTime')
-      this.swithMode(capName, "exposureMode", 'continuous', 'manual', numValue);        
-    else if (capName === 'focusDistance')
-      this.swithMode(capName, "focusMode", 'continuous', 'manual', numValue);
-    else if (numValue === 'auto'){
-      delete camSettings.constraints.video[capName];
-    } else {
-      camSettings.constraints.video[capName] = numValue;
+      camSettings[capName] = parseInt(userValue);
     }
     camSettings.refresh();
     uiEl.querySelector('.ico-label').textContent = `${numValue}`;
@@ -168,7 +161,7 @@ function captureFrame() {
 
   // 3. Get the image data URL and store it
   const dataURL = captureCanvas.toDataURL('image/jpeg', 0.8); // 0.8 is quality
-  capturedImages.push(dataURL);
+  capturedImages.push(dataURL);setConstraint
   const secs = capturedImages.length / camSettings.fps;
   statusDisplay.textContent = `Status: ${capturedImages.length} frame(s). ${secs.toFixed(1)} seconds`;
   if (secs > duration.value){
@@ -200,7 +193,7 @@ const screen = {
   
 function startCapture() {
   screen.setLock(true);
-  camSettings.refresh();
+  camSettings.refresh();setConstraint
   //settings.update();
   setupCamera();
   const intervalSeconds = parseInt(camSettings.timelapse);
