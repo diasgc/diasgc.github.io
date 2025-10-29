@@ -44,8 +44,8 @@ const camSettings = {
     this.track = stream.getVideoTracks()[0];
     this.caps = this.track.getCapabilities();
     this.constraints.video = {
-      width: videoFeed.videoWidth,
-      height: videoFeed.videoHeight,
+      width: { ideal: 720 },
+      height: { ideal: 1280 },
       facingMode: "environment",
       resizeMode: "crop-and-scale",
       frameRate: { ideal: 30.0, max: 60.0 }
