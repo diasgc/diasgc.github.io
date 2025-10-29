@@ -38,7 +38,7 @@ const camSettings = {
   caps: {},
   fps: 30,
   timelapse: 1,
-  drawInterval: 1000 / 30,
+  drawInterval: function(){ return 1000 / this.fps; },
   track: null,
   init: function(stream){
     this.track = stream.getVideoTracks()[0];
@@ -47,7 +47,6 @@ const camSettings = {
       width: { ideal: 720 },
       height: { ideal: 1280 },
       facingMode: "environment",
-      resizeMode: "crop-and-scale",
       frameRate: { ideal: 30.0, max: 60.0 }
     };
     Object.keys(this.keys).forEach(cap => {
@@ -60,7 +59,6 @@ const camSettings = {
   refresh: function(){
     if (!this.track) return;
     this.track.applyConstraints(this.constraints);
-    this.drawInterval = 1000 / this.fps;
   }
 }
 
@@ -92,6 +90,16 @@ const ui = {
       camSettings[capName] = parseInt(userValue);
     }
   },
+  parseUserValue: function(userValue){
+    if (userValue === 'max' && camSettings.caps[capName].max)
+      userValue = camSettings.caps[capName].max;
+    else if (userValue === 'min' && camSettings.caps[capName].min)
+      userValue = camSettings.caps[capName].min;
+    if (!isNaN(parseFloat(userValue))){
+      return parseFloat(userValue);
+    }
+    return userValue;
+  },
   applyCap: function(capName, userValue, uiEl){
     if (camSettings.keys[capName]){
       const key = camSettings.keys[capName];
@@ -100,9 +108,9 @@ const ui = {
         delete camSettings.constraints.video[capName];
       } else if (key.manual){
         camSettings.constraints.video[key.mode] = key.manual;
-        camSettings.constraints.video[capName] = parseInt(userValue);
+        camSettings.constraints.video[capName] = ui.parseUserValue(userValue);
       } else {
-        camSettings.constraints.video[capName] = parseInt(userValue);
+        camSettings.constraints.video[capName] = ui.parseUserValue(userValue);
       }
     } else {
       camSettings[capName] = parseInt(userValue);
@@ -282,7 +290,7 @@ function drawNextFrame(frameIndex) {
       if (mediaRecorder.state === 'recording') {
         drawNextFrame(frameIndex + 1);
       }
-    }, camSettings.drawInterval);
+    }, camSettings.drawInterval());
   };
   img.src = capturedImages[frameIndex];
 }
