@@ -67,10 +67,7 @@ const camSettings = {
 const ui = {
   dialogEl: document.getElementById('dialog'),
   init: function(){
-    const close = document.getElementById('dialog-close');
-    close.addEventListener('click', () => {
-      this.dialogEl.style.display = 'none';
-    });
+    console.dir(camSettings);
   },
   setupCap: function(capName){
     const id = document.getElementById(capName);
