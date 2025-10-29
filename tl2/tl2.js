@@ -5,7 +5,7 @@ const startStopBtn = document.getElementById('startStop');
 //const intervalInput = document.getElementById('interval');
 const statusDisplay = document.getElementById('status');
 const ctx = captureCanvas.getContext('2d');
-const duration = document.getElementById('duration');
+//const duration = document.getElementById('duration');
 
 let isCapturing = false;
 let captureTimer;
@@ -31,6 +31,7 @@ const camSettings = {
   caps: {},
   fps: 30,
   timelapse: 1,
+  duration: 60,
   drawInterval: function(){ return 1000 / this.fps; },
   track: null,
   init: function(stream){
@@ -157,7 +158,7 @@ function captureFrame() {
   capturedImages.push(dataURL)
   const secs = capturedImages.length / camSettings.fps;
   statusDisplay.textContent = `Status: ${capturedImages.length} frame(s). ${secs.toFixed(1)} seconds`;
-  if (secs > duration.value){
+  if (secs > camSettings.duration){
     stopCaptureAndGenerate();
   }
 }
