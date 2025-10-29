@@ -162,7 +162,7 @@ function captureFrame() {
 
   // 3. Get the image data URL and store it
   const dataURL = captureCanvas.toDataURL('image/jpeg', 0.8); // 0.8 is quality
-  capturedImages.push(dataURL);setConstraint
+  capturedImages.push(dataURL)
   const secs = capturedImages.length / camSettings.fps;
   statusDisplay.textContent = `Status: ${capturedImages.length} frame(s). ${secs.toFixed(1)} seconds`;
   if (secs > duration.value){
@@ -194,7 +194,7 @@ const screen = {
   
 function startCapture() {
   screen.setLock(true);
-  camSettings.refresh();setConstraint
+  camSettings.refresh()
   //settings.update();
   setupCamera();
   const intervalSeconds = parseInt(camSettings.timelapse);
