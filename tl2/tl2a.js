@@ -152,7 +152,7 @@ async function setupCamera() {
     const stream = await navigator.mediaDevices.getUserMedia(camSettings.constraints);
     videoFeed.srcObject = stream;
     camSettings.init(stream);
-    statusDisplay.textContent = 'Version: ' + (vrs ? vrs : 'dev') + ' | Status: Camera ready.';
+    statusDisplay.textContent = `Status: Camera ready.\n${JSON.stringify(camSettings.constraints.video, null,2)}`;
   } catch (err) {
     statusDisplay.textContent = 'Status: Error accessing camera. Please ensure permissions are granted.';
     console.error("Error accessing camera: ", err);
@@ -333,3 +333,5 @@ videoFeed.addEventListener('loadedmetadata', () => {
 ui.init();
 // Initial camera setup
 setupCamera();
+
+alert("Timelapse Camera version: " + (vrs ? vrs : 'dev'));
