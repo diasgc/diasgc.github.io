@@ -2,12 +2,13 @@ const videoFeed = document.getElementById('videoFeed');
 const captureCanvas = document.getElementById('captureCanvas');
 const timelapseVideo = document.getElementById('timelapseVideo');
 const startStopBtn = document.getElementById('startStop');
-//const intervalInput = document.getElementById('interval');
+startStopBtn.onchange = startStop;
+
 const statusDisplay = document.getElementById('status');
 const ctx = captureCanvas.getContext('2d');
-//const duration = document.getElementById('duration');
 
-const vrs = new URL(document.currentScript.src).searchParams.get("v");
+
+const vrs = new URL(document.currentScript.src).searchParams.get("v") || 'dev';
 
 let isCapturing = false;
 let captureTimer;
@@ -205,8 +206,6 @@ const screen = {
 function startCapture() {
   screen.setLock(true);
   camSettings.refresh()
-  //settings.update();
-  setupCamera();
   const intervalSeconds = parseInt(camSettings.timelapse.value);
   if (isNaN(intervalSeconds) || intervalSeconds < 1) {
     alert("Please set a valid capture interval (min 1 second).");
@@ -229,7 +228,6 @@ function stopCaptureAndGenerate() {
   screen.setLock(false);
   isCapturing = false;
   clearInterval(captureTimer);
-  //startStopBtn.textContent = 'Start Capture';
   //intervalInput.disabled = false;
 
   if (capturedImages.length < 2) {
@@ -242,9 +240,6 @@ function stopCaptureAndGenerate() {
 }
 
 // --- 3. MediaRecorder (Video Generation) ---
-//const FRAME_RATE = 20; // FPS for the final timelapse video (speed)
-//const DRAW_INTERVAL = 1000 / FRAME_RATE; 
-
 async function generateTimelapseVideo() {
   statusDisplay.textContent = 'Status: Generating video... Do not close window.';
   recordedChunks.length = 0;
@@ -334,4 +329,4 @@ ui.init();
 // Initial camera setup
 setupCamera();
 
-alert("Timelapse Camera version: " + (vrs ? vrs : 'dev'));
+alert(`Timelapse Camera version: ${vrs}`);
