@@ -7,6 +7,8 @@ const statusDisplay = document.getElementById('status');
 const ctx = captureCanvas.getContext('2d');
 //const duration = document.getElementById('duration');
 
+const vrs = new URL(document.currentScript.src).searchParams.get("v");
+
 let isCapturing = false;
 let captureTimer;
 const capturedImages = [];
@@ -150,7 +152,7 @@ async function setupCamera() {
     const stream = await navigator.mediaDevices.getUserMedia(camSettings.constraints);
     videoFeed.srcObject = stream;
     camSettings.init(stream);
-    statusDisplay.textContent = 'Status: Camera ready.';
+    statusDisplay.textContent = 'Version: ' + (vrs ? vrs : 'dev') + ' | Status: Camera ready.';
   } catch (err) {
     statusDisplay.textContent = 'Status: Error accessing camera. Please ensure permissions are granted.';
     console.error("Error accessing camera: ", err);
