@@ -25,6 +25,25 @@ body {
   background: #200;
 }
 
+#videoOverlay {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  align-self: center;
+  object-fit: cover;
+  z-index: 0;
+  margin: 0;
+  text-align: center;
+  font-size: 120px;
+  font-weight: bold;
+  color: #fff1;
+  background: transparent;
+} 
+
 #timelapseVideo {
   position: absolute;
   display: none;
@@ -37,6 +56,36 @@ body {
   margin: 0;
   background: #020;
   z-index: 5;
+}  
+
+#div-timer {
+  position: absolute;
+  top: 48px;
+  display: none;
+  width: 100%;
+  height: auto;
+  font-size: 72px;
+  font-weight: 100;
+  text-align: center;
+}
+
+.div-timer-label {
+  font-size: 10px;
+  font-weight: 400;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+#elapsedTime {
+  font-size: 18px;
+}
+
+#info {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  font-size: 24px;
 }
 
 .controls {
@@ -86,9 +135,9 @@ body {
 }
 
 .rec-btn-div input[type="checkbox"]:checked + label {
-  margin: 20px;
+  margin: 22px;
   background: #a00;
-  border-radius: 25%;
+  border-radius: 20%;
   animation: pulse 1000ms infinite;
 }
 
@@ -123,6 +172,7 @@ body {
   margin: 0;
   padding: 12px 0;
 }
+
 .flex-1 {
   flex: 1;
   text-align: center;

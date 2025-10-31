@@ -1,6 +1,8 @@
 const videoFeed = document.getElementById('videoFeed');
 const captureCanvas = document.getElementById('captureCanvas');
 const timelapseVideo = document.getElementById('timelapseVideo');
+const videoOverlay = document.getElementById('videoOverlay');
+
 const startStopBtn = document.getElementById('startStop');
 startStopBtn.onchange = startStop;
 
@@ -48,7 +50,9 @@ const camSettings = {
 }
 
 const ui = {
+  
   dialogEl: document.getElementById('dialog'),
+  
   init: function(){
     console.dir(camSettings);
     const e = document.getElementById('div-setup');
@@ -62,6 +66,7 @@ const ui = {
       }
     });
   },
+  
   getDiv: function(capName){
     const cap = camSettings[capName];
     if (!cap) return document.createElement('div');
@@ -78,6 +83,7 @@ const ui = {
     });
     return div;
   },
+  
   getPrompt: function(capName){
     let p = `Set ${capName} value:\n`;
     let defaultValue;
@@ -96,6 +102,7 @@ const ui = {
     }
     return { text: p, defaultValue: defaultValue };
   },
+  
   parseUserValue: function(userValue){
     if (userValue === 'max' && camSettings.caps[capName].max)
       userValue = camSettings.caps[capName].max;
@@ -106,6 +113,7 @@ const ui = {
     }
     return userValue;
   },
+
   applyCap: function(capName, userValue, uiEl){
     if (camSettings[capName]){
       const key = camSettings[capName];
@@ -126,40 +134,22 @@ const ui = {
   }
 }
 
-/*
-const settings = {
-  FRAME_RATE: 20, // FPS for the final timelapse video (speed)
-  DRAW_INTERVAL: 1000 / 20, // Interval between frames in ms
-  update: function(){
-    this.FRAME_RATE = document.getElementById('fps').value;
-    this.DRAW_INTERVAL = 1000 / this.FRAME_RATE;
-    this.setConstraint('exptime','exposureTime',0);
-    this.setConstraint('temperature','colorTemperature', 2700);
-  },
-  setConstraint: function(inputId, constraintName, defaultValue){
-    const value = parseInt(document.getElementById(inputId).value);
-    if (isNaN(value) || value <= defaultValue){
-      delete videoConstraints.video[constraintName];
-    } else {
-      videoConstraints.video[constraintName] = value;
-    }
-  }
-}
-*/
-
 // --- 1. Initialize Camera Stream ---
 async function setupCamera() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia(camSettings.constraints);
     videoFeed.srcObject = stream;
     camSettings.init(stream);
-    statusDisplay.textContent = `Status: Camera ready.\n${JSON.stringify(camSettings.constraints.video)}`;
+    statusDisplay.textContent = 'Status: Camera ready.';
   } catch (err) {
     statusDisplay.textContent = 'Status: Error accessing camera. Please ensure permissions are granted.';
     console.error("Error accessing camera: ", err);
   }
 }
 
+function showInfo(){
+  alert(`${JSON.stringify(camSettings.constraints.video,null,2)}`);
+}
 
 
 // --- 2. Camera Capture Functions ---
@@ -175,7 +165,9 @@ function captureFrame() {
   const dataURL = captureCanvas.toDataURL('image/jpeg', 0.8); // 0.8 is quality
   capturedImages.push(dataURL)
   const secs = capturedImages.length / camSettings.fps;
-  statusDisplay.textContent = `Status: ${capturedImages.length} frame(s). ${secs.toFixed(1)} seconds`;
+  stats.frames = capturedImages.length;
+  //statusDisplay.textContent = `Status: ${secs.toFixed(1)} seconds`;
+  videoOverlay.textContent = `${capturedImages.length}`;
   if (secs > camSettings.duration.value){
     stopCaptureAndGenerate();
   }
@@ -204,17 +196,17 @@ const screen = {
 
   
 function startCapture() {
-  screen.setLock(true);
-  camSettings.refresh()
   const intervalSeconds = parseInt(camSettings.timelapse.value);
   if (isNaN(intervalSeconds) || intervalSeconds < 1) {
     alert("Please set a valid capture interval (min 1 second).");
     return;
   }
+  screen.setLock(true);
+  camSettings.refresh()
   console.dir(camSettings);
   isCapturing = true;
   //intervalInput.disabled = true;
-  timelapseVideo.style.display = 'none';
+  timelapseVideo.style.display = 'nonconst secs = capturedImages.length / camSettings.fps;e';
   capturedImages.length = 0; // Clear previous images
 
   // Capture the first frame immediately
@@ -222,12 +214,41 @@ function startCapture() {
 
   // Set the timer to capture frames repeatedly
   captureTimer = setInterval(captureFrame, intervalSeconds * 1000);
+  stats.start();
+  stats.statTimer = setInterval(stats.postStats.bind(stats), 1000);
 }
+
+const stats = {
+  frames: 0,
+  startTime: 0,
+  elapsedTime: 0,
+  recordedTime: 0,
+  statTimer: null,
+  start: function(){
+    this.frames = 0;
+    this.startTime = Date.now();
+    this.elapsedTime = 0;
+    this.recordedTime = 0;
+    this.postStats();
+    document.getElementById('div-timer').style.display = 'block';
+  },
+  postStats: function(){
+    this.elapsedTime = (Date.now() - this.startTime);
+    this.recordedTime = this.frames / camSettings.fps;
+    document.getElementById('elapsedTime').textContent = new Date(this.elapsedTime).toISOString().substr(11, 8);
+    document.getElementById('recordedTime').textContent = `${new Date(this.recordedTime * 1000).toISOString().substr(14, 8)}`;
+  },
+  stop: function(){
+    document.getElementById('div-timer').style.display = 'none';
+  }
+}
+
 
 function stopCaptureAndGenerate() {
   screen.setLock(false);
   isCapturing = false;
   clearInterval(captureTimer);
+  clearInterval(stats.statTimer);
   //intervalInput.disabled = false;
 
   if (capturedImages.length < 2) {
@@ -305,6 +326,7 @@ function startStop() {
 }
 
 function downloadVideo(blob) {
+  videoOverlay.innerHTML = '';
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.style.display = 'none';
