@@ -1,0 +1,39 @@
+body {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    background: #111;
+    color: #eee;
+}
+
+.result {
+    position: absolute;
+    top:0;
+    left:0;
+    right: 0;
+    bottom: 0;
+    align-self: center;
+    justify-self: center;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.div-res {
+    border: 1px solid #fff1;
+    border-radius: 12px;
+    margin: 12px;
+    padding: 8px;
+    cursor: pointer;
+}
+
+video {
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 12px solid transparent;
+}
+
+canvas {
+    display: none;
+}

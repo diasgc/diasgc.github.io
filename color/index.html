@@ -16,9 +16,14 @@
 </head>
 <body>
 
-  <video id="video" autoplay playsinline style="display: none;"></video>
   <canvas id="canvas"></canvas>
-  <p id="color">Color: </p>
+  <div class="result">
+    <video id="video" autoplay playsinline></video>
+    <div class="div-res" id="rgba" onclick="copyClip(this)"></div>
+    <div class="div-res" id="hsla" onclick="copyClip(this)"></div>
+    <div class="div-res" id="hsva" onclick="copyClip(this)"></div>
+    <div class="div-res" id="html" onclick="copyClip(this)"></div>
+  </div>
   <script src="main.js?v=251101a"></script>
 </body>
 </html>
