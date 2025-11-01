@@ -18,6 +18,36 @@ const capturedImages = [];
 let mediaRecorder;
 const recordedChunks = [];
 
+
+const camera = {
+  getSupportedMimeTypes: function() {
+    const possibleTypes = [
+      'video/webm;codecs=vp9,opus',
+      'video/webm;codecs=vp8,opus',
+      'video/webm;codecs=h264,opus',
+      'video/webm;codecs=av01,opus',
+      'video/x-matroska;codecs=hvc1.1.6.L186.B0,opus',
+      'video/mp4;codecs=vp9,mp4a.40.2',
+      'video/mp4;codecs=vp9,opus',
+      'video/mp4;codecs=avc1.64003E,mp4a.40.2',
+      'video/mp4;codecs=avc1.64003E,opus',
+      'video/mp4;codecs=avc3.64003E,mp4a.40.2',
+      'video/mp4;codecs=avc3.64003E,opus',
+      'video/mp4;codecs=hvc1.1.6.L186.B0,mp4a.40.2',
+      'video/mp4;codecs=hvc1.1.6.L186.B0,opus',
+      'video/mp4;codecs=hev1.1.6.L186.B0,mp4a.40.2',
+      'video/mp4;codecs=hev1.1.6.L186.B0,opus',
+      'video/mp4;codecs=av01.0.19M.08,mp4a.40.2',
+      'video/mp4;codecs=av01.0.19M.08,opus',
+      'video/mp4',
+    ];
+    return possibleTypes.filter(mimeType => {
+      return MediaRecorder.isTypeSupported(mimeType);
+    });
+  }
+}
+
+
 const camSettings = {
   constraints: {
     video: {
@@ -30,6 +60,8 @@ const camSettings = {
   },
   caps: {},
   fps: 30,
+  jpegQual: 0.9,
+  videoMime: "video/webm",
   iso: { cam: true, abr: 'iso', defVal: 'auto', mi: 'camera'},
   timelapse: { value: 2, cam: false, abr: 'speed', defVal: 2, mi: 'avg_pace'},
   duration: { value: 60, cam: false, abr: 'timer', defVal: 60, mi: 'alarm_on'},
@@ -45,6 +77,8 @@ const camSettings = {
   init: function(stream){
     this.track = stream.getVideoTracks()[0];
     this.caps = this.track.getCapabilities();
+    this.mimeTypes = camera.getSupportedMimeTypes();
+    console.dir(this.mimeTypes);
     ui.init()
   },
   refresh: function(){
@@ -56,27 +90,30 @@ const camSettings = {
 const ui = {
   
   dialogEl: document.getElementById('dialog'),
+  elapsedEl: document.getElementById('elapsedTime'),
+  recordedEl: document.getElementById('recordedTime'),
+  divCaps: document.getElementById('div-setup'),
+  timerEl: document.getElementById('div-timer'),
   
   init: function(){
     console.dir(camSettings);
-    const e = document.getElementById('div-setup');
-    e.replaceChildren();
     
-    e.appendChild(this.getDiv('timelapse'));
-    e.appendChild(this.getDiv('duration'));
+    this.divCaps.replaceChildren();
+    
+    this.divCaps.appendChild(this.getDiv('timelapse'));
+    this.divCaps.appendChild(this.getDiv('duration'));
     Object.keys(camSettings.caps).forEach(capName => {
       if (camSettings[capName]){
-        e.appendChild(ui.getDiv(capName));
+        ui.divCaps.appendChild(ui.getDiv(capName));
       }
     });
   },
   
-  getDiv: function(capName){
+  getDiv: function(capName, callback){
     const cap = camSettings[capName];
     if (!cap) return document.createElement('div');
     const div = document.createElement('div');
     div.classList.add('flex-1');
-    div.id = capName;
     //div.innerHTML = `
     //  ${cap.svg ? cap.svg + "\n\t": ''}<div class="ico-label" id="${capName}-label">${cap.abr}</div>
     //`;
@@ -131,14 +168,40 @@ const ui = {
       } else if (key.manual){
         camSettings.constraints.video[key.mode] = key.manual;
         camSettings.constraints.video[capName] = ui.parseUserValue(userValue);
-      } else {
+      } else if (camSettings[capName].cam){
         camSettings.constraints.video[capName] = ui.parseUserValue(userValue);
+      } else {
+        camSettings[capName].value = userValue;
       }
-    } else {
-      camSettings[capName].value = parseInt(userValue);
     }
     camSettings.refresh();
     uiEl.querySelector('.ico-label').textContent = `${userValue}`;
+  },
+
+  promptDismiss: function(){
+    document.getElementById('customPrompt').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+  },
+  promptSelect: function(arr, callback){
+    document.getElementById('customPrompt').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+    document.getElementById('prompt-ok').onclick = () => {
+      ui.promptDismiss();
+      callback(sel.value);
+    }
+    document.getElementById('prompt-cancel').onclick = this.promptDismiss
+    const sel = document.getElementById('selectOption');
+    sel.replaceChildren();
+    arr.forEach(k => {
+      const e = document.createElement('option');
+      e.value = k;
+      e.innerText = k;
+      sel.appendChild(e)
+    });
+    sel.addEventListener('change', () => {
+      
+      
+    });
   }
 }
 
@@ -156,11 +219,15 @@ async function setupCamera() {
 }
 
 function showInfo(){
-  alert(`${JSON.stringify(camSettings.constraints.video,null,2)}`);
+  alert(`${JSON.stringify(camSettings.constraints.video, null, 2)}`);
 }
 
 function showCaps(){
   alert(`${JSON.stringify(camSettings.caps)}`);
+}
+
+function setMime(){
+  ui.promptSelect(camSettings.mimeTypes, (v) => camSettings.videoMime = v);
 }
 
 
@@ -174,11 +241,10 @@ function captureFrame() {
   ctx.drawImage(videoFeed, 0, 0, captureCanvas.width, captureCanvas.height);
 
   // 3. Get the image data URL and store it
-  const dataURL = captureCanvas.toDataURL('image/jpeg', 0.8); // 0.8 is quality
+  const dataURL = captureCanvas.toDataURL('image/jpeg', camSettings.jpegQual); // 0.8 is quality
   capturedImages.push(dataURL)
   const secs = capturedImages.length / camSettings.fps;
   stats.frames = capturedImages.length;
-  //statusDisplay.textContent = `Status: ${secs.toFixed(1)} seconds`;
   videoOverlay.textContent = `${capturedImages.length}`;
   if (secs > camSettings.duration.value){
     stopCaptureAndGenerate();
@@ -218,7 +284,7 @@ function startCapture() {
   console.dir(camSettings);
   isCapturing = true;
   //intervalInput.disabled = true;
-  timelapseVideo.style.display = 'nonconst secs = capturedImages.length / camSettings.fps;e';
+  timelapseVideo.style.display = 'none';
   capturedImages.length = 0; // Clear previous images
 
   // Capture the first frame immediately
@@ -242,16 +308,16 @@ const stats = {
     this.elapsedTime = 0;
     this.recordedTime = 0;
     this.postStats();
-    document.getElementById('div-timer').style.display = 'block';
+    ui.timerEl.style.display = 'block';
   },
   postStats: function(){
     this.elapsedTime = (Date.now() - this.startTime);
     this.recordedTime = this.frames / camSettings.fps;
-    document.getElementById('elapsedTime').textContent = new Date(this.elapsedTime).toISOString().substr(11, 8);
-    document.getElementById('recordedTime').textContent = `${new Date(this.recordedTime * 1000).toISOString().substr(14, 8)}`;
+    ui.elapsedEl.textContent = new Date(this.elapsedTime).toISOString().substr(11, 8);
+    ui.recordedEl.textContent = `${new Date(this.recordedTime * 1000).toISOString().substr(14, 8)}`;
   },
   stop: function(){
-    document.getElementById('div-timer').style.display = 'none';
+    ui.timerEl.style.display = 'none';
   }
 }
 
@@ -280,7 +346,7 @@ async function generateTimelapseVideo() {
   const stream = captureCanvas.captureStream(camSettings.fps); 
   
   // 2. Setup the MediaRecorder
-  mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+  mediaRecorder = new MediaRecorder(stream, { mimeType: camSettings.videoMime });
 
   mediaRecorder.ondataavailable = (event) => {
     if (event.data.size > 0) {
@@ -290,7 +356,7 @@ async function generateTimelapseVideo() {
 
   mediaRecorder.onstop = () => {
     // 4. Combine chunks into a video blob and display
-    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+    const blob = new Blob(recordedChunks, { type: camSettings.videoMime });
     timelapseVideo.src = URL.createObjectURL(blob);
     timelapseVideo.style.display = 'block';
     statusDisplay.textContent = `Status: Video generated! Total frames: ${capturedImages.length}.`;
@@ -341,9 +407,10 @@ function downloadVideo(blob) {
   videoOverlay.innerHTML = '';
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
+  const ext = camSettings.videoMime.split(/[/;]/)[1];
   a.style.display = 'none';
   a.href = url;
-  a.download = `TL-${Date.now()}.webm`;
+  a.download = `TL-${Date.now()}.${ext}`;
   document.body.appendChild(a);
   a.click();
   setTimeout(() => {

@@ -42,10 +42,23 @@
   <div class="div-info">
     <div class="material-icons info" onclick="showInfo()">info</div>
     <div class="material-icons info" onclick="showCaps()">help</div>
+    <div class="material-icons info" onclick="setMime()">av1</div>
+  </div>
+
+  <!-- Overlay -->
+  <div id="overlay"></div>
+
+  <!-- Custom Prompt -->
+  <div id="customPrompt">
+    <p>Please select an option:</p>
+    <select id="selectOption"></select>
+    <br>
+    <button id="prompt-ok">OK</button>
+    <button id="prompt-cancel">Cancel</button>
   </div>
 
   <video id="timelapseVideo" controls></video>
 
-  <script src="tl2a.js?v=251030a"></script>
+  <script src="tl2a.js?v=251101"></script>
 </body>
 </html>
