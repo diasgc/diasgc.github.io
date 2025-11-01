@@ -216,9 +216,8 @@ body {
   font-family: 'Material Symbols Outlined';
   font-size: 36px;
   display: block;
-  width: 36px;
-  height: auto;
   padding: 8px;
+  text-align: center;
   cursor: pointer;
 }
 
@@ -226,10 +225,10 @@ body {
   font-size: 10px;
   text-align: center;
 }
+
 .ico-svg {
   width: var(--ico-sz);
-  height: var(  <div class="material-icons" onclick="showInfo()">info</div>
-    <div class="material-icons" onclick="showCaps()">help</div>--ico-sz);
+  height: var(--ico-sz);
   fill: #e3e3e3;
   &:hover {
     fill: #4af;
