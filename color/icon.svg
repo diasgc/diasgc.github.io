@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg width="800px" height="800px" version="1.1" viewBox="0 0 73 73" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <title>design-and-ux/color-theory</title>
+ <desc>Created with Sketch.</desc>
+ <defs>
+  <linearGradient id="linearGradient11" x1="-.82" x2="70" y1="-.69" y2="70" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#fff" offset="0"/>
+   <stop stop-color="#c0c0c0" offset="1"/>
+  </linearGradient>
+ </defs>
+ <g id="design-and-ux/color-theory" fill="none">
+  <g id="container" transform="matrix(1 0 0 1 1 1)" fill="url(#linearGradient11)" stroke="#10422f" stroke-width="2">
+   <rect id="mask" x="-1" y="-1" width="71" height="71" rx="14" fill="url(#linearGradient11)" stroke="none"/>
+  </g>
+  <g id="rgb" transform="translate(11 11)">
+   <path id="Shape" d="m41 15c0 8.4-6.8 15-15 15s-15-6.8-15-15c0-8.4 6.8-15 15-15s15 6.8 15 15z" fill="#42C0E2"/>
+   <path d="m52 35c0 8.4-6.8 15-15 15-8.4 0-15-6.8-15-15s6.8-15 15-15c8.4 0 15 6.8 15 15z" fill="#FFD061"/>
+   <path d="m22 30c1.1 0.28 2.3 0.43 3.6 0.43 6.7 0 12-4.3 14-10-1.1-0.28-2.3-0.43-3.6-0.43-6.7 0-12 4.3-14 10z" fill="#49BD90"/>
+   <path d="m30 35c0 8.4-6.8 15-15 15-8.4 0-15-6.8-15-15s6.8-15 15-15c8.4 0 15 6.8 15 15z" fill="#FA70B2"/>
+   <path d="m12 20c2 6 7.7 10 14 10 1.2 0 2.4-0.15 3.6-0.43-2-6-7.7-10-14-10-1.2 0-2.4 0.15-3.6 0.43z" fill="#AF7BC6"/>
+   <path d="m22 35c0 4.2 1.7 7.9 4.4 11 2.7-2.7 4.4-6.5 4.4-11s-1.7-7.9-4.4-11c-2.7 2.7-4.4 6.5-4.4 11z" fill="#EF6122"/>
+   <path d="m30 30c-1.1 0.28-2.3 0.42-3.6 0.42s-2.4-0.15-3.6-0.42c0.74-2.2 2-4.2 3.6-5.8 1.6 1.6 2.8 3.6 3.6 5.8z" fill="#fff"/>
+  </g>
+ </g>
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:title>design-and-ux/color-theory</dc:title>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+</svg>

@@ -1,9 +1,9 @@
 const staticTimelapseJs = "static-timelapseJs"
 const assets = [
-  "/tl2/",
-  "/tl2/index.html",
-  "/tl2/tl2.css",
-  "/tl2/tl2a.js"
+  "/color/",
+  "/color/index.html",
+  "/color/style.css",
+  "/color/main.js"
 ]
 
 self.addEventListener("install", installEvent => {
