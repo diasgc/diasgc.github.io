@@ -20,6 +20,9 @@ const settings = {
   moon: 'auto',
   wind: 'auto',
   init2: function(){
+    const urlParams = new URLSearchParams(window.location.search);
+    this.rate = parseInt(urlParams.get('live') || 2000);
+    this.live = this.rate === 0;
     document.getElementById('bsettings').addEventListener('change', (e) => {
       document.getElementById('settings').style.display = e.target.checked ? 'inline' : 'none';
     });
