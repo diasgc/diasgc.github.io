@@ -133,14 +133,22 @@ video.addEventListener('click', (event) => {
   //canvas.style.display = 'none';
   // Display the color
   ui.post(r,g,b,a);
-  video.style.border = `12px solid rgba(${r}, ${g}, ${b}, ${a / 255})`;
+  video.style.border = `12px solid rgba(${r}, ${g}, ${b}, ${a.toFixed(2) / 255})`;
 });
 
-function copyClip(el){
-  const t = el.innerText;
+function copyClip(t){
   navigator.clipboard.writeText(t).then(() => {
     alert(`${t} copied to clipboard`);
   }).catch(err => {
     alert(`Failed to copy: ${err}`);
   });
+}
+
+function ccopy(f){
+  switch(f){
+    case 'rgb': copyClip(`rgba(${color[f][0]},${color[f][1]},${color[f][2]},255)`); break;
+    case 'hsl': copyClip(`hsla(${(color[f][0] * 360).toFixed(0)},${color[f][1].toFixed(2)},${color[f][2].toFixed(2)},1.0)`); break;
+    case 'hsv': copyClip(`hsva(${(color[f][0] * 360).toFixed(0)},${color[f][1].toFixed(2)},${color[f][2].toFixed(2)},1.0)`); break;
+    case 'html': copyClip(color[f]); break;
+  }
 }

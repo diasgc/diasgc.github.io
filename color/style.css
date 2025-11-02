@@ -30,7 +30,6 @@ video {
     width: 240px;
     height: 240px;
     border-radius: 50%;
-    object-fit: fill;
     border: 12px solid transparent;
 }
 
@@ -52,6 +51,6 @@ canvas {
   text-align: center;
   align-items: center;
   justify-content: center;
-  margin: 0;
+  margin: 2px;
   padding: 4px;
 }
