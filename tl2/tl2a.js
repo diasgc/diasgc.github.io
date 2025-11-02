@@ -94,13 +94,14 @@ const ui = {
   recordedEl: document.getElementById('recordedTime'),
   divCaps: document.getElementById('div-setup'),
   timerEl: document.getElementById('div-timer'),
-  
+  speedEl: document.getElementById('tl-speed'),
+
   init: function(){
     console.dir(camSettings);
-    
+    this.speedEl.addEventListener('click', ui.setTimelapseSpeed);
+
     this.divCaps.replaceChildren();
-    
-    this.divCaps.appendChild(this.getDiv('timelapse'));
+    //this.divCaps.appendChild(this.getDiv('timelapse'));
     this.divCaps.appendChild(this.getDiv('duration'));
     Object.keys(camSettings.caps).forEach(capName => {
       if (camSettings[capName]){
@@ -108,7 +109,13 @@ const ui = {
       }
     });
   },
-  
+  setTimelapseSpeed: function(e){
+    e.stopPropagation();
+    let s = parseFloat(prompt('Set timelapse speed x', 60));
+    if (isNaN(s) || s <= 0) s = 60;
+    ui.speedEl.innerText = `${s}x`;
+    camSettings.timelapse = s/camSettings.fps;
+  },
   getDiv: function(capName, callback){
     const cap = camSettings[capName];
     if (!cap) return document.createElement('div');
@@ -274,9 +281,9 @@ const screen = {
 
   
 function startCapture() {
-  const intervalSeconds = parseInt(camSettings.timelapse.value);
-  if (isNaN(intervalSeconds) || intervalSeconds < 1) {
-    alert("Please set a valid capture interval (min 1 second).");
+  const intervalSeconds = parseFloat(camSettings.timelapse);
+  if (isNaN(intervalSeconds) || intervalSeconds < 0.1) {
+    alert("Please set a valid capture interval (min 100 millisecond).");
     return;
   }
   screen.setLock(true);
