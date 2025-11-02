@@ -19,11 +19,29 @@
   <canvas id="canvas"></canvas>
   <div class="result">
     <video id="video" autoplay playsinline></video>
-    <div class="div-res" id="rgba" onclick="copyClip(this)"></div>
-    <div class="div-res" id="hsla" onclick="copyClip(this)"></div>
-    <div class="div-res" id="hsva" onclick="copyClip(this)"></div>
-    <div class="div-res" id="html" onclick="copyClip(this)"></div>
+    <div class="flex">
+      <div class="f1" id="rgb">RGB</div>
+      <div class="f1 div-res" id="rgb-r">255</div>
+      <div class="f1 div-res" id="rgb-g">255</div>
+      <div class="f1 div-res" id="rgb-b">255</div>
+    </div>
+    <div class="flex">
+      <div class="f1" id="hsl">HSL</div>
+      <div class="f1 div-res" id="hsl-h">360</div>
+      <div class="f1 div-res" id="hsl-s">100%</div>
+      <div class="f1 div-res" id="hsl-l">100%</div>
+    </div>
+    <div class="flex">
+      <div class="f1" id="hsv">HSV</div>
+      <div class="f1 div-res" id="hsv-h">360</div>
+      <div class="f1 div-res" id="hsv-s">100%</div>
+      <div class="f1 div-res" id="hsv-v">100%</div>
+    </div>
+    <div class="flex">
+      <div class="f1">HTML</div>
+      <div class="f1 div-res" id="html">#FFFFFF</div>
+    </div>
   </div>
-  <script src="main.js?v=251101a"></script>
+  <script src="main.js?v=251102a"></script>
 </body>
 </html>

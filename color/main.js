@@ -6,20 +6,28 @@ function toHex(v){
   return v.toString(16).padStart(2,'0').toUpperCase();
 }
 
-const ui = {
-  rgba: document.getElementById('rgba'),
-  hsla: document.getElementById('hsla'),
-  hsva: document.getElementById('hsva'),
-  html: document.getElementById('html'),
-  post: function(r,g,b,a){
-    this.rgba.innerText = `R: ${r}, G: ${g}, B: ${b}`;
-    this.html.innerText = `HTML: #${toHex(r)}${toHex(g)}${toHex(b)}`;
-    a = (a * 100 / 255).toFixed(0);
-    let h, s, l, v;
-    [h, s, l] = this.rgbToHsl(r,g,b);
-    this.hsla.innerText = `hue: ${(h*360).toFixed(0)} sat: ${(s*100).toFixed(0)}% lum: ${(l*100).toFixed(0)}%`;
-    [h, s, v] = this.rgbToHsv(r,g,b);
-    this.hsva.innerText = `hue: ${(h*360).toFixed(0)} sat: ${(s*100).toFixed(0)}% val: ${(v*100).toFixed(0)}%`;
+const color = {
+  rgb: [0,0,0],
+  hsl: [0,0,0],
+  hsv: [0,0,0],
+  html: '#000000',
+  set: function(r,g,b){
+    this.rgb = [ r, g, b];
+    this.hsl = this.rgbToHsl(r,g,b);
+    this.hsv = this.rgbToHsv(r,g,b);
+    this.html = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  },
+  getHSL: function(){
+    return [ this.strHue(this.hsl[0]), this.strP(this.hsl[1]), this.strP(this.hsl[2]) ];
+  },
+  getHSV: function(){
+    return [ this.strHue(this.hsv[0]), this.strP(this.hsv[1]), this.strP(this.hsv[2]) ];
+  },
+  strHue: function(h){
+    return (h * 360).toFixed(0);
+  },
+  strP: function(v){
+    return (v * 100).toFixed(0) + "%";
   },
   rgbToHsl: function(r, g, b){
     r /= 255, g /= 255, b /= 255;
@@ -59,6 +67,35 @@ const ui = {
     }
     return [h, s, v];
   }
+}
+const ui = {
+  rgbr: document.getElementById('rgb-r'),
+  rgbg: document.getElementById('rgb-g'),
+  rgbb: document.getElementById('rgb-b'),
+  hslh: document.getElementById('hsl-h'),
+  hsls: document.getElementById('hsl-s'),
+  hsll: document.getElementById('hsl-l'),
+  hsvh: document.getElementById('hsv-h'),
+  hsvs: document.getElementById('hsv-s'),
+  hsvv: document.getElementById('hsv-v'),
+  html: document.getElementById('html'),
+  post: function(r,g,b,a){
+    color.set(r,g,b);
+    this.rgbr.innerText = color.rgb[0];
+    this.rgbg.innerText = color.rgb[1];
+    this.rgbb.innerText = color.rgb[2];
+    let hsl = color.getHSL();
+    this.hslh.innerText = hsl[0];
+    this.hsls.innerText = hsl[1];
+    this.hsll.innerText = hsl[2];;
+    let hsv = color.getHSV();
+    this.hsvh.innerText = hsv[0];
+    this.hsvs.innerText = hsv[1];
+    this.hsvv.innerText = hsv[2];
+
+    this.html.innerText = color.html;
+  },
+  
 }
 
 // Access the camera

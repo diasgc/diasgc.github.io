@@ -30,10 +30,28 @@ video {
     width: 240px;
     height: 240px;
     border-radius: 50%;
-    object-fit: cover;
+    object-fit: fill;
     border: 12px solid transparent;
 }
 
 canvas {
     display: none;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 0;
+  padding: 12px 0;
+}
+
+.f1 {
+  flex: 1;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 4px;
 }
