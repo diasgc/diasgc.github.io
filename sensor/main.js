@@ -16,7 +16,7 @@ const mainPalette = [
 
 const sensor = {
   mag: null,
-  data: [],
+  data: [0,0,0],
   init: function(){
     navigator.permissions
       .query({ name: 'magnetometer' })
@@ -35,7 +35,6 @@ const delay = 500;
 const startTime = Date.now();
 const backgroundColor = mainPalette.slice(0, nlines);
 backgroundColor.push("#80808010");
-
 
 var labelIds = [];
 const ul = document.createElement('div');
@@ -86,7 +85,7 @@ const chart = new Chart(document.getElementById("chart"), {
           delay: 2000,
           onRefresh: chart => {
             for (let i = 0; i < nlines; i++){
-              let d = inputData[i].toFixed(2);
+              let d = sensor.data[i].toFixed(2);
               labelIds[i].innerHTML = "col" + i + ": " + d;
               chart.data.datasets[i].data.push({
                 x: Date.now(),
@@ -109,4 +108,6 @@ function genData(){
   inputData = sensor.data;
 }
 
-setInterval(genData, delay);
+sensor.init();
+
+//setInterval(genData, delay);
