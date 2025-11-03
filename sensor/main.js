@@ -37,15 +37,12 @@ const backgroundColor = mainPalette.slice(0, nlines);
 backgroundColor.push("#80808010");
 
 var labelIds = [];
-const ul = document.createElement('div');
-document.getElementById("js-legend").appendChild(ul);
-for (let i = 0 ; i < nlines + 1 ; i++){
-  const li = document.createElement('div');
-  li.innerHTML = `<div id="cbox" style="background-color: ${ backgroundColor[i] }"></span>`
-  const sp = document.createElement('span');
-  li.appendChild(sp);
-  labelIds.push(sp);
-  ul.appendChild(li);
+const cap = document.getElementById('js-legend');
+for (let i = 0 ; i < nlines ; i++){
+  cap.innerHTML += `<div class="grid-item">
+  <div class="cbox" style="background-color: ${ backgroundColor[i] }"></div>
+  <div id="cap-${i}" class="cap-info"></div>
+  </div>`;
 };
 
 const dataLen = 20;
@@ -86,7 +83,7 @@ const chart = new Chart(document.getElementById("chart"), {
           onRefresh: chart => {
             for (let i = 0; i < nlines; i++){
               let d = sensor.data[i].toFixed(2);
-              labelIds[i].innerHTML = "col" + i + ": " + d;
+              document.getElementById(`cap-${i}`).innerHTML = "col" + i + ": " + d;
               chart.data.datasets[i].data.push({
                 x: Date.now(),
                 y: d
