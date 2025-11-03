@@ -14,7 +14,22 @@ const mainPalette = [
   "#9575CD", "#B39DDB", "#9FA8DA", "#C5CAE9"
 ];
 
-const magSensor = new Magnetometer({ frequency: 60 });
+const sensor = {
+  mag: null,
+  data: [],
+  init: function(){
+    navigator.permissions
+      .query({ name: 'magnetometer' })
+      .then((p) => {
+        this.mag = new Magnetometer({ frequency: 60 });
+        this.mag.addEventListener("reading", (e) => {
+          this.data = [ this.mag.x, this.mag.y, this.mag.z ];
+        });
+        this.mag.start();
+      });
+  }
+}
+
 const nlines = 3;
 const delay = 500;
 const startTime = Date.now();
@@ -91,7 +106,7 @@ const chart = new Chart(document.getElementById("chart"), {
 });
 
 function genData(){
-  inputData = [ magSensor.x, magSensor.y, magSensor.z ];
+  inputData = sensor.data;
 }
 
 setInterval(genData, delay);
