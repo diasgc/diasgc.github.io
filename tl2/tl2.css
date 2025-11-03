@@ -35,7 +35,7 @@ body {
   font-feature-settings: 'liga';
 }
 
-#videoFeed {
+video {
   position: absolute;
   width: 100%;
   height: auto;
@@ -83,10 +83,9 @@ body {
   z-index: 5;
 }  
 
-#div-timer {
+.div-timer {
   position: absolute;
   top: 48px;
-  display: none;
   width: 100%;
   height: auto;
   font-size: 72px;
@@ -94,12 +93,16 @@ body {
   text-align: center;
 }
 
+#div-timer {
+  display: none;
+}
+
 .div-timer-label {
   font-size: 10px;
   font-weight: 400;
   text-align: center;
   margin: 0;
-  padding: 0;
+  padding: 12px 0 0 0;
 }
 
 #elapsedTime {

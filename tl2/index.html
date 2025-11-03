@@ -36,14 +36,17 @@
 
   <canvas id="captureCanvas" style="display: none;"></canvas>
 
-  <div id="status">Status: Waiting to start...</div>
   <div id="videoOverlay"></div>
-  <div id="div-timer">
-    <label for="elapsedTime" class="div-timer-label">elapsed</label>
-    <div id="elapsedTime">0</div>
-    <label for="recordedTime" class="div-timer-label">recorded</label>
-    <div id="recordedTime">0</div>
+  <div class="div-timer">
+    <div id="div-timer">
+      <div class="div-timer-label">elapsed</div>
+      <div id="elapsedTime">0</div>
+      <div class="div-timer-label">recorded</div>
+      <div id="recordedTime">0</div>
+    </div>
+    <div id="status">Status: Waiting to start...</div>
   </div>
+  
 
   <div class="div-info">
     <div class="material-icons info" onclick="showInfo()">info</div>
@@ -65,6 +68,6 @@
 
   <video id="timelapseVideo" controls></video>
 
-  <script src="tl2a.js?v=251102a"></script>
+  <script src="tl2a.js?v=251103a"></script>
 </body>
 </html>

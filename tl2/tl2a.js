@@ -114,7 +114,7 @@ const ui = {
     let s = parseFloat(prompt('Set timelapse speed x', 60));
     if (isNaN(s) || s <= 0) s = 60;
     ui.speedEl.innerText = `${s}x`;
-    camSettings.timelapse = s/camSettings.fps;
+    camSettings.timelapse.value = s/camSettings.fps;
   },
   getDiv: function(capName, callback){
     const cap = camSettings[capName];
@@ -218,7 +218,8 @@ async function setupCamera() {
     const stream = await navigator.mediaDevices.getUserMedia(camSettings.constraints);
     videoFeed.srcObject = stream;
     camSettings.init(stream);
-    statusDisplay.textContent = 'Status: Camera ready.';
+    const v = camSettings.videoMime.split(/[/;=,]/);
+    statusDisplay.textContent = `Status: Camera ready. ${v[1]} ${v[3] || 'default'}`;
   } catch (err) {
     statusDisplay.textContent = 'Status: Error accessing camera. Please ensure permissions are granted.';
     console.error("Error accessing camera: ", err);
@@ -234,7 +235,11 @@ function showCaps(){
 }
 
 function setMime(){
-  ui.promptSelect(camSettings.mimeTypes, (v) => camSettings.videoMime = v);
+  ui.promptSelect(camSettings.mimeTypes, (m) => {
+    camSettings.videoMime = m;
+    const v = camSettings.videoMime.split(/[/;=,]/);
+    statusDisplay.textContent = `Status: Camera ready. ${v[1]} ${v[3] || 'default'}`;
+  });
 }
 
 
@@ -281,7 +286,7 @@ const screen = {
 
   
 function startCapture() {
-  const intervalSeconds = parseFloat(camSettings.timelapse);
+  const intervalSeconds = parseFloat(camSettings.timelapse.value  );
   if (isNaN(intervalSeconds) || intervalSeconds < 0.1) {
     alert("Please set a valid capture interval (min 100 millisecond).");
     return;
