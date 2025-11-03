@@ -15,17 +15,17 @@ const mainPalette = [
 ];
 
 const sensor = {
-  mag: null,
+  sensor: null,
   data: [0,0,0],
   init: function(){
     navigator.permissions
-      .query({ name: 'magnetometer' })
+      .query({ name: 'gyroscope' })
       .then((p) => {
-        this.mag = new Magnetometer({ frequency: 60 });
-        this.mag.addEventListener("reading", (e) => {
-          this.data = [ this.mag.x, this.mag.y, this.mag.z ];
+        this.sensor = new Gyroscope({ frequency: 60 });
+        this.sensor.addEventListener("reading", (e) => {
+          this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ];
         });
-        this.mag.start();
+        this.sensor.start();
       });
   }
 }
