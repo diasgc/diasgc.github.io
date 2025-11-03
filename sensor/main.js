@@ -14,7 +14,8 @@ const mainPalette = [
   "#9575CD", "#B39DDB", "#9FA8DA", "#C5CAE9"
 ];
 
-const nlines = 8;
+const magSensor = new Magnetometer({ frequency: 60 });
+const nlines = 3;
 const delay = 500;
 const startTime = Date.now();
 const backgroundColor = mainPalette.slice(0, nlines);
@@ -90,12 +91,7 @@ const chart = new Chart(document.getElementById("chart"), {
 });
 
 function genData(){
-  const rdata = [];
-  const max = 10;
-  const min = 0;
-  for(let i = 0 ; i < nlines; i++){
-    inputData[i] = Math.random() * 10;
-  }
+  inputData = [ magSensor.x, magSensor.y, magSensor.z ];
 }
 
 setInterval(genData, delay);

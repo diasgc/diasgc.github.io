@@ -1,5 +1,5 @@
 :root {
-  --ico-sz: 32px;
+  --ico-sz: 28px;
 }
 
 body {
@@ -234,7 +234,7 @@ video {
 
 .ico {
   font-family: 'Material Symbols Outlined';
-  font-size: 36px;
+  font-size: 32px;
   display: block;
   padding: 8px;
   text-align: center;
