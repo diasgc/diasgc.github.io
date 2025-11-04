@@ -137,6 +137,7 @@ const sensor = {
     const s = sensor.list[key];
     if (s){
       s.requestPermission().then((state) => {
+        if (sensor.id) sensor.id.stop();
         sensor.id = s.get();
         sensor.dim = s.dim;
         ui.reset();
@@ -159,9 +160,10 @@ const ui = {
   backgroundColor: '',
   reset: function(){
     const cap = document.getElementById('js-legend');
+    cap.replaceChildren();
     for (let i = 0 ; i < sensor.dim ; i++){
       cap.innerHTML += `<div class="grid-item">
-      <div class="cbox" style="background-color: ${ this.backgroundColor[i] }"></div>
+      <div class="cbox" style="background-color: ${ ui.backgroundColor[i] }"></div>
       <div id="cap-${i}" class="cap-info"></div>
       </div>`;
     };
@@ -209,7 +211,7 @@ const chart = new Chart(document.getElementById("chart"), {
         realtime: {
           delay: 2000,
           onRefresh: chart => {
-            for (let i = 0; i < sensor.dim; i++){
+            for (let i = 0; i < sensor.data.length; i++){
               let d = sensor.data[i].toFixed(2);
               document.getElementById(`cap-${i}`).innerHTML = "col" + i + ": " + d;
               chart.data.datasets[i].data.push({
