@@ -3,13 +3,24 @@ body {
     background: #111;
     color: #eee;
 }
+
+select {
+    margin: 4px;
+    padding: 8px;
+    border: #fff1;
+    border-radius: 8px;
+    font-size: 18px;
+    background: #111;
+    color: #eee;
+}
+
 .container {
     display: block;
     width: 90%;
     height: 240px;
     margin: auto;
     padding: 5px;
-    font-size: small;CpuWebView2
+    font-size: small;
 }
 
 #js-chart {

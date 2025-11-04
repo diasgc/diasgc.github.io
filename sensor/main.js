@@ -15,55 +15,183 @@ const mainPalette = [
 ];
 
 const sensor = {
-  sensor: null,
+  id: null,
   data: [0,0,0],
+  dim: 3,
+  options: { referenceFrame: "device", frequency: 60 },
+  list: {
+    AbsoluteOrientationSensor: {
+      get: function(){
+        return new AbsoluteOrientationSensor( sensor.options );
+      },
+      read: function(){
+        return sensor.id.quaternion;
+      },
+      requestPermission: function(){
+        return Promise.all([
+          navigator.permissions.query({ name: "accelerometer" }),
+          navigator.permissions.query({ name: "magnetometer" }),
+          navigator.permissions.query({ name: "gyroscope" }),
+        ]);
+      },
+      dim: 4,
+    },
+    Accelerometer: {
+      get: function(){
+        return new Accelerometer(sensor.options);
+      },
+      read: function(){
+        return [ sensor.id.x, sensor.id.y, sensor.id.z ]
+      },
+      requestPermission: function(){
+        return navigator.permissions.query({ name: "accelerometer" });
+      },
+      dim: 3,
+    },
+    AmbientLightSensor: {
+      dim: 1,
+      get: function(){
+        return new AmbientLightSensor(sensor.options);
+      },
+      read: function(){
+        return [ sensor.id.illuminance ]
+      },
+      requestPermission: function(){
+        return navigator.permissions.query({ name: 'ambient-light-sensor' });
+      }
+    },
+    GravitySensor: {
+      dim: 3,
+      get: function(){
+        return new GravitySensor(sensor.options);
+      },
+      read: function(){
+        return [ sensor.id.x, sensor.id.y, sensor.id.z ]
+      },
+      requestPermission: function(){
+        return navigator.permissions.query({ name: 'accelerometer' });      
+      }
+    },
+    Gyroscope: {
+      dim: 3,
+      get: function(){
+        return new Gyroscope(sensor.options);
+      },
+      read: function(){
+        return [ sensor.id.x, sensor.id.y, sensor.id.z ]
+      },
+      requestPermission: function(){
+        return navigator.permissions.query({ name: 'gyroscope' });      
+      }
+    },
+    LinearAccelerationSensor: {
+      dim: 3,
+      get: function(){
+        return new LinearAccelerationSensor(sensor.options);
+      },
+      read: function(){
+        return [ sensor.id.x, sensor.id.y, sensor.id.z ]
+      },
+      requestPermission: function(){
+        return navigator.permissions.query({ name: 'accelerometer' });      
+      }
+    },
+    Magnetometer: {
+      dim: 3,
+      get: function(){
+        return new Magnetometer(sensor.options);
+      },
+      read: function(){
+        return [ sensor.id.x, sensor.id.y, sensor.id.z ]
+      },
+      requestPermission: function(){
+        return navigator.permissions.query({ name: 'magnetometer' });
+      }
+    },
+    RelativeOrientationSensor: {
+      dim: 4,
+      get: function(){
+        return new RelativeOrientationSensor(sensor.options);
+      },
+      read: function(){
+        return sensor.id.quaternion;
+      },
+      requestPermission: function(){
+        return Promise.all([
+          navigator.permissions.query({ name: "accelerometer" }),
+          navigator.permissions.query({ name: "gyroscope" }),
+        ]);
+      }
+    },
+  },
   init: function(){
-    navigator.permissions
-      .query({ name: 'gyroscope' })
-      .then((p) => {
-        this.sensor = new Gyroscope({ frequency: 60 });
-        this.sensor.addEventListener("reading", (e) => {
-          this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ];
+    const s = document.getElementById('sel-sensors');
+    s.replaceChildren();
+    Object.keys(sensor.list).forEach((k) => {
+      if (window[k])
+        s.innerHTML += `<option value='${k}'>${k}</option>`;
+    });
+    s.addEventListener('change', () => sensor.start(s.value));
+  },
+  start: function(key){
+    const s = sensor.list[key];
+    if (s){
+      s.requestPermission().then((state) => {
+        sensor.id = s.get();
+        sensor.dim = s.dim;
+        ui.reset();
+        sensor.id.addEventListener("reading", (e) => {
+          sensor.data = s.read();
         });
-        this.sensor.start();
+        sensor.id.start();
       });
+    }
   }
 }
 
-const nlines = 3;
+const ui = {
+  mainPalette: [
+    "#039BE5", "#42A5F5", "#26C6DA", "#80DEEA", 
+    "#FFCA28", "#FFB300", "#FB8C00", "#F4511E",
+    "#F44336", "#E91E63", "#AB47BC", "#7E57C2",
+    "#9575CD", "#B39DDB", "#9FA8DA", "#C5CAE9"
+  ],
+  backgroundColor: '',
+  reset: function(){
+    const cap = document.getElementById('js-legend');
+    for (let i = 0 ; i < sensor.dim ; i++){
+      cap.innerHTML += `<div class="grid-item">
+      <div class="cbox" style="background-color: ${ this.backgroundColor[i] }"></div>
+      <div id="cap-${i}" class="cap-info"></div>
+      </div>`;
+    };
+    this.backgroundColor = this.mainPalette.slice(0, sensor.dim);
+    this.backgroundColor.push("#80808010");
+  }
+}
 const delay = 500;
 const startTime = Date.now();
-const backgroundColor = mainPalette.slice(0, nlines);
-backgroundColor.push("#80808010");
 
-var labelIds = [];
-const cap = document.getElementById('js-legend');
-for (let i = 0 ; i < nlines ; i++){
-  cap.innerHTML += `<div class="grid-item">
-  <div class="cbox" style="background-color: ${ backgroundColor[i] }"></div>
-  <div id="cap-${i}" class="cap-info"></div>
-  </div>`;
-};
+ui.reset();
 
 const dataLen = 20;
 const datasets = [];
-const labels = [];
-var inputData = new Array(nlines).fill(0);
+var inputData = new Array(sensor.dim).fill(0);
 
 function loadData(data){
   inputData = data;
 }
 
 function setPalette(palette){
-  palette.splice(nlines);
+  palette.splice(sensor.dim);
   palette.push("#80808020");
 }
 
-for (let i = 0; i < nlines; i++){
+for (let i = 0; i < sensor.dim; i++){
   datasets.push({
     label: "line" + i,
     cubicInterpolationMode: 'monotone',
-    borderColor: backgroundColor[i],    
+    borderColor: ui.backgroundColor[i],    
     fill: false,
     data: []
   })
@@ -81,7 +209,7 @@ const chart = new Chart(document.getElementById("chart"), {
         realtime: {
           delay: 2000,
           onRefresh: chart => {
-            for (let i = 0; i < nlines; i++){
+            for (let i = 0; i < sensor.dim; i++){
               let d = sensor.data[i].toFixed(2);
               document.getElementById(`cap-${i}`).innerHTML = "col" + i + ": " + d;
               chart.data.datasets[i].data.push({
