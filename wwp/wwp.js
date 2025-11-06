@@ -8,7 +8,11 @@ Date.prototype.isDstObserved = function () {
   return this.getTimezoneOffset() < this.stdTimezoneOffset();
 }
 
+
 const settings = {
+  urlParams: null,
+  bId: document.getElementById('bsettings'),
+  sId: document.getElementById('settings'),
   live: false,
   rate: 2000,
   timeId: document.getElementById('time'),
@@ -20,12 +24,13 @@ const settings = {
   moon: 'auto',
   wind: 'auto',
   init2: function(){
-    const urlParams = new URLSearchParams(window.location.search);
-    this.rate = parseInt(urlParams.get('live') || 2000);
+    this.urlParams = new URLSearchParams(window.location.search);
+    this.rate = parseInt(this.urlParams.get('live') || 2000);
     this.live = this.rate === 0;
-    document.getElementById('bsettings').addEventListener('change', (e) => {
-      document.getElementById('settings').style.display = e.target.checked ? 'inline' : 'none';
-    });
+    if (this.urlParams.get('info')){
+      settings.toggleSettings();
+    }
+    this.bId.addEventListener('change', settings.toggleSettings);
     let d = document.getElementById('sinput');
     d.replaceChildren();
     settings.add(d, "sun position", -1, 100, -1, (v,l) => {
@@ -56,6 +61,9 @@ const settings = {
       settings.wind = v < 0 ? 'auto' : v;
       l.innerHTML = "wind: " + settings.wind + (v < 0 ? "" : " km/h");
     });
+  },
+  toggleSettings: function(e){
+    this.sId.style.display = this.bId.checked ? 'inline' : 'none';
   },
   add: function(d,lab,min,max,def, onchangeListener){
     let n = d.childElementCount + 1;
