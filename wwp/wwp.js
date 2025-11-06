@@ -61,8 +61,8 @@ const settings = {
       l.innerHTML = "wind: " + settings.wind + (v < 0 ? "" : " km/h");
     });
   },
-  toggleSettings: function(e){
-    this.sId.style.display = this.bId.checked ? 'inline' : 'none';
+  toggleSettings: function(){
+    settings.sId.style.display = settings.bId.checked ? 'inline' : 'none';
   },
   add: function(d,lab,min,max,def, onchangeListener){
     let n = d.childElementCount + 1;
