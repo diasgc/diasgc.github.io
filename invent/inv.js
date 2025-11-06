@@ -145,17 +145,17 @@ function showResults(){
     let from = header[i + offset];
     let el_src = document.createElement("fieldset");
     let el_src_legend = document.createElement("legent");
-    el_src_legend.innerHTML = "from " + from;
+    el_src_legend.innerHTML = `from ${from}`;
     el_src.appendChild(el_src_legend);
     for (let j = 0; j < header.length - offset; j++){
       if (i == j)
         continue;
       let to = header[j + offset];
       const filteredData = outLines.filter(row => row[1] === from && row[2] === to);
-      console.log("from " + from + " to " + to + ": " + filteredData.length); 
+      console.log(`from ${from} to ${to}: ${filteredData.length}`); 
       if (filteredData.length == 0)
         continue;
-      let el_dst = getLinkElement("trf-" + from + "-to-" + to, from + "-&gt;" + to, filteredDataToGhaf(filteredData));
+      let el_dst = getLinkElement(`trf-${from}-to-${to}`, `${from}-&gt;${to}`, filteredDataToGhaf(filteredData));
       el_src.appendChild(el_dst);
     }
     res.appendChild(el_src);
@@ -171,7 +171,7 @@ function getUri(arr){
 function getLinkElement(name, label, uri){
   let el = document.createElement("a");
   el.setAttribute("href", uri);
-  el.setAttribute("download", name +"-" + new Date().getTime() + ".csv");
+  el.setAttribute("download", `${name}-${new Date().getTime()}.csv`);
   el.innerHTML = label;
   return el;
 }
@@ -207,4 +207,3 @@ let opencsv = () => {
 }
 
 csvIn.addEventListener('change', opencsv);
-
