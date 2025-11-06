@@ -27,10 +27,9 @@ const settings = {
     this.urlParams = new URLSearchParams(window.location.search);
     this.rate = parseInt(this.urlParams.get('live') || 2000);
     this.live = this.rate === 0;
-    if (this.urlParams.get('info')){
-      settings.toggleSettings();
-    }
     this.bId.addEventListener('change', settings.toggleSettings);
+    if (this.urlParams.get('info'))
+      this.bId.click();
     let d = document.getElementById('sinput');
     d.replaceChildren();
     settings.add(d, "sun position", -1, 100, -1, (v,l) => {
