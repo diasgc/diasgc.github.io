@@ -2,6 +2,11 @@ var level = 3;
 const useIcons = true;
 const container = document.getElementById('container');
 
+const settings = {
+  show: false,
+  background: 'camera'
+}
+
 populate(data);
 
 function setDisplay(id,display){
@@ -15,6 +20,47 @@ function saveState(id){
 
 function loadState(id){
   id.open = localStorage.getItem(id.id) || false;
+}
+
+function toggleSettings(){
+  settings.show = !settings.show;
+  setDisplay('setup', settings.show ? 'block':'none');
+}
+
+function backCamera(){
+  settings.background = 'camera';
+  navigator.mediaDevices.getUserMedia({
+    video: {
+      width: {ideal: window.width},
+      height: {ideal: window.height},
+      facingMode: "environment"
+    }
+  })
+  .then((stream) => {
+    let videoFeed = document.getElementById('f-video');
+    setDisplay('f-video','block');
+    setDisplay('d-blur', 'block');
+    setDisplay('gl-canvas','none');
+    if (videoFeed.requestFullscreen)
+      videoFeed.requestFullscreen();
+    settings.videoStream = stream;
+    videoFeed.srcObject = stream;
+  })
+}
+
+function backGlsl(){
+  if (settings.videoStream){
+    settings.videoStream.close();
+    settings.videoStream = null;
+  }
+  setDisplay('f-video', 'none');
+  setDisplay('d-blur', 'none');
+  setDisplay('gl-canvas','block');
+  let w = new GlCanvas('gl-canvas');
+  w.load({fragmentId: 'shader1'}, gl => {
+    webGl = gl;
+    webGl.start(true);
+  });
 }
 
 function clearCache(){

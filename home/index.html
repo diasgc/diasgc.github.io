@@ -62,7 +62,12 @@
   <video id="f-video" autoplay></video>
   <div id="d-blur" class="div-blur"></div>
   <div id="container"></div>
-  <div id="clearCache" onclick="clearCache()"></div>
+  <div id="setup">
+    <div class="s-item" onclick="clearCache()">Clear cache</div>
+    <div class="s-item" onclick="backCamera()">Background Camera</div>
+    <div class="s-item" onclick="backGlsl()">Background glsl</div>
+  </div>
+  <div id="clearCache" onclick="toggleSettings()"></div>
   <script src="../common/glcanvas.js?v=250126"></script>
   <script type="text/javascript" src="data.js?v=251108a"></script>
   <script type="text/javascript" src="main.js?v=251108a"></script>
