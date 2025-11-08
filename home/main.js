@@ -54,3 +54,12 @@ function populate(data){
 });
 }
 
+window.onload = function(){
+  let w = new GlCanvas('gl-canvas');
+  w.load({fragmentId: 'glsl'}, gl => init(gl));
+}
+
+function init(gl){
+  webGl = gl;
+  webGl.start(true);
+}

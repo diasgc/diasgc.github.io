@@ -25,10 +25,23 @@
 }
 
 body {
-    background: var(--bg-stripes);
+    /*background: var(--bg-stripes);*/
     color: var(--body-color);
-    margin: 8px;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+#container {
+  z-index: 1;
 }
 
 div {
@@ -52,11 +65,13 @@ img {
   padding: 4px;
 }
 
+
+
 .icon-wrap {
   display: inline-block;
   background: white;
-  box-shadow: 0 0 8px 0 #0003;
-  border-radius: 16px;
+  box-shadow: 0 0 22px 0 #0006;
+  border-radius: 50%;
   text-align: center;
   padding: 8px;
   margin: 8px;
@@ -79,7 +94,8 @@ img {
   text-overflow: ellipsis;
   overflow: hidden;
   display: inherit;
-  font-size: 12px;
-  padding: 8px 0;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 12px 0 22px 0;
   margin: 0 ;
 }
