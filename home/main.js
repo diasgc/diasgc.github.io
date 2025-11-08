@@ -63,7 +63,11 @@ function addEntry2(parent, entry){
 
 window.onload = function(){
   navigator.mediaDevices.getUserMedia({
-    video: {width: {ideal: window.width}, height: {ideal: window.height}}
+    video: {
+      width: {ideal: window.width},
+      height: {ideal: window.height},
+      facingMode: "environment"
+    }
   })
   .then((stream) => {
     let videoFeed = document.getElementById('f-video');
