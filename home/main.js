@@ -4,6 +4,11 @@ const container = document.getElementById('container');
 
 populate(data);
 
+function setDisplay(id,display){
+  const e = document.getElementById(id);
+  if (e) e.style.display = display;
+}
+
 function saveState(id){
   localStorage.setItem(id.id, id.open);
 }
@@ -57,9 +62,24 @@ function addEntry2(parent, entry){
 }
 
 window.onload = function(){
-  let w = new GlCanvas('gl-canvas');
-  w.load({fragmentId: 'shader1'}, gl => {
-    webGl = gl;
-    webGl.start(true);
+  navigator.mediaDevices.getUserMedia({
+    video: {width: {ideal: window.width}, height: {ideal: window.height}}
+  })
+  .then((stream) => {
+    let videoFeed = document.getElementById('f-video');
+    setDisplay('f-video','block');
+    setDisplay('d-blur', 'block');
+    if (videoFeed.requestFullscreen)
+      videoFeed.requestFullscreen();
+    videoFeed.srcObject = stream;
+  })
+  .catch((error) => {
+    setDisplay('gl-canvas','block');
+    setDisplay('d-blur', 'block');
+    let w = new GlCanvas('gl-canvas');
+    w.load({fragmentId: 'shader1'}, gl => {
+      webGl = gl;
+      webGl.start(true);
+    });
   });
 }
