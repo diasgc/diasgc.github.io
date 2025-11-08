@@ -41,11 +41,9 @@ function backCamera(){
     setDisplay('f-video','block');
     setDisplay('d-blur', 'block');
     setDisplay('gl-canvas','none');
-    if (videoFeed.requestFullscreen)
-      videoFeed.requestFullscreen();
     settings.videoStream = stream;
     videoFeed.srcObject = stream;
-  })
+  }).catch((error) => backGlsl());
 }
 
 function backGlsl(){
@@ -108,28 +106,8 @@ function addEntry2(parent, entry){
 }
 
 window.onload = function(){
-  navigator.mediaDevices.getUserMedia({
-    video: {
-      width: {ideal: window.width},
-      height: {ideal: window.height},
-      facingMode: "environment"
-    }
-  })
-  .then((stream) => {
-    let videoFeed = document.getElementById('f-video');
-    setDisplay('f-video','block');
-    setDisplay('d-blur', 'block');
-    if (videoFeed.requestFullscreen)
-      videoFeed.requestFullscreen();
-    videoFeed.srcObject = stream;
-  })
-  .catch((error) => {
-    setDisplay('gl-canvas','block');
-    setDisplay('d-blur', 'block');
-    let w = new GlCanvas('gl-canvas');
-    w.load({fragmentId: 'shader1'}, gl => {
-      webGl = gl;
-      webGl.start(true);
-    });
-  });
+  if (settings.background === 'camera')
+    backCamera();
+  else
+    backGlsl();
 }
