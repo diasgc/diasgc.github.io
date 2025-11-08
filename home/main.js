@@ -16,8 +16,8 @@ function populate(data){
   Object.keys(data).forEach(k => {
     let h = document.createElement('details');
     h.id = k;
-    h.addEventListener('toggle', () => saveState(h));
-    loadState(h);
+    h.addEventListener('toggle', () => localStorage.setItem(h.id, h.open));
+    h.open = localStorage.getItem(h.id) || false;
     h.innerHTML=`<summary>${k}</summary>`;
     data[k].forEach(value => {
       if (value === 'break')
