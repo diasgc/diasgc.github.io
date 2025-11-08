@@ -85,7 +85,7 @@ summary {
 
 .icon-wrap {
   display: inline-block;
-  background: white;
+  background: #fff;
   box-shadow: 0 0 22px 0 #0006;
   border-radius: 50%;
   text-align: center;
@@ -101,7 +101,6 @@ summary {
   width: 52px;
   display: block;
   border-radius: 30px;
-  background: #eee;
 }
 
 .icon-wrap > p {

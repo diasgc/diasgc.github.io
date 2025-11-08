@@ -4,10 +4,20 @@ const container = document.getElementById('container');
 
 populate(data);
 
+function saveState(id){
+  localStorage.setItem(id.id, id.open);
+}
+
+function loadState(id){
+  id.open = localStorage.getItem(id.id) || false;
+}
+
 function populate(data){
   Object.keys(data).forEach(k => {
     let h = document.createElement('details');
-    h.open = true;
+    h.id = k;
+    h.addEventListener('toggle', () => saveState(h));
+    loadState(h);
     h.innerHTML=`<summary>${k}</summary>`;
     data[k].forEach(value => {
       if (value === 'break')
@@ -19,6 +29,14 @@ function populate(data){
   })
 }
 
+function countClick(el){
+  let itemCount = localStorage.getItem('counter') || {};
+  if (!itemCount[el.id])
+    itemCount[el.id] = 0;
+  itemCount[el.id] += 1;
+  localStorage.setItem('counter',itemCount);
+}
+
 function addEntry2(parent, entry){
   let h = document.createElement('div');
   h.className='icon-wrap';
@@ -28,7 +46,7 @@ function addEntry2(parent, entry){
   var icon = entry['icon'];
   if (!icon)
     icon = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${url}&size=128`;
-  h.innerHTML=`<a href="${url}"><img src="${icon}"/></a><p>${entry['name']}</p>`;
+  h.innerHTML=`<a id="${entry['name']}" href="${url}" onclick="countClick(this)"><img src="${icon}"/></a><p>${entry['name']}</p>`;
   parent.appendChild(h);
 }
 
