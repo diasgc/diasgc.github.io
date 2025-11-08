@@ -9,7 +9,7 @@
   <link rel="manifest" href="site.webmanifest">
   <link rel="stylesheet" href="style.css?build=250111">
 </head>
-<script id="glsl" type="x-shader/x-fragment">
+<script id="shader1" type="x-shader/x-fragment">
   uniform vec2  iResolution;
   uniform float iTime;
 
@@ -20,9 +20,47 @@
     fragColor = vec4(dst,1.0);
   }
 </script>
+<script id="shader2" type="x-shader/x-fragment">
+  uniform vec2  iResolution;
+  uniform float iTime;
+
+  float length2(vec2 p){
+      return dot(p,p);
+  }
+
+  float noise(vec2 p){
+    return fract(sin(fract(sin(p.x) * (43.13311)) + p.y) * 31.0011);
+  }
+
+  float worley(vec2 p) {
+    float d = 1e30;
+    for (int xo = -1; xo <= 1; ++xo) {
+      for (int yo = -1; yo <= 1; ++yo) {
+        vec2 tp = floor(p) + vec2(xo, yo);
+        d = min(d, length2(p - tp - noise(tp)));
+      }
+    }
+    return 3.0*exp(-4.0*abs(2.5*d - 1.0));
+  }
+
+  float fworley(vec2 p) {
+    return sqrt(sqrt(sqrt(
+      worley(p*5.0 + 0.05*iTime) *
+      sqrt(worley(p * 50.0 + 0.12 + -0.1*iTime)) *
+      sqrt(sqrt(worley(p * -10.0 + 0.03*iTime))))));
+  }
+        
+  void mainImage( out vec4 fragColor, in vec2 fragCoord ){
+    vec2 uv = fragCoord.xy / iResolution.xy;
+      float t = fworley(uv * iResolution.xy / 1500.0);
+      t*=exp(-length2(abs(0.7*uv - 1.0)));	
+      fragColor = vec4(1. - t * vec3(1.5, 1.1*t, pow(t, 0.5-t)), 1.5);
+  }
+</script>
 <body>
   <canvas id="gl-canvas"></canvas>
   <div id="container"></div>
+  <div id="clearCache" onclick="clearCache()"></div>
   <script src="../common/glcanvas.js?v=250126"></script>
   <script type="text/javascript" src="data.js?v=251107"></script>
   <script type="text/javascript" src="main.js?v=251107"></script>

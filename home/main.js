@@ -12,12 +12,18 @@ function loadState(id){
   id.open = localStorage.getItem(id.id) || false;
 }
 
+function clearCache(){
+  localStorage.clear();
+  populate(data);
+}
+
 function populate(data){
+  container.replaceChildren();
   Object.keys(data).forEach(k => {
     let h = document.createElement('details');
     h.id = k;
     h.addEventListener('toggle', () => localStorage.setItem(h.id, h.open));
-    h.open = localStorage.getItem(h.id) || false;
+    h.open = localStorage.getItem(h.id) || null;
     h.innerHTML=`<summary>${k}</summary>`;
     data[k].forEach(value => {
       if (value === 'break')
@@ -30,11 +36,11 @@ function populate(data){
 }
 
 function countClick(el){
-  let itemCount = localStorage.getItem('counter') || {};
+  let itemCount = JSON.parse(localStorage.getItem('counter') || "{}");
   if (!itemCount[el.id])
     itemCount[el.id] = 0;
   itemCount[el.id] += 1;
-  localStorage.setItem('counter',itemCount);
+  localStorage.setItem('counter',JSON.stringify(itemCount));
 }
 
 function addEntry2(parent, entry){
@@ -52,7 +58,7 @@ function addEntry2(parent, entry){
 
 window.onload = function(){
   let w = new GlCanvas('gl-canvas');
-  w.load({fragmentId: 'glsl'}, gl => {
+  w.load({fragmentId: 'shader1'}, gl => {
     webGl = gl;
     webGl.start(true);
   });

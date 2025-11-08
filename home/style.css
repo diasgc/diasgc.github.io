@@ -67,7 +67,8 @@ img {
 }
 
 details {
-  background: #fff8;
+  background: #fff4;
+  box-shadow: 0 0 12px 0 #0002;
   border-radius: 12px;
   padding: 8px;
   margin: 12px 4px;
@@ -113,4 +114,15 @@ summary {
   font-weight: bold;
   padding: 12px 0 22px 0;
   margin: 0 ;
+}
+
+#clearCache {
+  position: absolute;
+  top:0;
+  right: 0;
+  background: #0c0;
+  width: 8px;
+  height: 8px;
+  margin: 8px;
+  border-radius: 50%;
 }

@@ -89,7 +89,6 @@
     {"name": "Temu", "url": "https://www.temu.com/" },
     {"name": "AliExpress", "url": "https://best.aliexpress.com/"},
     {"name": "KuantoKusta", "url": "https://www.kuantokusta.pt/"},
-    "break",
     {"name": "BackMarket", "url": "https://www.backmarket.pt/", "background": "#dbfb6c"},
     {"name": "Refurbed", "url": "https://www.refurbed.pt/", "background": "#332e80"},
     {"name": "OLX", "url": "https://www.olx.pt/", "background": "#23e5db"},
