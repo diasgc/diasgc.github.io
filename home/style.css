@@ -1,8 +1,8 @@
 /* Light mode */
 @media (prefers-color-scheme: light) {
   :root {
-      --body-bg: #E0E0E0;
-      --body-color: #263238;
+      --body-bg: #eee;
+      --body-color: #111;
       --border-fg: rgba(0,0,0,0.0625);
       --bg-stripes: repeating-linear-gradient(
         -45deg,
@@ -14,9 +14,9 @@
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
   :root {
-      --body-bg: #263238;
-      --body-color: #E0E0E0;
-      --border-fg: rgba(255,255,255,0.0625);
+      --body-bg: #eee;
+      --body-color: #111;
+      --border-fg: rgba(0,0,0,0.0625);
       --bg-stripes: repeating-linear-gradient(
         -45deg,
         #263238, #263238 3px,
