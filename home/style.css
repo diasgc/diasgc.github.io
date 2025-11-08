@@ -42,6 +42,7 @@ canvas {
 
 #container {
   z-index: 1;
+  padding: 12px;
 }
 
 div {
@@ -65,7 +66,22 @@ img {
   padding: 4px;
 }
 
+details {
+  background: #fff8;
+  border-radius: 12px;
+  padding: 8px;
+  margin: 12px 4px;
+}
 
+summary {
+  padding: 12px;
+}
+
+.sep {
+  margin: 8px 0;
+  height: 1px;
+  background: #0001;
+}
 
 .icon-wrap {
   display: inline-block;

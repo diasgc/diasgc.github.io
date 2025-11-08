@@ -2,64 +2,40 @@ var level = 3;
 const useIcons = true;
 const container = document.getElementById('container');
 
-/*
-fetch("data.json")
-  .then(response => response.json())
-  .then(json => populate(json));
-*/
-
 populate(data);
 
-function addArray(array){
-  array.forEach((entry) => {
-    if (entry === 'break'){
-      let h = document.createElement('div');
-      container.appendChild(h)
-    } else {
-      addEntry(entry);
-    }
-  });
-  //level--;
+function populate(data){
+  Object.keys(data).forEach(k => {
+    let h = document.createElement('details');
+    h.open = true;
+    h.innerHTML=`<summary>${k}</summary>`;
+    data[k].forEach(value => {
+      if (value === 'break')
+        h.innerHTML += '<div class="sep"></div>';
+      else
+        addEntry2(h,value);
+    })
+    container.appendChild(h);
+  })
 }
 
-function addHeader(header,level){
-  let h = document.createElement('div');
-  h.innerHTML="<h"+level+">"+header+"</h"+level+">";
-  container.appendChild(h);
-  //level++;
-}
-
-function addEntry(entry){
+function addEntry2(parent, entry){
   let h = document.createElement('div');
   h.className='icon-wrap';
   if (entry['background'])
-    h.style="background: "+entry['background'];
+    h.style=`background: ${entry['background']}`;
   let url  = entry['url'];
   var icon = entry['icon'];
   if (!icon)
-    icon = "https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url="+url+"&size=128";
-  h.innerHTML="<a href=\""+url+"\"><img src=\""+icon+"\" /></a><p>"+entry['name']+"</p>";
-  container.appendChild(h);
-}
-
-function populate(data){
-  Object.entries(data).forEach(([key, value]) => {
-    let t = Object.prototype.toString.call(value);
-    if (t === '[object Array]'){
-        addHeader(key, level);
-        addArray(value);
-    } else if (t === '[object Object]'){
-        addEntry(value);
-    }
-});
+    icon = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${url}&size=128`;
+  h.innerHTML=`<a href="${url}"><img src="${icon}"/></a><p>${entry['name']}</p>`;
+  parent.appendChild(h);
 }
 
 window.onload = function(){
   let w = new GlCanvas('gl-canvas');
-  w.load({fragmentId: 'glsl'}, gl => init(gl));
-}
-
-function init(gl){
-  webGl = gl;
-  webGl.start(true);
+  w.load({fragmentId: 'glsl'}, gl => {
+    webGl = gl;
+    webGl.start(true);
+  });
 }
