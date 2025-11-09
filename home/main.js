@@ -44,7 +44,7 @@ function saveState(id){
 }
 
 function loadState(id){
-  id.open = localStorage.getItem(id.id) || null;
+  id.open = localStorage.getItem(id.id) === true ? true : null;
 }
 
 function toggleSettings(){
