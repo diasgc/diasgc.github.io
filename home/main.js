@@ -1,6 +1,28 @@
-var level = 3;
 const useIcons = true;
-const container = document.getElementById('container');
+
+const ui = {
+  container: document.getElementById('container'),
+  video: document.getElementById('f-video'),
+  canvas: document.getElementById('gl-canvas'),
+  blur: document.getElementById('d-blur'),
+  setup: document.getElementById('setup'),
+  opts: document.getElementById('clearCache'),
+  show: function(el,display){
+    if (el) el.style.display = display;
+  },
+  showSetup: function(state){
+    if (state){
+      this.blur.style.zIndex = 2;
+      this.show(this.setup,'block');
+      this.blur.addEventListener('click',() => ui.showSetup(false));
+    } else {
+      ui.blur.style.zIndex = -1;
+      ui.show(ui.setup, 'none');
+      ui.blur.removeEventListener('click', () => ui.showSetup(false));
+    }
+  },
+}
+
 
 const settings = {
   show: false,
@@ -15,7 +37,10 @@ function setDisplay(id,display){
 }
 
 function saveState(id){
-  localStorage.setItem(id.id, id.open);
+  if (id.open)
+    localStorage.setItem(id.id, true);
+  else
+    localStorage.removeItem(id.id);
 }
 
 function loadState(id){
@@ -24,10 +49,13 @@ function loadState(id){
 
 function toggleSettings(){
   settings.show = !settings.show;
-  setDisplay('setup', settings.show ? 'block':'none');
+  ui.showSetup(settings.show);
+  //ui.show(ui.setup, settings.show ? 'block':'none');
 }
 
 function backCamera(){
+  ui.showSetup(false);
+  settings.show = false;
   settings.background = 'camera';
   navigator.mediaDevices.getUserMedia({
     video: {
@@ -37,23 +65,24 @@ function backCamera(){
     }
   })
   .then((stream) => {
-    let videoFeed = document.getElementById('f-video');
-    setDisplay('f-video','block');
-    setDisplay('d-blur', 'block');
-    setDisplay('gl-canvas','none');
+    ui.show(ui.video, 'block');
+    ui.show(ui.blur,'block');
+    ui.show(ui.canvas, 'none');
     settings.videoStream = stream;
-    videoFeed.srcObject = stream;
+    ui.video.srcObject = stream;
   }).catch((error) => backGlsl());
 }
 
 function backGlsl(){
+  ui.showSetup(false);
+  settings.show = false;
   if (settings.videoStream){
     settings.videoStream.close();
     settings.videoStream = null;
   }
-  setDisplay('f-video', 'none');
-  setDisplay('d-blur', 'none');
-  setDisplay('gl-canvas','block');
+  ui.show(ui.video, 'none');
+  ui.show(ui.blur,'none');
+  ui.show(ui.canvas, 'block');
   let w = new GlCanvas('gl-canvas');
   w.load({fragmentId: 'shader1'}, gl => {
     webGl = gl;
@@ -62,16 +91,18 @@ function backGlsl(){
 }
 
 function clearCache(){
+  settings.show = false;
+  ui.showSetup(false);
   localStorage.clear();
   populate(data);
 }
 
 function populate(data){
-  container.replaceChildren();
+  ui.container.replaceChildren();
   Object.keys(data).forEach(k => {
     let h = document.createElement('details');
     h.id = k;
-    h.addEventListener('toggle', () => localStorage.setItem(h.id, h.open));
+    h.addEventListener('toggle', () => saveState(h));
     h.open = localStorage.getItem(h.id) || null;
     h.innerHTML=`<summary>${k}</summary>`;
     data[k].forEach(value => {
@@ -80,7 +111,7 @@ function populate(data){
       else
         addEntry2(h,value);
     })
-    container.appendChild(h);
+    ui.container.appendChild(h);
   })
 }
 

@@ -147,6 +147,7 @@ summary {
   padding: 8px;
   border-radius: 12px;
   background: #fff;
+  z-index: 3;
   &::-webkit-scrollbar {
     background: transparent;
   }
