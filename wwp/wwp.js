@@ -91,7 +91,8 @@ const wwprov = {
   flds: [ "temperature_2m", "relative_humidity_2m", "rain", "cloud_cover", "cloud_cover_low", "cloud_cover_mid", "cloud_cover_high", "visibility","wind_speed_10m" ],
   kind: 'hourly', //'current',
   timestamp: 0,
-  timeout: 24 * 60 * 60 * 1000, 
+  timeout: 24 * 60 * 60 * 1000,
+  status: document.getElementById('webstatus'),
   url: function(kind, fields){
     const f = fields.join();
     return `https://api.open-meteo.com/v1/forecast?latitude=${wwprov.pos.latitude}&longitude=${wwprov.pos.longitude}&${kind}=${f}`;
@@ -135,13 +136,17 @@ const wwprov = {
       var xhr = new XMLHttpRequest();
       xhr.open('GET', url, true);
       xhr.responseType = 'json';
+      wwprov.status.style.background = '#0c0';
       xhr.onload = function() {
         var status = xhr.status;
         if (status === 200) {
           wwprov.wth.data = JSON.parse(JSON.stringify(xhr.response));
           wwprov.wth.timestamp = Date.now();
           wwprov.save();
+          wwprov.status.style.background = 'transparent';
           if (callback) callback();
+        } else {
+          wwprov.status.style.background = '#c00';
         }
       };
       xhr.send();
