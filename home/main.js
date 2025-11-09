@@ -77,7 +77,9 @@ function backGlsl(){
   ui.showSetup(false);
   settings.show = false;
   if (settings.videoStream){
-    settings.videoStream.close();
+    settings.videoStream.getTracks().forEach(function(track) {
+      track.stop();
+    });
     settings.videoStream = null;
   }
   ui.show(ui.video, 'none');

@@ -3,6 +3,8 @@
   :root {
       --body-bg: #eee;
       --body-color: #111;
+      --blur-color: #fff4;
+      --icon-bg: #eee;
       --border-fg: rgba(0,0,0,0.0625);
       --bg-stripes: repeating-linear-gradient(
         -45deg,
@@ -14,8 +16,10 @@
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
   :root {
-      --body-bg: #eee;
-      --body-color: #111;
+      --body-bg: #111;
+      --body-color: #eee;
+      --blur-color: #1114;
+      --icon-bg: #eee;
       --border-fg: rgba(0,0,0,0.0625);
       --bg-stripes: repeating-linear-gradient(
         -45deg,
@@ -52,7 +56,7 @@ video {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #fffa;
+  background-color: var(--blur-color);
   backdrop-filter: blur(72px);
   z-index: -1;
 }
@@ -74,7 +78,7 @@ img {
 }
 
 details {
-  background: #fff4;
+  background: var(--blur-color);
   box-shadow: 0 0 12px 0 #0002;
   border-radius: 12px;
   padding: 8px;
@@ -93,7 +97,7 @@ summary {
 
 .icon-wrap {
   display: inline-block;
-  background: #fff;
+  background: var(--icon-bg);
   box-shadow: 0 0 22px 0 #0006;
   border-radius: 50%;
   text-align: center;
@@ -146,7 +150,7 @@ summary {
   margin: 8px;
   padding: 8px;
   border-radius: 12px;
-  background: #fff;
+  background: var(--body-bg);
   z-index: 3;
   &::-webkit-scrollbar {
     background: transparent;
