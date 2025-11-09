@@ -15,11 +15,11 @@ const ui = {
     if (state){
       this.blur.style.zIndex = 2;
       this.show(this.setup,'block');
-      this.blur.addEventListener('click',() => ui.showSetup(false));
+      this.setup.addEventListener('click',() => ui.showSetup(false));
     } else {
       ui.blur.style.zIndex = -1;
       ui.show(ui.setup, 'none');
-      ui.blur.removeEventListener('click', () => ui.showSetup(false));
+      ui.setup.removeEventListener('click', () => ui.showSetup(false));
     }
   },
   getIconUrl: function(url){
