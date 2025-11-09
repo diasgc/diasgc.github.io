@@ -92,6 +92,11 @@ function backGlsl(){
   });
 }
 
+function reload(){
+  fetch(window.location.href, { cache: 'reload' })
+  .then(() => location.reload());
+}
+
 function clearCache(){
   settings.show = false;
   ui.showSetup(false);
