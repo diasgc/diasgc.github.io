@@ -1,0 +1,32 @@
+body {
+  display: flex;
+  font-family: 'Open Sans', sans-serif;
+  flex-direction: column;
+  height: 100vh;
+}
+
+pre {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 12px;
+}
+
+.mi {
+  font-family: 'Material Symbols Outlined';
+  font-size: 32px;
+}
+
+.ico {
+  font-family: 'Material Symbols Outlined';
+  font-size: 32px;
+  display: block;
+  padding: 8px;
+  text-align: center;
+  cursor: pointer;
+}
