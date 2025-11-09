@@ -32,10 +32,12 @@ const ui = {
       r.style.setProperty('--body-bg', '#111');
       r.style.setProperty('--body-color', '#eee');
       r.style.setProperty('--blur-color', '#1118');
+      r.style.setProperty('--border-fg', '#0008');
     } else {
       r.style.setProperty('--body-bg', '#eee');
       r.style.setProperty('--body-color', '#111');
       r.style.setProperty('--blur-color', '#eee4');
+      r.style.setProperty('--border-fg', '#fff8');
     }
   }
 }

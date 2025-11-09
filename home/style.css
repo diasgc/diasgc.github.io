@@ -5,7 +5,7 @@
       --body-color: #111;
       --blur-color: #fff4;
       --icon-bg: #fff;
-      --border-fg: rgba(0,0,0,0.0625);
+      --border-fg: #fffa;
       --bg-stripes: repeating-linear-gradient(
         -45deg,
         #E0E0E0, #E0E0E0 3px,
@@ -20,7 +20,7 @@
       --body-color: #eee;
       --blur-color: #1118;
       --icon-bg: #fff;
-      --border-fg: rgba(0,0,0,0.0625);
+      --border-fg: #000a;
       --bg-stripes: repeating-linear-gradient(
         -45deg,
         #263238, #263238 3px,
@@ -61,6 +61,7 @@ video {
   height: 100%;
   background-color: var(--blur-color);
   backdrop-filter: blur(72px);
+  -webkit-backdrop-filter: blur(72px);
   z-index: -1;
 }
 
@@ -131,14 +132,14 @@ summary {
   margin: 0 ;
 }
 
-#clearCache {
+#setupBtn {
   position: absolute;
-  top:0;
-  right: 0;
+  top:16px;
+  right: 16px;
+  width: 22px;
+  height: 22px;
   background: #0c0;
-  width: 8px;
-  height: 8px;
-  margin: 8px;
+  border: 8px solid var(--border-fg);
   border-radius: 50%;
 }
 
@@ -166,7 +167,7 @@ summary {
   border-radius: 12px;
   background: var(--body-bg);
   z-index: 3;
-  &::-webkit-scrollbar {border-bottom: 2px solid black;
+  &::-webkit-scrollbar {
     background: transparent;
   }
 }
