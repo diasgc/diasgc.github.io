@@ -7,6 +7,7 @@ const ui = {
   blur: document.getElementById('d-blur'),
   setup: document.getElementById('setup'),
   opts: document.getElementById('clearCache'),
+  themeDark: true,
   show: function(el,display){
     if (el) el.style.display = display;
   },
@@ -21,42 +22,51 @@ const ui = {
       ui.blur.removeEventListener('click', () => ui.showSetup(false));
     }
   },
+  getIconUrl: function(url){
+    return `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${url}&size=128`;
+  },
+  toggleTheme: function(){
+    let r = document.querySelector(':root');
+    ui.themeDark = !ui.themeDark;
+    if (ui.themeDark){
+      r.style.setProperty('--body-bg', '#111');
+      r.style.setProperty('--body-color', '#eee');
+      r.style.setProperty('--blur-color', '#1118');
+    } else {
+      r.style.setProperty('--body-bg', '#eee');
+      r.style.setProperty('--body-color', '#111');
+      r.style.setProperty('--blur-color', '#eee4');
+    }
+  }
 }
 
 
-const settings = {
+const config = {
   show: false,
-  background: 'camera'
+  background: 'camera',
+  blur: 72,
+  saveState: function(id){
+    if (id.open)
+      localStorage.setItem(id.id, true);
+    else
+      localStorage.removeItem(id.id);
+  },
+  loadState: function(h){
+    h.open = localStorage.getItem(h.id) || null;
+  }
+}
+
+function toggleView(){
+  config.show = !config.show;
+  ui.showSetup(config.show);
 }
 
 populate(data);
 
-function setDisplay(id,display){
-  const e = document.getElementById(id);
-  if (e) e.style.display = display;
-}
-
-function saveState(id){
-  if (id.open)
-    localStorage.setItem(id.id, true);
-  else
-    localStorage.removeItem(id.id);
-}
-
-function loadState(id){
-  id.open = localStorage.getItem(id.id) === true ? true : null;
-}
-
-function toggleSettings(){
-  settings.show = !settings.show;
-  ui.showSetup(settings.show);
-  //ui.show(ui.setup, settings.show ? 'block':'none');
-}
-
 function backCamera(){
   ui.showSetup(false);
-  settings.show = false;
-  settings.background = 'camera';
+  config.show = false;
+  config.background = 'camera';
   navigator.mediaDevices.getUserMedia({
     video: {
       width: {ideal: window.width},
@@ -68,19 +78,19 @@ function backCamera(){
     ui.show(ui.video, 'block');
     ui.show(ui.blur,'block');
     ui.show(ui.canvas, 'none');
-    settings.videoStream = stream;
+    config.videoStream = stream;
     ui.video.srcObject = stream;
   }).catch((error) => backGlsl());
 }
 
 function backGlsl(){
   ui.showSetup(false);
-  settings.show = false;
-  if (settings.videoStream){
-    settings.videoStream.getTracks().forEach(function(track) {
+  config.show = false;
+  if (config.videoStream){
+    config.videoStream.getTracks().forEach(function(track) {
       track.stop();
     });
-    settings.videoStream = null;
+    config.videoStream = null;
   }
   ui.show(ui.video, 'none');
   ui.show(ui.blur,'none');
@@ -94,11 +104,11 @@ function backGlsl(){
 
 function reload(){
   fetch(window.location.href, { cache: 'reload' })
-  .then(() => location.reload());
+    .then(() => location.reload());
 }
 
 function clearCache(){
-  settings.show = false;
+  config.show = false;
   ui.showSetup(false);
   localStorage.clear();
   populate(data);
@@ -109,8 +119,8 @@ function populate(data){
   Object.keys(data).forEach(k => {
     let h = document.createElement('details');
     h.id = k;
-    h.addEventListener('toggle', () => saveState(h));
-    h.open = localStorage.getItem(h.id) || null;
+    h.addEventListener('toggle', () => config.saveState(h));
+    config.loadState(h);
     h.innerHTML=`<summary>${k}</summary>`;
     data[k].forEach(value => {
       if (value === 'break')
@@ -122,6 +132,17 @@ function populate(data){
   })
 }
 
+function addEntry2(parent, entry){
+  let h = document.createElement('div');
+  h.className='icon-wrap';
+  if (entry['background'])
+    h.style=`background: ${entry['background']}`;
+  let url  = entry['url'];
+  let icon = entry['icon'] || ui.getIconUrl(url);
+  h.innerHTML=`<a id="${entry['name']}" href="${url}" onclick="countClick(this)"><img src="${icon}"/></a><p>${entry['name']}</p>`;
+  parent.appendChild(h);
+}
+
 function countClick(el){
   let itemCount = JSON.parse(localStorage.getItem('counter') || "{}");
   if (!itemCount[el.id])
@@ -130,21 +151,8 @@ function countClick(el){
   localStorage.setItem('counter',JSON.stringify(itemCount));
 }
 
-function addEntry2(parent, entry){
-  let h = document.createElement('div');
-  h.className='icon-wrap';
-  if (entry['background'])
-    h.style=`background: ${entry['background']}`;
-  let url  = entry['url'];
-  var icon = entry['icon'];
-  if (!icon)
-    icon = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${url}&size=128`;
-  h.innerHTML=`<a id="${entry['name']}" href="${url}" onclick="countClick(this)"><img src="${icon}"/></a><p>${entry['name']}</p>`;
-  parent.appendChild(h);
-}
-
 window.onload = function(){
-  if (settings.background === 'camera')
+  if (config.background === 'camera')
     backCamera();
   else
     backGlsl();

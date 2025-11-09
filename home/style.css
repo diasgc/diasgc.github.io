@@ -4,7 +4,7 @@
       --body-bg: #eee;
       --body-color: #111;
       --blur-color: #fff4;
-      --icon-bg: #eee;
+      --icon-bg: #fff;
       --border-fg: rgba(0,0,0,0.0625);
       --bg-stripes: repeating-linear-gradient(
         -45deg,
@@ -18,8 +18,8 @@
   :root {
       --body-bg: #111;
       --body-color: #eee;
-      --blur-color: #1114;
-      --icon-bg: #eee;
+      --blur-color: #1118;
+      --icon-bg: #fff;
       --border-fg: rgba(0,0,0,0.0625);
       --bg-stripes: repeating-linear-gradient(
         -45deg,
@@ -29,10 +29,13 @@
 }
 
 body {
-    /*background: var(--bg-stripes);*/
-    color: var(--body-color);
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
+  color: var(--body-color);
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  overflow: auto;
+  &::-webkit-scrollbar{
+    display: none;
+  }
 }
 
 canvas, video {
@@ -105,6 +108,7 @@ summary {
   margin: 8px;
   width: 64px;
   height: 64px;
+  transition: background 0.5s;
 }
 
 .icon-wrap > div {
@@ -141,26 +145,41 @@ summary {
 #setup {
   display: none;
   position: absolute;
-  overflow-y: overlay;
-  overflow-x: hidden;
-  left: 5%;
-  right: 5%;
-  top: 40%;
-  bottom: 40%;
-  margin: 8px;
-  padding: 8px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: #0008;
+  z-index: 3;
+}
+
+.s-div {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 30%;
   border-radius: 12px;
   background: var(--body-bg);
   z-index: 3;
-  &::-webkit-scrollbar {
+  &::-webkit-scrollbar {border-bottom: 2px solid black;
     background: transparent;
   }
 }
 
 .s-item {
-  display: block;
+  color: var(--body-color);
   width: 100%;
   font-size: 18px;
-  padding: 12px 0;
+  padding: 12px;
   text-align: center;
+  z-index: 3;
+  border-bottom: 1px solid #0001;
+  &:hover {
+    background: #8882;
+  }
 }
