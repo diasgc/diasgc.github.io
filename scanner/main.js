@@ -67,7 +67,5 @@ function onScanSuccess(decodedText, decodedResult) {
 }
 
 let html5QrcodeScanner = new Html5QrcodeScanner(
-    "qr-reader", { fps: 10, qrbox: 250 });
+    "qr-reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
 html5QrcodeScanner.render(onScanSuccess);
-
-// test only onScanSuccess(testStr,0);

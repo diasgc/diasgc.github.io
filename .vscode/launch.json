@@ -50,6 +50,14 @@
     {
       "type": "msedge",
       "request": "launch",
+      "name": "scanner",
+      "webRoot": "${workspaceRoot}/scanner",
+      "file": "${workspaceFolder}/scanner/index.html",
+      "runtimeArgs": ["--disable-web-security"]
+    },
+    {
+      "type": "msedge",
+      "request": "launch",
       "name": "tnk",
       "webRoot": "${workspaceRoot}/zc/tnk",
       "file": "${workspaceFolder}/zc/tnk/index.html",
