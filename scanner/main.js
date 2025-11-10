@@ -85,6 +85,9 @@ function onScanSuccess(decodedText, decodedResult) {
         content.innerHTML += `COD: ${out.cod}<br>LOT: ${out.lot}<br>VAL: ${out.val}<br>PC: ${out.pc}<br>SN: ${out.sn}<br>`;
         content.innerHTML += `<a href="${out.rcm}">rcm</a><br><a href="${out.fi}">fi</a>`;
       }
+      if (out.str){
+        content.innerHTML += `STR: ${out.str}`;
+      }
       lastResult = decodedText;
       console.log(`Scan result ${decodedText}`, decodedResult);
     }
