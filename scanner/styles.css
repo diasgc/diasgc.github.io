@@ -7,9 +7,15 @@ body {
 #qr-reader {
   width: 250px;
   height: 250px;
+  border-radius: 50%;
 }
 
 #qr-reader-results {
   font-size: 18px;
   margin: 10px;
+}
+
+a {
+  font-size: 22px;
+  font-weight: bold;
 }

@@ -78,8 +78,8 @@ function onScanSuccess(decodedText, decodedResult) {
       let out = parseInf(decodedText);
       content.innerHTML = `Len: ${decodedText.length}<br>${out.cod}<br>${out.lot}<br>${out.val}<br>${out.pc}<br>${out.sn}<br>`;
       if (out.cod){
-        content.innerHTML += `${out.cod}<br>${out.lot}<br>${out.val}<br>${out.pc}<br>${out.sn}<br>`;
-        content.innerHTML += `<a href="${out.rcm}">rcm</a><a href="${out.fi}">fi</a>`;
+        content.innerHTML += `COD: ${out.cod}<br>LOT: ${out.lot}<br>VAL: ${out.val}<br>PC: ${out.pc}<br>SN: ${out.sn}<br>`;
+        content.innerHTML += `<a href="${out.rcm}">rcm</a><br><a href="${out.fi}">fi</a>`;
       }
       lastResult = decodedText;
       console.log(`Scan result ${decodedText}`, decodedResult);
