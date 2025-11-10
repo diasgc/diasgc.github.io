@@ -1,10 +1,43 @@
 const beep = document.getElementById('beep');
-const table = document.getElementById("table-results");
-const resultContainer = document.getElementById('qr-reader-results');
+const content = document.getElementById('qr-reader-results');
 var lastResult, countResults = 0;
 const gs = String.fromCharCode(29);
 
 const testStr = "010560031211263417250731102423821100923530526127145665971";
+
+function parseInf(str){
+var a, tag, arr = str.split(gs), out={};
+  while (arr.length > 0){
+      a = arr.pop();
+      if (a.length < 2)
+          continue;
+      tag = a.slice(0,2);
+      if (tag === "01"){
+        out.pc = a.slice(2,16);
+        // 05600312112634
+        if (a.length > 16)
+          arr.push(a.substring(16));
+        continue;
+      } else if (tag === "17") {
+        out.val = `20${a.substring(2,4)}/${a.substring(4,6)}/${a.substring(6,8)}`;
+        if (a.length > 6)
+          arr.push(a.substring(8));
+        continue;
+      } else if (tag === "10") {
+        out.lot = a.substring(2);
+        continue;
+      } else if (tag === "21") {
+        out.sn = a.substring(2);
+      } else if (tag === "71") {
+        out.cod = a.substring(3);
+        out.rcm = `https://extranet.infarmed.pt/INFOMED-fo/download-ficheiro.xhtml?med_id=${out.cod}&tipo_doc=rcm`;
+        out.fi = `https://extranet.infarmed.pt/INFOMED-fo/download-ficheiro.xhtml?med_id=${out.cod}&tipo_doc=fi`;
+      } else {
+        out.str = a;
+      }
+  }
+  return out;
+}
 
 function tryINF(str){ 
   var a, tag, arr = str.split(gs), out="";
@@ -31,6 +64,7 @@ function tryINF(str){
         out += "SN : " + a.substring(2) + "\n";
       } else if (tag === "71") {
         out += "COD: " + a.substring(3) + "\n";
+        out += "<a href="
       } else {
         out += "UNKNOWN " + a + "\n";
       }
@@ -41,28 +75,14 @@ function tryINF(str){
 function onScanSuccess(decodedText, decodedResult) {
     if (decodedText !== lastResult) {
       beep.play();
-      /*
-      if (table.rows.length == 0){
-        var thead = document.createElement('thead');
-        table.appendChild(thead);
-        thead.appendChild(document.createElement('th').innerText)
-
-        table.appendChild(thead);
+      let out = parseInf(decodedText);
+      content.innerHTML = `Len: ${decodedText.length}<br>${out.cod}<br>${out.lot}<br>${out.val}<br>${out.pc}<br>${out.sn}<br>`;
+      if (out.cod){
+        content.innerHTML += `${out.cod}<br>${out.lot}<br>${out.val}<br>${out.pc}<br>${out.sn}<br>`;
+        content.innerHTML += `<a href="${out.rcm}">rcm</a><a href="${out.fi}">fi</a>`;
       }
-      */
-      let row = table.insertRow(countResults + 1);
-      let fc = decodedText.charCodeAt(0);
-      row.insertCell(0).innerText = countResults;
-      //row.insertCell(2).innerHTML = "0x" + fc.toString(16);
-      row.insertCell(1).innerText = decodedText.length;
-      row.insertCell(2).innerText = tryINF(decodedText);
-      ++countResults;
       lastResult = decodedText;
-      // Handle on success condition with the decoded message.
       console.log(`Scan result ${decodedText}`, decodedResult);
-      //resultContainer.innerText = decodedText;
-      //html5QrcodeScanner.clear();
-      //html5QrcodeScanner.pause();
     }
 }
 
