@@ -39,6 +39,10 @@ var a, tag, arr = str.split(gs), out={};
   return out;
 }
 
+function reload(){
+  location.reload(true);
+}
+
 function tryINF(str){ 
   var a, tag, arr = str.split(gs), out="";
   while (arr.length > 0){
