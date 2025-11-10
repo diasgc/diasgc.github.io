@@ -18,6 +18,15 @@ Number.prototype.strOct = function(pad, prefix=true){
   return (prefix ? "0" : "") + ret;
 }
 
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker
+      .register("/ccc/serviceWorker.js")
+      .then(res => console.log("service worker registered"))
+      .catch(err => console.log("service worker not registered", err))
+  })
+}
+
 let urlParams = new URLSearchParams(window.location.search);
 const filePath = urlParams.get('path');
 const uri = urlParams.get('u');

@@ -1,10 +1,11 @@
 const staticApp = "static-app"
 const assetsApp = [
-  "/wwp/",
-  "/wwp/index.html",
-  "/wwp/wwp.css",
-  "/wwp/wwp.js",
-  "/wwp/shaders/default.frag"
+  "/home/",
+  "/home/icons/",
+  "/home/index.html",
+  "/home/style.css",
+  "/home/main.js",
+  "/home/data.js"
 ]
 
 self.addEventListener("install", installEvent => {
