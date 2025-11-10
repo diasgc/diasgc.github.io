@@ -81,7 +81,7 @@ function onScanSuccess(decodedText, decodedResult) {
     if (decodedText !== lastResult) {
       beep.play();
       let out = parseInf(decodedText);
-      content.innerHTML = `Len: ${decodedText.length}<br>${out.cod}<br>${out.lot}<br>${out.val}<br>${out.pc}<br>${out.sn}<br>`;
+      content.innerHTML = `Len: ${decodedText.length}`;
       if (out.cod){
         content.innerHTML += `COD: ${out.cod}<br>LOT: ${out.lot}<br>VAL: ${out.val}<br>PC: ${out.pc}<br>SN: ${out.sn}<br>`;
         content.innerHTML += `<a href="${out.rcm}">rcm</a><br><a href="${out.fi}">fi</a>`;
