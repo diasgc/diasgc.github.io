@@ -40,7 +40,8 @@ var a, tag, arr = str.split(gs), out={};
 }
 
 function reload(){
-  location.reload(true);
+  fetch(window.location.href, { cache: 'reload' })
+    .then(() => location.reload());
 }
 
 function tryINF(str){ 
