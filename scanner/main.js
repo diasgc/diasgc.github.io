@@ -81,13 +81,13 @@ function onScanSuccess(decodedText, decodedResult) {
     if (decodedText !== lastResult) {
       beep.play();
       let out = parseInf(decodedText);
-      content.innerHTML = `Len: ${decodedText.length}`;
+      content.innerHTML = `<p class='fi'>Len: ${decodedText.length}</p>`;
       if (out.cod){
-        content.innerHTML += `COD: ${out.cod}<br>LOT: ${out.lot}<br>VAL: ${out.val}<br>PC: ${out.pc}<br>SN: ${out.sn}<br>`;
-        content.innerHTML += `<a href="${out.rcm}">rcm</a><br><a href="${out.fi}">fi</a>`;
+        content.innerHTML += `<p class='fi'>COD: ${out.cod}</p><p class='fi'>LOT: ${out.lot}</p><p class='fi'>VAL: ${out.val}</p><p class='fi'>PC: ${out.pc}</p><p class='fi'>SN: ${out.sn}</p>`;
+        content.innerHTML += `<a class='fi' href="${out.rcm}">rcm</a><a class='fi' href="${out.fi}">fi</a>`;
       }
       if (out.str){
-        content.innerHTML += `STR: ${out.str}`;
+        content.innerHTML += `<p class='fi'>STR: ${out.str}</p>`;
       }
       lastResult = decodedText;
       console.log(`Scan result ${decodedText}`, decodedResult);
@@ -97,3 +97,5 @@ function onScanSuccess(decodedText, decodedResult) {
 let html5QrcodeScanner = new Html5QrcodeScanner(
     "qr-reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
 html5QrcodeScanner.render(onScanSuccess);
+
+onScanSuccess(testStr,"");

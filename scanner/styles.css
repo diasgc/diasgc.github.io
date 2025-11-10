@@ -6,6 +6,13 @@ body {
   display: flex;
 }
 
+.fi {
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: #fff1;
+  margin: 12px;
+}
+
 #qr-reader {
   flex: 1;
   align-self: center;
