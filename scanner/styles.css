@@ -13,12 +13,22 @@ body {
   margin: 12px;
 }
 
+.sq {
+  flex:1;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
 #qr-reader {
-  flex: 1;
   align-self: center;
+  justify-self: center;
   width: 250px;
   height: 250px;
   border-radius: 50%;
+  background: #8884;
+  border: none;
+  outline: none;
 }
 
 #qr-reader-results {
@@ -41,5 +51,28 @@ body {
 a {
   color: #aff;
   font-size: 20px;
+  font-weight: bold;
+}
+
+#qr-reader__scan_region {
+  border-radius: 50%;
+}
+
+#html5-qrcode-button-camera-stop,
+#html5-qrcode-button-camera-permission,
+#html5-qrcode-button-camera-start {
+  border: none;
+  border-radius: 12px;
+  outline: none;
+  background: #0008;
+  padding: 4px 8px;
+  color: #fff;
+  margin: 12px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+#html5-qrcode-anchor-scan-type-change{
+  font-size: 12px;
   font-weight: bold;
 }
