@@ -3,7 +3,7 @@ body {
   font-size: 13px;
   background: #111;
   color: #eee;
-  display: flex;
+  display: block;
 }
 
 .fi {
@@ -14,7 +14,6 @@ body {
 }
 
 .sq {
-  flex:1;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
@@ -32,7 +31,7 @@ body {
 }
 
 #qr-reader-results {
-  flex: 1;
+  margin-top: 90px;
   align-self: center;
   font-size: 16px;
   margin: 10px;
@@ -54,10 +53,17 @@ a {
   font-weight: bold;
 }
 
+video {
+  border-radius: 50%;
+  width: 250px;
+  height: 250px;
+}
+
 #qr-reader__scan_region {
   border-radius: 50%;
 }
 
+#html5-qrcode-button-file-selection,
 #html5-qrcode-button-camera-stop,
 #html5-qrcode-button-camera-permission,
 #html5-qrcode-button-camera-start {

@@ -52,7 +52,7 @@ const tnk = {
     { "Noach": "0;6:9–11:32" },
     { "Lech-Lecha": "0;12:1–17:27" },
     { "Vayera": "0;18:1–22:24" },
-    { "Chayei Sarah": "0;23:1–25:18" },
+    { "Chayei Sara": "0;23:1–25:18" },
     { "Toldot": "0;25:19–28:9" },
     { "Vayetzei": "0;28:10–32:3" },
     { "Vayishlach": "0;32:4–36:43" },
@@ -528,7 +528,7 @@ function about(){
 function fadeInText(element, newText){
   element.style.opacity = 0;
   element.style.animation = 'none';
-  void element.offsetWidth;
+  void element.offsetWidth;navToParsha
   element.innerHTML = newText;
   element.style.animation = 'fadeIn 0.5s ease-in-out forwards';
 }
@@ -539,7 +539,7 @@ function neq(){
   tnk.txtMode = (tnk.txtMode + 1) % 3;
   id.innerText = `${cap[tnk.txtMode]}`;
   refresh();
-}
+}navToParsha
 
 function settings(){
 
