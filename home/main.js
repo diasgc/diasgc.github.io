@@ -108,7 +108,7 @@ function backGlsl(){
   ui.show(ui.blur,'none');
   ui.show(ui.canvas, 'block');
   let w = new GlCanvas('gl-canvas');
-  w.load({fragmentId: 'shader1'}, gl => {
+  w.load({fragmentId: 'shader2'}, gl => {
     webGl = gl;
     webGl.start(true);
   });

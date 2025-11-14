@@ -26,41 +26,74 @@
   }
 </script>
 <script id="shader2" type="x-shader/x-fragment">
-  uniform vec2  iResolution;
-  uniform float iTime;
+uniform vec2  iResolution;
+uniform float iTime;
+uniform vec3  iGyroscope;
 
-  float length2(vec2 p){
-      return dot(p,p);
-  }
+#define P13_OCTAVES 5
+#define speed -0.1
+#define I vec2(0.0,1.0)
+#define BKG fract(iGyroscope)
+#define R13(p) fract(sin(dot(p, vec3(12.345, 67.89, 412.12))) * 42123.45) * 2.0 - 1.0
 
-  float noise(vec2 p){
-    return fract(sin(fract(sin(p.x) * (43.13311)) + p.y) * 31.0011);
-  }
+// Perlin noise 3D
+float P13(vec3 p) {
+    vec3 u = floor(p);
+    vec3 v = fract(p);
+    vec3 s = smoothstep(0.0, 1.0, v);
+    
+    return mix(
+      mix(
+        mix(R13(u + I.xxx), R13(u + I.yxx), s.x),
+        mix(R13(u + I.xyx), R13(u + I.yyx), s.x),
+        s.y),
+      mix(
+        mix(R13(u + I.xxy), R13(u + I.yxy), s.x),
+        mix(R13(u + I.xyy), R13(u + I.yyy), s.x),
+        s.y),
+      s.z);
+}
 
-  float worley(vec2 p) {
-    float d = 1e30;
-    for (int xo = -1; xo <= 1; ++xo) {
-      for (int yo = -1; yo <= 1; ++yo) {
-        vec2 tp = floor(p) + vec2(xo, yo);
-        d = min(d, length2(p - tp - noise(tp)));
-      }
+float fBM13(vec3 p) {
+    vec3 off = vec3(0.0, 2.1, 1.0) * iTime * speed;
+    vec3 q = p - off;
+    
+    // fbm
+    float a1 = 0.5;
+    float a2 = 2.0;
+    float f = 0.0;
+    for (int i = 0; i < P13_OCTAVES; i++){
+        f += a1 * P13(q);
+        a1 *= 0.5;
+        q *= a2;
     }
-    return 3.0*exp(-4.0*abs(2.5*d - 1.0));
-  }
+    return exp(f) - 1.0;
+}
 
-  float fworley(vec2 p) {
-    return sqrt(sqrt(sqrt(
-      worley(p*5.0 + 0.05*iTime) *
-      sqrt(worley(p * 50.0 + 0.12 + -0.1*iTime)) *
-      sqrt(sqrt(worley(p * -10.0 + 0.03*iTime))))));
-  }
-        
-  void mainImage( out vec4 fragColor, in vec2 fragCoord ){
-    vec2 uv = fragCoord.xy / iResolution.xy;
-      float t = fworley(uv * iResolution.xy / 1500.0);
-      t*=exp(-length2(abs(0.7*uv - 1.0)));	
-      fragColor = vec4(1. - t * vec3(1.5, 1.1*t, pow(t, 0.5-t)), 1.5);
-  }
+void overlay(inout vec3 col, in float f){
+    col = mix(col, col + f * (1. - col), f);
+}
+
+#define STEPS 7
+#define T     0.3
+#define C     0.75
+#define noiseDir1 vec2(1.0, 1.0019)
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    // Normalized pixel coordinates (from 0 to 1)
+    vec2 uv = fragCoord/iResolution.xy * vec2(iResolution.x/iResolution.y, 1.0);
+    vec3 color = BKG;
+    
+    vec3 p = vec3(uv * 1.5, iTime * 1e-1);
+    for (int i = 0 ; i < STEPS; i++){
+        p += fBM13(p) + iTime * T;
+    }
+    float f = fBM13(p);
+    overlay(color, f * C);
+
+    fragColor = vec4(color, 1.0);
+}
 </script>
 <body>
   <canvas id="gl-canvas"></canvas>
