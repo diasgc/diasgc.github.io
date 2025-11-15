@@ -149,7 +149,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       }
     },
     ambientLightSensor: {
-      isEnabled: falseaddEventListener("reading", null),
+      isEnabled: false,
       name: 'iAmbientLight',
       type: 'float',
       data: 0,
