@@ -33,8 +33,8 @@ uniform vec3  iGyroscope;
 #define P13_OCTAVES 5
 #define speed -0.1
 #define I vec2(0.0,1.0)
-#define BKG vec3(0.,0.5,1.0)
-#define R13(p) fract(sin(dot(p, iGyroscope)) * 42123.45) * 2.0 - 1.0
+#define BKG iGyroscope
+#define R13(p) fract(sin(dot(p, vec3(12.345, 67.89, 412.12))) * 42123.45) * 2.0 - 1.0
 
 // Perlin noise 3D
 float P13(vec3 p) {
