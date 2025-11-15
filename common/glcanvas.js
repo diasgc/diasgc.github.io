@@ -113,11 +113,15 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       type: 'vec3',
       data: [0,0,0],
       start: function(){
-        this.sensor = new Gyroscope();
-        this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
+        navigator.permissions.query({ name: 'gyroscope' }).then((s) => {
+          this.sensor = new Gyroscope();
+          this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
+          this.sensor.start();
+        });
       },
       stop: function(){
         this.sensor.addEventListener("reading", null);
+        this.sensor.stop();
       },
       update: function(gl, program){
         gl.uniform3f(program[this.name], this.data[0], this.data[1], this.data[2]);
