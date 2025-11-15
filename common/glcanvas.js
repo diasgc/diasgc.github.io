@@ -114,7 +114,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       data: [0,0,0],
       start: function(){
         this.sensor = new Gyroscope();
-        this.sensor.addEventListener('reading', (e) => this.data = [ e.target.x, e.target.y, e.target.z ]);
+        this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
       },
       stop: function(){
         this.sensor.addEventListener("reading", null);
