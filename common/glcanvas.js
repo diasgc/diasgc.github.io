@@ -97,8 +97,11 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       type: 'vec3',
       data: [0,0,0],
       start: function(){
-        this.sensor = new Accelerometer();
-        this.sensor.addEventListener("reading", (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
+        navigator.permissions.query({ name: 'accelerometer' }).then((s) => {
+          this.sensor = new Gyroscope();
+          this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
+          this.sensor.stop();
+        });
       },
       stop: function(){
         this.sensor.addEventListener("reading", null);
@@ -132,8 +135,11 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       type: 'vec3',
       data: [0,0,0],
       start: function(){
-        this.sensor = new Magnetometer();
-        this.sensor.addEventListener('reading', (e) => this.data = [ e.target.x, e.target.y, e.target.z ]);
+        navigator.permissions.query({ name: 'magnetometer' }).then((s) => {
+          this.sensor = new Magnetometer();
+          this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
+          this.sensor.start();
+        });
       },
       stop: function(){
         this.sensor.addEventListener("reading", null);
@@ -143,7 +149,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       }
     },
     ambientLightSensor: {
-      isEnabled: false,
+      isEnabled: falseaddEventListener("reading", null),
       name: 'iAmbientLight',
       type: 'float',
       data: 0,
