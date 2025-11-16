@@ -4,8 +4,8 @@ function rotate(d){
   img.style.transform = `rotate(${-dd}deg)`;
   options.date = d;
   options.timeZoneOffset = d.getTimezoneOffset()/60;
-  const zmanim = KosherZmanim.getZmanimJson(options);
-  document.getElementById('zman').innerHTML = JSON.stringify(zmanim).replace(/,/g,'<br/>').replace(/{|}/g,'');  
+  //const zmanim = KosherZmanim.getZmanimJson(options);
+  //document.getElementById('zman').innerHTML = JSON.stringify(zmanim).replace(/,/g,'<br/>').replace(/{|}/g,'');  
 }
 
 
@@ -18,6 +18,18 @@ const options = {
   locationName: 'Porto',
   complexZmanim: false
 };
+
+function getCurrentTime24h() {
+    const now = new Date();
+    return now.toLocaleTimeString('en-GB', { // 'en-GB' uses 24-hour format
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false // Ensures 24-hour format
+    });
+}
+
+document.getElementById('time').addEventListener('click',()=> window.open('./tnk/index.html'));
 
 navigator.geolocation.getCurrentPosition(position => {
   options.latitude = position.coords.latitude;
@@ -33,7 +45,7 @@ setInterval(()=>{
     const t = document.getElementById('time');
     const d = new Date();
     rotate(d);
-    t.innerText = `${d.getHours()}:${d.getMinutes()}`;
+    t.innerText = getCurrentTime24h();
 },5000);
 
 //https://developers.sefaria.org/reference/get-v3-texts
