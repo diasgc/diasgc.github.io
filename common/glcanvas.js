@@ -71,13 +71,6 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       'mouse', 'time', 'random1', 'random2', 'noise24b256', 'noise8b256'
     ],
     sensorOptions: { referenceFrame: "device", frequency: 60 },
-    startSensor: function(sensorKey, sensorPerm, sensorObj){
-      navigator.permissions.query({ name: sensorPerm }).then((s) => {
-        uniforms[sensorKey].sensor = sensorObj;
-        uniforms[sensorKey].sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
-        uniforms[sensorKey].sensor.start();
-      });
-    },
     addUniform: function(name, type, start, stop){
       this.uniformList.push(name);
       this[name] = {
@@ -105,7 +98,11 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       type: 'vec3',
       data: [0,0,0],
       start: function(){
-        this.startSensor('accelerometer', 'accelerometer', new Accelerometer(this.sensorOptions));
+        navigator.permissions.query({ name: 'accelerometer' }).then((s) => {
+          this.sensor = new Accelerometer(this.sensorOptions);
+          this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
+          this.sensor.start();
+        });
       },
       stop: function(){
         this.sensor.stop();
@@ -120,7 +117,11 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       type: 'vec3',
       data: [0,0,0],
       start: function(){
-        this.startSensor('gyroscope', 'gyroscope', new Gyroscope(this.sensorOptions));
+        navigator.permissions.query({ name: 'gyroscope' }).then((s) => {
+          this.sensor = new Gyroscope(this.sensorOptions);
+          this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
+          this.sensor.start();
+        });
       },
       stop: function(){
         this.sensor.stop();
@@ -135,7 +136,11 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       type: 'vec3',
       data: [0,0,0],
       start: function(){
-        this.startSensor('magnetometer', 'magnetometer', new Magnetometer(this.sensorOptions));
+        navigator.permissions.query({ name: 'magnetometer' }).then((s) => {
+          this.sensor = new Magnetometer(this.sensorOptions);
+          this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
+          this.sensor.start();
+        });
       },
       stop: function(){
         this.sensor.stop();
@@ -169,7 +174,11 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       type: 'vec3',
       data: [0,0,0],
       start: function(){
-        this.startSensor('gravitySensor', 'accelerometer', new GravitySensor(this.sensorOptions));
+        navigator.permissions.query({ name: 'accelerometer' }).then((s) => {
+          this.sensor = new GravitySensor(this.sensorOptions);
+          this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
+          this.sensor.start();
+        });
       },
       stop: function(){
         this.sensor.stop();
@@ -184,7 +193,11 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       type: 'vec3',
       data: [0,0,0],
       start: function(){
-        this.startSensor('linearAccelerationSensor', 'accelerometer', new LinearAccelerationSensor(this.sensorOptions));
+        navigator.permissions.query({ name: 'accelerometer' }).then((s) => {
+          this.sensor = new LinearAccelerationSensor(this.sensorOptions);
+          this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
+          this.sensor.start();
+        });
       },
       stop: function(){
         this.sensor.stop();
