@@ -24,7 +24,6 @@ function getCurrentTime24h() {
     return now.toLocaleTimeString('en-GB', { // 'en-GB' uses 24-hour format
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit',
         hour12: false // Ensures 24-hour format
     });
 }
