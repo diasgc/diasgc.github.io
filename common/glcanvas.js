@@ -62,7 +62,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
         this.id.style.display = 'block';
     }
   }
-
+  
   uniforms = {
     isTouchDevice: 'ontouchstart' in window || navigator.msMaxTouchPoints,
     uniformList: [
@@ -70,6 +70,14 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       'linearAccelerationSensor', 'relativeOrientationSensor', 'absoluteOrientationSensor',
       'mouse', 'time', 'random1', 'random2', 'noise24b256', 'noise8b256'
     ],
+    sensorOptions: { referenceFrame: "device", frequency: 60 },
+    startSensor: function(sensorKey, sensorPerm, sensorObj){
+      navigator.permissions.query({ name: sensorPerm }).then((s) => {
+        uniforms[sensorKey].sensor = sensorObj;
+        uniforms[sensorKey].sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
+        uniforms[sensorKey].sensor.start();
+      });
+    },
     addUniform: function(name, type, start, stop){
       this.uniformList.push(name);
       this[name] = {
@@ -97,14 +105,10 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       type: 'vec3',
       data: [0,0,0],
       start: function(){
-        navigator.permissions.query({ name: 'accelerometer' }).then((s) => {
-          this.sensor = new Gyroscope();
-          this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
-          this.sensor.stop();
-        });
+        this.startSensor('accelerometer', 'accelerometer', new Accelerometer(this.sensorOptions));
       },
       stop: function(){
-        this.sensor.addEventListener("reading", null);
+        this.sensor.stop();
       },
       update: function(gl, program){
         gl.uniform3f(program[this.name], this.data[0], this.data[1], this.data[2]);
@@ -116,11 +120,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       type: 'vec3',
       data: [0,0,0],
       start: function(){
-        navigator.permissions.query({ name: 'gyroscope' }).then((s) => {
-          this.sensor = new Gyroscope();
-          this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
-          this.sensor.start();
-        });
+        this.startSensor('gyroscope', 'gyroscope', new Gyroscope(this.sensorOptions));
       },
       stop: function(){
         this.sensor.stop();
@@ -135,14 +135,10 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       type: 'vec3',
       data: [0,0,0],
       start: function(){
-        navigator.permissions.query({ name: 'magnetometer' }).then((s) => {
-          this.sensor = new Magnetometer();
-          this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
-          this.sensor.start();
-        });
+        this.startSensor('magnetometer', 'magnetometer', new Magnetometer(this.sensorOptions));
       },
       stop: function(){
-        this.sensor.addEventListener("reading", null);
+        this.sensor.stop();
       },
       update: function(gl, program){
         gl.uniform3f(program[this.name], this.data[0], this.data[1], this.data[2]);
@@ -154,14 +150,17 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       type: 'float',
       data: 0,
       start: function(){
-        this.sensor = new AmbientLightSensor();
-        this.sensor.addEventListener('reading', (e) => this.data = e.target.illuminance);
+        navigator.permissions.query({ name: 'ambient-light-sensor' }).then((s) => {
+          this.sensor = new AmbientLightSensor(this.sensorOptions);
+          this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.illuminance ]);
+          this.sensor.start();
+        });
       },
       stop: function(){
-        this.sensor.addEventListener("reading", null);
+        this.sensor.stop();
       },
       update: function(gl, program){
-        gl.uniform3f(program[this.name], this.data[0], this.data[1], this.data[2]);
+        gl.uniform3f(program[this.name], this.data[0]);
       }
     },
     gravitySensor: {
@@ -170,11 +169,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       type: 'vec3',
       data: [0,0,0],
       start: function(){
-        navigator.permissions.query({ name: 'accelerometer' }).then((s) => {
-          this.sensor = new GravitySensor();
-          this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
-          this.sensor.start();
-        });
+        this.startSensor('gravitySensor', 'accelerometer', new GravitySensor(this.sensorOptions));
       },
       stop: function(){
         this.sensor.stop();
@@ -189,11 +184,10 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       type: 'vec3',
       data: [0,0,0],
       start: function(){
-        this.sensor = new LinearAccelerationSensor();
-        this.sensor.addEventListener('reading', (e) => this.data = [ e.target.x, e.target.y, e.target.z ]);
+        this.startSensor('linearAccelerationSensor', 'accelerometer', new LinearAccelerationSensor(this.sensorOptions));
       },
       stop: function(){
-        this.sensor.addEventListener("reading", null);
+        this.sensor.stop();
       },
       update: function(gl, program){
         gl.uniform3f(program[this.name], this.data[0], this.data[1], this.data[2]);
@@ -205,11 +199,17 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       type: 'vec3',
       data: [0,0,0],
       start: function(){
-        this.sensor = new RelativeOrientationSensor();
-        this.sensor.addEventListener('reading', (e) => this.data = [ e.target.x, e.target.y, e.target.z ]);
+        Promise.all([
+          navigator.permissions.query({ name: "accelerometer" }),
+          navigator.permissions.query({ name: "gyroscope" }),
+        ]).then((s) => {
+          this.sensor = new RelativeOrientationSensor();
+          this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
+          this.sensor.start();
+        });
       },
       stop: function(){
-        this.sensor.addEventListener("reading", null);
+        this.sensor.stop();
       },
       update: function(gl, program){
         gl.uniform3f(program[this.name], this.data[0], this.data[1], this.data[2]);
@@ -221,8 +221,14 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       type: 'vec3',
       data: [0,0,0],
       start: function(){
-        this.sensor = new AbsoluteOrientationSensor();
-        this.sensor.addEventListener('reading', (e) => this.data = [ e.target.x, e.target.y, e.target.z ]);
+        Promise.all([
+          navigator.permissions.query({ name: "accelerometer" }),
+          navigator.permissions.query({ name: "gyroscope" }),
+        ]).then((s) => {
+          this.sensor = new AbsoluteOrientationSensor();
+          this.sensor.addEventListener('reading', (e) => this.data = [ this.sensor.x, this.sensor.y, this.sensor.z ]);
+          this.sensor.start();
+        });
       },
       stop: function(){
         this.sensor.addEventListener("reading", null);
@@ -379,6 +385,13 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       this.uniformList.forEach(u => {
         if (this[u].isEnabled)
           this[u].start();
+      });
+    },
+
+    stop: function(){
+      this.uniformList.forEach(u => {
+        if (this[u].isEnabled)
+          this[u].stop();
       });
     },
 
