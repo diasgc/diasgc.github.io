@@ -375,7 +375,48 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
       stop: function(){},
       update: function(){}
     },
-
+    mic8b: {
+      isEnabled: false,
+      name: 'iMic',
+      type: 'sampler2D',
+      data: null,
+      init: function(gl, program){
+        const texture = gl.createTexture();
+        gl.activeTexture(gl.TEXTURE0); 
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        this.level = 0;
+        this.internalFormat = gl.RGBA;
+        this.width = 256;
+        this.height = 256;
+        this.border = 0;
+        this.srcFormat = gl.RGBA;
+        this.srcType = gl.UNSIGNED_BYTE;
+        gl.uniform1i(program.mic8b, 0);
+      },
+      start: function(){
+        navigator.getUserMedia({ audio: true, video: false }).then((stream) => {
+          this.stream = stream;
+          const audioCtx = new AudioContext();
+          const analyser = audioCtx.createAnalyser();
+          const source = audioCtx.createMediaStreamSource(stream);
+          source.connect(analyser);
+          analyser.fftSize = 2048;
+          const bufferLength = analyser.frequencyBinCount;
+          this.data = new Uint8Array(bufferLength);
+          analyser.getByteTimeDomainData(dataArray);
+        });
+      },
+      stop: function(){
+        this.stream.getTracks().forEach(track => {
+          track.stop();
+          track.enabled = false;
+        });
+      },
+      update: function(){
+        const pixels = new Uint8Array(this.data);
+        gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border, srcFormat, srcType, pixels);
+      }
+    },
     inspectCode: function(code){
       this.uniformList.forEach(uniform => {
         let regex = new RegExp(`[\n\\s]+uniform\\s+${this[uniform].type}\\s+${this[uniform].name}`,'g');
