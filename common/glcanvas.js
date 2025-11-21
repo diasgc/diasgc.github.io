@@ -68,7 +68,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
     uniformList: [
       'accelerometer', 'gyroscope', 'magnetometer', 'ambientLightSensor', 'gravitySensor',
       'linearAccelerationSensor', 'relativeOrientationSensor', 'absoluteOrientationSensor',
-      'mouse', 'time', 'random1', 'random2', 'noise24b256', 'noise8b256'
+      'mouse', 'time', 'random1', 'random2', 'noise24b256', 'noise8b256', 'mic8b'
     ],
     sensorOptions: { referenceFrame: "device", frequency: 60 },
     addUniform: function(name, type, start, stop){
@@ -385,25 +385,27 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
         gl.activeTexture(gl.TEXTURE0); 
         gl.bindTexture(gl.TEXTURE_2D, texture);
         this.level = 0;
-        this.internalFormat = gl.RGBA;
-        this.width = 256;
-        this.height = 256;
+        this.internalFormat = gl.LUMINANCE;
+        this.width = 16;
+        this.height = 16;
+        this.len = this.width * this.height;
         this.border = 0;
-        this.srcFormat = gl.RGBA;
+        this.srcFormat = gl.LUMINANCE;
         this.srcType = gl.UNSIGNED_BYTE;
+        this.data = new Array(this.len).fill(0);
         gl.uniform1i(program.mic8b, 0);
+        this.gl = gl;
       },
       start: function(){
-        navigator.getUserMedia({ audio: true, video: false }).then((stream) => {
+        navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then((stream) => {
           this.stream = stream;
           const audioCtx = new AudioContext();
-          const analyser = audioCtx.createAnalyser();
+          this.analyser = audioCtx.createAnalyser();
           const source = audioCtx.createMediaStreamSource(stream);
-          source.connect(analyser);
-          analyser.fftSize = 2048;
-          const bufferLength = analyser.frequencyBinCount;
+          source.connect(this.analyser);
+          this.analyser.fftSize = this.len * 2;
+          const bufferLength = this.analyser.frequencyBinCount;
           this.data = new Uint8Array(bufferLength);
-          analyser.getByteTimeDomainData(dataArray);
         });
       },
       stop: function(){
@@ -413,8 +415,19 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
         });
       },
       update: function(){
+        if (this.analyser)
+          this.analyser.getByteFrequencyData(this.data);
+        //console.dir(this.data);
         const pixels = new Uint8Array(this.data);
-        gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border, srcFormat, srcType, pixels);
+        this.gl.texImage2D(this.gl.TEXTURE_2D,
+          this.level,
+          this.internalFormat,
+          this.width,
+          this.height,
+          this.border,
+          this.srcFormat,
+          this.srcType,
+          pixels);
       }
     },
     inspectCode: function(code){
