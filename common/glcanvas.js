@@ -68,7 +68,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
     uniformList: [
       'accelerometer', 'gyroscope', 'magnetometer', 'ambientLightSensor', 'gravitySensor',
       'linearAccelerationSensor', 'relativeOrientationSensor', 'absoluteOrientationSensor',
-      'mouse', 'time', 'random1', 'random2', 'noise24b256', 'noise8b256', 'mic8b'
+      'mouse', 'time', 'random1', 'random2', 'noise24b256', 'noise8b256', 'mic8b','stereoMic'
     ],
     sensorOptions: { referenceFrame: "device", frequency: 60 },
     addUniform: function(name, type, start, stop){
@@ -354,58 +354,86 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
         return (Math.random() * 255) & 0xFF;
       },
       init: function(gl, program){
+        console.log('init noise24b256');
         const texture = gl.createTexture();
         gl.activeTexture(gl.TEXTURE0); 
         gl.bindTexture(gl.TEXTURE_2D, texture);
-        const level = 0;
-        const internalFormat = gl.RGBA;
-        const width = 256;
-        const height = 256;
-        const border = 0;
-        const srcFormat = gl.RGBA;
-        const srcType = gl.UNSIGNED_BYTE;
-        let data = [];
-        for (let i = 0; i < 256 * 256; i++)
-          data.push(this.rnd256() , this.rnd256(), this.rnd256(), 255);
-        const pixels = new Uint8Array(data);
-        gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border, srcFormat, srcType, pixels);
-        gl.uniform1i(program.noise24b256, 0);
+        this.blockSize = 256;
+        gl.uniform1i(program.noise24b256, 0); // TEXTURE0
+        //console.log(`init noise24b256 with data ${data.slice(0,10)}... (${data.length})`);
       },
       start: function(){},
       stop: function(){},
+      update: function(gl, program){
+        this.data = [];
+        for (let i = 0; i < this.blockSize * this.blockSize; i++)
+          this.data.push(this.rnd256() , this.rnd256(), this.rnd256(), 255);
+        const pixels = new Uint8Array(this.data);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.blockSize, this.blockSize, 0, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+      }
+    },
+    stereoMic: {
+      isEnabled: false,
+      name: 'iStereoMic',
+      type: 'vec2',
+      data: [],
+      start: function(){
+        navigator.mediaDevices.getUserMedia({ audio: { channelCount: 2 }, video: false }).then((stream) => {
+          this.stream = stream;
+          this.audioCtx = new AudioContext();
+          this.processor = this.audioCtx.createScriptProcessor(256, 2, 2);
+          this.processor.onaudioprocess = (event) => {
+            const l = event.inputBuffer.getChannelData(0);
+            const r = event.inputBuffer.getChannelData(1);
+            this.data = [ l[0], r[0] ];
+          };
+          const source = this.audioCtx.createMediaStreamSource(stream);
+          source.connect(this.processor);
+          this.processor.connect(this.audioCtx.destination)
+        });
+      },
+      stop: function(){
+        this.stream.getTracks().forEach(track => {
+          track.stop();
+          track.enabled = false;
+        });
+      },
       update: function(){}
     },
     mic8b: {
       isEnabled: false,
       name: 'iMic',
       type: 'sampler2D',
-      data: null,
+      data: [],
       init: function(gl, program){
         const texture = gl.createTexture();
         gl.activeTexture(gl.TEXTURE0); 
         gl.bindTexture(gl.TEXTURE_2D, texture);
         this.level = 0;
-        this.internalFormat = gl.LUMINANCE;
-        this.width = 16;
-        this.height = 16;
+        this.internalFormat = gl.RGBA;
+        this.sz = 32;
+        this.width = this.sz;
+        this.height = this.sz;
         this.len = this.width * this.height;
         this.border = 0;
-        this.srcFormat = gl.LUMINANCE;
+        this.srcFormat = gl.RGBA;
         this.srcType = gl.UNSIGNED_BYTE;
-        this.data = new Array(this.len).fill(0);
-        gl.uniform1i(program.mic8b, 0);
+        this.data = new Uint8Array(this.len * 4);
         this.gl = gl;
+        this.audioCtx = new AudioContext();
+        this.processor = this.audioCtx.createScriptProcessor(this.len * 4, 1, 1);
+        this.processor.onaudioprocess = (event) => {
+            const inputData = event.inputBuffer.getChannelData(0);
+            for (let i = 0; i < this.len; i++)
+              this.data[i] = (inputData[i] * 128 + 128) & 0xFF;
+        };
       },
       start: function(){
-        navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then((stream) => {
+        navigator.mediaDevices.getUserMedia({ audio: { channelCount: 2 }, video: false }).then((stream) => {
           this.stream = stream;
-          const audioCtx = new AudioContext();
-          this.analyser = audioCtx.createAnalyser();
-          const source = audioCtx.createMediaStreamSource(stream);
-          source.connect(this.analyser);
-          this.analyser.fftSize = this.len * 2;
-          const bufferLength = this.analyser.frequencyBinCount;
-          this.data = new Uint8Array(bufferLength);
+          const source = this.audioCtx.createMediaStreamSource(stream);
+          source.connect(this.processor);
+          this.processor.connect(this.audioCtx.destination)
         });
       },
       stop: function(){
@@ -415,25 +443,16 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord){
         });
       },
       update: function(){
-        if (this.analyser)
-          this.analyser.getByteFrequencyData(this.data);
-        //console.dir(this.data);
-        const pixels = new Uint8Array(this.data);
-        this.gl.texImage2D(this.gl.TEXTURE_2D,
-          this.level,
-          this.internalFormat,
-          this.width,
-          this.height,
-          this.border,
-          this.srcFormat,
-          this.srcType,
-          pixels);
+        this.gl.texImage2D(this.gl.TEXTURE_2D,0, this.gl.RGBA, this.width, this.height, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array(this.data));
       }
     },
     inspectCode: function(code){
       this.uniformList.forEach(uniform => {
         let regex = new RegExp(`[\n\\s]+uniform\\s+${this[uniform].type}\\s+${this[uniform].name}`,'g');
-        this[uniform].isEnabled = code.match(regex) ? true : false;
+        let isEnabled = code.match(regex) ? true : false;
+        this[uniform].isEnabled = isEnabled;
+        if (isEnabled)
+          console.log(`${uniform} is enabled: ${this[uniform].isEnabled}`);
       });
     },
 
