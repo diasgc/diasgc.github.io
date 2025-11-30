@@ -63,5 +63,13 @@
       "file": "${workspaceFolder}/zc/tnk/index.html",
       "runtimeArgs": ["--disable-web-security"]
     },
+        {
+      "type": "msedge",
+      "request": "launch",
+      "name": "ff",
+      "webRoot": "${workspaceRoot}/ff",
+      "file": "${workspaceFolder}/ff/index.html",
+      "runtimeArgs": ["--disable-web-security"]
+    },
   ]
 }
