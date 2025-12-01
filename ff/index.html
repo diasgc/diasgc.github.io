@@ -15,13 +15,17 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <video autoplay muted id="video-result" controls></video><br/>
+    <video class="f1" autoplay muted id="video-result" controls></video><br/>
+    <div class="f1">
     <button disabled id="load-button">Load ffmpeg-core (~31 MB)</button><br/>
-    <input type="file" id="uploader" accept="video/webm"/><br/>
+    <input type="file" id="uploader" accept="video/*"/><br/>
+    <pre><code id="ffurl" contenteditable="true" spellcheck="false">insert url</code></pre>
     <pre><code id="ffargs" contenteditable="true" spellcheck="false">-c:v libx265 -crf 32</code></pre>
-    <button disabled id="transcode-button">Transcode webm to mp4</button><br/>
-    <p id="log-div"></p>
-    <p>Open Developer Tools (Ctrl+Shift+I) to View Logs</p>
+    <button id="transcode-button">Transcode</button><br/>
+    </div>
+    <div class="f1">
+      <pre><code class="log" id="log-div"></code></pre>
+    </div>
     <script src="ff.js?v=251201a"></script>
 </body>
 </html>

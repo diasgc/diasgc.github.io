@@ -8,6 +8,8 @@
 
 body {
   position: relative;
+  display: flex;
+  flex-direction: column;
   width: 100dvw;
   height: 100dvh;
   margin: 0;
@@ -18,8 +20,13 @@ body {
   color: var(--main-fg);
 }
 
+.f1 {
+  flex: 1;
+}
+
 video {
   width: 100%;
+  flex: 1;
 }
 
 code {
@@ -38,4 +45,13 @@ button, input, pre {
 
 input, pre {
   width: calc(100% - 40px);
+}
+
+.log {
+  height: 100%;
+  flex: 1;
+  overflow: auto;
+  font-size: 10px;
+  color: #fe4;
+  border: none;
 }
