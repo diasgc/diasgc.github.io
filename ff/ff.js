@@ -31,6 +31,14 @@ const fetchFile = async (url) => {
     return new Uint8Array(buffer);
 };
 
+const inputData = {
+    file: null,
+}
+
+document.getElementById('uploader').addEventListener('change', async (event) => {
+    inputData.file = event.target.files[0];
+});
+
 const load = async () => {
     loadBtn.setAttribute('disabled', true);
     const ffmpegBlobURL = await toBlobURLPatched(`${baseURLFFMPEG}/ffmpeg.js`, 'text/javascript', (js) => js.replace('new URL(e.p+e.u(814),e.b)', 'r.workerLoadURL'));
@@ -62,9 +70,17 @@ const load = async () => {
     transcodeBtn.removeAttribute('disabled');
 }
 
+const tryFetchInputFile = async () => {
+    if (inputData.file) {
+        return await inputData.file.arrayBuffer();
+    } else {
+        return await fetchFile('https://raw.githubusercontent.com/ffmpegwasm/testdata/master/Big_Buck_Bunny_180_10s.webm');
+    }
+};
+
 const transcode = async () => {
     transcodeBtn.setAttribute('disabled', true);
-    await ffmpeg.writeFile('input.webm', await fetchFile('https://raw.githubusercontent.com/ffmpegwasm/testdata/master/Big_Buck_Bunny_180_10s.webm'));
+    await ffmpeg.writeFile('input.webm', await tryFetchInputFile());
     await ffmpeg.exec(['-i', 'input.webm', 'output.mp4']);
     const data = await ffmpeg.readFile('output.mp4');
     videoEl.src = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
