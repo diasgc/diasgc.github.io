@@ -37,6 +37,14 @@ const inputData = {
 
 document.getElementById('uploader').addEventListener('change', async (event) => {
     inputData.file = event.target.files[0];
+    if (inputData.file) {
+        const video = document.getElementById('video-result');
+        video.src = URL.createObjectURL(inputData.file);
+        video.load();
+        const arrayBuffer = await inputData.file.arrayBuffer();
+        inputData.data = new Uint8Array(arrayBuffer);
+        transcodeBtn.removeAttribute('disabled');
+    }
 });
 
 const load = async () => {
@@ -67,7 +75,7 @@ const load = async () => {
         });
     }
     console.log('ffmpeg.load success');
-    transcodeBtn.removeAttribute('disabled');
+    //transcodeBtn.removeAttribute('disabled');
 }
 
 const tryFetchInputFile = async () => {
@@ -80,8 +88,9 @@ const tryFetchInputFile = async () => {
 
 const transcode = async () => {
     transcodeBtn.setAttribute('disabled', true);
-    await ffmpeg.writeFile('input.webm', await tryFetchInputFile());
-    await ffmpeg.exec(['-i', 'input.webm', 'output.mp4']);
+    let args = document.getElementById('ffargs').innerText.split('\s+');
+    await ffmpeg.writeFile('input.webm', inputData.data);
+    await ffmpeg.exec(['-i', 'input.webm', ...args, 'output.mp4']);
     const data = await ffmpeg.readFile('output.mp4');
     videoEl.src = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
 }

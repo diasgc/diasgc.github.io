@@ -17,3 +17,25 @@ body {
   background: var(--main-bg);
   color: var(--main-fg);
 }
+
+video {
+  width: 100%;
+}
+
+code {
+  display: block;
+}
+
+button, input, pre {
+  width: calc(100% - 20px);
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid #8888;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px;
+}
+
+input, pre {
+  width: calc(100% - 40px);
+}

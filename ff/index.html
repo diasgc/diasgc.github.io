@@ -18,6 +18,7 @@
     <video autoplay muted id="video-result" controls></video><br/>
     <button disabled id="load-button">Load ffmpeg-core (~31 MB)</button><br/>
     <input type="file" id="uploader" accept="video/webm"/><br/>
+    <pre><code id="ffargs" contenteditable="true" spellcheck="false">-c:v libx265 -crf 32</code></pre>
     <button disabled id="transcode-button">Transcode webm to mp4</button><br/>
     <p id="log-div"></p>
     <p>Open Developer Tools (Ctrl+Shift+I) to View Logs</p>
