@@ -115,7 +115,7 @@ const inputData = {
 }
 
 async function transcode(){
-  if (ui.furl.innerText.startsWith('http')){
+  if (ui.furl.innerText.startsWith('https')){
     await ffUtil.transcodeUrl(ui.furl.innerText, inputData.extOut, ui.args.innerText);
   } else if (inputData.file){
     await ffUtil.transcodeFile(inputData.extIn, inputData.data, inputData.extOut, ui.args.innerText);
