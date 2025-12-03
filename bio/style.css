@@ -1,0 +1,504 @@
+:root {
+  color-scheme: dark light;
+  --accent:  light-dark(#07b,#07b);
+  --main-bg: light-dark(#eee,#333);
+  --main-fg: light-dark(#111,#eee);
+  --fade-fg: light-dark(#1118,#eee8);
+  --bar-bg:  light-dark(#ddd,#222);
+  --fade-border: light-dark(#1112,#fff2);
+  --fade-cell:   light-dark(#1111,#fff1);
+  --accent-cell: light-dark(#07ba,#07b);
+}
+
+@font-face {
+  font-family: 'stmVelish';
+  src:url('fonts/stmvelish.woff') format('woff');
+}
+
+body {
+  background: var(--main-bg);
+  color: var(--main-fg);
+  font-family: sans-serif;
+  overflow: hidden;
+  margin: 0;
+  z-index: 0;
+}
+
+#bkg-blur {
+  position: fixed;
+  display: none;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #0008;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 3;
+}
+
+/* Side Navigation Styling */
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: var(--bar-bg);
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.sidenav a, .nav-details {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: var(--main-fg);
+  display: block;
+  transition: 0.3s;
+}
+
+.zm {
+  padding: 8px 8px;
+  text-decoration: none;
+  font-size: 22px;
+  color: var(--main-fg);
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: var(--accent);
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+/* App Bar Styling */
+.app-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--bar-bg);
+  color: var(--main-fg);
+  padding: 12px 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif;
+}
+
+/* Title Styling */
+.app-bar .title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Icon Styling */
+.app-bar .icons {
+  display: flex;
+  gap: 16px;
+}
+
+#app-bar-menu {
+  position: absolute;  
+  top: 48px;
+  right: 0;
+  padding: 12px;
+  font-size: 16px;
+  background: var(--bar-bg);
+  z-index: 2;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  color: var(--bar-bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.dropdown div {
+  display: block;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: var(--main-fg);
+}
+
+.dropdown div:hover {
+  color: var(--accent);
+}
+
+.dropdown.show {
+  display: block;
+}
+
+#web-stat {
+  position: absolute;
+  top:12px;
+  right: 32px;
+  font-size: 14px;
+  color: #0f0;
+  text-align: center;
+  width: 20px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.text-s {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.app-bar .icon {
+  cursor: pointer;
+  font-size: 28px;
+  transition: transform 0.2s ease;
+}
+
+.app-bar .icon:hover {
+  transform: scale(1.2);
+}
+
+/* Optional: Responsive Design */
+@media (max-width: 600px) {
+  .app-bar .title { font-size: 16px;}
+  .app-bar .icon { font-size: 24px; }
+  .sidenav { padding-top: 15px; }
+  .sidenav a { font-size: 18px; }
+}
+
+/* Navigation bar container */
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--bar-bg); /* Dark background */
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px 0;
+}
+
+/* Navigation bar items */
+.nav-bar .a {
+  color: var(--main-fg);
+  text-decoration: none;
+  font-size: 16px;
+  text-align: center;
+  flex: 1; 
+}
+
+/* Highlight effect on hover */
+.nav-bar .a:hover {
+  color: var(--accent);
+}
+
+/* Active link styling */
+.nav-bar .a.active {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+/* Icon styling (optional) */
+.nav-bar .a i {
+  display: block;
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+#nav-neq {
+  font-size: 24px;
+  font-weight: bold;
+  font-family: 'stmVelish';
+}
+
+#heb-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  margin-top: 32px;
+}
+
+#gem-content {
+  padding: 32px;
+}
+
+.about-text {
+  font-size: 12px;
+  text-align: center;
+}
+
+.heb-text, .gem-text, .gem-text-small {
+  font-size: 28px;
+  text-align: right;
+  direction: rtl;
+  font-family: 'stmVelish';
+  padding: 32px 8px 12px 8px;
+  flex: 1;
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+.gem-text, .gem-text-small {
+  font-size: 22px;
+  opacity: 1;
+  animation: none;
+}
+
+.gem-text-small {
+  font-size: 18px;
+}
+
+.gem-eng {
+  font-size: 14px;
+  padding: 0 8px;
+}
+
+.table-flex {
+  display: flex;
+}
+
+
+#eng-content {
+  font-size: 16px;
+  text-align: left;
+  font-style: italic;
+  padding: 32px;
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  0%   { opacity: 0;}
+  100% { opacity: 1; }
+}
+
+#info-content {
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  padding: 32px 12px;
+}
+
+#pasuk-ref {
+  font-size: 12px;
+  text-align: right;
+  direction: ltr;
+  padding: 18px 42px;
+}
+
+.pasuk-nav {
+  position: static;
+  margin: 2px;
+  color: var(--fade-border);
+  font-size: 48px;
+  font-weight: bold;
+  outline: none;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background: var(--fade-border);
+    cursor: pointer;
+  }
+}
+
+#nav-buttons {
+  position: fixed;
+  bottom: 72px;
+  right: 1vw;
+}
+
+.zm {
+  font-size: 12px;
+}
+
+.panel {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 12px;
+  margin: 0;
+  padding: 16px;
+  border-radius: 8px;;
+  background: #202020f8;
+  z-index: 4;
+}
+
+.fs-search {
+  display: block;
+  border: 1px solid var(--fade-border);
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 8px;
+  text-align: center;
+  transition: 0.5s;
+}
+
+.box-1 {
+  display: flex;
+  flex-direction: row;
+}
+
+.b1 {
+  flex: 1;
+}
+.b3 {
+  flex: 3;
+}
+.span-sup, .span-notes {
+  font-size: 14px;
+  color: var(--fade-fg)
+}
+.span-sup {
+  vertical-align: super;
+}
+
+.matrix-span {
+  background: var(--fade-border);
+  color: var(--main-fg);
+  border-radius: 4px;
+  padding: 8px;
+  margin: 4px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+}
+
+#pan-matrix-head {
+  padding: 8px 0px 12px 0px;
+}
+
+.matrix-grid {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  margin: 12px 0px;
+  direction: rtl;
+  overflow-y: auto;
+  max-height: 90vh;
+  &::-webkit-scrollbar {
+    display: none; /* Hides scrollbar for WebKit browsers */
+  }
+}
+ 
+span[class^="matrix-span-cell-"]{
+  color: var(--main-fg);
+  background: var(--fade-cell);
+  aspect-ratio: 1 / 1;
+  font-family: 'stmVelish';
+  user-select: none;
+  text-align: center;
+  cursor: pointer;
+}
+
+span[class^="matrix-span-cell-"]:hover{
+  background: var(--accent-cell);
+}
+
+.matrix-span-cell-0 {
+  max-width: 72px;
+  padding: 0px 8px;
+  font-size: 26px;
+}
+
+.matrix-span-cell-1 {
+  max-width: 64px;
+  padding: 0px 6px;
+  font-size: 24px;  
+}
+
+.matrix-span-cell-2 {
+  max-width: 48px;
+  padding: 0px 4px;
+  font-size: 18px;  
+}
+
+.matrix-span-cell-3 {
+  max-width: 32px;
+  padding: 0px 2px;
+  font-size: 14px;  
+}
+
+.matrix-span-cell-4 {
+  max-width: 22px;
+  padding: 0px;
+  font-size: 12px;  
+}
+
+#pan-matrix-head {
+  font-size: 12px;
+  font-weight: bold;
+  margin: 12px 4px;
+}
+
+#pan-matrix-dismiss {
+  margin: 24px 4px;
+}
+
+button:focus, input:focus, select:focus, textarea:focus {
+  outline: none;
+}
+
+button,input,select {
+  cursor: pointer;
+  outline: none;
+  border: 1px solid var(--fade-border);
+  background: transparent;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 13px;
+  margin: 8px;
+  color: var(--main-fg);
+}
+
+.button-nav {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  margin: 0;
+  border-radius: 50%;
+  font-weight: normal;
+  &:hover{
+    font-weight: bold;
+  }
+}
+
+.btn-center {
+  display: block;
+  width: 100%;
+  justify-self: center;
+  margin: 32px 0 0 0;
+}
+
+select {
+  border: none;
+}
+
+select option {
+  background: var(--main-bg);
+  color: var(--main-fg);
+}
+
+.sel-search {
+  font-size: 18px;
+  padding: 2px 8px;
+}

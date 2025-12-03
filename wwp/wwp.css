@@ -25,12 +25,18 @@ body {
 
 #webstatus {
   position: absolute;
-  top:12px;
-  right: 12px;
+  top:100px;
+  right: 24px;
   width: 12px;
   height: 12px;
   border-radius: 50%;
+  background: #ff01;
   transition: background 1s ease;
+}
+
+#bsettings {
+  top: 42px;
+  right: 20px;
 }
 
 button {
@@ -115,11 +121,6 @@ input[type="checkbox"] {
   display: none;
   left: 8px;
   bottom: 0px;
-}
-
-#bsettings {
-  top: 42px;
-  right: 12px;
 }
 
 #info {

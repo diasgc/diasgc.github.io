@@ -272,6 +272,7 @@ function updateNow(elev, moon, temp, hum, clds, cldL, rain, wind){
 
 window.onload = function(){
   settings.init2();
+  wwprov.status.addEventListener('click', () => reset());
   let w = new GlCanvas('gl-canvas');
   wwprov.load(() => {
     updateInfo();
