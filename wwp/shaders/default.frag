@@ -54,6 +54,7 @@
 #define R11(x)        fract(sin(x) * 43758.5453)
 #define ACESFilmic(x) (x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14)
 
+
 // environment variables
 #if SHADERTOY
  #define temperature  273.0
@@ -63,6 +64,7 @@
  #define moon         0.5
  #define rain         0.0
  #define wind         10.0
+ #define offsetX      0.0
 #else
  // uniforms
  uniform vec2         iResolution;
@@ -76,6 +78,7 @@
  uniform float        uRain;
  uniform float        uTemperature;
  uniform float        uWind;
+ uniform float        uOffsetX;
  // alias
  #define sunElev      uSunPosition
  #define humidity     uHumidity
@@ -85,6 +88,7 @@
  #define rain         uRain
  #define temperature  uTemperature
  #define wind         uWind
+ #define offsetX      uOffsetX
 #endif
 
 #define altitude      0.0
@@ -228,7 +232,7 @@ const struct Mountains {
   vec3  shade;
   int   steps;
   float height;
-  float offset;
+  float yoffset;
 } MOUNTS = Mountains(vec3(1.13, 1.04, 1.1), 10, 1.2, 0.08);
 
 float N11(float x){
@@ -249,11 +253,12 @@ float perlin(float x){
 
 float mountain(vec2 uv, float scale, float offset, float h1, float h2, float s){
   float h = h1 + perlin(MOUNTS.height * scale * uv.x + offset) * (h2 - h1);
-  return 1. - smoothstep(h, h + 0.001, uv.y - MOUNTS.offset);
+  return 1. - smoothstep(h, h + 0.001, uv.y - MOUNTS.yoffset);
 }
 
 float renderMountains(vec2 uv, float h){
   float m = 0.;
+  uv.x = fract(uv.x + offsetX);
   //float s = max(sunElev, 0.0);
   float ss = 0.001 + smoothstep(0.9, 1.0, h) * 0.008;
   m  = mountain(uv, 2.0, 7., -0.005, -0.07, ss * 1.5); // back
