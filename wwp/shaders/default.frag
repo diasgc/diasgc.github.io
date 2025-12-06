@@ -258,7 +258,7 @@ float mountain(vec2 uv, float scale, float offset, float h1, float h2, float s){
 
 float renderMountains(vec2 uv, float h){
   float m = 0.;
-  uv.x = fract(uv.x + offsetX);
+  uv.x = 0.5 * (uv.x + offsetX);
   //float s = max(sunElev, 0.0);
   float ss = 0.001 + smoothstep(0.9, 1.0, h) * 0.008;
   m  = mountain(uv, 2.0, 7., -0.005, -0.07, ss * 1.5); // back

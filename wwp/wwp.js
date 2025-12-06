@@ -217,6 +217,7 @@ function init(gl){
   webGl.start(settings.live);
   setInterval(upd, settings.rate);
 }
+
 function upd(){
   setUniforms();
   if (!settings.live)
@@ -247,7 +248,11 @@ function setUniforms(){
 }
 
 function androidSetWpOffset(offset){
-  webGl.uniforms.uOffsetX.data = [offset];
+  if (webGl){
+    webGl.uniforms.uOffsetX.data = [offset];
+    if (!settings.live)
+      webGl.render();
+  }
 }
 
 function reset(){
