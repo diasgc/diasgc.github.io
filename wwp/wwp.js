@@ -31,6 +31,7 @@ const settings = {
   rain: 'auto',
   moon: 'auto',
   wind: 'auto',
+  xoffset: 0.0,
   init2: function(){
     this.urlParams = new URLSearchParams(window.location.search);
     this.rate = parseInt(this.urlParams.get('live') || 2000);
@@ -68,6 +69,11 @@ const settings = {
       settings.wind = v < 0 ? 'auto' : v;
       l.innerHTML = "wind: " + settings.wind + (v < 0 ? "" : " km/h");
     });
+    settings.add(d, "offset", 0, 100,0, (v,l) => {
+      settings.xoffset = v / 100.0;
+      l.innerHTML = "x offset: " + settings.xoffset.toFixed(2);
+    });
+    this.toggleSettings();
   },
   toggleSettings: function(){
     settings.sId.style.display = settings.bId.checked ? 'inline' : 'none';
@@ -211,6 +217,7 @@ function init(gl){
   webGl.start(settings.live);
   setInterval(upd, settings.rate);
 }
+
 function upd(){
   setUniforms();
   if (!settings.live)
@@ -236,7 +243,16 @@ function setUniforms(){
   webGl.uniforms.uTemperature.data = [temp + 273.15];
   let wind10 = settings.wind === 'auto' ? wwprov.wth.get('wind_speed_10m') : settings.wind;
   webGl.uniforms.uWind.data = [wind10];
+  webGl.uniforms.uOffsetX.data = [settings.xoffset];
   updateNow(elev.toFixed(4),moon.toFixed(1),temp.toFixed(1),hum*100,clds*100,cldL*100,rain, wind10);
+}
+
+function androidSetWpOffset(offset){
+  if (webGl){
+    webGl.uniforms.uOffsetX.data = [offset];
+    if (!settings.live)
+      webGl.render();
+  }
 }
 
 function reset(){
@@ -286,7 +302,8 @@ window.onload = function(){
         uMoon: { type: 'float' },
         uRain: { type: 'float' },
         uTemperature: { type: 'float' },
-        uWind: { type: 'float' }
+        uWind: { type: 'float' },
+        uOffsetX: { type: 'float' }
       }
      }, gl => init(gl))
   });
