@@ -248,10 +248,10 @@ function setUniforms(){
 }
 
 function androidSetWpOffset(offset){
-  if (webGl){
+  settings.xoffset = offset;
+  if (webGl && !settings.live){
     webGl.uniforms.uOffsetX.data = [offset];
-    if (!settings.live)
-      webGl.render();
+    webGl.render();
   }
 }
 
