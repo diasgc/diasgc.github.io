@@ -580,7 +580,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   sky = ACESFilmic(sky);
 
 #if CLOUDS2
-  vec3 ro = vec3(0.0, 1.0, -1.0);
+  vec3 ro = vec3(0.0, .32, -1.5); //vec3 ro = vec3(0.0, 1.0, -1.0);
   vec3 rd = normalize(vec3(uv.x * iResolution.x / iResolution.y, -uv.y, 1.0));
   volumetricTrace(ro, rd, sky, phum, cosGamma, m);
 #endif
@@ -588,7 +588,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   // add moonlight according to moon phase (do not apply acesfilmic)
   sky += night;
 
-
+  // dim when clouds
+  sky *= mix(1.0, 0.84, vhum.z);
   
 
   if (m > 0.0) {
@@ -605,7 +606,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     float hazeE = (1. - hazeD) * sc;
     sky *= hazeD;
     sky += (hazeE + phum.y * clds * uv.y);
-    sky *= mix(1.0, 0.5, vhum.z);
   }
 
   if (rain > 0.0)
