@@ -594,21 +594,23 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   if (m > 0.0) {
     float s = smoothstep(0.01, 0.1, cosGamma) * length(sky) * vhum.y * 0.5;
     vec3 shade = mix(MOUNTS.shade, light * s, vhum.y);
-    vec3 fade = 0.5 * shade;
+    vec3 fade = vhum.y * shade;
     vec3 tone = shade;
     sky = s * mix(sky, mix(tone, fade, m), m * phum.y * (1. - phum.x) * cosGamma);
   }
 
-  if (overcast == 1.0){
+  if (vhum.z > 0.89){
     float sc = smoothstep( 0.0, 0.8, uv.y * cosGamma);
     float hazeD = 1. - 0.5 * phum.x * phum.y * sc;
     float hazeE = (1. - hazeD) * sc;
-    sky = sky * hazeD;
+    sky *= hazeD;
     sky += (hazeE + phum.y * clds * uv.y);
+    sky *= mix(1.0, 0.5, vhum.z);
   }
 
   if (rain > 0.0)
     renderRain(fragCoord, sky);
+  
   
   fragColor = vec4( sky, 1.0);
 }
