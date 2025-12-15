@@ -511,8 +511,8 @@ function hewClick(element, event){
   const v = KBLH.removeNikud(element.innerText);
   const g = KBLH.getGematria(v);
   let html = `<span class='gem-text'>${v}</span><span class='gem-eng'><b>ot:</b> ${KBLH.countOtiot(v)} <b>gematria:</b> ${g}</span><br>`;
-  fetchJson(`https://www.torahcalc.com/api/gematriasearch?value=${g}`,(j)=>{
-    if (j.data['TORAH_WORDS']){tl
+  fetchJson(`https://www.torahcalc.com/api/gematriasearch?value=${g}`,(j) => {
+    if (j.data['TORAH_WORDS']){
       html += `<p class='gem-eng'>Other Torah words matching gematria of ${g}</p>`
       j.data['TORAH_WORDS'].forEach(e => html += `<span class='gem-text-small'>${e} </span>`)  
     }
@@ -528,7 +528,7 @@ function about(){
 function fadeInText(element, newText){
   element.style.opacity = 0;
   element.style.animation = 'none';
-  void element.offsetWidth;navToParsha
+  void element.offsetWidth;
   element.innerHTML = newText;
   element.style.animation = 'fadeIn 0.5s ease-in-out forwards';
 }
@@ -539,7 +539,7 @@ function neq(){
   tnk.txtMode = (tnk.txtMode + 1) % 3;
   id.innerText = `${cap[tnk.txtMode]}`;
   refresh();
-}navToParsha
+}
 
 function settings(){
 
