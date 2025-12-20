@@ -151,7 +151,7 @@ function getWptsXml(keys){
 async function exportMedia() {
   const zip = new JSZip();
   const old = data.main.current;
-  const keys = Object.keys(wallpaper.presets);
+  const keys = Object.keys(data.presets);
   for (let i = 0; i < wallpaper.count; i++) {
     wallpaper.loadPreset(keys[i]);
     zip.file(
