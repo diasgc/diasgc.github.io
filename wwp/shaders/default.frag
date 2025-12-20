@@ -589,7 +589,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   sky += night;
 
   // dim when clouds
-  sky *= mix(1.0, 0.84, vhum.z);
+  //sky *= mix(1.0, 0.84, vhum.z);
   
 
   if (m > 0.0) {
