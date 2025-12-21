@@ -552,7 +552,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   L0 += sunEx * 1.9e2 * Fex * sundisk; //mix(sundisk, 0., overcast * m);
 #if DEF_LAMBDA
   // clouds will desaturate
-  L = mix(L, vec3(length(L)), overcast);
+  float lc = length(L) - smoothstep(0.9,1.0,overcast) * 0.2;
+
+  L = mix(L, vec3(lc), overcast);
 #endif
 
 #if CLOUDS
