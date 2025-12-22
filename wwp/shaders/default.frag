@@ -259,13 +259,11 @@ float mountain(vec2 uv, float scale, float offset, float h1, float h2, float s){
 float renderMountains(vec2 uv, float h){
   float m = 0.;
   uv.x = 0.5 * (uv.x + offsetX);
-  //float s = max(sunElev, 0.0);
-  float ss = 0.001 + smoothstep(0.9, 1.0, h) * 0.008;
-  m  = mountain(uv, 2.0, 7., -0.005, -0.07, ss * 1.5); // back
-  m += max(m, mountain(uv, 1.2,  9., 0.035, -0.10, ss));
-  m += max(m, mountain(uv, 1.7, 11., 0.105, -0.10, ss));
-  m += max(m, mountain(uv, 2.5, 16., 0.175, -0.10, ss * 1.5)); // front
-  return m * (1. - ss * uv.y * 500.);
+  m  =        mountain(uv, 8.0,   1.,-0.015, -0.05, 1.0);   // front
+  m += max(m, mountain(uv, 3.2,  10., 0.135, -0.08, 20.0));  
+  m += max(m, mountain(uv, 10.7, 21., 0.105, -0.03, 3.0));
+  m += max(m, mountain(uv, 12.5, 36., 0.175, -0.01, 4.0)); // front
+  return pow(m, 1.1 - h);
 }
 
 const vec2 I = vec2(0.0, 1.0);
@@ -542,8 +540,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
   
 #if MOUNTAINS
-  float m = renderMountains(uv, vhum.x * vhum.y);
+  float mh = 0.5 + 0.4 * smoothstep(0.8, 1.0, vhum.x * vhum.y);
+  float m = renderMountains(uv, mh);
 #else
+  float mh = 0.;
   float m = 0.;
 #endif
 
@@ -595,11 +595,13 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
 
   if (m > 0.0) {
-    float s = smoothstep(0.01, 0.1, cosGamma) * length(sky) * vhum.y * 0.5;
-    vec3 shade = mix(MOUNTS.shade, light * s, vhum.y);
-    vec3 fade = vhum.y * shade;
-    vec3 tone = shade;
-    sky = s * mix(sky, mix(tone, fade, m), m * phum.y * (1. - phum.x) * cosGamma);
+    //float s = smoothstep(0.01, 0.1, cosGamma) * length(sky) * vhum.y * 0.5;
+    //vec3 shade = mix(MOUNTS.shade, light * s, vhum.y);
+    //vec3 fade = vhum.y * shade;
+    //vec3 tone = shade;
+    //sky = s * mix(sky, mix(tone, fade, m), m * phum.y * (1. - phum.x) * cosGamma);
+    vec3 ms = mix(MOUNTS.shade, (1. - sky), mh);
+    sky = sky - m * (1. - mh) * ms;
   }
 
   if (vhum.z > 0.89){
