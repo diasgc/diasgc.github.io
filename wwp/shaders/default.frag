@@ -540,7 +540,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
   
   
 #if MOUNTAINS
-  float mh = 0.5 + 0.4 * smoothstep(0.8, 1.0, vhum.x * vhum.y);
+  float mh = 0.5 + 0.4 * smoothstep(0.8, 1.0, vhum.x * 0.3 + vhum.y * 0.7);
   float m = renderMountains(uv, mh);
 #else
   float mh = 0.;
@@ -600,8 +600,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     //vec3 fade = vhum.y * shade;
     //vec3 tone = shade;
     //sky = s * mix(sky, mix(tone, fade, m), m * phum.y * (1. - phum.x) * cosGamma);
-    vec3 ms = mix(MOUNTS.shade, (1. - sky), mh);
-    sky = sky - m * (1. - mh) * ms;
+    //vec3 ms = mix(MOUNTS.shade, (1. - sky), mh);
+    sky = sky - m * (1. - mh) * vec3(0.8, 0.81, 0.82);
   }
 
   if (vhum.z > 0.89){
