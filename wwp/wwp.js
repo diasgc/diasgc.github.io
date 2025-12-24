@@ -21,9 +21,11 @@ const settings = {
   urlParams: null,
   bId: document.getElementById('bsettings'),
   sId: document.getElementById('settings'),
+  timeId: document.getElementById('time'),
+  
   live: false,
   rate: 2000,
-  timeId: document.getElementById('time'),
+  
   sunPos: 'auto',
   humidity: 'auto',
   clouds: 'auto',
@@ -32,7 +34,8 @@ const settings = {
   moon: 'auto',
   wind: 'auto',
   xoffset: 0.0,
-  init2: function(){
+  
+  init: function(){
     this.urlParams = new URLSearchParams(window.location.search);
     this.rate = parseInt(this.urlParams.get('live') || 2000);
     this.live = this.rate === 0;
@@ -75,9 +78,11 @@ const settings = {
     });
     this.toggleSettings();
   },
+  
   toggleSettings: function(){
     settings.sId.style.display = settings.bId.checked ? 'inline' : 'none';
   },
+  
   add: function(d,lab,min,max,def, onchangeListener){
     let n = d.childElementCount + 1;
     let s = document.createElement('input');
@@ -107,10 +112,12 @@ const wwprov = {
   timestamp: 0,
   timeout: 24 * 60 * 60 * 1000,
   status: document.getElementById('webstatus'),
+
   url: function(kind, fields){
     const f = fields.join();
     return `https://api.open-meteo.com/v1/forecast?latitude=${wwprov.pos.latitude}&longitude=${wwprov.pos.longitude}&${kind}=${f}`;
   },
+  
   pos: {
     latitude: 0,
     longitude: 0,
@@ -122,6 +129,7 @@ const wwprov = {
       });  
     }
   },
+  
   sun: {
     elevRad: 0,
     elevAbs: 0,
@@ -141,6 +149,7 @@ const wwprov = {
       wwprov.sun.sunset = times.sunset.toLocaleTimeString();
     }
   },
+  
   wth: {
     data: {},
     timestamp: 0,
@@ -175,12 +184,14 @@ const wwprov = {
       return i < 0 ? 0 : wwprov.wth.data.hourly[field][i];
     }
   },
+  
   update: function(callback){
     wwprov.pos.update(() => {
       wwprov.sun.update();
       wwprov.wth.update(callback);
     });
   },
+  
   load: function(callback){
     let cache = localStorage.getItem('wwprov');
     if (cache){
@@ -194,6 +205,7 @@ const wwprov = {
       wwprov.update(callback);
     }
   },
+  
   save: function(){
     let cache = {
       timestamp: wwprov.wth.timestamp,
@@ -203,6 +215,7 @@ const wwprov = {
     }
     localStorage.setItem('wwprov', JSON.stringify(cache));
   },
+  
   clearCache: function(){
     localStorage.removeItem('wwprov');
   }
@@ -287,7 +300,7 @@ function updateNow(elev, moon, temp, hum, clds, cldL, rain, wind){
 }
 
 window.onload = function(){
-  settings.init2();
+  settings.init();
   wwprov.status.addEventListener('click', () => reset());
   let w = new GlCanvas('gl-canvas');
   wwprov.load(() => {
@@ -296,14 +309,14 @@ window.onload = function(){
       fragmentAsset: 'shaders/default.frag',
       uniforms: {
         uSunPosition: { type: 'float' },
-        uClouds: { type: 'float' },
-        uCloudLow: { type: 'float' },
-        uHumidity: { type: 'float' },
-        uMoon: { type: 'float' },
-        uRain: { type: 'float' },
+        uClouds:      { type: 'float' },
+        uCloudLow:    { type: 'float' },
+        uHumidity:    { type: 'float' },
+        uMoon:        { type: 'float' },
+        uRain:        { type: 'float' },
         uTemperature: { type: 'float' },
-        uWind: { type: 'float' },
-        uOffsetX: { type: 'float' }
+        uWind:        { type: 'float' },
+        uOffsetX:     { type: 'float' }
       }
      }, gl => init(gl))
   });

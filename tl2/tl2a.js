@@ -61,29 +61,31 @@ const camera = {
 const camSettings = {
   constraints: {
     video: {
-      width: { ideal: 720 },
-      height: { ideal: 720 },
+      width:      { ideal: 720 },
+      height:     { ideal: 720 },
       facingMode: "environment",
-      frameRate: { ideal: 30.0, max: 60.0 }
+      frameRate:  { ideal: 30.0, max: 60.0 }
     },
     audio: false
   },
   caps: {},
-  fps: 30,
-  jpegQual: 0.9,
+  fps:        30,
+  jpegQual:   0.9,
   videoMime: "video/webm",
-  iso: { cam: true, abr: 'iso', defVal: 'auto', mi: 'camera'},
-  timelapse: { value: 2, cam: false, abr: 'speed', defVal: 2, mi: 'avg_pace'},
-  duration: { value: 60, cam: false, abr: 'timer', defVal: 60, mi: 'alarm_on'},
-  exposureTime: { cam: true, abr: 'exp', defVal: 'auto', mode: 'exposureMode', auto: 'continuous', manual: 'manual', mi: 'exposure'},
-  colorTemperature: { cam: true, abr: 'TºK', defVal: 'auto', mode: 'whiteBalanceMode', auto: 'continuous', manual: 'manual', mi: 'device_thermostat'},
-  focusDistance:    { cam: true, abr: 'foc', defVal: 'auto', mode: 'focusMode', auto: 'continuous', manual: 'manual', mi: 'frame_person'},
-  contrast: { cam: true, abr: 'cnt', defVal: 'auto', mi: 'contrast'},
-  saturation: { cam: true, abr: 'sat', defVal: 'auto', mi: 'palette'},
-  brightness: { cam: true, abr: 'brt', defVal: 'auto', mi: 'wb_sunny'},
-  sharpness: { cam: true, abr: 'shp', defVal: 'auto', mi: 'triangle_circle'},
+  iso:              { cam: true,  abr: 'iso',   defVal: 'auto', mi: 'camera'},
+  timelapse:        { cam: false, abr: 'speed', defVal: 2,      mi: 'avg_pace', value: 2 },
+  duration:         { cam: false, abr: 'timer', defVal: 60,     mi: 'alarm_on', value: 60},
+  exposureTime:     { cam: true,  abr: 'exp',   defVal: 'auto', mi: 'exposure', mode: 'exposureMode', auto: 'continuous', manual: 'manual' },
+  colorTemperature: { cam: true,  abr: 'TºK',   defVal: 'auto', mi: 'device_thermostat', mode: 'whiteBalanceMode', auto: 'continuous', manual: 'manual'},
+  focusDistance:    { cam: true,  abr: 'foc',   defVal: 'auto', mi: 'frame_person', mode: 'focusMode', auto: 'continuous', manual: 'manual'},
+  contrast:         { cam: true,  abr: 'cnt',   defVal: 'auto', mi: 'contrast'},
+  saturation:       { cam: true,  abr: 'sat',   defVal: 'auto', mi: 'palette'},
+  brightness:       { cam: true,  abr: 'brt',   defVal: 'auto', mi: 'wb_sunny'},
+  sharpness:        { cam: true,  abr: 'shp',   defVal: 'auto', mi: 'triangle_circle'},
   track: null,
-  drawInterval: function(){ return 1000 / this.fps; },
+  drawInterval: function(){
+    return 1000 / this.fps;
+  },
   init: function(stream){
     this.track = stream.getVideoTracks()[0];
     this.caps = this.track.getCapabilities();
@@ -99,12 +101,12 @@ const camSettings = {
 
 const ui = {
   
-  dialogEl: document.getElementById('dialog'),
-  elapsedEl: document.getElementById('elapsedTime'),
+  dialogEl:   document.getElementById('dialog'),
+  elapsedEl:  document.getElementById('elapsedTime'),
   recordedEl: document.getElementById('recordedTime'),
-  divCaps: document.getElementById('div-setup'),
-  timerEl: document.getElementById('div-timer'),
-  speedEl: document.getElementById('tl-speed'),
+  divCaps:    document.getElementById('div-setup'),
+  timerEl:    document.getElementById('div-timer'),
+  speedEl:    document.getElementById('tl-speed'),
 
   init: function(){
     console.dir(camSettings);
@@ -119,6 +121,7 @@ const ui = {
       }
     });
   },
+
   setTimelapseSpeed: function(e){
     e.stopPropagation();
     let s = parseFloat(prompt('Set timelapse speed x', 60));
@@ -126,6 +129,7 @@ const ui = {
     ui.speedEl.innerText = `${s}x`;
     camSettings.timelapse.value = s/camSettings.fps;
   },
+
   getDiv: function(capName, callback){
     const cap = camSettings[capName];
     if (!cap) return document.createElement('div');
