@@ -9,6 +9,7 @@
   <title>Test iframe</title>
   <style>
     body, html {
+      font-family: monospace;
       margin: 0;
       padding: 0;
       height: 100%;
@@ -25,15 +26,15 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: 42px;
       text-align: start;
-      padding: 12px 4px;
-      background: #222;
+      padding: 12px;
+      background: #400;
     }
     #i-url {
       display: inline-block;
-      width: calc(100% - 8px);
-      padding: 2px 4px;
+      width: calc(100% - 72px);
+      padding: 8px;
+      margin-left: 24px;
       font-size: 14px;
       color: #eee;
       background: #333;
@@ -46,9 +47,29 @@
   </style>
  </head>
  <body>
-   <iframe id="iframe"></iframe>
+   <iframe id="iframe" sandbox="allow-scripts" onload="setUrl(this.contentWindow.location)"></iframe>
    <div class="m-top">
-    <div id="i-url" contenteditable="true">about:blank</div>
+    <div id="i-url" contenteditable="true">https://www.google.com</div>
    </div>
+   <script>
+    const iframe = document.getElementById('iframe');
+    const iUrl = document.getElementById('i-url');
+    iUrl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        let url = iUrl.innerText.trim();
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+          url = 'https://' + url;
+        }
+        iframe.src = url;
+      }
+    });
+    function setUrl(location) {
+      iUrl.innerText = iframe.src;
+      let iframeDoc = this.contentDocument || this.contentWindow.document;
+      let audios = iframeDoc.querySelectorAll('audio, video');
+      audios.forEach(el => el.muted = true);
+    }
+   </script>
  </body>
 </html>
