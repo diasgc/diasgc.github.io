@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="mobile-web-app-capable" content="yes">
+  <title>Test iframe</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #111;
+      overflow: hidden;
+    }
+    iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
+    }
+    .m-top {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 42px;
+      text-align: start;
+      padding: 12px 4px;
+      background: #222;
+    }
+    #i-url {
+      display: inline-block;
+      width: calc(100% - 8px);
+      padding: 2px 4px;
+      font-size: 14px;
+      color: #eee;
+      background: #333;
+      border-radius: 8px;
+      outline: none;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  </style>
+ </head>
+ <body>
+   <iframe id="iframe"></iframe>
+   <div class="m-top">
+    <div id="i-url" contenteditable="true">about:blank</div>
+   </div>
+ </body>
+</html>

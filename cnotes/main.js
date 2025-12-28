@@ -36,22 +36,25 @@ const actions = {
         alert('Note saved securely!');
     },
     loadNote: function() {
-        if (!actions.password) {
-            alert('Please set a password first.');
-            return;
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.onchange = e => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const encrypted = event.target.result;
+                actions.password = ui.requestPassword();
+                try {
+                    const decrypted = CryptoJS.AES.decrypt(encrypted, actions.password).toString(CryptoJS.enc.Utf8);
+                    ui.contentId.innerHTML = decrypted;
+                    alert('Note loaded successfully!');
+                } catch (e) {
+                    alert('Failed to decrypt note. Check your password.');
+                }
+            }
+            reader.readAsText(file);
         }
-        const encrypted = localStorage.getItem('cnote');
-        if (!encrypted) {
-            alert('No note found!');
-            return;
-        }
-        try {
-            const decrypted = CryptoJS.AES.decrypt(encrypted, actions.password).toString(CryptoJS.enc.Utf8);
-            ui.contentId.innerHTML = decrypted;
-            alert('Note loaded successfully!');
-        } catch (e) {
-            alert('Failed to decrypt note. Check your password.');
-        }
+        input.click();
     }
 }
 
