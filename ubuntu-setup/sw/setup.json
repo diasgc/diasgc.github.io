@@ -64,7 +64,8 @@
   "Extras": {
     "id": "grp-xtra",
     "pkg": {
-      "Cubic": {"type": "apt", "args": "cubic", "ppa": "cubic-wizard/release"}
+      "Cubic": {"type": "apt", "args": "cubic", "ppa": "cubic-wizard/release"},
+      "Cryptomator": {"type": "apt", "args": "cryptomator", "ppa":"sebastian-stenzel/cryptomator" }
     }
   }
 }
