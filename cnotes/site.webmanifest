@@ -1,6 +1,6 @@
 {
-  "name": "tnk",
-  "short_name": "tnk",
+  "name": "cnotes",
+  "short_name": "cnotes",
   "icons": [
     {
       "src": "icon.svg",
@@ -9,7 +9,7 @@
       "purpose": "any"
   }
   ],
-  "theme_color": "#202020",
-  "background_color": "#202020",
+  "theme_color": "#111111",
+  "background_color": "#111111",
   "display": "standalone"
 }

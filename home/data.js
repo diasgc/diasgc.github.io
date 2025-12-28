@@ -12,6 +12,7 @@
     { "url": "https://diasgc.github.io/glsl/", "icon": "../glsl/glsl.svg", "name": "GLSL"},
     { "url": "https://diasgc.github.io/glsl/editor.html", "icon": "../glsl/editor.svg", "name": "WebGl"},
     { "url": "https://diasgc.github.io/sensor/", "icon": "../sensor/icon.svg", "name": "Sensors"},
+    { "url": "https://diasgc.github.io/cnotes/", "icon": "../cnotes/icon.svg", "name": "CNotes"},
     { "url": "https://diasgc.github.io/ubuntu-setup/res/", "icon": "../ubuntu-setup/res/icon.svg", "name": "UbuntuWp"},
     { "url": "https://diasgc.github.io/ubuntu-setup/sw/", "icon": "../ubuntu-setup/sw/icon.svg", "name": "UbuntuSetup"},
     { "url": "https://diasgc.github.io/color/", "icon": "../color/icon.svg", "name": "Color"},

@@ -1,36 +1,45 @@
-    const iframe = document.getElementById('iframe');
-    const iUrl = document.getElementById('i-url');
-    const mTop = document.querySelector('.m-top');
-    let inactivityTimer;
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker
+      .register("/old_h/sb/serviceWorker.js")
+      .then(res => console.log("service worker registered"))
+      .catch(err => console.log("service worker not registered", err))
+  })
+}
 
-    function resetInactivityTimer() {
-      clearTimeout(inactivityTimer);
-      mTop.classList.remove('hidden');
-      inactivityTimer = setTimeout(() => {
-        mTop.classList.add('hidden');
-      }, 5000);
+const iframe = document.getElementById('iframe');
+const iUrl = document.getElementById('i-url');
+const mTop = document.querySelector('.m-top');
+let inactivityTimer;
+
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  mTop.classList.remove('hidden');
+  inactivityTimer = setTimeout(() => {
+    mTop.classList.add('hidden');
+  }, 5000);
+}
+
+// Track activity
+document.addEventListener('mousemove', resetInactivityTimer);
+document.addEventListener('keydown', resetInactivityTimer);
+document.addEventListener('click', resetInactivityTimer);
+document.addEventListener('touchstart', resetInactivityTimer);
+
+iUrl.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    let url = iUrl.innerText.trim();
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://' + url;
     }
+    iframe.src = url;
+  }
+});
 
-    // Track activity
-    document.addEventListener('mousemove', resetInactivityTimer);
-    document.addEventListener('keydown', resetInactivityTimer);
-    document.addEventListener('click', resetInactivityTimer);
-    document.addEventListener('touchstart', resetInactivityTimer);
+function setUrl(frame) {
+  iUrl.innerText = frame.contentWindow.location.href;
+}
 
-    iUrl.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        let url = iUrl.innerText.trim();
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-          url = 'https://' + url;
-        }
-        iframe.src = url;
-      }
-    });
-
-    function setUrl(frame) {
-      iUrl.innerText = frame.contentWindow.location.href;
-    }
-
-    // Initialize timer
-    resetInactivityTimer();
+// Initialize timer
+resetInactivityTimer();
