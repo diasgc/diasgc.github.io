@@ -27,11 +27,9 @@
         iframe.src = url;
       }
     });
-    function setUrl(location) {
-      iUrl.innerText = iframe.src;
-      let iframeDoc = this.contentDocument || this.contentWindow.document;
-      let audios = iframeDoc.querySelectorAll('audio, video');
-      audios.forEach(el => el.muted = true);
+
+    function setUrl(frame) {
+      iUrl.innerText = frame.contentWindow.location.href;
     }
 
     // Initialize timer

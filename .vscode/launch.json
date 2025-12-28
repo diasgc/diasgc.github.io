@@ -71,12 +71,20 @@
       "file": "${workspaceFolder}/zc/tnk/index.html",
       "runtimeArgs": ["--disable-web-security"]
     },
-        {
+    {
       "type": "msedge",
       "request": "launch",
       "name": "ff",
       "webRoot": "${workspaceRoot}/ff",
       "file": "${workspaceFolder}/ff/index.html",
+      "runtimeArgs": ["--disable-web-security"]
+    },
+    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "sb",
+      "webRoot": "${workspaceRoot}/old_h/sb",
+      "file": "${workspaceFolder}/old_h/sb/index.html",
       "runtimeArgs": ["--disable-web-security"]
     },
   ]

@@ -22,7 +22,7 @@
       transition: margin-left 0.4s ease;
     }
     .m-top.hidden {
-      margin-left: calc(-100% + 8px);
+      margin-left: calc(-100% - 8px);
     }
     #i-url {
       display: inline-block;

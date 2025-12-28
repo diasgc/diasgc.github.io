@@ -29,9 +29,9 @@ const actions = {
         const content = ui.contentId.innerHTML;
         const encrypted = CryptoJS.AES.encrypt(content, actions.password).toString();
         if (!actions.filename) {
-            actions.filename = prompt('Enter filename to save note:');
+            actions.filename = prompt('Enter filename to save note:') || 'cnote.txt';
         }
-        dowload(encrypted, actions.filename || 'cnote.txt', 'text/plain');
+        dowload(encrypted, actions.filename, 'text/plain');
         //localStorage.setItem('cnote', encrypted);
         alert('Note saved securely!');
     },
@@ -39,7 +39,7 @@ const actions = {
         const input = document.createElement('input');
         input.type = 'file';
         input.onchange = e => {
-            const file = e.target.files[0];
+            actions.filename = e.target.files[0];
             const reader = new FileReader();
             reader.onload = function(event) {
                 const encrypted = event.target.result;
@@ -52,7 +52,7 @@ const actions = {
                     alert('Failed to decrypt note. Check your password.');
                 }
             }
-            reader.readAsText(file);
+            reader.readAsText(actions.filename);
         }
         input.click();
     }
