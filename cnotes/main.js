@@ -39,7 +39,8 @@ const actions = {
         const input = document.createElement('input');
         input.type = 'file';
         input.onchange = e => {
-            actions.filename = e.target.files[0];
+            const file = e.target.files[0];
+            actions.filename = file.name;
             const reader = new FileReader();
             reader.onload = function(event) {
                 const encrypted = event.target.result;
@@ -52,7 +53,7 @@ const actions = {
                     alert('Failed to decrypt note. Check your password.');
                 }
             }
-            reader.readAsText(actions.filename);
+            reader.readAsText(file);
         }
         input.click();
     }
