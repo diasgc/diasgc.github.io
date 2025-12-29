@@ -15,10 +15,10 @@ const ui = {
   panelTimeout: 5000,
 
   init: function(){
-    document.addEventListener('mousemove', resetInactivityTimer);
-    document.addEventListener('keydown', resetInactivityTimer);
-    document.addEventListener('click', resetInactivityTimer);
-    document.addEventListener('touchstart', resetInactivityTimer);
+    document.addEventListener('mousemove', ui.resetInactivityTimer);
+    document.addEventListener('keydown', ui.resetInactivityTimer);
+    document.addEventListener('click', ui.resetInactivityTimer);
+    document.addEventListener('touchstart', ui.resetInactivityTimer);
     ui.iurl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
