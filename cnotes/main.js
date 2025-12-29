@@ -35,7 +35,7 @@ const actions = {
     if (!actions.password) {
       actions.password = ui.requestPassword();
     }
-    const content = ui.contentId.innerHTML;
+    const content = ui.contentId.innerText;
     const encrypted = CryptoJS.AES.encrypt(content, actions.password).toString();
     if (!actions.filename) {
       actions.filename = prompt('Enter filename to save note:') || 'cnote.txt';
