@@ -32,10 +32,6 @@ const ui = {
     ui.resetInactivityTimer();
   },
 
-  setUrl: function(){
-    ui.iurl.innerText = iframe.contentWindow.location.href;
-  },
-
   resetInactivityTimer: function(){
       clearTimeout(ui.inactivityTimer);
       ui.panel.classList.remove('hidden');
@@ -45,9 +41,15 @@ const ui = {
   }
 }
 
+function setUrl(){
+  ui.iurl.innerText = ui.iframe.contentWindow.location.href;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     ui.init();
 });
+
+
 
 /*
 const iframe = document.getElementById('iframe');
