@@ -25,46 +25,55 @@ const data = {
     Object.keys(obj.src).forEach(src => data.addOpt(ssrc, src));
     data.upd();
   },
+  includeAny: function(i, tags){
+    for (let t of tags){
+      if (data.jdata.data[i] && data.jdata.data[i].includes(t)){
+        return true;
+      }
+    }
+    return false;
+  },
+  includeAll: function(i, tags){
+    for (let t of tags){
+      if (data.jdata.data[i] && !data.jdata.data[i].includes(t)){
+        return false;
+      }
+    }
+    return true;
+  },
   upd: function(){
     const sid = ui.sid;
     const tag = ui.stag;
+    sid.innerHTML = '';
     if (tag.innerText.trim() === ''){
       Object.keys(data.jdata.data).forEach(i => data.addOpt(sid, i));
     } else {
       const tags = tag.innerText.trim().split(' ');
-      const filtered = Object.keys(data.jdata.data).filter(i => {
-        for (let t of tags){
-          if (data.jdata.data[i] && data.jdata.data[i].includes(t)){
-            return true;
-          }
-        }
-        return false;
-      });
-      sid.innerHTML = '';
+      const fn = `include${ui.sflt.value}`;
+      const filtered = Object.keys(data.jdata.data).filter(i => data[fn](i, tags));
       filtered.forEach(i => data.addOpt(sid, i));
     }
   }
 }
 
 const ui = {
-
   iframe: document.getElementById('iframe'),
   panel:  document.getElementById('m-top'),
   bload:  document.getElementById('s-load'),
   ssrc:   document.getElementById('s-src'),
   sid:    document.getElementById('s-id'),
   stag:   document.getElementById('s-tag'),
+  sflt:   document.getElementById('s-flt'),
   inactivityTimer: null,
   panelTimeout: 5000,
-
   init: function(){
     document.addEventListener('mousemove', ui.resetInactivityTimer);
     document.addEventListener('keydown', ui.resetInactivityTimer);
     document.addEventListener('click', ui.resetInactivityTimer);
     document.addEventListener('touchstart', ui.resetInactivityTimer);
     ui.sid.addEventListener('change', () => {
-      let q = data.jdata.src[ui.ssrc.value].replace('<query>', ui.sid.value);
-      let url = `https://${ui.ssrc.value}/${q}`;
+      let url = `https://${ui.ssrc.value}${data.jdata.src[ui.ssrc.value]}${ui.sid.value}`;
+      console.log(url);
       ui.iframe.src = url;
     });
     ui.stag.addEventListener('keydown', (e) => {
@@ -75,7 +84,7 @@ const ui = {
     });
     ui.resetInactivityTimer();
     ui.bload.addEventListener('click', () => {
-      ui.panel.style.display = 'flex';
+      ui.panel.style.display = 'block';
       ui.panel.classList.toggle('hidden');
       ui.loadCat();
     });

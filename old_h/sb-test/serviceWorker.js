@@ -1,5 +1,5 @@
 const staticApp = "static-app"
-const n = "old_h/sb-test";
+const n = "/old_h/sb-test";
 const assetsApp = [
   `${n}/`,
   `${n}/index.html`,

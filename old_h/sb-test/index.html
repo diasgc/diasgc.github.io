@@ -6,6 +6,7 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="site.webmanifest">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
   <title>SandboxT</title>
   <link rel="stylesheet" href="style.css">
@@ -14,9 +15,17 @@
    <iframe id="iframe" sandbox="allow-scripts allow-forms" onload="setUrl()"></iframe>
    <button id="s-load">+</button>
    <div id="m-top" hidden>
-    <select class="mfa" id="s-src"></select>
-    <select class="mfa" id="s-id"></select>
-    <div class="mfb" id="s-tag" contenteditable="true"></div>
+    <div class="mfr">
+      <select class="mfa" id="s-src"></select>
+      <select class="mfa" id="s-id"></select>
+    </div>
+    <div class="mfr">
+      <div class="mfb" id="s-tag" contenteditable="true"></div>
+      <select class="mfa" id="s-flt">
+        <option value="All">All</option>
+        <option value="Any">Any</option>
+      </select>
+    </div>
    </div>
    <script src="main.js?v=251228"></script>
  </body>
