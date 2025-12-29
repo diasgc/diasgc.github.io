@@ -8,6 +8,7 @@ if ("serviceWorker" in navigator) {
 }
 
 const ui = {
+
   iframe: document.getElementById('iframe'),
   iurl:   document.getElementById('i-url'),
   panel:  document.getElementById('m-top'),
@@ -33,12 +34,12 @@ const ui = {
   },
 
   resetInactivityTimer: function(){
-      clearTimeout(ui.inactivityTimer);
-      ui.panel.classList.remove('hidden');
-      ui.inactivityTimer = setTimeout(() => {
-        ui.panel.classList.add('hidden');
-      }, ui.panelTimeout);
-  }
+    clearTimeout(ui.inactivityTimer);
+    ui.panel.classList.remove('hidden');
+    ui.inactivityTimer = setTimeout(() => {
+      ui.panel.classList.add('hidden');
+    }, ui.panelTimeout);
+}
 }
 
 function setUrl(){
@@ -46,7 +47,7 @@ function setUrl(){
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    ui.init();
+  ui.init();
 });
 
 
