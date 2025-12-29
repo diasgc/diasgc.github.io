@@ -7,39 +7,66 @@ if ("serviceWorker" in navigator) {
   })
 }
 
+const ui = {
+  iframe: document.getElementById('iframe'),
+  iurl:   document.getElementById('i-url'),
+  panel:  document.getElementById('m-top'),
+  inactivityTimer: null,
+  panelTimeout: 5000,
+
+  init: function(){
+    document.addEventListener('mousemove', resetInactivityTimer);
+    document.addEventListener('keydown', resetInactivityTimer);
+    document.addEventListener('click', resetInactivityTimer);
+    document.addEventListener('touchstart', resetInactivityTimer);
+    this.iurl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        let url = ui.iurl.innerText.trim();
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+          url = 'https://' + url;
+        }
+        ui.iframe.src = url;
+      }
+    });
+    ui.resetInactivityTimer();
+  },
+
+  setUrl: function(){
+    ui.iurl.innerText = iframe.contentWindow.location.href;
+  },
+
+  resetInactivityTimer: function(){
+      clearTimeout(ui.inactivityTimer);
+      ui.panel.classList.remove('hidden');
+      ui.inactivityTimer = setTimeout(() => {
+        ui.panel.classList.add('hidden');
+      }, ui.panelTimeout);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    ui.init();
+});
+
+/*
 const iframe = document.getElementById('iframe');
 const iUrl = document.getElementById('i-url');
 const mTop = document.querySelector('.m-top');
 let inactivityTimer;
 
 function resetInactivityTimer() {
-  clearTimeout(inactivityTimer);
-  mTop.classList.remove('hidden');
-  inactivityTimer = setTimeout(() => {
-    mTop.classList.add('hidden');
+  clearTimeout(ui.inactivityTimer);
+  ui.panel.classList.remove('hidden');
+  ui.inactivityTimer = setTimeout(() => {
+    ui.panel.classList.add('hidden');
   }, 5000);
 }
 
-// Track activity
-document.addEventListener('mousemove', resetInactivityTimer);
-document.addEventListener('keydown', resetInactivityTimer);
-document.addEventListener('click', resetInactivityTimer);
-document.addEventListener('touchstart', resetInactivityTimer);
-
-iUrl.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    let url = iUrl.innerText.trim();
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      url = 'https://' + url;
-    }
-    iframe.src = url;
-  }
-});
-
 function setUrl(frame) {
-  iUrl.innerText = frame.contentWindow.location.href;
+  ui.iurl.innerText = frame.contentWindow.location.href;
 }
 
 // Initialize timer
-resetInactivityTimer();
+ui.resetInactivityTimer();
+*/
