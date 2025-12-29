@@ -6,6 +6,7 @@
       background: #111;
       overflow: hidden;
     }
+
     iframe {
       border: none;
       width: 100%;
@@ -20,11 +21,14 @@
       text-align: start;
       padding: 12px;
       background: #444;
-      transition: margin-left 0.4s ease;
+      border-radius: 0px;
+      transition: margin-left 0.4s ease, background 0.4 ease, border-radius 0.4 ease;
     }
+
     #m-top.hidden {
       margin-left: calc(-100% - 8px);
       background: #800;
+      border-radius: 8px;
     }
 
     #i-url {
