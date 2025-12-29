@@ -11,6 +11,7 @@
       width: 100%;
       height: 100%;
     }
+    
     .m-top {
       position: fixed;
       top: 0;
@@ -18,12 +19,14 @@
       width: 100%;
       text-align: start;
       padding: 12px;
-      background: #400;
+      background: #444;
       transition: margin-left 0.4s ease;
     }
     .m-top.hidden {
       margin-left: calc(-100% - 8px);
+      background: #800;
     }
+
     #i-url {
       display: inline-block;
       width: calc(100% - 72px);
