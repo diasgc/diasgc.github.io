@@ -24,6 +24,8 @@ const data = {
     ssrc.innerHTML = '';
     Object.keys(obj.src).forEach(src => data.addOpt(ssrc, src));
     data.upd();
+    ui.panel.style.display = 'block';
+    ui.panel.classList.toggle('hidden');
   },
   includeAny: function(i, tags){
     for (let t of tags){
@@ -84,8 +86,6 @@ const ui = {
     });
     ui.resetInactivityTimer();
     ui.bload.addEventListener('click', () => {
-      ui.panel.style.display = 'block';
-      ui.panel.classList.toggle('hidden');
       ui.loadCat();
     });
   },

@@ -84,7 +84,7 @@ select.mfa {
   cursor: pointer;
 }
 
-options.mfa {
+select.mfa option {
   background: #444;
   color: #eee;
 }
