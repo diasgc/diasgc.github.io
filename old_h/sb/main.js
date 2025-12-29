@@ -19,7 +19,7 @@ const ui = {
     document.addEventListener('keydown', resetInactivityTimer);
     document.addEventListener('click', resetInactivityTimer);
     document.addEventListener('touchstart', resetInactivityTimer);
-    this.iurl.addEventListener('keydown', (e) => {
+    ui.iurl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
         let url = ui.iurl.innerText.trim();
