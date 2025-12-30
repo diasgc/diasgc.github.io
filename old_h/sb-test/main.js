@@ -134,27 +134,3 @@ function setUrl(){
 document.addEventListener('DOMContentLoaded', () => {
   ui.init();
 });
-
-
-
-/*
-const iframe = document.getElementById('iframe');
-const iUrl = document.getElementById('i-url');
-const mTop = document.querySelector('.m-top');
-let inactivityTimer;
-
-function resetInactivityTimer() {
-  clearTimeout(ui.inactivityTimer);
-  ui.panel.classList.remove('hidden');
-  ui.inactivityTimer = setTimeout(() => {
-    ui.panel.classList.add('hidden');
-  }, 5000);
-}
-
-function setUrl(frame) {
-  ui.iurl.innerText = frame.contentWindow.location.href;
-}
-
-// Initialize timer
-ui.resetInactivityTimer();
-*/
