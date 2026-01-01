@@ -73,7 +73,9 @@ function toggleView(){
   ui.showSetup(config.show);
 }
 
+ui.container.replaceChildren();
 populate(data);
+populate(extra_data);
 
 function backCamera(){
   ui.showSetup(false);
@@ -127,7 +129,6 @@ function clearCache(){
 }
 
 function populate(data){
-  ui.container.replaceChildren();
   Object.keys(data).forEach(k => {
     let h = document.createElement('details');
     h.id = k;
