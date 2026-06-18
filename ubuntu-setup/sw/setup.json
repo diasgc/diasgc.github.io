@@ -2,9 +2,9 @@
   "Basics": {
     "id": "grp-basics",
     "pkg": {
-      "Curl": { "type": "apt", "args": "curl" },
-      "Git": { "type": "apt", "args": "git" },
-      "Gnome scanner": { "type": "apt", "args": "simple-scan" },
+      "Curl": { "type": "apt", "args": "curl", "sel": true },
+      "Git": { "type": "apt", "args": "git", "sel": true },
+      "Gnome scanner": { "type": "apt", "args": "simple-scan", "sel": true },
       "Microsoft Edge": { "type": "deb", "args": "https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb", "pkg": "microsoft-edge-stable"},
       "GIMP": { "type": "apt", "args": "gimp" },
       "Inkscape": { "type": "apt", "args": "inkscape" },
@@ -37,28 +37,28 @@
   "Gnome": {
     "id": "grp-gnome",
     "pkg": {
-      "Dock customizations": {"type": "script", "args": "dock" },
-      "Shell Extensions": {"type": "apt", "args": "gnome-shell-extensions" },
-      "Shell Extension Manager": {"type": "apt", "args": "gnome-shell-extension-manager" }, 
-      "Gnome Tweaks": {"type": "apt", "args": "gnome-tweaks" },
-      "DConf Editor": {"type": "apt", "args": "dconf-editor" },
-      "Grub Customizer": {"type": "apt", "args": "grub-customizer", "ppa": "ppa:danielrichter2007/grub-customizer" }
+      "Dock customizations": {"type": "script", "args": "dock", "sel": true },
+      "Shell Extensions": {"type": "apt", "args": "gnome-shell-extensions", "sel": true },
+      "Shell Extension Manager": {"type": "apt", "args": "gnome-shell-extension-manager", "sel": true }, 
+      "Gnome Tweaks": {"type": "apt", "args": "gnome-tweaks", "sel": true },
+      "DConf Editor": {"type": "apt", "args": "dconf-editor", "sel": true },
+      "Grub Customizer": {"type": "apt", "args": "grub-customizer", "ppa": "ppa:danielrichter2007/grub-customizer", "sel": true }
     }
   },
   "Multimedia": {
     "id": "grp-mm",
     "pkg": {
-      "FFmpeg": {"type": "apt", "args": "ffmpeg", "versions": {
+      "FFmpeg": {"type": "apt", "args": "ffmpeg", "sel": true, "versions": {
         "ffmpeg 8": {
             "ppa": "ppa:ubuntuhandbook1/ffmpeg8",
             "args": "-t \"o=LP-PPA-ubuntuhandbook1-ffmpeg8\" ffmpeg"
           }
         }
       },
-      "yt-dlp": {"type": "apt", "args": "yt-dlp" },
-      "fdkaac codec": {"type": "apt", "args": "fdkaac" },
-      "libheif HEIF/AVIF": {"type": "apt", "args": "libheif-examples" },
-      "libheif plugins": {"type": "apt", "args": "libheif-plugin-dav1d libheif-plugin-ffmpegdec libheif-plugin-j2kdec libheif-plugin-j2kenc libheif-plugin-jpegdec libheif-plugin-jpegenc libheif-plugin-rav1e libheif-plugin-svtenc libheif-plugin-x265" }
+      "yt-dlp": {"type": "apt", "args": "yt-dlp", "sel": true },
+      "fdkaac codec": {"type": "apt", "args": "fdkaac", "sel": true },
+      "libheif HEIF/AVIF": {"type": "apt", "args": "libheif-examples", "sel": true },
+      "libheif plugins": {"type": "apt", "args": "libheif-plugin-dav1d libheif-plugin-ffmpegdec libheif-plugin-j2kdec libheif-plugin-j2kenc libheif-plugin-jpegdec libheif-plugin-jpegenc libheif-plugin-rav1e libheif-plugin-svtenc libheif-plugin-x265", "sel": true }
     }
   },
   "Extras": {

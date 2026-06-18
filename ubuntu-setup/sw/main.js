@@ -67,7 +67,10 @@ const dmain = {
     l.innerText = group;
     utils.addOption(s,'none','none',false, dmain.selectNone(s));
     //utils.addOption(s,'','all',false, dmain.selectAll(s));
-    Object.keys(g.pkg).forEach(k => utils.addOption(s, JSON.stringify(g.pkg[k]), k, true));
+    Object.keys(g.pkg).forEach(k => {
+      const v = g.pkg[k];
+      utils.addOption(s, JSON.stringify(v), k, v.sel);
+    });
     d.appendChild(l);
     d.appendChild(s);
     dmain.id.appendChild(d);
