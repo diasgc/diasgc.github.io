@@ -6,16 +6,21 @@ wallpaper.count = 2;
 wallpaper.type = 2;
 wallpaper.imgFormat = 'webp';
 
+if (opts.user === '@user'){
+  opts.user = prompt("Enter Linux username:");
+  opts.home = `/home/${opts.user}`;
+}
+
 wallpaper.types = {
   "1": {
-    img_dir: () => `${opts.home}/Pictures/Wallpapers`,
+    img_dir: () => `${opts.home}/.local/share/backgrounds`,
     xml_dir: () => '',
     count: () => 1,
     thumbs: 'none',
     add: 'none'
   },
   "2": {
-    img_dir: () => `${opts.home}/Pictures/Wallpapers`,
+    img_dir: () => `${opts.home}/.local/share/backgrounds`,
     xml_dir: () => `${opts.home}/.local/share/gnome-background-properties`,
     ts_dir: () => '',
     count: () => 2,
@@ -44,22 +49,27 @@ function setWpType(){
       thumbs.style.display = "none";
       wallpaper.count = 1;
       wp_cell_add.style.display = "none";
-      wallpaper.img_dir = `${opts.home}/Pictures/Wallpapers`;
+      //wallpaper.img_dir = `${opts.home}/Pictures/Wallpapers`;
+      wallpaper.img_dir = '${HOME}/.local/share/backgrounds';
       wallpaper.xml_dir = ``;
       break; // single
     case "2":
       thumbs.style.display = "block"; // daynight
       wp_cell_add.style.display = "none";
       wallpaper.count = 2;
-      wallpaper.img_dir = `${opts.home}/Pictures/Wallpapers`;
-      wallpaper.xml_dir = `${opts.home}/.local/share/gnome-background-properties`
+      //wallpaper.img_dir = `${opts.home}/Pictures/Wallpapers`;
+      wallpaper.img_dir = '${HOME}/.local/share/backgrounds';
+      //wallpaper.xml_dir = `${opts.home}/.local/share/gnome-background-properties`;
+      wallpaper.xml_dir = '${HOME}/.local/share/gnome-background-properties';
       break;
     case "3":
       thumbs.style.display = "block";
       wallpaper.count = Object.keys(wallpaper.presets).length;
       wp_cell_add.style.display = "block";
-      wallpaper.xml_dir = `${opts.home}/.local/share/gnome-background-properties`
-      wallpaper.ts_dir = `${opts.home}/.local/share/backgrounds/time-shift`;
+      //wallpaper.xml_dir = `${opts.home}/.local/share/gnome-background-properties`;
+      wallpaper.xml_dir = '${HOME}/.local/share/gnome-background-properties';
+      //wallpaper.ts_dir = `${opts.home}/.local/share/backgrounds/time-shift`;
+      wallpaper.ts_dir = '${HOME}/.local/share/backgrounds/time-shift';
       wallpaper.img_dir = wallpaper.ts_dir;
       break; // timeshift
   }
@@ -67,8 +77,6 @@ function setWpType(){
 }
 
 wpType.addEventListener("change", setWpType);
-
-setWpType();
 
 function getWpName(prefix){
   return `${prefix}-${opts.id}.${wallpaper.imgFormat}`;
@@ -182,13 +190,13 @@ async function exportMedia() {
 
 function getScript(){
   let script = `#!/bin/bash
-mkdir -p ${wallpaper.img_dir}
+mkdir -p ${wallpaper.img_dir} 
 cp theme-*${opts.id}.${wallpaper.imgFormat} ${wallpaper.img_dir}/`
   if (wallpaper.wp_xml){
-    script +=`\ncp ${wallpaper.wp_xml} ${wallpaper.xml_dir}/`
+    script +=`\nmkdir -p ${wallpaper.xml_dir}\ncp ${wallpaper.wp_xml} ${wallpaper.xml_dir}/`
   }
   if (wallpaper.ts_dir) {
-    script +=`\ncp ${opts.id}.xml ${wallpaper.ts_dir}/`;
+    script +=`\nmkdir -p ${wallpaper.ts_dir}\ncp ${opts.id}.xml ${wallpaper.ts_dir}/`;
   }
   script +="\necho 'Done!'"
   return script;
@@ -236,4 +244,5 @@ function initComponents() {
   wp_cell_add.style.display = "none";
   wallpaper.loadPreset("light");
   wallpaper.loadPreset("dark");
+  setWpType();
 }
