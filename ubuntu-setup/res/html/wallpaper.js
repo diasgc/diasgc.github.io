@@ -3,6 +3,7 @@ out_format.addEventListener("change", () => wallpaper.imgFormat = out_format.val
   
 wallpaper.current = 'light';
 wallpaper.count = 2;
+wallpaper.type = 2;
 wallpaper.imgFormat = 'webp';
 
 wallpaper.types = {
@@ -161,11 +162,11 @@ async function exportMedia() {
     );
   }
   wallpaper.loadPreset(old);
-  if (wallpaper.type === "2") {
+  if (wallpaper.type === 2) {
     const config = await fetchEval('html/config-wp.xml');
     wallpaper.wp_xml = `wp-${opts.id}-daynight.xml`;
     zip.file(wallpaper.wp_xml, config);
-  } else if (wallpaper.type === "3") {
+  } else if (wallpaper.type === 3) {
     wallpaper.wp_xml = `wp-${opts.id}-timeshift.xml`;
     zip.file(wallpaper.wp_xml, getWpTsConfig());
     zip.file(`${opts.id}.xml`, getWptsXml(keys));
