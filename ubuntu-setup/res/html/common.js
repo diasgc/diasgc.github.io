@@ -205,21 +205,21 @@ const intro = {
 
 const data = {
   main: {
-    pattern_color: '#000000',
+    pattern_color: '#ffffff',
     pattern_alpha: '0.05',
-    grad_top: '#333333',
-    grad_bot: '#03080c',
+    grad_top: '#0d0704',
+    grad_bot: '#03070d',
     grad_alpha: '1.0',
-    logo_color: '#ffffff',
+    logo_color: '#d82000',
     logo_alpha: '0.1',
     logo_scale: '1.0',
     logo_dx: '0',
     logo_dy: '0',
-    font_color: '#ffffff',
+    font_color: '#d82000',
     font_family: {},
     font_size_title: '40',
-    font_size_footer: '14',
-    font_alpha: '1.0',
+    font_size_footer: '18',
+    font_alpha: '0.5',
     title_y: 13,
     footer_y: 72,
     current: 'dark'

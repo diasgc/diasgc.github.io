@@ -36,7 +36,7 @@ const grid = document.querySelector(".wp-grid");
 const wp_cell_add = document.getElementById("wp-cell-add");
 const wpType = document.getElementById("wp_type");
 
-wpType.addEventListener("change", () => {
+function setWpType(){
   const thumbs = document.getElementById("wp_preview_ctrl");
   wallpaper.type = wpType.value;
   switch (wpType.value) {
@@ -64,7 +64,11 @@ wpType.addEventListener("change", () => {
       break; // timeshift
   }
   renderSvg();
-});
+}
+
+wpType.addEventListener("change", setWpType);
+
+setWpType();
 
 function getWpName(prefix){
   return `${prefix}-${opts.id}.${wallpaper.imgFormat}`;
@@ -162,11 +166,11 @@ async function exportMedia() {
     );
   }
   wallpaper.loadPreset(old);
-  if (wallpaper.type === 2) {
+  if (wallpaper.type == 2) {
     const config = await fetchEval('html/config-wp.xml');
     wallpaper.wp_xml = `wp-${opts.id}-daynight.xml`;
     zip.file(wallpaper.wp_xml, config);
-  } else if (wallpaper.type === 3) {
+  } else if (wallpaper.type == 3) {
     wallpaper.wp_xml = `wp-${opts.id}-timeshift.xml`;
     zip.file(wallpaper.wp_xml, getWpTsConfig());
     zip.file(`${opts.id}.xml`, getWptsXml(keys));
@@ -186,7 +190,7 @@ cp theme-*${opts.id}.${wallpaper.imgFormat} ${wallpaper.img_dir}/`
   if (wallpaper.ts_dir) {
     script +=`\ncp ${opts.id}.xml ${wallpaper.ts_dir}/`;
   }
-  script +="\nnecho 'Done!'"
+  script +="\necho 'Done!'"
   return script;
 }
 
