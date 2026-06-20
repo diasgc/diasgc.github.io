@@ -11,26 +11,28 @@ if (opts.user === '@user'){
   opts.home = `/home/${opts.user}`;
 }
 
+opts.background_path = `${opts.home}/.local/share/backgrounds`;
+opts.gnome_background_properties_path = `${opts.home}/.local/share/gnome-background-properties`;
 wallpaper.types = {
   "1": {
-    img_dir: () => `${opts.home}/.local/share/backgrounds`,
+    img_dir: () => `${opts.background_path}`,
     xml_dir: () => '',
     count: () => 1,
     thumbs: 'none',
     add: 'none'
   },
   "2": {
-    img_dir: () => `${opts.home}/.local/share/backgrounds`,
-    xml_dir: () => `${opts.home}/.local/share/gnome-background-properties`,
+    img_dir: () => `${opts.background_path}`,
+    xml_dir: () => `${opts.gnome_background_properties_path}`,
     ts_dir: () => '',
     count: () => 2,
     thumbs: 'block',
     add: 'none'
   },
   "3": {
-    img_dir: () => `${opts.home}/.local/share/backgrounds/time-shift`,
-    xml_dir: () => `${opts.home}/.local/share/gnome-background-properties`,
-    ts_dir: () => `${opts.home}/.local/share/backgrounds/time-shift`,
+    img_dir: () => `${opts.background_path}/time-shift`,
+    xml_dir: () => `${opts.gnome_background_properties_path}`,
+    ts_dir: () => `${opts.background_path}/time-shift`,
     count: () => Object.keys(wallpaper.presets).length,
     thumbs: 'block',
     add: 'none'
@@ -49,7 +51,7 @@ function setWpType(){
       thumbs.style.display = "none";
       wallpaper.count = 1;
       wp_cell_add.style.display = "none";
-      //wallpaper.img_dir = `${opts.home}/Pictures/Wallpapers`;
+      //wallpaper.img_dir = `${opts.background_path}`;
       wallpaper.img_dir = '${HOME}/.local/share/backgrounds';
       wallpaper.xml_dir = ``;
       break; // single
@@ -57,19 +59,19 @@ function setWpType(){
       thumbs.style.display = "block"; // daynight
       wp_cell_add.style.display = "none";
       wallpaper.count = 2;
-      //wallpaper.img_dir = `${opts.home}/Pictures/Wallpapers`;
-      wallpaper.img_dir = '${HOME}/.local/share/backgrounds';
-      //wallpaper.xml_dir = `${opts.home}/.local/share/gnome-background-properties`;
-      wallpaper.xml_dir = '${HOME}/.local/share/gnome-background-properties';
+      wallpaper.img_dir = `${opts.background_path}`;
+      //wallpaper.img_dir = '${HOME}/.local/share/backgrounds';
+      wallpaper.xml_dir = `${opts.gnome_background_properties_path}`;
+      //wallpaper.xml_dir = '${HOME}/.local/share/gnome-background-properties';
       break;
     case "3":
       thumbs.style.display = "block";
       wallpaper.count = Object.keys(wallpaper.presets).length;
       wp_cell_add.style.display = "block";
-      //wallpaper.xml_dir = `${opts.home}/.local/share/gnome-background-properties`;
-      wallpaper.xml_dir = '${HOME}/.local/share/gnome-background-properties';
-      //wallpaper.ts_dir = `${opts.home}/.local/share/backgrounds/time-shift`;
-      wallpaper.ts_dir = '${HOME}/.local/share/backgrounds/time-shift';
+      wallpaper.xml_dir = `${opts.gnome_background_properties_path}`;
+      //wallpaper.xml_dir = '${HOME}/.local/share/gnome-background-properties';
+      wallpaper.ts_dir = `${opts.background_path}/time-shift`;
+      //wallpaper.ts_dir = '${HOME}/.local/share/backgrounds/time-shift';
       wallpaper.img_dir = wallpaper.ts_dir;
       break; // timeshift
   }
