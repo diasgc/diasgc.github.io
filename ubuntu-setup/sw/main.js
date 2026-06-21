@@ -102,15 +102,21 @@ const versions = {
 const exec = {
   id: document.getElementById('exec'),
   sh: '',
+  apt_list: [],
+  ppa_list: [],
+  snap_list: [],
   init: function(){
     this.id.addEventListener('click', this.gen);
     dmain.load();
     versions.llvm();
   },
   apt: function(v){
-    if (v.ppa)
-      exec.sh +=`\nsudo add-apt-repository ppa:${v.ppa} -y\nsudo apt update`;
-    exec.sh +=`\nsudo apt install ${v.args} -y`;
+    if (v.ppa){
+      exec.ppa_list.push(`${v.ppa}`);
+      //exec.sh +=`\nsudo add-apt-repository ppa:${v.ppa} -y\nsudo apt update`;
+    }
+    exec.apt_list.push(`${v.args}`);
+    //exec.sh +=`\nsudo apt install ${v.args} -y`;
   },
   deb: function(v){
     exec.sh +=`
@@ -119,11 +125,14 @@ echo "Downloading $name, please wait..."
 wget -q "${v.args}"
 sudo dpkg -i $name && rm $name
 `;
-    if (v.pkg)
-      exec.sh += `sudo apt update && sudo apt install ${v.pkg} -y`
+    if (v.pkg){
+      //exec.sh += `sudo apt update && sudo apt install ${v.pkg} -y`;
+      exec.apt_list.push(`${v.pkg}`);
+    }
   },
   snap: function(v){
-    exec.sh +=`\nsudo apt install ${v.args} -y`;
+    //exec.sh +=`\nsudo snap install ${v.args} -y`;
+    exec.snap_list.push(`${v.args}`);
   },
   script: function(v){
     exec.s = false;
@@ -158,10 +167,20 @@ EOF`;
         });
       }
     });
+    exec.sh += '\n\n\n# TEST';
+    if (exec.ppa_list.length > 0){
+      exec.sh += `\nsudo add-apt-repository ${exec.ppa_list.join(' ')} -y\nsudo apt update`;
+    }
+    if (exec.apt_list.length > 0){
+      exec.sh += `\nsudo apt install ${exec.apt_list.join(' ')} -y`;
+    }
+    if (exec.snap_list.length > 0){
+      exec.sh += `\nsudo snap install ${exec.snap_list.join(' ')} -y`;
+    }
     const t = setInterval(()=> {
       if (exec.s){
         const blob = new Blob([exec.sh], { type: "text/plain" });
-        utils.downloadBlob(blob,"install.sh");
+        utils.downloadBlob(blob,`install-${Date.now().valueOf().toString(16)}.sh`);
         clearInterval(t);
       };
     },500);

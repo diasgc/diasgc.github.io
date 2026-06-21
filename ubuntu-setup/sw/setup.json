@@ -1,48 +1,44 @@
 {
-  "Basics": {
-    "id": "grp-basics",
-    "pkg": {
-      "Curl": { "type": "apt", "args": "curl", "sel": true },
-      "Git": { "type": "apt", "args": "git", "sel": true },
-      "Gnome scanner": { "type": "apt", "args": "simple-scan", "sel": true },
-      "Microsoft Edge": { "type": "deb", "args": "https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb", "pkg": "microsoft-edge-stable"},
-      "GIMP": { "type": "apt", "args": "gimp" },
-      "Inkscape": { "type": "apt", "args": "inkscape" },
-      "LibreOffice": { "type": "apt", "args": "libreoffice" },
-      "Veracrypt (legacy)": { "type": "deb", "args": "https://launchpad.net/veracrypt/trunk/1.25.9/+download/veracrypt-1.25.9-Ubuntu-23.04-amd64.deb" },
-      "Veracrypt (latest)": { "type": "apt", "ppa": "unit193/encryption", "args": "veracrypt" },
-      "ShowTime": { "type": "script", "args": "showtime" },
-      "Spotify": { "type": "script", "args": "spotify" }
-    }
-  },
-  "Devel": {
-    "id": "grp-dev",
-    "pkg": {
-      "Buld Essential": {"type": "apt", "args": "build-essential" },
-      "LLVM/Clang": {"type": "apt", "args": "llvm", "versions": {
-        "LLVM-20": {
-          "cmd": "wget -q https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && ./llvm.sh 20 all && rm llvm.sh"
-        },
-        "LLVM-21": {
-          "cmd": "wget -q https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && ./llvm.sh 21 all && rm llvm.sh"
-        }
-      }},
-      "CMake Tools": {"type": "apt", "args": "cmake cmake-curses-gui"},
-      "Autotools": {"type": "apt", "args": "automake autoconf autogen autopoint libtool-bin m4"},
-      "Meson": {"type": "apt", "args": "meson"},
-      "VSCode": {"type": "snap", "args": "code"},
-      "Android Studio": {"type": "snap", "args": "android-studio"}
-    }
-  },
-  "Gnome": {
+  "Basic": {
     "id": "grp-gnome",
     "pkg": {
+      "Bash Aliases": {"type": "script", "args": "alias", "sel": true },
+      "Doc Templates": {"type": "script", "args": "templates", "sel": true },
       "Dock customizations": {"type": "script", "args": "dock", "sel": true },
       "Shell Extensions": {"type": "apt", "args": "gnome-shell-extensions", "sel": true },
       "Shell Extension Manager": {"type": "apt", "args": "gnome-shell-extension-manager", "sel": true }, 
       "Gnome Tweaks": {"type": "apt", "args": "gnome-tweaks", "sel": true },
       "DConf Editor": {"type": "apt", "args": "dconf-editor", "sel": true },
-      "Grub Customizer": {"type": "apt", "args": "grub-customizer", "ppa": "ppa:danielrichter2007/grub-customizer", "sel": true }
+      "Grub Customizer": {"type": "apt", "args": "grub-customizer", "ppa": "ppa:danielrichter2007/grub-customizer", "sel": true },
+      "Gnome scanner": { "type": "apt", "args": "simple-scan", "sel": true },
+      "Curl": { "type": "apt", "args": "curl", "sel": true },
+      "Git": { "type": "apt", "args": "git", "sel": true }
+    }
+  },
+  "Snap": {
+    "id": "grp-snap",
+    "pkg": {
+      "Android Studio": {"type": "snap", "args": "android-studio"},
+      "GIMP": { "type": "snap", "args": "gimp", "sel": true },
+      "Inkscape": { "type": "snap", "args": "inkscape", "sel": true },
+      "LibreOffice": { "type": "snap", "args": "libreoffice" },
+      "VS Code": { "type": "snap", "args": "code", "sel": true },
+      "Spotify": { "type": "snap", "args": "spotify", "sel": true } 
+    }
+  },
+  "Software": {
+    "id": "grp-soft",
+    "pkg": {
+      "Cubic": {"type": "apt", "args": "cubic", "ppa": "cubic-wizard/release"},
+      "Cryptomator": {"type": "apt", "args": "cryptomator", "ppa":"sebastian-stenzel/cryptomator" },
+      "GIMP": { "type": "apt", "args": "gimp" },
+      "Inkscape": { "type": "apt", "args": "inkscape" },
+      "Microsoft Edge": { "type": "deb", "args": "https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb", "pkg": "microsoft-edge-stable"},
+      "Veracrypt (legacy)": { "type": "deb", "args": "https://launchpad.net/veracrypt/trunk/1.25.9/+download/veracrypt-1.25.9-Ubuntu-23.04-amd64.deb" },
+      "Veracrypt (latest)": { "type": "apt", "ppa": "unit193/encryption", "args": "veracrypt" },
+      "ShowTime": { "type": "script", "args": "showtime" },
+      "Snapshot": { "type": "apt", "args": "snapshot" },
+      "Spotify": { "type": "script", "args": "spotify" }
     }
   },
   "Multimedia": {
@@ -61,11 +57,32 @@
       "libheif plugins": {"type": "apt", "args": "libheif-plugin-dav1d libheif-plugin-ffmpegdec libheif-plugin-j2kdec libheif-plugin-j2kenc libheif-plugin-jpegdec libheif-plugin-jpegenc libheif-plugin-rav1e libheif-plugin-svtenc libheif-plugin-x265", "sel": true }
     }
   },
-  "Extras": {
-    "id": "grp-xtra",
+  "Devel": {
+    "id": "grp-dev",
     "pkg": {
-      "Cubic": {"type": "apt", "args": "cubic", "ppa": "cubic-wizard/release"},
-      "Cryptomator": {"type": "apt", "args": "cryptomator", "ppa":"sebastian-stenzel/cryptomator" }
+      "Buld Essential": {"type": "apt", "args": "build-essential" },
+      "LLVM/Clang": {"type": "apt", "args": "llvm", "versions": {
+        "LLVM-20": {
+          "cmd": "wget -q https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && ./llvm.sh 20 all && rm llvm.sh"
+        },
+        "LLVM-21": {
+          "cmd": "wget -q https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && ./llvm.sh 21 all && rm llvm.sh"
+        }
+      }},
+      "CMake Tools": {"type": "apt", "args": "cmake cmake-curses-gui"},
+      "Autotools": {"type": "apt", "args": "automake autoconf autogen autopoint libtool-bin m4"},
+      "Meson": {"type": "apt", "args": "meson"}
+    }
+  },
+  "System": {
+    "id": "grp-sys",
+    "pkg": {
+      "Timeshift": {"type": "apt", "args": "timeshift", "ppa": "teejee2008/ppa" },
+      "BleachBit": {"type": "apt", "args": "bleachbit" },
+      "GParted": {"type": "apt", "args": "gparted"},
+      "Stacer": {"type": "apt", "args": "stacer", "ppa":"oguzhaninan/stacer"},
+      "UFW Firewall GUI (Gufw)": {"type": "apt", "args": "gufw" },
+      "AppImageLauncher (AppImage support)": {"type": "apt", "args": "appimagelauncher",  "ppa":"appimagelauncher-team/stable" }
     }
   }
 }

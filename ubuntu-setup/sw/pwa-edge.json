@@ -1,7 +1,7 @@
 {
   "AliExpress": {
     "id": "jmiaicfemicdelgegengpmfebnedeean",
-    "url": "https://pt.aliexpress.com/?spm=a2g0o.home.logo.1.52391c91LHhS6f",
+    "url": "https://pt.aliexpress.com/",
     "prof": "Default"
   },
   "Amazon": {
@@ -16,12 +16,12 @@
   },
   "Copilot": {
     "id": "bnhceeojbohnmbniganikfffbpbemfej",
-    "url": "https://copilot.microsoft.com/chats/iLQGoZM74thbS6AJfXi9f",
+    "url": "https://copilot.microsoft.com/",
     "prof": "Default"
   },
   "DeepSeek": {
     "id": "ihaceamecmebkkenpfeppakhhifjfded",
-    "url": "https://chat.deepseek.com/authorized?provider=GOOGLE&nonce=b3d5a219a1192d6ebe5a8c76665c6c5596183a70d7535f257777ee2df4e557fc&new=0&case=1",
+    "url": "https://chat.deepseek.com/",
     "prof": "Default"
   },
   "Disney+": {
@@ -79,19 +79,9 @@
     "url": "https://snspt-my.sharepoint.com/",
     "prof": "Profile"
   },
-  "MyNOS": {
-    "id": "nofefnfklnjnghnoacbijcomimgjphca",
-    "url": "https://my.nos.pt/WSC/Callback?code=aj0c20Ri&expires_in=599&state=bijofk5d",
-    "prof": "Default"
-  },
   "Netflix": {
     "id": "eppojlglocelodeimnohnlnionkobfln",
     "url": "https://www.netflix.com/browse",
-    "prof": "Default"
-  },
-  "NOS TV": {
-    "id": "bfncpbgehdnhcaoinlfciiagodhkpebo",
-    "url": "https://www.nostv.pt/",
     "prof": "Default"
   },
   "Outlook (PWA)": {
