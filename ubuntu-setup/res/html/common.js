@@ -1,3 +1,29 @@
+/** url parameters
+ * 
+ * 'vnd': vendor, default: '',
+ * 'w': resX, default: window.screen.width * window.devicePixelRatio,
+ * 'h': resY, default: window.screen.height * window.devicePixelRatio,
+ * 'usr': user, default: '',
+ * 't': type, default: 'wallpaper',
+ * 'id': id, default: Date.now().valueOf().toString(16),
+ * 'grub_set': grubSet, default: 'grub-os-symb',
+ * 
+ * 'patc': pattern_color, default: '#804000',
+ * 'pata': pattern_alpha, default: '0.05',
+ * 'grdt': gradient_top, default: '#0d0704',
+ * 'grdb': gradient_bottom, default: '#03070d',
+ * 'grda': gradient_alpha, default: '1.0',
+ * 'logc': logo_color, default: '#d82000',
+ * 'loga': logo_alpha, default: '0.1',
+ * 'fonc': font_color, default: '#d82000',
+ * 'fnst': font_size_title, default: '40',
+ * 'fnsf': font_size_footer, default: '18',
+ * 'fona': font_alpha, default: '0.5',
+ * 'tity': title_y, default: 13,
+ * 'foty': footer_y, default: 72,
+ * 
+ */
+
 const urlParams = new URLSearchParams(window.location.search);
 
 async function loadContent(tag) {
@@ -205,28 +231,28 @@ const intro = {
 
 const data = {
   main: {
-    pattern_color: '#ffffff',
-    pattern_alpha: '0.05',
-    grad_top: '#0d0704',
-    grad_bot: '#03070d',
-    grad_alpha: '1.0',
-    logo_color: '#d82000',
-    logo_alpha: '0.1',
+    pattern_color: urlParams.get('patc') || '#804000',
+    pattern_alpha: urlParams.get('pata') ||'0.05',
+    grad_top: urlParams.get('grdt') ||'#0d0704',
+    grad_bot: urlParams.get('grdb') || '#03070d',
+    grad_alpha: urlParams.get('grda') ||'1.0',
+    logo_color: urlParams.get('logc') || '#d82000',
+    logo_alpha: urlParams.get('loga') || '0.1',
     logo_scale: '1.0',
     logo_dx: '0',
     logo_dy: '0',
-    font_color: '#d82000',
+    font_color: urlParams.get('fonc') || '#d82000',
     font_family: {},
-    font_size_title: '40',
-    font_size_footer: '18',
-    font_alpha: '0.5',
-    title_y: 13,
-    footer_y: 72,
+    font_size_title: urlParams.get('fonst') || '40',
+    font_size_footer: urlParams.get('fonsf') || '18',
+    font_alpha: urlParams.get('fona') ||'0.5',
+    title_y: urlParams.get('tity') || 13,
+    footer_y: urlParams.get('foty') || 72,
     current: 'dark'
   },
   presets: {
     dark: {
-      pattern_color: '#ffffff',
+      pattern_color: '#804000',
       pattern_alpha: '0.05',
       grad_top: '#0d0704',
       grad_bot: '#03070d',
@@ -239,7 +265,7 @@ const data = {
       current: 'dark'
     },
     light: {
-      pattern_color: '#000000',
+      pattern_color: '#804000',
       pattern_alpha: '0.05',
       grad_top: '#d8d8d8',
       grad_bot: '#c0c6cc',

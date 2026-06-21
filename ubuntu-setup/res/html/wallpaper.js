@@ -13,6 +13,7 @@ if (opts.user === '@user'){
 
 opts.background_path = `${opts.home}/.local/share/backgrounds`;
 opts.gnome_background_properties_path = `${opts.home}/.local/share/gnome-background-properties`;
+
 wallpaper.types = {
   "1": {
     img_dir: () => `${opts.background_path}`,
