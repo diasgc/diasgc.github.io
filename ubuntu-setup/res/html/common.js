@@ -281,20 +281,13 @@ const data = {
     {'foty':'footer_y'}
   ],
   readParams: function(urlParams){
-    let pr = data.main;
-    if (urlParams.get('pre')){
-      pr = data.presets[urlParams.get('pre')];
-    }
-    //const p = urlParams.get('pre') || 'dark';
-    //let pr = data.presets[p];
+    let pr = data.presets[urlParams.get('pre')] ?? data.main;
     for (const param of this.availableParameters){
-      const key = Object.keys(param)[0];
+      const [key, pk] = Object.entries(param)[0];
       const val = urlParams.get(key);
       if (val){
-        let pk = param[key];
-        let el = document.getElementById(pk);
         pr[pk] = val;
-        el.setAttribute('value', val);
+        document.getElementById(pk)?.setAttribute('value', val);
       }
     }
   },
