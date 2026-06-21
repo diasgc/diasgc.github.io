@@ -99,8 +99,8 @@ function l_oadPreset(name) {
 function renderSvg(){
   const svg = encodeSvg(genSvg());
   wallpaper.id.src = svg;
-  data.main.wp_light = `${opts.home}/Pictures/Wallpapers/theme-light-${opts.id}.${wallpaper.imgFormat}`;
-  data.main.wp_dark = `${opts.home}/Pictures/Wallpapers/theme-dark-${opts.id}.${wallpaper.imgFormat}`;
+  data.main.wp_light = `${opts.background_path}/theme-light-${opts.id}.${wallpaper.imgFormat}`;
+  data.main.wp_dark = `${opts.background_path}/theme-dark-${opts.id}.${wallpaper.imgFormat}`;
   data.main.options = document.getElementById("wp_options").value;
   data.main.shadertype = document.getElementById("wp_shader").value;
   data.main.pcolor = document.getElementById("wp_pcolor").value;
