@@ -385,13 +385,13 @@ const ui = {
           case 'pwa':
             script += `\n# Configure PWA: ${packageName}\n`;
             script += `mkdir -p "\${HOME}/.local/share/applications"\n`;
-            script += `cat > "\${HOME}/.local/share/applications/edge-${pkgConfig.pwa}.desktop" << 'EOF'\n`;
+            script += `cat > "\${HOME}/.local/share/applications/msedge-${pkgConfig.pwa}.desktop" << 'EOF'\n`;
             script += `[Desktop Entry]\n`;
             script += `Version=1.0\n`;
             script += `Type=Application\n`;
             script += `Name=${packageName}\n`;
             script += `Exec=/opt/microsoft/msedge/microsoft-edge --app-id=${pkgConfig.pwa} "--app-url=${pkgConfig.args}"\n`;
-            script += `Icon=msedge\n`;
+            script += `Icon=msedge-${pkgConfig.pwa}-Default.png\n`;
             script += `EOF\n`;
             break;
         }
