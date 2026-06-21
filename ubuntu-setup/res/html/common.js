@@ -8,17 +8,18 @@
  * 'id': id, default: Date.now().valueOf().toString(16),
  * 'grub_set': grubSet, default: 'grub-os-symb',
  * 
- * 'patc': pattern_color, default: '#804000',
- * 'pata': pattern_alpha, default: '0.05',
- * 'grdt': gradient_top, default: '#0d0704',
- * 'grdb': gradient_bottom, default: '#03070d',
- * 'grda': gradient_alpha, default: '1.0',
- * 'logc': logo_color, default: '#d82000',
- * 'loga': logo_alpha, default: '0.1',
- * 'fonc': font_color, default: '#d82000',
- * 'fnst': font_size_title, default: '40',
- * 'fnsf': font_size_footer, default: '18',
- * 'fona': font_alpha, default: '0.5',
+ * 'pre': preset, default: 'dark',
+ * 'pc': pattern_color, default: '#804000',
+ * 'pa': pattern_alpha, default: '0.05',
+ * 'gt': gradient_top, default: '#0d0704',
+ * 'gb': gradient_bottom, default: '#03070d',
+ * 'ga': gradient_alpha, default: '1.0',
+ * 'lc': logo_color, default: '#d82000',
+ * 'la': logo_alpha, default: '0.1',
+ * 'fc': font_color, default: '#d82000',
+ * 'fst': font_size_title, default: '40',
+ * 'fsf': font_size_footer, default: '18',
+ * 'fa': font_alpha, default: '0.5',
  * 'tity': title_y, default: 13,
  * 'foty': footer_y, default: 72,
  * 
@@ -231,60 +232,78 @@ const intro = {
 
 const data = {
   main: {
-    pattern_color: urlParams.get('patc') || '#804000',
-    pattern_alpha: urlParams.get('pata') ||'0.05',
-    grad_top: urlParams.get('grdt') ||'#0d0704',
-    grad_bot: urlParams.get('grdb') || '#03070d',
-    grad_alpha: urlParams.get('grda') ||'1.0',
-    logo_color: urlParams.get('logc') || '#d82000',
-    logo_alpha: urlParams.get('loga') || '0.1',
+    pattern_color: '#804000',
+    pattern_alpha: '0.05',
+    grad_top: '#0d0704',
+    grad_bot: '#03070d',
+    grad_alpha: '1.0',
+    logo_color: '#d82000',
+    logo_alpha: '0.1',
     logo_scale: '1.0',
     logo_dx: '0',
     logo_dy: '0',
-    font_color: urlParams.get('fonc') || '#d82000',
+    font_color: '#d82000',
     font_family: {},
-    font_size_title: urlParams.get('fonst') || '40',
-    font_size_footer: urlParams.get('fonsf') || '18',
-    font_alpha: urlParams.get('fona') ||'0.5',
-    title_y: urlParams.get('tity') || 13,
-    footer_y: urlParams.get('foty') || 72,
+    font_size_title: '40',
+    font_size_footer: '18',
+    font_alpha: '0.5',
+    title_y: 13,
+    footer_y: 72,
     current: 'dark'
   },
   presets: {
     dark: {
-      pattern_color: '#804000',
-      pattern_alpha: '0.05',
       grad_top: '#0d0704',
       grad_bot: '#03070d',
-      grad_alpha: '1.0',
-      logo_color: '#d82000',
       logo_alpha: '0.3',
-      logo_dx: '0',
-      logo_dy: '0',
-      font_color: '#d82000',
       current: 'dark'
     },
     light: {
-      pattern_color: '#804000',
-      pattern_alpha: '0.05',
       grad_top: '#d8d8d8',
       grad_bot: '#c0c6cc',
-      grad_alpha: '1.0',
-      logo_color: '#d82000',
       logo_alpha: '0.1',
-      logo_dx: '0',
-      logo_dy: '0',
-      font_color: '#d82000',
       current: 'light'
     },
+  },  
+  availableParameters: [ 
+    {'pc':'pattern_color'},
+    {'pa':'pattern_alpha'},
+    {'gt':'grad_top'},
+    {'gb':'grad_bot'},
+    {'ga':'grad_alpha'},
+    {'lc':'logo_color'},
+    {'la':'logo_alpha'},
+    {'fc':'font_color'},
+    {'fst':'font_size_title'},
+    {'fsf':'font_size_footer'},
+    {'fa':'font_alpha'},
+    {'tity':'title_y'},
+    {'foty':'footer_y'}
+  ],
+  readParams: function(urlParams){
+    let pr = data.main;
+    if (urlParams.get('pre')){
+      pr = data.presets[urlParams.get('pre')];
+    }
+    //const p = urlParams.get('pre') || 'dark';
+    //let pr = data.presets[p];
+    for (const param of this.availableParameters){
+      const key = Object.keys(param)[0];
+      const val = urlParams.get(key);
+      if (val){
+        let pk = param[key];
+        let el = document.getElementById(pk);
+        pr[pk] = val;
+        el.setAttribute('value', val);
+      }
+    }
   },
   read: function(id){ //updatePreset(key)
     const val = document.getElementById(id).value;
     this.presets[this.main.current][id] = val;
     this.main[id] = val;
     return val;
-  },
-  keys: [],
+  }
 }
 
 const wallpaper = {
@@ -456,6 +475,8 @@ opts.user = urlParams.get('usr') || opts.user;
 opts.home = `/home/${opts.user}`;
 opts.grubSet = opts.grubSet.replace("@grub_set",'') || "grub-os-symb";
 opts.ratio = 100 / window.screen.height / window.devicePixelRatio;
+
+data.readParams(urlParams);
 
 intro.init(fonts.init);
 
