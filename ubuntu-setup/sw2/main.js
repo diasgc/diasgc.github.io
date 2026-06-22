@@ -323,16 +323,16 @@ const ui = {
   toggleTheme() {
     const isDark = document.documentElement.classList.toggle('dark-mode');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    this.themeToggle.textContent = isDark ? '☀️' : '🌙';
+    this.themeToggle.innerHTML = `<span class="material-icons-outlined">${isDark ? 'light_mode' : 'dark_mode'}</span>`;
   },
 
   loadThemePreference() {
     const theme = localStorage.getItem('theme') || 'light';
     if (theme === 'dark') {
       document.documentElement.classList.add('dark-mode');
-      this.themeToggle.textContent = '☀️';
+      this.themeToggle.innerHTML = '<span class="material-icons-outlined">light_mode</span>';
     } else {
-      this.themeToggle.textContent = '🌙';
+      this.themeToggle.innerHTML = '<span class="material-icons-outlined">dark_mode</span>';
     }
   },
 
@@ -355,6 +355,7 @@ const ui = {
       const aptList = new Set();
       const snapList = new Set();
       const scriptsList = [];
+      let pwaCount = 0;
 
       // Process selected packages
       for (const key of appState.selected) {
@@ -383,8 +384,10 @@ const ui = {
             scriptsList.push(pkgConfig.args);
             break;
           case 'pwa':
+            if (pwaCount === 0)
+              script += `mkdir -p "\${HOME}/.local/share/applications"\n`;
+            pwaCount++;
             script += `\n# Configure PWA: ${packageName}\n`;
-            script += `mkdir -p "\${HOME}/.local/share/applications"\n`;
             script += `cat > "\${HOME}/.local/share/applications/msedge-${pkgConfig.pwa}.desktop" << 'EOF'\n`;
             script += `[Desktop Entry]\n`;
             script += `Version=1.0\n`;
@@ -396,6 +399,9 @@ const ui = {
             break;
         }
       }
+
+      if (pwaCount > 0)
+        script += `\nupdate-desktop-database ~/.local/share/applications/\n`;
 
       // Add PPAs and update
       if (ppaList.size > 0) {
