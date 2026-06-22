@@ -162,7 +162,7 @@ const ui = {
     
     const allBtn = document.createElement('button');
     allBtn.className = 'category-btn active';
-    allBtn.textContent = '🎯 All Categories';
+    allBtn.innerHTML = '<span class="material-icons-outlined" style="font-size: 1.1rem; margin-right: 0.6rem;">dashboard</span>All Categories';
     allBtn.addEventListener('click', () => {
       appState.currentCategory = 'all';
       appState.searchQuery = '';
@@ -175,7 +175,7 @@ const ui = {
     categories.forEach(category => {
       const btn = document.createElement('button');
       btn.className = 'category-btn';
-      btn.textContent = `📦 ${category}`;
+      btn.innerHTML = `<span class="material-icons-outlined" style="font-size: 1.1rem; margin-right: 0.6rem;">inventory_2</span>${category}`;
       btn.addEventListener('click', () => {
         appState.currentCategory = category;
         appState.searchQuery = '';
@@ -233,7 +233,7 @@ const ui = {
         
         return `
           <div class="category-section">
-            <h2 class="category-title">${category}</h2>
+            <h2 class="category-title"><span class="material-icons-outlined">inventory_2</span>${category}</h2>
             <div class="package-grid">
               ${categoryHtml}
             </div>
@@ -275,7 +275,7 @@ const ui = {
         <div class="package-header">
           <input type="checkbox" class="package-checkbox" data-key="${pkg.key}" ${isSelected ? 'checked' : ''}>
           <div style="flex: 1;">
-            <div class="package-name">${pkg.name}</div>
+            <div class="package-name"><span class="material-icons-outlined" style="font-size: 1.15rem; margin-right: 0.5rem;">download</span>${pkg.name}</div>
             <span class="package-type">${pkg.config.type}</span>
           </div>
         </div>
@@ -321,18 +321,22 @@ const ui = {
   },
 
   toggleTheme() {
-    const isDark = document.documentElement.classList.toggle('dark-mode');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    this.themeToggle.innerHTML = `<span class="material-icons-outlined">${isDark ? 'light_mode' : 'dark_mode'}</span>`;
+    // Toggle the `light-mode` class on <html>. CSS uses default (dark) in :root and
+    // `html.light-mode` for light theme overrides.
+    const isLight = document.documentElement.classList.toggle('light-mode');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    // Show the icon for the action the button will perform (opposite of current)
+    this.themeToggle.innerHTML = `<span class="material-icons-outlined">${isLight ? 'dark_mode' : 'light_mode'}</span>`;
   },
 
   loadThemePreference() {
-    const theme = localStorage.getItem('theme') || 'light';
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark-mode');
-      this.themeToggle.innerHTML = '<span class="material-icons-outlined">light_mode</span>';
-    } else {
+    const theme = localStorage.getItem('theme') || 'dark';
+    if (theme === 'light') {
+      document.documentElement.classList.add('light-mode');
       this.themeToggle.innerHTML = '<span class="material-icons-outlined">dark_mode</span>';
+    } else {
+      document.documentElement.classList.remove('light-mode');
+      this.themeToggle.innerHTML = '<span class="material-icons-outlined">light_mode</span>';
     }
   },
 
