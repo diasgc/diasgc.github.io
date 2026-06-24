@@ -11,6 +11,7 @@
       "DConf Editor": {"type": "apt", "args": "dconf-editor", "sel": true },
       "Grub Customizer": {"type": "apt", "args": "grub-customizer", "ppa": "ppa:danielrichter2007/grub-customizer", "sel": true },
       "Gnome scanner": { "type": "apt", "args": "simple-scan", "sel": true },
+      "Gnome Software Updates": { "type": "apt", "args": "software-properties-gtk", "gnome": "50", "sel": true }, 
       "Curl": { "type": "apt", "args": "curl", "sel": true },
       "Git": { "type": "apt", "args": "git", "sel": true }
     }
