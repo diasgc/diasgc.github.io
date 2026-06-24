@@ -1,15 +1,33 @@
 {
-  "name": "ubuntu-setup",
-  "short_name": "ubuntu",
+  "name": "Ubuntu Setup Installer",
+  "short_name": "Ubuntu Setup",
+  "description": "Modern Ubuntu Software Installation Manager",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#0d47a1",
+  "background_color": "#ffffff",
   "icons": [
     {
       "src": "icon.svg",
-      "sizes": "48x48 72x72 96x96 128x128 192x192 256x256 512x512",
+      "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
-  }
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
-  "display": "standalone"
+  "categories": ["productivity", "utilities"],
+  "screenshots": [
+    {
+      "src": "icon.svg",
+      "sizes": "540x720",
+      "form_factor": "narrow"
+    }
+  ]
 }
