@@ -1,20 +1,20 @@
 <svg version="1.1" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
  <defs>
   <linearGradient id="grad" x2="256" y2="256" gradientUnits="userSpaceOnUse">
-   <stop stop-color="#fafafa" offset="0"/>
-   <stop stop-color="#c8ccd0" offset="1"/>
+   <stop stop-color="#fff4ee" offset="0"/>
+   <stop stop-color="#f4c4aa" offset="1"/>
   </linearGradient>
  </defs>
  <rect width="256" height="256" ry="32" fill="url(#grad)"/>
  <g transform="translate(0,-12)">
-  <rect x="28" y="40" width="64" height="64" ry="17" fill="#377"/>
-  <rect x="96" y="40" width="64" height="64" ry="17" fill="#bee"/>
-  <rect x="164" y="40" width="64" height="64" ry="17" fill="#bee"/>
-  <rect x="96" y="108" width="64" height="64" ry="17" fill="#5bb"/>
-  <rect x="28" y="108" width="64" height="64" ry="17" fill="#bee"/>
-  <rect x="164" y="108" width="64" height="64" ry="17" fill="#8dd"/>
-  <rect x="96" y="176" width="64" height="64" ry="17" fill="#388"/>
-  <rect x="28" y="176" width="64" height="64" ry="17" fill="#bee"/>
-  <rect x="164" y="176" width="64" height="64" ry="17" fill="#bee"/>
+  <rect x="28" y="40" width="64" height="64" ry="17" fill="#d84000"/>
+  <rect x="96" y="40" width="64" height="64" ry="17" fill="#ffb08a"/>
+  <rect x="164" y="40" width="64" height="64" ry="17" fill="#ffb08a"/>
+  <rect x="96" y="108" width="64" height="64" ry="17" fill="#ff7a3d"/>
+  <rect x="28" y="108" width="64" height="64" ry="17" fill="#ffb08a"/>
+  <rect x="164" y="108" width="64" height="64" ry="17" fill="#ff9c6b"/>
+  <rect x="96" y="176" width="64" height="64" ry="17" fill="#b83000"/>
+  <rect x="28" y="176" width="64" height="64" ry="17" fill="#ffb08a"/>
+  <rect x="164" y="176" width="64" height="64" ry="17" fill="#ffb08a"/>
  </g>
 </svg>
