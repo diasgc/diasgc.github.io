@@ -11,5 +11,4 @@ alias edit='gnome-text-editor'
 alias jpg2avif='for i in *.jpg; do a=$(basename "$i"); b=${a%.*}; ffmpeg -hide_banner -i "$a" "${b}.avif" && rm "$a"; done'
 alias jpeg2avif='for i in *.jpeg; do a=$(basename "$i"); b=${a%.*}; ffmpeg -hide_banner -i "$a" "${b}.avif" && rm "$a"; done'
 alias mp4tohevc='for i in *.mp4; do a=$(basename "$i"); b=${a%.*}; ffmpeg -hide_banner -i "$a" -c:v libx265 -crf 32 "${b}-HEVC.mp4" && rm "$a"; done'
-alias ffp='firefox --private-window'
 EOF

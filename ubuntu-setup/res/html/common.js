@@ -7,6 +7,7 @@
  * 't': type, default: 'wallpaper',
  * 'id': id, default: Date.now().valueOf().toString(16),
  * 'grub_set': grubSet, default: 'grub-os-symb',
+ * 'fstr': fstr, default: '',
  * 
  * 'pre': preset, default: 'dark',
  * 'pc': pattern_color, default: '#804000',
