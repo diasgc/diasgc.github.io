@@ -31,16 +31,23 @@
     "id": "grp-soft",
     "pkg": {
       "Cubic": {"type": "apt", "args": "cubic", "ppa": "cubic-wizard/release"},
-      "Cryptomator": {"type": "apt", "args": "cryptomator", "ppa":"sebastian-stenzel/cryptomator" },
       "GIMP": { "type": "apt", "args": "gimp" },
       "Inkscape": { "type": "apt", "args": "inkscape" },
       "Microsoft Edge": { "type": "deb", "args": "https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb", "pkg": "microsoft-edge-stable"},
-      "Veracrypt (legacy)": { "type": "deb", "args": "https://launchpad.net/veracrypt/trunk/1.25.9/+download/veracrypt-1.25.9-Ubuntu-23.04-amd64.deb" },
-      "Veracrypt (latest)": { "type": "apt", "ppa": "unit193/encryption", "args": "veracrypt" },
       "ShowTime": { "type": "script", "args": "showtime" },
       "Snapshot": { "type": "apt", "args": "snapshot" },
       "Spotify": { "type": "script", "args": "spotify" }
     }
+  },
+  "Security": {
+    "id": "grp-soft",
+    "pkg": {
+      "Cryptomator": {"type": "apt", "args": "cryptomator", "ppa":"sebastian-stenzel/cryptomator" },
+      "FortiClient": {"type": "script", "args": "fortinet" },
+      "Veracrypt (legacy)": { "type": "deb", "args": "https://launchpad.net/veracrypt/trunk/1.25.9/+download/veracrypt-1.25.9-Ubuntu-23.04-amd64.deb" },
+      "Veracrypt (latest)": { "type": "apt", "ppa": "unit193/encryption", "args": "veracrypt" },
+      "UFW Firewall GUI (Gufw)": {"type": "apt", "args": "gufw" }
+      }
   },
   "Multimedia": {
     "id": "grp-mm",
@@ -82,7 +89,6 @@
       "BleachBit": {"type": "apt", "args": "bleachbit" },
       "GParted": {"type": "apt", "args": "gparted"},
       "Stacer": {"type": "apt", "args": "stacer", "ppa":"oguzhaninan/stacer"},
-      "UFW Firewall GUI (Gufw)": {"type": "apt", "args": "gufw" },
       "AppImageLauncher (AppImage support)": {"type": "apt", "args": "appimagelauncher",  "ppa":"appimagelauncher-team/stable" }
     }
   }
