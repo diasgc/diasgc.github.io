@@ -8,4 +8,8 @@ printf '%s\n' \
 'Signed-By: /usr/share/keyrings/microsoft-edge.gpg' \
 'Architectures: amd64' |
 sudo tee /etc/apt/sources.list.d/microsoft-edge.sources > /dev/null
-sudo apt install microsoft-edge-stable -y
+
+# osv="$(lsb_release -r | grep -oP "[0-9.]+")"
+# wget "https://packages.microsoft.com/config/ubuntu/${osv}/packages-microsoft-prod.deb" -O packages-microsoft-prod.deb
+# sudo dpkg -i packages-microsoft-prod.deb
+# rm packages-microsoft-prod.deb

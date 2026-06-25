@@ -3,10 +3,17 @@
 # Created by diasgc
 #
 
-if [ -z "$(which microsoft-edge)" ]; then
-  echo "Install Microsoft Edge first"
-  xdg-open "https://www.microsoft.com/en-us/edge/download"
-  wait 
+function getMsEdge() {
+  echo "Installing ms-edge browser..."
+  wget -q "https://packages.microsoft.com/config/ubuntu/${vrs}/packages-microsoft-prod.deb" -O ~/Downloads/packages-microsoft-prod.deb
+  sudo apt install -y ~/Downloads/packages-microsoft-prod.deb
+  sudo apt install -y microsoft-edge-stable
+}
+
+nav_app="$(dpkg -l | grep -E 'chromium|brave|edge|vivaldi')"
+
+if [ -z "${nav_app}" ]; then
+  echo -e "Install a chrome-based browser first."
   read -p "Press any key when ready"
 fi
 
@@ -18,7 +25,7 @@ gnome="$(gnome-shell --version | grep -oP '\d\d')"
 
 vnd="$(sed 's/.*/\L&/' /sys/devices/virtual/dmi/id/sys_vendor)"
 case "${vnd,,}" in
-  *besstar*)   vnd="minisforum" ;;
+  *besstar*)   vnd="minisforum";;
   *microsoft*) vnd="$(cat /sys/devices/virtual/dmi/id/product_family)";;
 esac
 

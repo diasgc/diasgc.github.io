@@ -469,6 +469,7 @@ opts.user = urlParams.get('usr') || opts.user;
 opts.home = `/home/${opts.user}`;
 opts.grubSet = opts.grubSet.replace("@grub_set",'') || "grub-os-symb";
 opts.ratio = 100 / window.screen.height / window.devicePixelRatio;
+opts.defFooter = urlParams.get('fstr') || `powered by ${opts.user}`;
 
 data.readParams(urlParams);
 
