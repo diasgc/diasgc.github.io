@@ -485,11 +485,9 @@ if (opts.defTitle.startsWith("@")){
       break;
     case 'refind':
       opts.defTitle = "rEFInd boot menu";
-      opts.defFooter = `powered by ${opts.user}`;
       break;
     default:
       opts.defTitle = "";
-      opts.defFooter = `powered by ${opts.user}`;
       break;
   }
 }
