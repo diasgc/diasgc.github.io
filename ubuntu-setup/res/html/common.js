@@ -450,7 +450,8 @@ const fonts = {
           fonts.select.addEventListener('change', renderSvg);
           document.getElementById('intro').style.display = 'none';
       }).catch((err) => {
-        fonts.setDefault("Error accessing local fonts:" + err)
+        fonts.setDefault("Error accessing local fonts:" + err);
+        document.getElementById('intro').style.display = 'none';
       });
     } else {
       fonts.setDefault("Local Font Access API is not supported in this browser.");
