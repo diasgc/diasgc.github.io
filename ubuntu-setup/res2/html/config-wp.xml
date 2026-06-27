@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE wallpapers SYSTEM "gnome-wp-list.dtd">
+<wallpapers>
+  <wallpaper deleted="false">
+    <name>Day-Night ${opts.id}</name>
+    <filename>${data.main.wp_light}</filename>
+    <filename-dark>${data.main.wp_dark}</filename-dark>
+    <options>${data.main.options}</options>
+    <shade_type>${data.main.shadertype}</shade_type>
+    <pcolor>${data.main.pcolor}</pcolor>
+    <scolor>${data.main.scolor}</scolor>
+  </wallpaper>
+</wallpapers>

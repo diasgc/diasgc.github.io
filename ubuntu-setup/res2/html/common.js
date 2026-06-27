@@ -496,4 +496,51 @@ if (opts.defTitle.startsWith("@")){
 opts.id = opts.id.replace('@id', Date.now().valueOf().toString(16));
 opts.type = urlParams.get('t') || opts.type.replace('@type','wallpaper');
 
+/* Panel Toggle Functionality for Mobile */
+const panelToggle = document.getElementById('panel-toggle');
+const controls = document.getElementById('controls');
+const preview = document.getElementById('preview');
+
+if (panelToggle) {
+  // Toggle panel on button click
+  panelToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    controls.classList.toggle('collapsed');
+  });
+
+  // Close panel when clicking outside on mobile
+  document.addEventListener('click', (e) => {
+    if (!controls.contains(e.target) && !panelToggle.contains(e.target)) {
+      if (window.innerWidth <= 768) {
+        controls.classList.add('collapsed');
+      }
+    }
+  });
+
+  // Close panel on orientation change
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+      if (window.innerWidth > 768) {
+        controls.classList.remove('collapsed');
+      }
+    }, 100);
+  });
+
+  // Handle window resize
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      controls.classList.remove('collapsed');
+      panelToggle.style.display = 'none';
+    } else {
+      panelToggle.style.display = 'flex';
+    }
+  });
+
+  // Initial state on load
+  if (window.innerWidth > 768) {
+    panelToggle.style.display = 'none';
+    controls.classList.remove('collapsed');
+  }
+}
+
 loadContent(opts.type);

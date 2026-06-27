@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+ <path id="bg" d="m16 0a16 16 0 0 0-16 16 16 16 0 0 0 16 16 16 16 0 0 0 16-16 16 16 0 0 0-16-16zm-0.2793 5.199 6.436 12.6-9.635-5.48-0.252-0.1484 3.451-6.973zm-4.477 9.068 10.74 4.32-15.23 6.164-0.748 0.3066 5.24-10.79zm11.52 5.072 2.914 5.861-7.252-2.586-0.6094-0.2129 4.947-3.062z"/>
+ <path id="fg" d="m15.72 5.2-3.451 6.972 0.252 0.1484 9.636 5.48zm-4.476 9.068-5.24 10.79 0.748-0.3066 15.23-6.164zm11.52 5.072-4.948 3.062 0.6092 0.2129 7.252 2.586z"/>
+ </defs>
+ <symbol id="color">
+  <use href="#bg" fill="#138ed3"/>
+  <use href="#fg" fill="#fff"/>
+ </symbol>
+ <symbol id="light-white"><use href="#fg" fill="#fff"/></symbol>
+ <symbol id="light-black"><use href="#fg"/></symbol>
+ <symbol id="full-white"><use href="#bg" fill="#fff"/></symbol>
+ <symbol id="full-black"><use href="#bg"/></symbol>
+ <use id="main" href="#color"/>
+</svg>
+

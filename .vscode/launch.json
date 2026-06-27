@@ -52,7 +52,7 @@
       "request": "launch",
       "name": "ubuntu-setup-res",
       "webRoot": "${workspaceRoot}/ubuntu-setup",
-      "file": "${workspaceFolder}/ubuntu-setup/res/index.html?usr=diasgc&pc=%23800000&lc=%230020d8&fc=%230020d8",
+      "file": "${workspaceFolder}/ubuntu-setup/res2/index.html?usr=diasgc&pc=%23800000&lc=%230020d8&fc=%230020d8",
       "runtimeArgs": ["--disable-web-security"] 
     },
     {

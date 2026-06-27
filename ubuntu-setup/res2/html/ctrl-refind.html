@@ -1,0 +1,330 @@
+<div class="control-group">
+  <div class="div-header">rEFInd</div>
+  <details>
+    <summary>OS Menu</summary>
+    <div class="flex-end">
+      <div class="flex-1">
+        <label for="os_color">Color:</label>
+        <input type="color" id="os_color" value="#FFFFFF" />
+      </div>
+      <div class="flex-1">
+        <label for="os_size">Size:</label>
+        <input
+          type="number"
+          id="os_size"
+          min="32"
+          max="256"
+          step="8"
+          value="128"
+        />
+      </div>
+    </div>
+  </details>
+  <details>
+    <summary>Tools Menu</summary>
+    <div class="flex-end">
+      <div class="flex-1">
+        <label for="tools_color">Color:</label>
+        <input type="color" id="tools_color" value="#FFFFFF" />
+      </div>
+      <div class="flex-1">
+        <label for="tools_size">Size:</label>
+        <input
+          type="number"
+          id="tools_size"
+          min="8"
+          max="64"
+          step="4"
+          value="48"
+        />
+      </div>
+      <div class="flex-switch">
+        <span class="span-label">Edit Tools Mode*</span>
+        <label class="material-switch">
+          <input type="checkbox" id="toggle-disabled-tools" />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+    <div class="div-info">
+      *Edit tools let you select which tools shall be available by enabling or
+      disabling with 'double-click', or change the order by dragging the icons.
+    </div>
+  </details>
+  <details>
+    <summary>Advanced Options</summary>
+    <!--https://www.rodsbooks.com/refind/configfile.html-->
+    <div class="flex-end">
+      <div
+        class="flex-1"
+        title="Sets the timeout period in seconds.&#13; - If 0, the timeout is disabled—rEFInd waits indefinitely for user input.&#13; - If -1, rEFInd will normally boot immediately to the default selection;&#13;however, if a shortcut key (for instance, W for Windows) is pressed, that system will boot instead.&#13;If any other key is pressed, the menu will show with no timeout."
+      >
+        <label for="conf_timeout">Timeout:</label>
+        <select id="conf_timeout">
+          <option value="default">Default</option>
+          <option value="-1">Immediately</option>
+          <option value="0">Wait for user</option>
+          <option value="1">1s</option>
+          <option value="2">2s</option>
+          <option value="3">3s</option>
+          <option value="5">5s</option>
+          <option value="10">10s</option>
+          <option value="15">15s</option>
+          <option value="30">30s</option>
+          <option value="60">60s</option>
+        </select>
+      </div>
+      <div
+        id="div-shutdown"
+        class="flex-switch"
+        style="display: none"
+        title="Shutdown after Timeout.&#13;&#13; - If set to false or one of its synonyms (the default),&#13;rEFInd boots the option set via default_selection&#13;when the timeout period is reached.&#13;&#13; - When set to true or one of its synonyms,&#13;rEFInd attempts to shut down the computer&#13;when the timeout period is reached.&#13;&#13;Many older EFIs lack software shutdown support.&#13;On them, setting this option to true&#13;will cause a reboot or a hang once&#13;the timeout value is reached!">
+        <span class="span-label">Shutdown:</span>
+        <label class="material-switch">
+          <input type="checkbox" id="conf_shutdown_after_timeout" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div id="div-screensaver" class="flex-1" style="display: none">
+        <label for="conf_screensaver">Screensaver delay:</label>
+        <input
+          type="number"
+          id="conf_screensaver"
+          min="0"
+          max="60"
+          step="1"
+          value="0"
+        />
+      </div>
+    </div>
+    <div class="flex-end">
+      <div class="flex-1">
+        <label for="conf_log_level">Log Level:</label>
+        <select id="conf_log_level">
+          <option value="default">Default</option>
+          <option value="0">No Log</option>
+          <option value="1">Level 0</option>
+          <option value="2">Level 1</option>
+          <option value="3">Level 2</option>
+          <option value="4">Level 3</option>
+        </select>
+      </div>
+      <div class="flex-switch">
+        <span class="span-label">Use NVRAM:</span>
+        <label class="material-switch">
+          <input type="checkbox" id="conf_use_nvram" />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+    <details>
+      <summary>Hide UI elements</summary>
+      <div class="flex-end">
+        <div class="flex-1 grid">
+          <label for="grp_hideui_banner">Banner:</label>
+          <input type="checkbox" id="grp_hideui_banner" />
+        </div>
+        <div class="flex-1 grid">
+          <label for="grp_hideui_label">Label:</label>
+          <input type="checkbox" id="grp_hideui_label" />
+        </div>
+        <div class="flex-1 grid">
+          <label for="grp_hideui_singleuser">Singleuser:</label>
+          <input type="checkbox" id="grp_hideui_singleuser" />
+        </div>
+        <div class="flex-1 grid">
+          <label for="grp_hideui_safemod">Safe Mode:</label>
+          <input type="checkbox" id="grp_hideui_safemod" />
+        </div>
+        <div class="flex-1 grid">
+          <label for="grp_hideui_hwtest">HW Test:</label>
+          <input type="checkbox" id="grp_hideui_hwtest" />
+        </div>
+      </div>
+      <div class="flex-end">
+        <div class="flex-1 grid">
+          <label for="grp_hideui_arrows">Arrows:</label>
+          <input type="checkbox" id="grp_hideui_arrows" />
+        </div>
+        <div class="flex-1 grid">
+          <label for="grp_hideui_hints">Hints:</label>
+          <input type="checkbox" id="grp_hideui_hints" />
+        </div>
+        <div class="flex-1 grid">
+          <label for="grp_hideui_editor">Editor:</label>
+          <input type="checkbox" id="grp_hideui_editor" />
+        </div>
+        <div class="flex-1 grid">
+          <label for="grp_hideui_badges">Badges:</label>
+          <input type="checkbox" id="grp_hideui_badges" />
+        </div>
+        <div class="flex-1 grid">
+          <label for="grp_hideui_all">All:</label>
+          <input type="checkbox" id="grp_hideui_all" />
+        </div>
+      </div>
+    </details>
+    <div class="flex-end">
+      <div class="flex-switch">
+        <span class="span-label">Text Only:</span>
+        <label class="material-switch">
+          <input type="checkbox" id="conf_textonly" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="flex-1">
+        <label for="conf_textmode">Text Mode:</label>
+        <input type="number" id="os_size" min="0" step="1" value="0" />
+      </div>
+      <div class="flex-switch">
+        <span class="span-label">Enable Touch:</span>
+        <label class="material-switch">
+          <input type="checkbox" id="conf_enable_touch" />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+    <div class="flex-end">
+      <div class="flex-switch">
+        <span class="span-label">Enable Mouse:</span>
+        <label class="material-switch">
+          <input type="checkbox" id="conf_enable_mouse" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="flex-1">
+        <label for="conf_mouse_size">Mouse Size:</label>
+        <input type="number" id="conf_mouse_size" min="8" step="1" value="16" />
+      </div>
+      <div class="flex-1">
+        <label for="conf_mouse_speed">Mouse Speed:</label>
+        <input type="number" id="conf_mouse_speed" min="1" step="1" value="1" />
+      </div>
+    </div>
+    <details>
+      <summary>Scan For</summary>
+      <div class="flex-end">
+        <div class="flex-1 grid">
+          <label for="grp_scanfor_internal">Internal:</label>
+          <input type="checkbox" id="grp_scanfor_internal" checked />
+        </div>
+        <div class="flex-1 grid">
+          <label for="grp_scanfor_external">External:</label>
+          <input type="checkbox" id="grp_scanfor_external" checked />
+        </div>
+        <div class="flex-1 grid">
+          <label for="grp_scanfor_optical">Optical:</label>
+          <input type="checkbox" id="grp_scanfor_optical" />
+        </div>
+        <div class="flex-1 grid">
+          <label for="grp_scanfor_netboot">NetBoot:</label>
+          <input type="checkbox" id="grp_scanfor_netboot" />
+        </div>
+        <div class="flex-1 grid">
+          <label for="grp_scanfor_hdbios">HD Bios:</label>
+          <input type="checkbox" id="grp_scanfor_hdbios" />
+        </div>
+      </div>
+      <div class="flex-end">
+        <div class="flex-1 grid">
+          <label for="grp_scanfor_biosexternal">Internal:</label>
+          <input type="checkbox" id="grp_scanfor_biosexternal" />
+        </div>
+        <div class="flex-1 grid">
+          <label for="grp_scanfor_cd">CD:</label>
+          <input type="checkbox" id="grp_scanfor_cd" />
+        </div>
+        <div class="flex-1 grid">
+          <label for="grp_scanfor_manual">Manual:</label>
+          <input type="checkbox" id="grp_scanfor_manual" />
+        </div>
+        <div class="flex-1 grid">
+          <label for="grp_scanfor_firmware">Firmware:</label>
+          <input type="checkbox" id="grp_scanfor_firmware" />
+        </div>
+      </div>
+    </details>
+    <div class="flex-end">
+      <div class="flex-switch">
+        <span class="span-label">Follow Symlinks:</span>
+        <label class="material-switch">
+          <input type="checkbox" id="conf_follow_symlinks" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="flex-switch">
+        <span class="span-label">UEFI deep legacy scan:</span>
+        <label class="material-switch">
+          <input type="checkbox" id="conf_uefi_deep_legacy_scan" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="flex-1">
+        <label for="conf_scan_delay">Scan Delay:</label>
+        <input type="number" id="conf_scan_delay" min="0" step="1" value="0" />
+      </div>
+    </div>
+    <div class="flex-end">
+      <div class="flex-switch">
+        <span class="span-label">Scan all Linux Kernels:</span>
+        <label class="material-switch">
+          <input type="checkbox" id="conf_scan_all_linux_kernels" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="flex-switch">
+        <span class="span-label">Support Gzipped Loaders:</span>
+        <label class="material-switch">
+          <input type="checkbox" id="conf_support_gzipped_loaders" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="flex-switch">
+        <span class="span-label">Fold Linux Kernels:</span>
+        <label class="material-switch">
+          <input type="checkbox" id="conf_fold_linux_kernels" />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+    <div class="flex-end">
+      <div class="flex-switch">
+        <span class="span-label">Write Systemd Vars:</span>
+        <label class="material-switch">
+          <input type="checkbox" id="conf_write_systemd_vars" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="flex-switch">
+        <span class="span-label">Enable/Lock Vmx:</span>
+        <label class="material-switch">
+          <input type="checkbox" id="conf_enable_and_lock_vmx" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="flex-1">
+        <label for="conf_max_tags">Max Tags:</label>
+        <input type="number" id="conf_max_tags" min="0" step="1" value="0" />
+      </div>
+    </div>
+    <div class="flex-1">
+      <label for="conf_linux_prefixes">Linux Prefixes:</label>
+      <input type="text" id="conf_linux_prefixes" value="default" />
+    </div>
+    <div class="flex-1">
+      <label for="conf_extra_kernel_version_strings"
+        >Extra Kernel Version Strngs:</label
+      >
+      <input type="text" id="conf_default_selection" value="default" />
+    </div>
+    <div class="flex-1">
+      <label for="conf_default_selection">Default Selection:</label>
+      <input type="text" id="conf_default_selection" value="default" />
+    </div>
+    <div class="flex-1">
+      <label for="conf_spoof_osx_version">Spoof OSX Version:</label>
+      <input type="text" id="conf_spoof_osx_version" value="default" />
+    </div>
+  </details>
+</div>
+<script src="html/refind.js?v=1.01" type="text/javascript"></script>

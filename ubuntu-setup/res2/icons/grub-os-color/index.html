@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    #panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    img {
+      width: 128px;
+      height: 128px;
+      padding: 8px;
+    }
+  </style>
+  <title>THIS IS TITLE</title>
+</head>
+<body>
+  <select name="example">
+    <option value="Color">Color</option>
+    <option value="Foreground">Foreground</option>
+    <option value="Mask">Mask</option>
+  </select>
+  <div id="panel">
+    <img src="artix.svg#light-black" alt="Artix"/>
+    <img src="chakra.svg#full-black" alt="Chakra"/>
+    <img src="ubuntu.svg" alt="Ubuntu"/>
+  </div>
+</body>
+</html>

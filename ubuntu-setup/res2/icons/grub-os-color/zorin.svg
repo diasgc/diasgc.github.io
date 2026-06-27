@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <path id="bg" d="m16 0a16 16 0 0 0-16 16 16 16 0 0 0 16 16 16 16 0 0 0 16-16 16 16 0 0 0-16-16zm0 4a12 12 0 0 1 12 12 12 12 0 0 1-12 12 12 12 0 0 1-12-12 12 12 0 0 1 12-12zm-0.1621 3.166-4.826 0.001953-1.396 2.449h12.78l-1.381-2.436-5.172-0.01562zm-7.951 5.492-1.885 3.328 1.758 3.123h0.6777l9.588-6.451h-10.14zm15.58 0-9.59 6.453h10.37l1.752-3.096-1.889-3.357h-0.6387zm-14 9.492 1.512 2.67 5.172 0.01563 4.828-0.001954 1.531-2.684h-13.04z" />
+  <path id="fg" d="m16 4a12 12 0 0 0-12 12 12 12 0 0 0 12 12 12 12 0 0 0 12-12 12 12 0 0 0-12-12zm-0.1621 3.166 5.172 0.0156 1.381 2.436h-12.78l1.396-2.449zm-7.952 5.492h10.14l-9.588 6.452h-0.6776l-1.758-3.123zm15.58 0h0.6388l1.889 3.358-1.752 3.096h-10.36zm-14 9.492h13.04l-1.531 2.684-4.828 2e-3 -5.172-0.0156z"/>
+ </defs>
+ <symbol id="color">
+  <use href="#bg" fill="#0af"/>
+  <use href="#fg" fill="#fff"/>
+ </symbol>
+ <symbol id="light-white"><use href="#fg" fill="#fff"/></symbol>
+ <symbol id="light-black"><use href="#fg"/></symbol>
+ <symbol id="full-white"><use href="#bg" fill="#fff"/></symbol>
+ <symbol id="full-black"><use href="#bg"/></symbol>
+ <use id="main" href="#color"/>
+</svg>

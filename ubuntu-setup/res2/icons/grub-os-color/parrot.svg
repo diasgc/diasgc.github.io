@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="grad" x1="17.28" x2="28.04" y1="16.63" y2="27.39" gradientTransform="matrix(.9968 0 0 .9976 .06426 .03839)" gradientUnits="userSpaceOnUse">
+   <stop stop-opacity=".4992" offset="0"/>
+   <stop stop-opacity="0" offset="1"/>
+  </linearGradient>
+  <path id="bg" d="m16 0a16 16 0 0 0-16 16 16 16 0 0 0 16 16 16 16 0 0 0 16-16 16 16 0 0 0-16-16zm-4.652 4.801 2.82 1.83 4.6 2.555c2.776 4.168 4.781 6.426 7.428 10.68l-3.818-0.9883-1.016 5.152-1.443-2.859-1.975 5.832-0.1895-10.83-2.766-1.412-2.955-5.58-1.504-0.5664-1.969 2.043-0.5605-4.256z"/>
+  <path id="fg" d="m11.35 4.8-3.349 1.6 0.5613 4.255 1.969-2.043 1.504 0.5663 2.956 5.579 2.766 1.413 0.1899 10.83 1.975-5.831 1.443 2.857 1.015-5.151 3.82 0.9878c-2.647-4.255-4.653-6.511-7.43-10.68l-4.601-2.555z"/>
+  <path id="sh" d="m18.77 9.2c2.77 4.158 4.764 6.408 7.404 10.65l-3.806-0.986-1.012 5.139-1.439-2.851-1.968 5.818 2.593 4.329a15.95 15.96 0 0 0 11.41-14.77l-5.969-3.32z" fill="url(#grad)"/>
+ </defs>
+ <symbol id="color">
+  <use href="#bg" fill="#5df"/>
+  <use href="#fg"/>
+  <use href="#sh"/>
+ </symbol>
+ <symbol id="light-white"><use href="#fg" fill="#fff"/></symbol>
+ <symbol id="light-black"><use href="#fg"/></symbol>
+ <symbol id="full-white"><use href="#bg" fill="#fff"/></symbol>
+ <symbol id="full-black"><use href="#bg"/></symbol>
+ <use id="main" href="#color"/>
+</svg>
