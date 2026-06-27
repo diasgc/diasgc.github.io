@@ -8,7 +8,22 @@ alias sys-upgrade='sudo do-release-upgrade'
 alias gedit='gnome-text-editor'
 alias ged='gnome-text-editor'
 alias edit='gnome-text-editor'
-alias jpg2avif='for i in *.jpg; do ffmpeg -hide_banner -i "\${i}" "\${i/.jpg/.avif}" && rm "\${i}"; done'
-alias jpeg2avif='for i in *.jpeg; do ffmpeg -hide_banner -i "\${i}" "\${i/.jpeg/.avif}" && rm "\${i}"; done'
-alias mp4tohevc='for i in *.mp4; do ffmpeg -hide_banner -i "\${i}" -c:v libx265 -crf 32 "\${i/.mp4/-HEVC.mp4}" && rm "\${i}"; done'
+
+function ffmpeg-avif() {
+    read -p "Remove original? (y/n): " rem
+    #read -p "Quality (0-51, empty for default)): " qual
+    args=(-c:v libaom-av1 -crf \${qual:-28})
+    for i in "\$@"; do
+        ffmpeg -hide_banner -i "\${i}" "\${args[@]}" "\${i/.*/.avif}" && case "\${rem,,}" in y) rm "\${i}" ;; esac
+    done
+}
+
+function ffmpeg-hevc() {
+    read -p "Remove original? (y/n): " rem
+    read -p "Quality (0-51, empty for default)): " qual
+    args=(-c:v libx265 -crf \${qual:-28})
+    for i in "\$@"; do
+        ffmpeg -hide_banner -i "\${i}" "\${args[@]}" "\${i/.*/-HEVC.mp4}" && case "\${rem,,}" in y) rm "\${i}" ;; esac
+    done
+}
 EOF
