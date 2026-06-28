@@ -506,6 +506,13 @@ async function startRecording(){
   if (outputCtl.options.debug)
     logger.d(JSON.stringify(session,null,2));
   stream = await navigator.mediaDevices.getUserMedia(session);
+  const track = stream.getAudioTracks()[0];
+  const settings = track.getSettings();
+  
+  if (session.audio.channelCount !== settings.channelCount) {
+    alert(`Channel count mismatch: selected ${session.audio.channelCount}, actual ${settings.channelCount}`);
+  }
+
   lock = await navigator.wakeLock.request('screen');
   let recOpts = outputCtl.getOptions();
   if (outputCtl.options.debug)
