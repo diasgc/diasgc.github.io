@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>CodeView</title>
+  <!--
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.js"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.0.943/pdf.min.js' type='module'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.0.943/pdf.worker.min.js' type='module'></script>
+  <script type="module">
+    import pdfjsDist from 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.8.69/+esm'
+    import * as pdfjsLib from 'pdfjs-dist/build'
+  </script>
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="filewv.css">
+  <link rel="stylesheet" href="icons.css">
+</head>
+<body>
+
+  <div id="header" class='c-header'>
+    <div class="c-header-bar">
+      <div id="h-title">Header Title</div>
+      <div id='h-nav'></div>
+    </div>
+    <div id='h-more' class='c-header-icon menu-icon' alt='menu'></div>
+  </div>
+
+  <div id="content" class='c-content'></div>
+
+  <div id="footer" class='c-footer'>
+    <div id='opts-filewv' class='tab-opts'>
+      <button id='opt-theme'>github</button>
+      <button id='opt-lang'>lang-auto</button>
+    </div>
+  </div>
+
+  <!-- PopupMenu -->
+  <div id="popupMenu" class="modal">
+    <div id="popupContent" class="modal-content"></div>
+  </div>
+  
+  <script type="text/javascript" src="common.js?v=2411250000"></script>
+  <script type="text/javascript" src="filewv.js?v=2411182000"></script>
+</body>
+</html>

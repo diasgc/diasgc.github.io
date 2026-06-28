@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <title>HexView</title>
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="hexv.css">
+</head>
+<body>
+<div id="content" class='c-content'>
+  <div id="file-picker">
+    <input type="file" accept="*" id="file-input">
+  </div>
+  <div id="div-hexv" class="tab-content">
+    <div class='table-fixed-head' >
+      <table id='thex' class='table-hex'>
+        <thead id="th-data"></thead>
+        <tbody id='tdata'"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div id="footer" class='c-footer'>
+  <div id="f-hoffset">
+    <div>
+      <fieldset class="f-offset"><legend>offset</legend>
+        <div id="off-first" onclick="offsetFirst()">&#x23EE;</div>
+        <div id="off-prev" onclick="offsetPrev()">&#x25C0;</div>
+        <input type="text" id="hvi-offset" name="offset" value="0" onchange="offsetChange()"/>
+        <div id="off-next" onclick="offsetNext()">&#x25B6;</div>
+        <div id="off-last" onclick="offsetLast()">&#x23ED;</div>
+      </fieldset>
+    </div>
+    <fieldset class="f-fs"><legend>bytes per row</legend>
+      <input type="radio" id="hvi-r8"  name="rowb" value="8" onchange="hcfg()"/><label for="hvi-r8">8</label>
+      <input type="radio" id="hvi-r12" name="rowb" value="12" onchange="hcfg()" checked/><label for="hvi-r12">12</label>
+      <input type="radio" id="hvi-r16" name="rowb" value="16" onchange="hcfg()"/><label for="hvi-r16">16</label>
+    </fieldset>
+    <fieldset class="f-fs"><legend>space char</legend>
+      <input type="radio" id="hvi-ch1" name="schar" value="." checked onchange="hcfg()"/><label for="hvi-ch1">dot</label>
+      <input type="radio" id="hvi-ch2" name="schar" value="&nbsp;" onchange="hcfg()"/><label for="hvi-ch2">spc</label>
+      <input type="radio" id="hvi-ch3" name="schar" value="-" onchange="hcfg()"/><label for="hvi-ch3">dsh</label>
+    </fieldset>
+    <fieldset class="f-fs"><legend>page size</legend>
+      <input type="radio" id="hvi-p05" name="pgsz" value="512" onchange="hcfg()"/><label for="hvi-p05">512b</label>
+      <input type="radio" id="hvi-p1k" name="pgsz" value="1024" onchange="hcfg()"/><label for="hvi-p1k">1024b</label>
+      <input type="radio" id="hvi-p2k" name="pgsz" value="2048" onchange="hcfg()" checked/><label for="hvi-p2k">2048b</label>
+    </fieldset>
+  </div>
+  <div id='f-hinfo' class='f-div'>
+    <div>
+      <fieldset class="f-fs"><legend>endianess</legend>
+        <input type="radio" id="hvi-le" name="endn" value="le" onchange="hnfo()" checked /><label for="hvi-le">LE</label>
+        <input type="radio" id="hvi-be" name="endn" value="be" onchange="hnfo()"/><label for="hvi-be">BE</label>
+      </fieldset>
+      <fieldset class="f-fs"><legend>sign</legend>
+        <input type="radio" id="hvi-u" name="sign" value="u" onchange="hnfo()" checked /><label for="hvi-u">U</label>
+        <input type="radio" id="hvi-s" name="sign" value="s" onchange="hnfo()"/><label for="hvi-s">S</label>
+      </fieldset>
+      <fieldset class="f-fs"><legend>input</legend>
+        <input type="radio" id="hvi-8b"  name="bwidth" value="8"   onchange="hnfo()"/><label for="hvi-8b">int8</label>
+        <input type="radio" id="hvi-16b" name="bwidth" value="16"  onchange="hnfo()" checked/><label for="hvi-16b">int16</label>
+        <input type="radio" id="hvi-24b" name="bwidth" value="24"  onchange="hnfo()"/><label for="hvi-24b">int24</label>
+        <input type="radio" id="hvi-32b" name="bwidth" value="32"  onchange="hnfo()"/><label for="hvi-32b">int32</label>
+        <input type="radio" id="hvi-64b" name="bwidth" value="64"  onchange="hnfo()"/><label for="hvi-64b">int64</label>
+        <input type="radio" id="hvi-32f" name="bwidth" value="f32" onchange="hnfo()"/><label for="hvi-32f">flt32</label>
+        <input type="radio" id="hvi-64f" name="bwidth" value="f64" onchange="hnfo()"/><label for="hvi-64f">flt64</label>
+      </fieldset>
+    </div>
+    <div>
+      <fieldset class="f-fsv"><legend>Output</legend>
+        <input type="radio" id="hvo-dec" name="hvout" value="dec" onchange="hnfo()" checked/><label for="hvo-dec">dec</label>
+        <input type="radio" id="hvo-oct" name="hvout" value="oct" onchange="hnfo()"/><label for="hvo-oct">oct</label>
+        <input type="radio" id="hvo-hex" name="hvout" value="hex" onchange="hnfo()"/><label for="hvo-hex">hex</label>
+        <input type="radio" id="hvo-bin" name="hvout" value="bin" onchange="hnfo()"/><label for="hvo-bin">bin</label>
+        <input type="radio" id="hvo-rgb" name="hvout" value="rgb" onchange="hnfo()"/><label for="hvo-rgb">rgb</label>
+        <input type="radio" id="hvo-dat" name="hvout" value="dat" onchange="hnfo()"/><label for="hvo-dat">dat</label>
+        <div id="hvi-val">0</div>
+      </fieldset>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="meta/datareader.js?v=2411182000"></script>
+<script type="text/javascript" src="common.js?v=2411182000"></script>
+<script type="text/javascript" src="hexv.js?v=2411182000"></script>
+</body>
+</html>

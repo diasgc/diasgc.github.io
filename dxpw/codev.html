@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>CodeView</title>
+  <script src='https://unpkg.com/mediainfo.js'></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js"></script>
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/atom-one-light.min.css">
+  <link rel="stylesheet" media="(prefers-color-scheme: dark)" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="codev.css">
+</head>
+<body>
+  <div id="header" class='c-header'>
+    <button id='tab-stat' class='tab-button'>File</button>
+    <button id='tab-meta' class='tab-button'>Metadata</button>
+    <button id='tab-code' class='tab-button'>Content</button>
+    <button id='tab-hexv' class='tab-button'>HexView</button>
+  </div>
+  <div id="content" class='c-content'>
+    <div id="div-stat" class="tab-content"></div>
+    <div id="div-meta" class="tab-content"></div>
+    <div id="div-code" class="tab-content"></div>
+    <div id="div-hexv" class="tab-content">
+      <div class='table-fixed-head'>
+        <table id='thex' class='table-hex'>
+          <thead>
+          <tr>
+            <th onclick='setOffset()'>offset</th>
+            <th onclick='setRowbytes()'>hex</th>
+            <th onclick='setAscii()'>ascii</th>
+          </tr>
+          </thead>
+          <tbody id='tdata'></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div id="footer" class='c-footer'>
+    <div id='opts-code' class='tab-opts'>
+      <button id='opt-theme' class='menu-item'>theme: github</button>
+      <button id='opt-lang' class='menu-item'>lang: auto</button>
+    </div>
+    <div id='opts-hexv' class='tab-opts'>
+      <button id='opt-offsetprev' class='menu-item-symb' onclick="setOffsetPrev()">&#x25C0;</button>
+      <span id='opt-offsetcurr' class="menu-item" onclick="setOffset()">0x0000-0x2000</span>
+      <button id='opt-offsetnext' class='menu-item-symb' onclick="setOffsetNext()">&#x25B6;</button>
+      <button id='opt-rowbytes' class='menu-item' onclick="setRowbytes()">8 byte</button>
+      <button id='opt-asciichr' class='menu-item' onclick="setAscii()">char: '.'</button>
+    </div>
+  </div>
+
+  <!-- PopupMenu -->
+  <div id="popupMenu" class="modal">
+    <div id="popupContent" class="modal-content"></div>
+  </div>
+  <script type="text/javascript" src="meta/datareader.js?v=2411182000"></script>
+  <!--<script type="text/javascript" src="meta/js_font.js?v=2411182000"></script>-->
+  <script type="text/javascript" src="meta/metadata_font.js?v=2411182000"></script>
+  <script type="text/javascript" src="meta/js_elf.js?v=2411182000"></script>
+  <script type="text/javascript" src="meta/js_jpeg.js?v=2411182000"></script>
+  <script type="text/javascript" src="meta/meta_image.js?v=2411182000"></script>
+  <script type="text/javascript" src="common.js?v=2411182000"></script>
+  <script type="text/javascript" src="codev.js?v=2411182000"></script>
+</body>
+</html>

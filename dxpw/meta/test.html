@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>CodeView</title>
+  <script type="text/javascript" src="datareader.js?v=20241208"></script>
+  <script type="text/javascript" src="meta_image.js"></script>
+  <script type="text/javascript" src="../common.js"></script>
+  <style>
+    .hv-opts {
+      display: block;
+      border: 1px solid #8882;
+      border-radius: 12px;
+      margin: 12px;
+      padding: 4px;
+      background-color: #f50;
+    }
+
+    .range-input {
+      -webkit-appearance: none;
+      appearance: none; 
+      width: 100%;
+      cursor: pointer;
+      outline: none;
+      border-radius: 1em;
+      height: 0.3em;
+      background: #8884;
+    }
+
+    .range-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none; 
+      height: 1em;
+      width: 1em;
+      background-color: #f50;
+      border-radius: 50%;
+      border: none;
+      transition: .2s ease-in-out;
+    }
+
+    .range-input::-moz-range-thumb {
+      height: 1em;
+      width: 1em;
+      background-color: #f50;
+      border-radius: 50%;
+      border: none;
+      transition: .2s ease-in-out;
+    }
+
+    .range-input::-webkit-slider-thumb:hover {
+      box-shadow: 0 0 0 0.7em rgba(255,85,0, .1)
+    }
+    .range-input:active::-webkit-slider-thumb {
+      box-shadow: 0 0 0 0.9em rgba(255,85,0, .2)
+    }
+    .range-input:focus::-webkit-slider-thumb {
+      box-shadow: 0 0 0 0.9em rgba(255,85,0, .2)
+    }
+
+    .range-input::-moz-range-thumb:hover {
+      box-shadow: 0 0 0 0.7em rgba(255,85,0, .1)
+    }
+    .range-input:active::-moz-range-thumb {
+      box-shadow: 0 0 0 0.9em rgba(255,85,0, .2)
+    }
+    .range-input:focus::-moz-range-thumb {
+      box-shadow: 0 0 0 0.9em rgba(255,85,0, .2)    
+    }
+    fieldset {
+      border-radius: 12px;
+      border: 1px solid #8882;
+      color: #f50;
+      font-size: 12px;
+      font-weight: 600;
+      margin: 12px;
+      padding: 12px;
+    }
+
+    select {
+      display: block;
+      border: 1px solid #8882;
+      border-radius: 12px;
+      margin: 12px;
+      padding: 4px;
+      background-color:  #f50;
+      color: #111;
+    }
+  </style>
+</head>
+<body>
+  <label for="font">Choose IMAGE</label>
+  <input type="file" id="test" name="test" accept="*" onchange="selectFile(this)"/>
+  <fieldset id="inOptions">
+    <legend>Options</legend>
+    <input type="range" min="0" max="32000" value="0" class="range-input">
+  </fieldset>
+  <div id="div-opts" style="display: block;">
+  </div>
+  <pre id="txt"></pre>
+  <script>
+    function selectFile(e){
+      let file = e.files[0];
+      DataReader.load(file, (r) => {
+        let meta = new MetadataImage(r);
+        document.getElementById("txt").innerText = JSON.stringify(meta.metadata, null, 2);  
+      })
+    };
+    function createSelectOptions(title, onchangeCallback, defValue, objOpts){
+      let sel = _newElement('select');
+      let grp = _newElement('optgroup');
+      grp.label = title;
+      Object.keys(objOpts).forEach( key => {
+        let opt = _newElement('option',null, key);
+        opt.value = objOpts[key];
+        if (opt.value === defValue)
+          opt.selected = 'selected'
+        grp.appendChild(opt);
+      })
+      sel.addEventListener('change', onchangeCallback);
+      sel.appendChild(grp);
+      return sel;
+    }
+
+    function createFieldset(title){
+      let fs = _newElement('fieldset');
+      let lg = _newElement('legend',null, title);
+      fs.appendChild(lg);
+      return fs;
+    }
+
+    function setAsciiValue(selectObject){
+      document.body.innerHTML += selectObject.value;
+    }
+    let hex_asciichar = '.';
+    let dopts = document.getElementById('div-opts');
+    let fs = createFieldset("Non-Printable Char");
+    let s = createSelectOptions("Non-printable chars", setAsciiValue, hex_asciichar, {
+      "dot": ".",
+      "middle-dot": "&#x00b7;",
+      "space": "&nbsp;"
+    });
+    fs.appendChild(s);
+    dopts.appendChild(fs);
+
+  </script>
+</body>
