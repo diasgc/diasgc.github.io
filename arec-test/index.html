@@ -15,6 +15,7 @@
 <button id="stopBtn" disabled>Stop Recording</button>
 <p id="status">Status: Idle</p>
 <audio id="playback" controls></audio>
+<p id="info"></p>
 
 <script>
 (async function() {
@@ -22,7 +23,8 @@
   const stopBtn = document.getElementById('stopBtn');
   const statusEl = document.getElementById('status');
   const playback = document.getElementById('playback');
-
+  const infoEl = document.getElementById('info');
+  
   let mediaRecorder;
   let audioChunks = [];
 
@@ -35,14 +37,16 @@
 
       const track = stream.getAudioTracks()[0];
       const settings = track.getSettings();
-      console.log("Actual audio track settings:", settings);
+      infoEl.textContent = "Actual audio track settings: " + JSON.stringify(settings);
 
       if (settings.channelCount < 2) {
+        infoEl.textContent += " (Stereo not available, using mono)";
         console.warn("Stereo not available, creating fake stereo...");
         return createFakeStereo(stream);
       }
       return stream;
     } catch (err) {
+      infoEl.textContent = "Error accessing microphone: " + err.message;
       console.error("Error accessing microphone:", err);
       alert("Microphone access failed: " + err.message);
       throw err;
