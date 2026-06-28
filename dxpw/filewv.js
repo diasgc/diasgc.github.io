@@ -170,6 +170,7 @@ function addLsItem(stat){
     icon.classList.add('item-hidden');
   item.appendChild(icon);
   let r = _newElement('div', "item-text");
+  r.appendChild(_newElement('div', "item-title", stat.name));
   if (stat.hasThumb()){
     r.style.paddingTop = '12px';
     if (stat.mimetype.match('image'))
@@ -192,8 +193,6 @@ function addLsItem(stat){
       r.appendChild(img);
     }
   }
-
-  r.appendChild(_newElement('div', "item-title", stat.name));
   r.appendChild(_newElement('div', "item-subtitle", stat.getSummary()));
   r.appendChild(_newElement('div', 'item-stat', stat.getStatHeader()));
   item.appendChild(r);
