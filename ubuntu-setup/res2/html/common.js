@@ -432,9 +432,9 @@ const fonts = {
   setDefault: function(err=''){
     intro.panel.style.background = '#f008';
     preset.font_family = this.sysFont;
-    intro.panel.textContent = err;
+    this.msgId.textContent.textContent = err;
     utils.addOption(fonts.select,JSON.stringify(this.defaultFont),"default");
-    document.getElementById('intro').style.display = 'none';
+    intro.panel.style.display = 'none';
   },
   init: function(){
     fonts.select.innerHTML = '';
@@ -448,14 +448,13 @@ const fonts = {
           });
           fonts.select.value = JSON.stringify(fonts.defaultFont);
           fonts.select.addEventListener('change', renderSvg);
-          document.getElementById('intro').style.display = 'none';
+          intro.panel.style.display = 'none';
       }).catch((err) => {
         fonts.setDefault("Error accessing local fonts:" + err);
-        document.getElementById('intro').style.display = 'none';
       });
     } else {
       fonts.setDefault("Local Font Access API is not supported in this browser.");
-      document.getElementById('intro').style.display = 'none';
+      intro.panel.style.display = 'none';
     }
   }
 }
