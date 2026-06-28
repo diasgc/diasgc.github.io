@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mobile Stereo Audio Recorder</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; }
+  button { margin: 5px; padding: 10px; }
+</style>
+</head>
+<body>
+
+<h2>Mobile Stereo Audio Recorder</h2>
+<button id="startBtn">Start Recording</button>
+<button id="stopBtn" disabled>Stop Recording</button>
+<p id="status">Status: Idle</p>
+<audio id="playback" controls></audio>
+
+<script>
+(async function() {
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const statusEl = document.getElementById('status');
+  const playback = document.getElementById('playback');
+
+  let mediaRecorder;
+  let audioChunks = [];
+
+  async function getStereoStream() {
+    try {
+      // Request stereo if possible
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: { channelCount: 2, sampleRate: 48000 }
+      });
+
+      const track = stream.getAudioTracks()[0];
+      const settings = track.getSettings();
+      console.log("Actual audio track settings:", settings);
+
+      if (settings.channelCount < 2) {
+        console.warn("Stereo not available, creating fake stereo...");
+        return createFakeStereo(stream);
+      }
+      return stream;
+    } catch (err) {
+      console.error("Error accessing microphone:", err);
+      alert("Microphone access failed: " + err.message);
+      throw err;
+    }
+  }
+
+  function createFakeStereo(monoStream) {
+    const audioCtx = new AudioContext();
+    const source = audioCtx.createMediaStreamSource(monoStream);
+    const splitter = audioCtx.createChannelSplitter(1);
+    const merger = audioCtx.createChannelMerger(2);
+
+    // Duplicate mono channel into left and right
+    splitter.connect(merger, 0, 0);
+    splitter.connect(merger, 0, 1);
+
+    const dest = audioCtx.createMediaStreamDestination();
+    merger.connect(dest);
+    return dest.stream;
+  }
+
+  startBtn.onclick = async () => {
+    statusEl.textContent = "Status: Requesting microphone...";
+    const stream = await getStereoStream();
+
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks = [];
+
+    mediaRecorder.ondataavailable = e => {
+      if (e.data.size > 0) audioChunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      playback.src = URL.createObjectURL(blob);
+      statusEl.textContent = "Status: Recording stopped";
+    };
+
+    mediaRecorder.start();
+    statusEl.textContent = "Status: Recording...";
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+  };
+
+  stopBtn.onclick = () => {
+    mediaRecorder.stop();
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+  };
+})();
+</script>
+
+</body>
+</html>
