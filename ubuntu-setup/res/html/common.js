@@ -430,11 +430,12 @@ const fonts = {
     };
   },
   setDefault: function(err=''){
-    intro.panel.style.background = '#f008';
-    data.presets.font_family = this.sysFont;
-    this.msgId.textContent.textContent = err;
-    utils.addOption(fonts.select,JSON.stringify(this.defaultFont),"default");
+    //intro.panel.style.background = '#f008';
     intro.panel.style.display = 'none';
+    utils.addOption(fonts.select,JSON.stringify(this.defaultFont),"default");
+    alert(err);
+    data.presets.font_family = this.sysFont;
+    //this.msgId.textContent.textContent = err;
   },
   init: function(){
     fonts.select.innerHTML = '';
