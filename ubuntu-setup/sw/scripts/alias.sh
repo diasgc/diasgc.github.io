@@ -10,7 +10,7 @@ alias ged='gnome-text-editor'
 alias edit='gnome-text-editor'
 
 function git-config(){
-    p=($(zenity --forms --text="Git Config" --add-entry="email" --add-entry="username" --add-combo="Scope" --combo-values="Local|Global" --separator=" "))
+    p=(\$(zenity --forms --text="Git Config" --add-entry="email" --add-entry="username" --add-combo="Scope" --combo-values="Local|Global" --separator=" "))
     test -z "\${p[0]}" && echo "Email is required." && return 1
     test -z "\${p[1]}" && echo "Username is required." && return
     case "\${p[2],,}" in
@@ -21,8 +21,9 @@ function git-config(){
 }
 
 function ffmpeg-avif() {
-    read -p "Remove original? (y/n): " rem
-    #read -p "Quality (0-51, empty for default)): " qual
+    test -z "\$1" && echo "Usage: ffmpeg-avif [-r remove original file] [<quality>] <file1> [file2 ...]" && return 1
+    case "\$1" in -r) rem=y; shift ;; esac
+    test -n "\$(grep -oP "\d+" <<<"\${1}")" && args+=(-crf "\${1}") && shift
     args=(-c:v libaom-av1 -crf \${qual:-28})
     for i in "\$@"; do
         ffmpeg -hide_banner -i "\${i}" "\${args[@]}" "\${i/.*/.avif}" && case "\${rem,,}" in y) rm "\${i}" ;; esac
@@ -30,8 +31,9 @@ function ffmpeg-avif() {
 }
 
 function ffmpeg-hevc() {
-    read -p "Remove original? (y/n): " rem
-    read -p "Quality (0-51, empty for default)): " qual
+    test -z "\$1" && echo "Usage: ffmpeg-hevc [-r remove original file] [<quality>] <file1> [file2 ...]" && return 1
+    case "\$1" in -r) rem=y; shift ;; esac
+    test -n "\$(grep -oP "\d+" <<<"\${1}")" && args+=(-crf "\${1}") && shift
     args=(-c:v libx265 -crf \${qual:-28})
     for i in "\$@"; do
         ffmpeg -hide_banner -i "\${i}" "\${args[@]}" "\${i/.*/-HEVC.mp4}" && case "\${rem,,}" in y) rm "\${i}" ;; esac
@@ -39,9 +41,12 @@ function ffmpeg-hevc() {
 }
 
 function ffmpeg-cut() {
-    read -p "Remove original? (y/n): " rem
-    ss=\$1; shift; to=\$1; shift
-    args=(-c copy -ss "\${ss}" -to "\${to}")
+    test -z "\$1" && echo "Usage: ffmpeg-cut [-r remove original file] <start_time>[-<end_time>] <file1> [file2 ...]" && return 1
+    case "\$1" in -r) rem=y; shift ;; esac
+    IFS='-' read -ra c <<< "\$1"; shift
+    args=(-c copy)
+    test -n "\$(grep -oP "\d{2}:\d{2}" <<<"\${c[0]}")" && args+=(-ss "\${c[0]}")
+    test -n "\$(grep -oP "\d{2}:\d{2}" <<<"\${c[1]}")" && args+=(-to "\${c[1]}")
     for i in "\$@"; do
         ffmpeg -hide_banner -i "\${i}" "\${args[@]}" "\${i/.*/-cut.mp4}" && case "\${rem,,}" in y) rm "\${i}" ;; esac
     done
