@@ -21,7 +21,7 @@ function git-config(){
 }
 
 function ffmpeg-avif() {
-    test -z "$1" && echo "Usage: ffmpeg-avif [-r remove original file] [<quality>] <file1> [file2 ...]" && return 1
+    test -z "$1" && echo "Usage: ffmpeg-avif [-r=remove original file] [<quality>] <file1> [file2 ...]" && return 1
     case "$1" in -r) rem=y; shift ;; esac
     test -n "$(grep -oP "\d+" <<<"${1}")" && args+=(-crf "${1}") && shift
     args=(-c:v libaom-av1 -crf ${qual:-28})
@@ -31,7 +31,7 @@ function ffmpeg-avif() {
 }
 
 function ffmpeg-hevc() {
-    test -z "$1" && echo "Usage: ffmpeg-hevc [-r remove original file] [<quality>] <file1> [file2 ...]" && return 1
+    test -z "$1" && echo "Usage: ffmpeg-hevc [-r=remove original file] [<quality>] <file1> [file2 ...]" && return 1
     case "$1" in -r) rem=y; shift ;; esac
     test -n "$(grep -oP "\d+" <<<"${1}")" && args+=(-crf "${1}") && shift
     args=(-c:v libx265 -crf ${qual:-28})
@@ -41,7 +41,7 @@ function ffmpeg-hevc() {
 }
 
 function ffmpeg-cut() {
-    test -z "$1" && echo "Usage: ffmpeg-cut [-r remove original file] <start_time>[-<end_time>] <file1> [file2 ...]" && return 1
+    test -z "$1" && echo "Usage: ffmpeg-cut [-r=remove original file] <start_time>[-<end_time>] <file1> [file2 ...]" && return 1
     case "$1" in -r) rem=y; shift ;; esac
     IFS='-' read -ra c <<< "$1"; shift
     args=(-c copy)
@@ -52,12 +52,13 @@ function ffmpeg-cut() {
     done
 }
 
-function ff-showtags() {
-    test -z "$1" && echo "Usage: ff-showtags <file>" && return 1
+function ff-tags() {
+    test -z "$1" && echo "Usage: ff-tags <file>" && return 1
     ffprobe -show_entries format_tags -show_entries stream_tags "$1"
 }
 
-echo -e "Extra functions added to your shell:
+function alias-help(){
+  echo -e "Functions and alias added to your shell:
 
   \e[1;92malias      :\e[0;2m reboot-uefi, cls, upgrade/apt-upgrade, apt-clean, sys-upgrade, gedit/ged/edit\e[0m
   
@@ -65,6 +66,10 @@ echo -e "Extra functions added to your shell:
   \e[1;92mffmpeg-avif:\e[0;2m Convert images to AVIF format using ffmpeg.\e[0m
   \e[1;92mffmpeg-hevc:\e[0;2m Convert videos to HEVC format using ffmpeg.\e[0m
   \e[1;92mffmpeg-cut :\e[0;2m Cut videos using ffmpeg.\e[0m
-  \e[1;92mff-showtags:\e[0;2m Show metadata tags of media files using ffprobe.\e[0m
+  \e[1;92mff-tags    :\e[0;2m Show metadata tags of media files using ffprobe.\e[0m
   "
+}
+
+echo -e "Extra functions added to your shell. Type \e[1;92malias-help\e[0m or press \e[1;92m<F12>\e[0m to show\n"
+bind '"\e[24~":"alias-help\n"'
 EOF
