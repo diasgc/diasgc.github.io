@@ -2,6 +2,7 @@ const renderCap = document.getElementById('grub_rendercap');
 const osSizeInput = document.getElementById("os_size");
 
 opts.iconList = [ 'ubuntu', 'windows', 'macosx' ]; //'tool_memtest', 'tool_mok_tool', 'tool_netboot', 'tool_part', 'tool_rescue' ];
+opts.osList.push("uefi-firmware","memtest");
 
 const menu = {
   id: document.getElementById('os-panel-grub'),
