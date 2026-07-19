@@ -68,6 +68,9 @@ function updateIcons(){
 
   data.main.os_iconsize = osSizeInput.value * window.devicePixelRatio;
   data.main.os_iconsize_w = data.main.os_iconsize * opts.w_icon;
+  data.main.grub_iconspace = os_iconsize_w / 4;
+  data.main.grub_padding = data.main.grub_iconspace / 2;
+  data.main.grub_spacing = data.main.grub_iconspace / 2;
   opts.w_icon *= 32;
   document.documentElement.style.setProperty("--os-size-w", (data.main.os_iconsize_w / opts.ui_resize) + "px");
   document.documentElement.style.setProperty("--os-size", (data.main.os_iconsize / opts.ui_resize) + "px");
@@ -139,6 +142,8 @@ function initComponents(){
     osSizeInput.addEventListener("input", setOsSize);
     setOsSize();
   }
-
+  data.main.grub_padding = 8;
+  data.main.grub_iconspace = 16;
+  data.main.grub_spacing = 8;
   window.addEventListener('resize', renderSvg);
 }
