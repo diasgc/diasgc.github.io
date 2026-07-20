@@ -45,8 +45,40 @@ function genSvgIcon(name){
   return eval("`" + svg + "`");
 }
 
+function evalSvgIcon(svg){
+  let font = data.main.font_family;
+  let font_size = data.main.os_iconsize / 10;
+  let cap_title = svg.match('<title>(.*?)</title>')[1];
+  let t = `<text x="48" y="22.5" fill="${data.main.os_color}" font-family="'${font.family}'" font-style="'${font.style}'" font-stretch="'${font.stretch}'" font-size="${font_size}px" font-weight="'${font.weight}'">${cap_title}</text>`
+  svg = svg.replaceAll("<!--text-here-->", t);
+  
+  svg = svg.replaceAll("viewBox=\"0 0 32 32\"",`viewBox=\"0 0 ${opts.w_icon} 32\"`);
+  const preset = data.main;
+  return eval("`" + svg + "`");
+}
+
 async function exportMedia() {
-  alert("Warning: Not Implemented. Yet!...");
+   const zip = new JSZip();
+  // add config grub
+  zip.file(`${opts.id}/theme.conf`, fetchEval("html/config-refind.txt"));
+  // add background
+  zip.file(`${opts.id}/background.png`, getWpBlob('png', opts.resX, opts.resY), { base64: true });
+  // add os-icons
+  for (os of opts.osList) {
+    let svg = await fetchText(`icons/${opts.grubSet}/${os}.svg`);
+    svg = svg.replaceAll(/fill="#[0-9a-fA-F]+"/gi,`fill="${data.main.os_color}"`);
+    svg = evalSvgIcon(svg);
+    const blob = await svg2image(svg, 'png', data.main.os_iconsize_w, data.main.os_iconsize);
+    zip.file(`${opts.id}/icons/${os}.png`, blob.split(',')[1], { base64: true });
+  }
+  // add grub-ui png
+  opts.pngList.forEach(icon => {
+    zip.file(`${opts.id}/${icon}.png`, fetchBlob(`refind/${icon}.png`));
+  });
+  // generate zip
+  const content = await zip.generateAsync({ type: "blob" });
+  // download
+  utils.downloadBlob(content, `theme-${opts.id}.zip`);
 }
 
 function initComponents() {
