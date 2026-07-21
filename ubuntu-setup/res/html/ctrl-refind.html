@@ -18,51 +18,73 @@
           value="128"
         />
       </div>
+      <div class="flex-switch">
+        <span class="span-label">Captions</span>
+        <label class="material-switch">
+          <input type="checkbox" id="toggle-render-captions" value="checked"/>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="flex-1">
+        <label for="cap_font_size">Cap.Size:</label>
+        <input type="number" id="cap_font_size" min="10" max="32" step="1" value="14">
+      </div>
     </div>
   </details>
   <details>
     <summary>Tools Menu</summary>
     <div class="flex-end">
       <div class="flex-1">
-        <label for="tools_color">Color:</label>
+        <label for="tools_color">Icon Color:</label>
         <input type="color" id="tools_color" value="#FFFFFF" />
       </div>
       <div class="flex-1">
-        <label for="tools_size">Size:</label>
-        <input
-          type="number"
-          id="tools_size"
-          min="8"
-          max="64"
-          step="4"
-          value="48"
-        />
+        <label for="tools_size">Icon Size:</label>
+        <input type="number" id="tools_size" min="8" max="64" step="4" value="48"/>
       </div>
       <div class="flex-switch">
-        <span class="span-label">Edit Tools Mode*</span>
+        <span class="span-label">Captions</span>
+        <label class="material-switch">
+          <input type="checkbox" id="toggle-render-captions-tools" value="checked"/>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="flex-1">
+        <label for="cap_font_size_tools">Cap.Size:</label>
+        <input type="number" id="cap_font_size_tools" min="10" max="32" step="1" value="14">
+      </div>
+    </div>
+    <div class="flex-end">
+      <div class="flex-switch">
         <label class="material-switch">
           <input type="checkbox" id="toggle-disabled-tools" />
           <span class="slider"></span>
         </label>
       </div>
-    </div>
-    <div class="div-info">
-      *Edit tools let you select which tools shall be available by enabling or
+      <div class="div-info">
+      Edit tools let you select which tools shall be available by enabling or
       disabling with 'double-click', or change the order by dragging the icons.
+      </div>
     </div>
   </details>
   <details>
-    <summary>Png Fonts Options</summary>
+    <summary>PNG Sys Monotype Font</summary>
     <div class="flex-end">
-      <div class="flex-3" title="Font Family">
-        <label for="png_fonts">Font Family:</label>
-        <select id="png_fonts">
+      <div class="flex-1" title="Font Family">
+        <label for="png_fontfamily">Font Family (monospace only):</label>
+        <select id="png_fontfamily">
           <option value="monospace">monospace</option>
         </select>
       </div>
+    </div>
+    <div class="flex-end">
       <div class="flex-1">
-        <label for="png_font_size">Font Size:</label>
-        <input type="number" id="png_font_size" min="10" max="32" step="1" value="14">
+        <label for="png_fontsize">Size:</label>
+        <input type="number" id="png_fontsize" min="10" max="32" step="1" value="14">
+      </div>
+      <div class="flex-1">
+        <label for="png_fontcolor">Color:</label>
+        <input type="color" id="png_fontcolor" value="#FFFFFF" />
       </div>
     </div>
   </details>

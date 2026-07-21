@@ -1,14 +1,15 @@
 const osSizeInput = document.getElementById("os_size");
 
 const pngFonts = {
-  select: document.getElementById("png_fonts"),
+  select: document.getElementById("png_fontfamily"),
   init: function(){
-    fonts.select.forEach(font => {
-      if (font.value.name.toLowerCase().includes("mono"))
-        font.value.monoWidth32 = pngFonts.getMonoCharWidth(32, font.value.name);
-        utils.addOption(pngFonts.select, font.value, font.value.name );
-      //<option value="{"family":"C059","style":"italic","name":"C059-BdIta","weight":700,"stretch":"normal"}">C059-BdIta</option>
-    })
+    for(const font of fonts.select.options){
+      let opt = JSON.parse(font.value);
+      if (opt.name.toLowerCase().includes("mono")){
+        opt.monoWidth12 = pngFonts.getMonoCharWidth(12, opt.name);
+        utils.addOption(pngFonts.select, opt, opt.name );
+      }
+    }
   },
   getMonoCharWidth: function(fontSize, fontFamily = 'monospace') {
     const canvas = document.createElement('canvas');
@@ -229,6 +230,4 @@ function initComponents() {
     // Initial state
     updateDisabledToolsVisibility();
   }
-
-  pngFonts.init();
 }

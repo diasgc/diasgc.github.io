@@ -450,6 +450,9 @@ const fonts = {
           fonts.select.value = JSON.stringify(fonts.defaultFont);
           fonts.select.addEventListener('change', renderSvg);
           intro.panel.style.display = 'none';
+          if (pngFonts){
+            pngFonts.init();
+          }
       }).catch((err) => {
         fonts.setDefault("Error accessing local fonts:" + err);
       });
