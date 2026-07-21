@@ -65,7 +65,7 @@ function evalSvgIcon(svg){
   let font = data.main.font_family;
   let font_size = 12;
   let cap_title = svg.match('<title>(.*?)</title>')[1];
-  let t = `<text x="50%" y="96%" font-size="18%" fill="${data.main.os_color}"alignment-baseline="middle" text-anchor="middle" font-family="Ubuntu" font-style="bold" font-weight="800">${cap_title}</text>`
+  let t = `<text x="50%" y="96%" font-size="18%" fill="${data.main.os_color}" alignment-baseline="middle" text-anchor="middle" font-family="Ubuntu" font-style="bold" font-weight="800">${cap_title}</text>`
   svg = svg.replaceAll("<!--text-here-->", t);
   
   //svg = svg.replaceAll("viewBox=\"0 0 32 32\"",`viewBox=\"0 0 ${opts.w_icon} 32\"`);
