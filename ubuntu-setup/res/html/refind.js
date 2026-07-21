@@ -65,12 +65,16 @@ function evalSvgIcon(svg){
   let font = data.main.font_family;
   let font_size = 12;
   let cap_title = svg.match('<title>(.*?)</title>')[1];
-  let t = `<text x="50%" y="96%" font-size="16%" alignment-baseline="middle" text-anchor="middle" fill="${data.main.os_color}" font-family="'${font.family}'" font-style="'${font.style}'" font-stretch="'${font.stretch}'" font-weight="'${font.weight}'">${cap_title}</text>`
+  let t = `<text x="50%" y="96%" font-size="18%" fill="${data.main.os_color}"alignment-baseline="middle" text-anchor="middle" font-family="Ubuntu" font-style="bold" font-weight="800">${cap_title}</text>`
   svg = svg.replaceAll("<!--text-here-->", t);
   
   //svg = svg.replaceAll("viewBox=\"0 0 32 32\"",`viewBox=\"0 0 ${opts.w_icon} 32\"`);
   const preset = data.main;
   return eval("`" + svg + "`");
+}
+
+const os_trans = {
+  "windows": "win",
 }
 
 async function exportMedia() {
@@ -89,6 +93,7 @@ async function exportMedia() {
     svg = svg.replaceAll(/fill="#[0-9a-fA-F]+"/gi,`fill="${data.main.os_color}"`);
     svg = evalSvgIcon(svg);
     const blob = await svg2image(svg, 'png', data.main.os_iconsize, data.main.os_iconsize);
+    if (os_trans[os]) os = os_trans[os];
     zip.file(`${opts.id}/icons/os_${os}.png`, blob.split(',')[1], { base64: true });
   }
   for (re of opts.refindList) {
