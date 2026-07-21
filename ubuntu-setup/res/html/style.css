@@ -532,6 +532,13 @@ details[open] div {
   }
 }
 
+.status {
+  width: 100%;
+  font-size: 10px;
+  color: #333;
+  text-align: center;
+}
+
 .wp-cell-label {
   position: absolute;
   top: 50%;

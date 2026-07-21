@@ -1,3 +1,16 @@
+const osSizeInput = document.getElementById("os_size");
+  
+function setOsSize(){
+  document.documentElement.style.setProperty("--os-size", data.main.os_iconsize / opts.ui_resize + "px");
+}
+
+if (osSizeInput) {
+  data.main.os_iconsize = osSizeInput.value;
+  data.main.os_iconsize_w = osSizeInput.value;    
+  osSizeInput.addEventListener("input", setOsSize);
+  setOsSize();
+}
+opts.w_icon = 32;
 
 const menu = {
   id: document.getElementById('os-panel'),
@@ -33,6 +46,9 @@ function renderSvg(){
 
 function updateIcons(){
   data.main.os_color = data.read('os_color');
+  data.main.os_iconsize = osSizeInput.value * window.devicePixelRatio;
+  data.main.os_toolsize = document.getElementById("tools_size").value * window.devicePixelRatio;
+  data.main.os_iconsize_w = data.main.os_iconsize * opts.w_icon;
   opts.iconList.forEach(icon => {
     const svg = genSvgIcon(icon);
     document.getElementById(`img_${icon}`).src = encodeSvg(svg);
@@ -41,7 +57,7 @@ function updateIcons(){
 
 function genSvgIcon(name){
   const svg = menu.iconData[name];
-  const preset = data.main;
+  const preset = data.main; 
   return eval("`" + svg + "`");
 }
 
@@ -49,40 +65,58 @@ function evalSvgIcon(svg){
   let font = data.main.font_family;
   let font_size = data.main.os_iconsize / 10;
   let cap_title = svg.match('<title>(.*?)</title>')[1];
-  let t = `<text x="48" y="22.5" fill="${data.main.os_color}" font-family="'${font.family}'" font-style="'${font.style}'" font-stretch="'${font.stretch}'" font-size="${font_size}px" font-weight="'${font.weight}'">${cap_title}</text>`
+  let t = `<text x="50%" y="${data.main.os_iconsize - font_size - 2}" alignment-baseline="middle" text-anchor="middle" fill="${data.main.os_color}" font-family="'${font.family}'" font-style="'${font.style}'" font-stretch="'${font.stretch}'" font-size="${font_size}px" font-weight="'${font.weight}'">${cap_title}</text>`
   svg = svg.replaceAll("<!--text-here-->", t);
   
-  svg = svg.replaceAll("viewBox=\"0 0 32 32\"",`viewBox=\"0 0 ${opts.w_icon} 32\"`);
+  //svg = svg.replaceAll("viewBox=\"0 0 32 32\"",`viewBox=\"0 0 ${opts.w_icon} 32\"`);
   const preset = data.main;
   return eval("`" + svg + "`");
 }
 
 async function exportMedia() {
-   const zip = new JSZip();
+  const status = document.getElementById('progress_status');
+  const zip = new JSZip();
   // add config grub
+  status.innerText = "Generating theme.conf...";
   zip.file(`${opts.id}/theme.conf`, fetchEval("html/config-refind.txt"));
+  status.innerText = "Adding background";
   // add background
   zip.file(`${opts.id}/background.png`, getWpBlob('png', opts.resX, opts.resY), { base64: true });
   // add os-icons
   for (os of opts.osList) {
+    status.innerText = `Adding icon ${os}`;
     let svg = await fetchText(`icons/${opts.grubSet}/${os}.svg`);
     svg = svg.replaceAll(/fill="#[0-9a-fA-F]+"/gi,`fill="${data.main.os_color}"`);
     svg = evalSvgIcon(svg);
-    const blob = await svg2image(svg, 'png', data.main.os_iconsize_w, data.main.os_iconsize);
+    const blob = await svg2image(svg, 'png', data.main.os_iconsize, data.main.os_iconsize);
     zip.file(`${opts.id}/icons/${os}.png`, blob.split(',')[1], { base64: true });
   }
-  // add grub-ui png
-  opts.pngList.forEach(icon => {
+  for (re of opts.refindList) {
+    status.innerText = `Adding icon ${re}`;
+    let svg = await fetchText(`icons/refind/${re}.svg`);
+    svg = svg.replaceAll(/fill="#[0-9a-fA-F]+"/gi,`fill="${data.main.os_color}"`);
+    svg = eval("`" + svg + "`");
+    //svg = svg.replaceAll("viewBox=\"0 0 32 32\"",`viewBox=\"0 0 ${data.main.os_toolsize} ${data.main.os_toolsize}\"`);
+    const blob = await svg2image(svg, 'png', data.main.os_toolsize, data.main.os_toolsize);
+    zip.file(`${opts.id}/icons/${re}.png`, blob.split(',')[1], { base64: true });
+  }
+  // add refind-ui png
+  opts.refindExtraList.forEach(icon => {
+    status.innerText = `Adding ${icon}`;
     zip.file(`${opts.id}/${icon}.png`, fetchBlob(`refind/${icon}.png`));
   });
   // generate zip
+  status.innerText = "Generating zip...";
+
+  zip.file("note.txt","Add 'include themes/surface/theme-w.conf' to the end of refind.conf\n")
   const content = await zip.generateAsync({ type: "blob" });
   // download
-  utils.downloadBlob(content, `theme-${opts.id}.zip`);
+  status.innerText = "Done";
+  utils.downloadBlob(content, `refind-theme-${opts.id}-${opts.vendor}.zip`);
 }
 
 function initComponents() {
-  
+
   checkTripleStateCheckbox();
   
   menu.loadData();

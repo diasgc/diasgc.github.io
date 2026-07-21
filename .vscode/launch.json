@@ -52,7 +52,7 @@
       "request": "launch",
       "name": "ubuntu-setup-res",
       "webRoot": "${workspaceRoot}/ubuntu-setup",
-      "file": "${workspaceFolder}/ubuntu-setup/res/index.html?usr=diasgc&vnd=surface",
+      "file": "${workspaceFolder}/ubuntu-setup/res/index.html?usr=diasgc&t=refind&gb=%239299a0&gt=%239299a0&vnd=minisforum",
       "runtimeArgs": ["--disable-web-security"] 
     },
     {
