@@ -17,7 +17,6 @@ const pngFonts = {
     return ctx.measureText('M').width; // 'M' is a good wide char
   }
 }
-pngFonts.init();
 
 function setOsSize(){
   document.documentElement.style.setProperty("--os-size", data.main.os_iconsize / opts.ui_resize + "px");
@@ -230,4 +229,6 @@ function initComponents() {
     // Initial state
     updateDisabledToolsVisibility();
   }
+
+  pngFonts.init();
 }
