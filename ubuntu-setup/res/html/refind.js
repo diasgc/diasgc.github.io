@@ -1,5 +1,17 @@
 const osSizeInput = document.getElementById("os_size");
-  
+
+const pngFonts = {
+  select: document.getElementById("png_fonts"),
+  init: function(){
+    fonts.select.forEach(font => {
+      if (font.value.name.toLowerCase().includes("mono"))
+        utils.addOption(pngFonts.select, font.value, font.value.name );
+      //<option value="{"family":"C059","style":"italic","name":"C059-BdIta","weight":700,"stretch":"normal"}">C059-BdIta</option>
+    })
+  }
+}
+pngFonts.init();
+
 function setOsSize(){
   document.documentElement.style.setProperty("--os-size", data.main.os_iconsize / opts.ui_resize + "px");
 }
@@ -36,6 +48,13 @@ const menu = {
         menu.iconData[name] = await this.import(`icons/refind/${name}.svg`);
       });
   }
+}
+
+function getMonoCharWidth(fontSize, fontFamily = 'monospace') {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.font = `${fontSize}px ${fontFamily}`;
+  return ctx.measureText('M').width; // 'M' is a good wide char
 }
 
 function renderSvg(){
@@ -110,6 +129,7 @@ async function exportMedia() {
     status.innerText = `Adding ${icon}`;
     zip.file(`${opts.id}/${icon}.png`, fetchBlob(`refind/${icon}.png`));
   });
+
   // generate zip
   status.innerText = "Generating zip...";
 
