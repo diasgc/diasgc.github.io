@@ -5,9 +5,16 @@ const pngFonts = {
   init: function(){
     fonts.select.forEach(font => {
       if (font.value.name.toLowerCase().includes("mono"))
+        font.value.monoWidth32 = pngFonts.getMonoCharWidth(32, font.value.name);
         utils.addOption(pngFonts.select, font.value, font.value.name );
       //<option value="{"family":"C059","style":"italic","name":"C059-BdIta","weight":700,"stretch":"normal"}">C059-BdIta</option>
     })
+  },
+  getMonoCharWidth: function(fontSize, fontFamily = 'monospace') {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.font = `${fontSize}px ${fontFamily}`;
+    return ctx.measureText('M').width; // 'M' is a good wide char
   }
 }
 pngFonts.init();
