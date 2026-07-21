@@ -63,9 +63,9 @@ function genSvgIcon(name){
 
 function evalSvgIcon(svg){
   let font = data.main.font_family;
-  let font_size = data.main.os_iconsize / 10;
+  let font_size = 12;
   let cap_title = svg.match('<title>(.*?)</title>')[1];
-  let t = `<text x="50%" y="${data.main.os_iconsize - font_size - 2}" alignment-baseline="middle" text-anchor="middle" fill="${data.main.os_color}" font-family="'${font.family}'" font-style="'${font.style}'" font-stretch="'${font.stretch}'" font-size="${font_size}px" font-weight="'${font.weight}'">${cap_title}</text>`
+  let t = `<text x="50%" y="96%" font-size="16%" alignment-baseline="middle" text-anchor="middle" fill="${data.main.os_color}" font-family="'${font.family}'" font-style="'${font.style}'" font-stretch="'${font.stretch}'" font-weight="'${font.weight}'">${cap_title}</text>`
   svg = svg.replaceAll("<!--text-here-->", t);
   
   //svg = svg.replaceAll("viewBox=\"0 0 32 32\"",`viewBox=\"0 0 ${opts.w_icon} 32\"`);
@@ -89,7 +89,7 @@ async function exportMedia() {
     svg = svg.replaceAll(/fill="#[0-9a-fA-F]+"/gi,`fill="${data.main.os_color}"`);
     svg = evalSvgIcon(svg);
     const blob = await svg2image(svg, 'png', data.main.os_iconsize, data.main.os_iconsize);
-    zip.file(`${opts.id}/icons/${os}.png`, blob.split(',')[1], { base64: true });
+    zip.file(`${opts.id}/icons/os_${os}.png`, blob.split(',')[1], { base64: true });
   }
   for (re of opts.refindList) {
     status.innerText = `Adding icon ${re}`;
