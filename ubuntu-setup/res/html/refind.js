@@ -64,6 +64,8 @@ const pngFonts = {
   family: 'monospace',
   style: 'bold',
   weight: 'bold',
+  padding: 0,
+  backgroundColor: null,
   init: function(){
     pngFonts.select.innerHTML = "";
     for(const font of fonts.select.options){
@@ -79,12 +81,60 @@ const pngFonts = {
     selections.init();
     tools.init();
   },
+  getFilename: function(){
+    let fname = `${pngFonts.name}-${pngFonts.weight}-${pngFonts.size}`;
+    fname = fname.replaceAll(" ","-").replaceAll('"','').replaceAll("'","");
+    return fname;
+  },
+  renderPng: function(){
+    const text = ' !\"#\$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\`abcdefghijklmnopqrstuvwxyz{|}~?';
+    
+    //const cssFont = `${pngFonts.style} ${pngFonts.weight} ${pngFonts.size}px "${pngFonts.name}"`;
+    const cssFont = `${pngFonts.weight} ${pngFonts.size}px "${pngFonts.family}"`;
+    const measureCanvas = document.createElement('canvas');
+    const measureCtx = measureCanvas.getContext('2d');
+    measureCtx.font = cssFont;
+    const metrics = measureCtx.measureText(text);
+
+    const ascent = metrics.actualBoundingBoxAscent;
+    const descent = metrics.actualBoundingBoxDescent;
+
+    if (!ascent && ascent !== 0) {
+      throw new Error('actualBoundingBoxAscent/Descent unsupported in this environment.');
+    }
+
+    const textWidth = metrics.width;
+    const textHeight = ascent + descent;
+    const canvasWidth = Math.ceil(textWidth + pngFonts.padding * 2);
+    const canvasHeight = pngFonts.size; //Math.ceil(textHeight + padding * 2);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    const ctx = canvas.getContext('2d');
+
+    if (pngFonts.backgroundColor) {
+      ctx.fillStyle = pngFonts.backgroundColor;
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    }
+
+    ctx.font = cssFont;
+    ctx.fillStyle = pngFonts.color;
+    ctx.textBaseline = 'alphabetic';
+
+    const baselineY = pngFonts.padding + ascent;
+    ctx.fillText(text, pngFonts.padding, baselineY);
+    return canvas.toDataURL("image/png", 1.0);
+  },
+
+
   getMonoCharWidth: function(fontSize, fontFamily = 'monospace') {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     ctx.font = `${fontSize} ${fontFamily}`;
     return ctx.measureText('M').width; // 'M' is a good wide char
   },
+
   selectFont: function(sel){
     const f = JSON.parse(sel.value);
     pngFonts.size = pngFonts.sizeId.value;
@@ -111,6 +161,7 @@ if (osSizeInput) {
   osSizeInput.addEventListener("input", setOsSize);
   setOsSize();
 }
+
 opts.w_icon = 32;
 
 const menu = {
@@ -131,13 +182,6 @@ const menu = {
       });
     tools.init();
   }
-}
-
-function getMonoCharWidth(fontSize, fontFamily = 'monospace') {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  ctx.font = `${fontSize}px ${fontFamily}`;
-  return ctx.measureText('M').width; // 'M' is a good wide char
 }
 
 function renderSvg(){
@@ -174,28 +218,18 @@ function evalSvgIcon(svg){
   return eval("`" + svg + "`");
 }
 
-async function getBlobFromSvg(path, width, height) {
-  let svg = await fetchText(path);
-  svg = eval("`" + svg + "`");
-  return await svg2image(svg, 'png', width, height);
-}
-
 const os_trans = {
   "windows": "win",
 }
 
+/*
 async function renderCharsetBlob(fontName, fontSize, color = '#111111', fontWeight = 'normal',
   fontStyle = 'normal', bgColor = null, padding = 0) {
-  // Build 96-char string: space (0x20) through DEL (0x7F)
-  // const text = Array.from({ length: 96 }, (_, i) => String.fromCharCode(0x20 + i)).join('');
+ 
   const text = ' !\"#\$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\`abcdefghijklmnopqrstuvwxyz{|}~?';
   // Ensure font is actually loaded (avoids silent fallback-font metrics)
   const cssFont = `${fontStyle} ${fontWeight} ${fontSize}px "${fontName}"`;
-  //await document.fonts.load(cssFont);
-  //if (!document.fonts.check(cssFont)) {
-  //  console.warn(`Font "${fontName}" (${fontStyle} ${fontWeight}) may not be loaded; fallback metrics possible.`);
-  //}
-
+ 
   // Measure first with a throwaway canvas
   const measureCanvas = document.createElement('canvas');
   const measureCtx = measureCanvas.getContext('2d');
@@ -232,6 +266,11 @@ async function renderCharsetBlob(fontName, fontSize, color = '#111111', fontWeig
   ctx.fillText(text, padding, baselineY);
   return canvas.toDataURL("image/png", 1.0);
 }
+*/
+
+function replaceFill(svg, color) {
+  return svg.replaceAll(/fill="#[0-9a-fA-F]+"/gi, `fill="${color}"`);
+}
 
 async function exportMedia() {
   const status = document.getElementById('progress_status');
@@ -257,11 +296,7 @@ async function exportMedia() {
   // add os-icons
   for (os of opts.osList) {
     status.innerText = `Adding OS Icon ${os}`;
-    let svg = await fetchEval(`icons/${opts.grubSet}/${os}.svg`, t => {
-      t.replaceAll(/fill="#[0-9a-fA-F]+"/gi,`fill="${data.main.os_color}"`);
-      return evalSvgIcon(t);
-      }
-    );
+    let svg = await fetchEval(`icons/${opts.grubSet}/${os}.svg`, t => evalSvgIcon(replaceFill(t, data.main.os_color)));
     const blob = await svg2image(svg, 'png', data.main.os_iconsize, data.main.os_iconsize);
     if (os_trans[os]) os = os_trans[os];
     zip.file(`${opts.id}/icons/os_${os}.png`, blob.split(',')[1], { base64: true });
@@ -270,7 +305,7 @@ async function exportMedia() {
   // add tool-icons
   for (re of opts.refindList) {
     status.innerText = `Adding Tool Icon ${re}`;
-    let svg = await fetchEval(`icons/refind/${re}.svg`, t => t.replaceAll(/fill="#[0-9a-fA-F]+"/gi,`fill="${data.main.os_color}"`));
+    let svg = await fetchEval(`icons/refind/${re}.svg`, t => replaceFill(t, data.main.os_color));
     const blob = await svg2image(svg, 'png', data.main.os_toolsize, data.main.os_toolsize);
     zip.file(`${opts.id}/icons/${re}.png`, blob.split(',')[1], { base64: true });
   }
@@ -287,9 +322,11 @@ async function exportMedia() {
   zip.file(`${opts.id}/selection_small.png`, blob.split(',')[1], { base64: true });
 
   status.innerText = `Adding font`;
-  let fname = `${pngFonts.name}-${pngFonts.weight}-${pngFonts.size}`;
-  fname = fname.replaceAll(" ","-").replaceAll('"','').replaceAll("'","");
-  blob = await renderCharsetBlob(pngFonts.name, pngFonts.size, pngFonts.color, pngFonts.weight);
+  //let fname = `${pngFonts.name}-${pngFonts.weight}-${pngFonts.size}`;
+  //fname = fname.replaceAll(" ","-").replaceAll('"','').replaceAll("'","");
+  //blob = await renderCharsetBlob(pngFonts.name, pngFonts.size, pngFonts.color, pngFonts.weight);
+  const fname = pngFonts.getFilename();
+  blob = pngFonts.renderPng();
   zip.file(`${opts.id}/${fname}.png`, blob.split(',')[1], { base64: true });
   
   // generate zip
