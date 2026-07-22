@@ -107,7 +107,7 @@ selection_small themes/${opts.id}/selection_small.png
 #                    user interface (ignored on older computers)
 # Default is shell,apple_recovery,mok_tool,about,shutdown,reboot,firmware
 #showtools shell,apple_recovery,mok_tool,about,shutdown,reboot,firmware
-showtools fwupdate, firmware, reboot, shutdown, bootorder, shell, gdisk, memtest, mok_tool, apple_recovery, windows_recovery, hidden_tags, about, exit
+${opts.showtools}
 
 dont_scan_volumes VTOYEFI
 #dont_scan_dirs 

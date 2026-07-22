@@ -1,8 +1,33 @@
 const osSizeInput = document.getElementById("os_size");
 
+const tools = {
+  sizeId: document.getElementById("tools-size"),
+  colorId: document.getElementById("tools-size"),
+  panelId: document.getElementById("tools-panel"),
+  size: 48,
+  color: "#111",
+  update: function(){
+    tools.size = tools.sizeId.value;
+    tools.color = tools.colorId.value;
+    data.main.os_toolsize = tools.size * window.devicePixelRatio;
+  },
+  init: function(){
+    tools.panelId
+      .querySelectorAll('[id^="img_"]')
+      .forEach(async img => {
+        let name = img.id.replace("img_","");
+        opts.iconList.push(img.id.replace("img_",""))
+        menu.iconData[name] = await menu.import(`icons/refind/${name}.svg`);
+      });
+    tools.sizeId.addEventListener("input", tools.update);
+    tools.colorId.addEventListener("input", tools.update);
+  }
+}
+
 const selections = {
   dotColorId: document.getElementById("selection_dotcolor"),
   opacityId: document.getElementById("selection_opacity"),
+  ids: ["selection_big", "selection_small"],
   bigSize: 144,
   smallSize: 64,
   opacity: 0.05,
@@ -12,6 +37,8 @@ const selections = {
     selections.bigSize = data.main.os_iconsize + 16;
     selections.smallSize = data.main.os_iconsize + 16;
     selections.color = data.main.os_color;
+    selections.dotColor = this.dotColorId.value;
+    selections.opacity = this.opacityId.value;
   },
   init: function(){
     selections.dotColorId.addEventListener("input", function(){
@@ -50,6 +77,7 @@ const pngFonts = {
       pngFonts.selectFont(this);
     });
     selections.init();
+    tools.init();
   },
   getMonoCharWidth: function(fontSize, fontFamily = 'monospace') {
     const canvas = document.createElement('canvas');
@@ -69,12 +97,12 @@ const pngFonts = {
     pngFonts.family = f.family;
     pngFonts.style = f.style;
     pngFonts.weight = f.weight;
-    renderSvg();
   }
 }
 
 function setOsSize(){
   document.documentElement.style.setProperty("--os-size", data.main.os_iconsize / opts.ui_resize + "px");
+  //document.documentElement.style.setProperty("--os-size", data.main.os_iconsize / opts.ui_resize + "px");
 }
 
 if (osSizeInput) {
@@ -101,13 +129,7 @@ const menu = {
         opts.iconList.push(name);
         menu.iconData[name] = await this.import(`icons/${opts.grubSet}/${name}.svg`);
       });
-    document.getElementById('tools-panel')
-      .querySelectorAll('[id^="img_"]')
-      .forEach(async img => {
-        let name = img.id.replace("img_","");
-        opts.iconList.push(img.id.replace("img_",""))
-        menu.iconData[name] = await this.import(`icons/refind/${name}.svg`);
-      });
+    tools.init();
   }
 }
 
@@ -127,8 +149,8 @@ function renderSvg(){
 function updateIcons(){
   data.main.os_color = data.read('os_color');
   data.main.os_iconsize = osSizeInput.value * window.devicePixelRatio;
-  data.main.os_toolsize = document.getElementById("tools_size").value * window.devicePixelRatio;
-  data.main.os_iconsize_w = data.main.os_iconsize * opts.w_icon;
+  data.main.os_iconsize_w = data.main.os_iconsize;
+  tools.update();
   opts.iconList.forEach(icon => {
     const svg = genSvgIcon(icon);
     document.getElementById(`img_${icon}`).src = encodeSvg(svg);
@@ -146,8 +168,7 @@ function evalSvgIcon(svg){
   let font_size = 12;
   let cap_title = svg.match('<title>(.*?)</title>')[1];
   let t = `<text x="50%" y="96%" font-size="18%" fill="${data.main.os_color}" alignment-baseline="middle" text-anchor="middle" font-family="Ubuntu" font-style="bold" font-weight="800">${cap_title}</text>`
-  svg = svg.replaceAll("<!--text-here-->", t);
-  
+  svg = svg.replaceAll("<!--text-here-->", t);  
   //svg = svg.replaceAll("viewBox=\"0 0 32 32\"",`viewBox=\"0 0 ${opts.w_icon} 32\"`);
   const preset = data.main;
   return eval("`" + svg + "`");
@@ -163,57 +184,113 @@ const os_trans = {
   "windows": "win",
 }
 
+async function renderCharsetBlob(fontName, fontSize, color = '#111111', fontWeight = 'normal',
+  fontStyle = 'normal', bgColor = null, padding = 0) {
+  // Build 96-char string: space (0x20) through DEL (0x7F)
+  // const text = Array.from({ length: 96 }, (_, i) => String.fromCharCode(0x20 + i)).join('');
+  const text = ' !\"#\$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\`abcdefghijklmnopqrstuvwxyz{|}~?';
+  // Ensure font is actually loaded (avoids silent fallback-font metrics)
+  const cssFont = `${fontStyle} ${fontWeight} ${fontSize}px "${fontName}"`;
+  //await document.fonts.load(cssFont);
+  //if (!document.fonts.check(cssFont)) {
+  //  console.warn(`Font "${fontName}" (${fontStyle} ${fontWeight}) may not be loaded; fallback metrics possible.`);
+  //}
+
+  // Measure first with a throwaway canvas
+  const measureCanvas = document.createElement('canvas');
+  const measureCtx = measureCanvas.getContext('2d');
+  measureCtx.font = cssFont;
+  const metrics = measureCtx.measureText(text);
+
+  const textWidth = metrics.width;
+  const ascent = metrics.actualBoundingBoxAscent;
+  const descent = metrics.actualBoundingBoxDescent;
+
+  if (!ascent && ascent !== 0) {
+    throw new Error('actualBoundingBoxAscent/Descent unsupported in this environment.');
+  }
+
+  const textHeight = ascent + descent;
+  const canvasWidth = Math.ceil(textWidth + padding * 2);
+  const canvasHeight = fontSize; //Math.ceil(textHeight + padding * 2);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+  const ctx = canvas.getContext('2d');
+
+  if (bgColor) {
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  }
+
+  ctx.font = cssFont;
+  ctx.fillStyle = color;
+  ctx.textBaseline = 'alphabetic';
+
+  const baselineY = padding + ascent;
+  ctx.fillText(text, padding, baselineY);
+  return canvas.toDataURL("image/png", 1.0);
+}
+
 async function exportMedia() {
   const status = document.getElementById('progress_status');
   const zip = new JSZip();
+  
+  let toolList = [];
+  tools.panelId.querySelectorAll('div:not(.disabled-tool)').forEach(div => {
+    let img = div.querySelector('img');
+    if (img) {
+      toolList.push(img.id.replaceAll("img_func_","").replaceAll("img_tool_",""));
+    }
+  });
+  opts.showtools = toolList.size > 0 ? "showtools " + toolList.join(",") : "";
+
   // add config grub
   status.innerText = "Generating theme.conf...";
   zip.file(`${opts.id}/theme.conf`, fetchEval("html/config-refind.txt"));
-  status.innerText = "Adding background";
+  
   // add background
+  status.innerText = "Adding background";
   zip.file(`${opts.id}/background.png`, getWpBlob('png', opts.resX, opts.resY), { base64: true });
+  
   // add os-icons
   for (os of opts.osList) {
-    status.innerText = `Adding icon ${os}`;
-    let svg = await fetchText(`icons/${opts.grubSet}/${os}.svg`);
-    svg = svg.replaceAll(/fill="#[0-9a-fA-F]+"/gi,`fill="${data.main.os_color}"`);
-    svg = evalSvgIcon(svg);
+    status.innerText = `Adding OS Icon ${os}`;
+    let svg = await fetchEval(`icons/${opts.grubSet}/${os}.svg`, t => {
+      t.replaceAll(/fill="#[0-9a-fA-F]+"/gi,`fill="${data.main.os_color}"`);
+      return evalSvgIcon(t);
+      }
+    );
     const blob = await svg2image(svg, 'png', data.main.os_iconsize, data.main.os_iconsize);
     if (os_trans[os]) os = os_trans[os];
     zip.file(`${opts.id}/icons/os_${os}.png`, blob.split(',')[1], { base64: true });
   }
+
+  // add tool-icons
   for (re of opts.refindList) {
-    status.innerText = `Adding icon ${re}`;
-    let svg = await fetchText(`icons/refind/${re}.svg`);
-    svg = svg.replaceAll(/fill="#[0-9a-fA-F]+"/gi,`fill="${data.main.os_color}"`);
-    svg = eval("`" + svg + "`");
-    //svg = svg.replaceAll("viewBox=\"0 0 32 32\"",`viewBox=\"0 0 ${data.main.os_toolsize} ${data.main.os_toolsize}\"`);
+    status.innerText = `Adding Tool Icon ${re}`;
+    let svg = await fetchEval(`icons/refind/${re}.svg`, t => t.replaceAll(/fill="#[0-9a-fA-F]+"/gi,`fill="${data.main.os_color}"`));
     const blob = await svg2image(svg, 'png', data.main.os_toolsize, data.main.os_toolsize);
     zip.file(`${opts.id}/icons/${re}.png`, blob.split(',')[1], { base64: true });
   }
 
-  status.innerText = `Adding selection and font`;
-  selections.bigSize = data.main.os_iconsize + 16;
-  selections.smallSize = data.main.os_iconsize + 16;
-  selections.opacity = 0.05;
-  selections.color = data.main.os_color;
-  selections.dotColor = data.main.os_color;
+  status.innerText = `Adding selection`;
+  selections.update();
 
-  let svg = await fetchText(`refind/selection_big.svg`);
-  svg = eval("`" + svg + "`");
+  let svg = await fetchEval(`refind/selection_big.svg`);
   let blob = await svg2image(svg, 'png', selections.bigSize, selections.bigSize);
   zip.file(`${opts.id}/selection_big.png`, blob.split(',')[1], { base64: true });
   
-  svg = await fetchText(`refind/selection_small.svg`);
-  svg = eval("`" + svg + "`");
+  svg = await fetchEval(`refind/selection_small.svg`);
   blob = await svg2image(svg, 'png', selections.smallSize, selections.smallSize);
   zip.file(`${opts.id}/selection_small.png`, blob.split(',')[1], { base64: true });
 
   status.innerText = `Adding font`;
-  svg = await fetchText(`refind/refind-pngfont.svg`);
-  svg = eval("`" + svg + "`");
-  blob = await svg2image(svg, 'png', pngFonts.wsize, pngFonts.size);
-  zip.file(`${opts.id}/refind-pngfont.png`, blob.split(',')[1], { base64: true });
+  let fname = `${pngFonts.name}-${pngFonts.weight}-${pngFonts.size}`;
+  fname = fname.replaceAll(" ","-").replaceAll('"','').replaceAll("'","");
+  blob = await renderCharsetBlob(pngFonts.name, pngFonts.size, pngFonts.color, pngFonts.weight);
+  zip.file(`${opts.id}/${fname}.png`, blob.split(',')[1], { base64: true });
   
   // generate zip
   status.innerText = "Generating zip...";
@@ -238,8 +315,8 @@ function initComponents() {
       document.getElementById('div-screensaver').style.display = this.value > 0 ? 'inline-block' : 'none';
     });
   }
-  // tools_size sync
-  const toolsSizeInput = document.getElementById("tools_size");
+  // tools-size sync
+  const toolsSizeInput = document.getElementById("tools-size");
   if (toolsSizeInput) {
     document.documentElement.style.setProperty("--tools-size",toolsSizeInput.value * opts.ratio + "%");
     toolsSizeInput.addEventListener("input", function () {
@@ -256,9 +333,9 @@ function initComponents() {
   }
 
   let dragged = null;
-  const toolsPanel = document.getElementById("tools-panel");
-  if (toolsPanel) {
-    toolsPanel.querySelectorAll(".tools-square").forEach((square) => {
+  //const toolsPanel = document.getElementById("tools-panel");
+  if (tools.panelId) {
+    tools.panelId.querySelectorAll(".tools-square").forEach((square) => {
       const img = square.querySelector("img");
       square.addEventListener("dblclick", function () {
         this.classList.toggle("disabled-tool");
@@ -285,9 +362,9 @@ function initComponents() {
           const rect = this.getBoundingClientRect();
           const offset = e.clientX - rect.left;
           if (offset < rect.width / 2) {
-            toolsPanel.insertBefore(dragged, this);
+            tools.panelId.insertBefore(dragged, this);
           } else {
-            toolsPanel.insertBefore(dragged, this.nextSibling);
+            tools.panelId.insertBefore(dragged, this.nextSibling);
           }
         }
       });
@@ -298,9 +375,9 @@ function initComponents() {
   const toggle = document.getElementById("toggle-disabled-tools");
   function updateDisabledToolsVisibility() {
     if (toggle.checked) {
-      toolsPanel.classList.remove("hide-disabled");
+      tools.panelId.classList.remove("hide-disabled");
     } else {
-      toolsPanel.classList.add("hide-disabled");
+      tools.panelId.classList.add("hide-disabled");
     }
   }
   if (toggle) {

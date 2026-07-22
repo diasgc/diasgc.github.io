@@ -86,8 +86,9 @@ async function fetchText(url){
   return text;
 }
 
-async function fetchEval(url){
-  const text = await fetchText(url);
+async function fetchEval(url, fn){
+  let text = await fetchText(url);
+  if (fn) text = fn(text)
   const ret = eval("`" + text + "`"); 
   return ret;
 }
