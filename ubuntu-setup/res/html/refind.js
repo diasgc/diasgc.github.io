@@ -1,21 +1,75 @@
 const osSizeInput = document.getElementById("os_size");
 
+const selections = {
+  dotColorId: document.getElementById("selection_dotcolor"),
+  opacityId: document.getElementById("selection_opacity"),
+  bigSize: 144,
+  smallSize: 64,
+  opacity: 0.05,
+  color: "#111",
+  dotColor: "#111",
+  update: function(){
+    selections.bigSize = data.main.os_iconsize + 16;
+    selections.smallSize = data.main.os_iconsize + 16;
+    selections.color = data.main.os_color;
+  },
+  init: function(){
+    selections.dotColorId.addEventListener("input", function(){
+      selections.dotColor = this.value;
+    });
+    selections.opacityId.addEventListener("input", function(){
+      selections.opacity = this.value;
+    });
+  }
+}
+
 const pngFonts = {
   select: document.getElementById("png_fontfamily"),
+  sizeId: document.getElementById("png_fontsize"),
+  colorId: document.getElementById("png_fontcolor"),
+  charWidth: 0.6,
+  name: 'monospace',
+  size: 14,
+  xoff: 8.4,
+  yoff: 24.8,
+  wsize: 1847,
+  color: '#111',
+  family: 'monospace',
+  style: 'bold',
+  weight: 'bold',
   init: function(){
+    pngFonts.select.innerHTML = "";
     for(const font of fonts.select.options){
       let opt = JSON.parse(font.value);
       if (opt.name.toLowerCase().includes("mono")){
         opt.monoWidth12 = pngFonts.getMonoCharWidth(12, opt.name);
-        utils.addOption(pngFonts.select, opt, opt.name );
+        utils.addOption(pngFonts.select, JSON.stringify(opt), opt.name );
       }
     }
+    pngFonts.select.addEventListener("change", function(){
+      pngFonts.selectFont(this);
+    });
+    selections.init();
   },
   getMonoCharWidth: function(fontSize, fontFamily = 'monospace') {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    ctx.font = `${fontSize}px ${fontFamily}`;
+    ctx.font = `${fontSize} ${fontFamily}`;
     return ctx.measureText('M').width; // 'M' is a good wide char
+  },
+  selectFont: function(sel){
+    const f = JSON.parse(sel.value);
+    pngFonts.size = pngFonts.sizeId.value;
+    pngFonts.charWidth = pngFonts.getMonoCharWidth(pngFonts.size, f.name);
+    pngFonts.xoff = (pngFonts.charWidth).toFixed(1);
+    pngFonts.yoff = (pngFonts.size * 0.775).toFixed(1);
+    pngFonts.wsize = Math.ceil(pngFonts.charWidth * 96);
+    pngFonts.color = pngFonts.colorId.value;
+    pngFonts.name = f.name;
+    pngFonts.family = f.family;
+    pngFonts.style = f.style;
+    pngFonts.weight = f.weight;
+    renderSvg();
   }
 }
 
@@ -99,6 +153,12 @@ function evalSvgIcon(svg){
   return eval("`" + svg + "`");
 }
 
+async function getBlobFromSvg(path, width, height) {
+  let svg = await fetchText(path);
+  svg = eval("`" + svg + "`");
+  return await svg2image(svg, 'png', width, height);
+}
+
 const os_trans = {
   "windows": "win",
 }
@@ -131,12 +191,30 @@ async function exportMedia() {
     const blob = await svg2image(svg, 'png', data.main.os_toolsize, data.main.os_toolsize);
     zip.file(`${opts.id}/icons/${re}.png`, blob.split(',')[1], { base64: true });
   }
-  // add refind-ui png
-  opts.refindExtraList.forEach(icon => {
-    status.innerText = `Adding ${icon}`;
-    zip.file(`${opts.id}/${icon}.png`, fetchBlob(`refind/${icon}.png`));
-  });
 
+  status.innerText = `Adding selection and font`;
+  selections.bigSize = data.main.os_iconsize + 16;
+  selections.smallSize = data.main.os_iconsize + 16;
+  selections.opacity = 0.05;
+  selections.color = data.main.os_color;
+  selections.dotColor = data.main.os_color;
+
+  let svg = await fetchText(`refind/selection_big.svg`);
+  svg = eval("`" + svg + "`");
+  let blob = await svg2image(svg, 'png', selections.bigSize, selections.bigSize);
+  zip.file(`${opts.id}/selection_big.png`, blob.split(',')[1], { base64: true });
+  
+  svg = await fetchText(`refind/selection_small.svg`);
+  svg = eval("`" + svg + "`");
+  blob = await svg2image(svg, 'png', selections.smallSize, selections.smallSize);
+  zip.file(`${opts.id}/selection_small.png`, blob.split(',')[1], { base64: true });
+
+  status.innerText = `Adding font`;
+  svg = await fetchText(`refind/refind-pngfont.svg`);
+  svg = eval("`" + svg + "`");
+  blob = await svg2image(svg, 'png', pngFonts.wsize, pngFonts.size);
+  zip.file(`${opts.id}/refind-pngfont.png`, blob.split(',')[1], { base64: true });
+  
   // generate zip
   status.innerText = "Generating zip...";
 

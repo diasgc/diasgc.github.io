@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 ${pngFonts.wsize} ${pngFonts.size}" xmlns="http://www.w3.org/2000/svg">
+ <text x="${pngFonts.xoff}" y="${pngFonts.yoff}" alignment-baseline="hanging" fill="${pngFonts.color}" font-family="${pngFonts.name}" font-size="${pngFonts.size}" font-weight="${pngFonts.style}">!\"#\$%&amp;\'()*+,-./0123456789:;&lt;=&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\`abcdefghijklmnopqrstuvwxyz{|}~?</text>
+</svg>

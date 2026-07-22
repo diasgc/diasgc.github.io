@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg">
+ <g>
+  <circle cx="72" cy="72" r="72" fill="${selections.color}" fill-opacity="${selections.opacity}"/>
+  <circle cx="72" cy="137" r="3" fill="${selections.dotColor}"/>
+ </g>
+</svg>
