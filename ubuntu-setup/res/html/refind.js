@@ -8,12 +8,8 @@ const panel_tools = {
   toggleId: document.getElementById("toggle-disabled-tools"),
   size: 48,
   color: "#111",
-  update: function(){
-    panel_tools.size = panel_tools.sizeId.value;
-    panel_tools.color = panel_tools.colorId.value;
-    data.main.os_toolsize = panel_tools.size * opts.ar;
-    document.documentElement.style.setProperty("--tools-size", panel_tools.sizeId.value * opts.ratio + "%");
-  },
+  dragged: null,
+  
   init: function(){
     panel_tools.panelId
       .querySelectorAll('[id^="img_"]')
@@ -27,6 +23,13 @@ const panel_tools = {
     panel_tools.update();
     panel_tools.setDraggable();
   },
+  update: function(){
+    panel_tools.size = panel_tools.sizeId.value;
+    panel_tools.color = panel_tools.colorId.value;
+    data.main.os_toolsize = panel_tools.size * opts.ar;
+    document.documentElement.style.setProperty("--tools-size", panel_tools.sizeId.value * opts.ratio + "%");
+  },
+
   updateDisabledToolsVisibility: function(){
     if (panel_tools.toggleId.checked) {
       panel_tools.panelId.classList.remove("hide-disabled");
@@ -36,53 +39,49 @@ const panel_tools = {
   },
 
   setDraggable: function(){
-    let dragged = null;
-    panel_tools.panelId.querySelectorAll(".tools-square").forEach((square) => {
-      const img = square.querySelector("img");
-      square.addEventListener("dblclick", function () {
-        this.classList.toggle("disabled-tool");
-        panel_tools.updateDisabledToolsVisibility();
-      });
-      square.addEventListener("dragstart", function (e) {
-        dragged = this;
-        e.dataTransfer.effectAllowed = "move";
-        // Optional: visual feedback
-        setTimeout(() => this.classList.add("dragging"), 0);
-      });
-      square.addEventListener("dragend", function () {
-        dragged = null;
-        this.classList.remove("dragging");
-      });
-      square.addEventListener("dragover", function (e) {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = "move";
-      });
-      square.addEventListener("drop", function (e) {
-        e.preventDefault();
-        if (dragged && dragged !== this) {
-          // Insert before or after depending on mouse position
-          const rect = this.getBoundingClientRect();
-          const offset = e.clientX - rect.left;
-          if (offset < rect.width / 2) {
-            panel_tools.panelId.insertBefore(dragged, this);
-          } else {
-            panel_tools.panelId.insertBefore(dragged, this.nextSibling);
+    panel_tools.panelId
+      .querySelectorAll(".tools-square")
+      .forEach((square) => {
+        const img = square.querySelector("img");
+        // double-click
+        square.addEventListener("dblclick", function (e) {
+          this.classList.toggle("disabled-tool");
+          panel_tools.updateDisabledToolsVisibility();
+        });
+        // drag: start
+        square.addEventListener("dragstart", function (e) {
+          panel_tools.dragged = this;
+          e.dataTransfer.effectAllowed = "move";
+          // Optional: visual feedback
+          setTimeout(() => this.classList.add("dragging"), 0);
+        });
+        // drag: end
+        square.addEventListener("dragend", function () {
+          panel_tools.dragged = null;
+          this.classList.remove("dragging");
+        });
+        // drag: over
+        square.addEventListener("dragover", function (e) {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
+        });
+        // drag: drop
+        square.addEventListener("drop", function (e) {
+          e.preventDefault();
+          if (panel_tools.dragged && panel_tools.dragged !== this) {
+            // Insert before or after depending on mouse position
+            const rect = this.getBoundingClientRect();
+            const offset = e.clientX - rect.left;
+            panel_tools.panelId.insertBefore(panel_tools.dragged, offset < rect.width / 2 ? this : this.nextSibling);
+            //if (offset < rect.width / 2) {
+            //  panel_tools.panelId.insertBefore(panel_tools.dragged, this);
+            //} else {
+            //  panel_tools.panelId.insertBefore(panel_tools.dragged, this.nextSibling);
+            //}
           }
-        }
-      });
+        });
     });
     
-    /*
-    const toggle = document.getElementById("toggle-disabled-tools");
-    function updateDisabledToolsVisibility() {
-      if (toggle.checked) {
-        panel_tools.panelId.classList.remove("hide-disabled");
-      } else {
-        panel_tools.panelId.classList.add("hide-disabled");
-      }
-    }
-    */
-
    // Hide/show disabled tools logic
     if (panel_tools.toggleId) {
       panel_tools.toggleId.addEventListener("change", panel_tools.updateDisabledToolsVisibility);
@@ -95,20 +94,45 @@ const panel_tools = {
 const selectors = {
   dotColorId: document.getElementById("selection_dotcolor"),
   opacityId: document.getElementById("selection_opacity"),
-  ids: ["selection_big", "selection_small"],
+  ids: ["big", "small"],
   bigSize: 144,
   smallSize: 64,
   opacity: 0.05,
   color: "#111",
-  dotColor: "#111",
+  dotColor: "#800",
+  iconData: {
+    "big": {
+      data: null,
+      size: 144
+    },
+    "small": {
+      data: null,
+      size: 64
+    },
+    loadData: async function(tag){
+      let t = await fetchText(`refind/selection_${tag}.svg`);
+      t = t.replaceAll(/fill=".*" fill-opacity=".*"/gi,
+        "fill=\"${selectors.color}\" fill-opacity=\"${selectors.opacity}\"")
+        .replaceAll(/fill="(?!\${).*"\/>/gi, "fill=\"${selectors.dotColor}\"/>")
+      selectors.iconData[tag].data = t;
+    },
+    getBlob: async function(tag){
+      let svg = eval("`" + selectors.iconData[tag].data + "`");
+      return await svg2image(svg, 'png', selectors.iconData[tag].size, selectors.iconData[tag].size);
+    }
+  },
   update: function(){
+    selectors.iconData.big.size = data.main.os_iconsize + 16;
     selectors.bigSize = data.main.os_iconsize + 16;
-    selectors.smallSize = data.main.os_iconsize + 16;
+    selectors.iconData.small.size = data.main.os_toolsize + 16;
+    selectors.smallSize = data.main.os_toolsize + 16;
     selectors.color = data.main.os_color;
     selectors.dotColor = this.dotColorId.value;
     selectors.opacity = this.opacityId.value;
   },
   init: function(){
+    selectors.iconData.loadData("big");
+    selectors.iconData.loadData("small");
     selectors.dotColorId.addEventListener("input", function(){
       selectors.dotColor = this.value;
     });
@@ -138,37 +162,59 @@ const font_png = {
   select: document.getElementById("png_fontfamily"),
   sizeId: document.getElementById("png_fontsize"),
   colorId: document.getElementById("png_fontcolor"),
-  charWidth: 0.6,
-  name: 'monospace',
-  size: 14,
-  xoff: 8.4,
-  yoff: 24.8,
-  wsize: 1847,
-  color: '#111',
-  family: 'monospace',
-  style: 'bold',
-  weight: 'bold',
+  font: {
+    name: 'monospace',
+    color: '#111',
+    family: 'monospace',
+    style: 'normal',
+    weight: 'bold',  
+  },
   padding: 0,
+  charset: ' !\"#\$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\`abcdefghijklmnopqrstuvwxyz{|}~?',
   backgroundColor: null,
   init: function(){
     font_png.select.innerHTML = "";
     for(const font of fonts.select.options){
       let opt = JSON.parse(font.value);
       if (opt.name.toLowerCase().includes("mono")){
-        opt.monoWidth12 = font_png.getMonoCharWidth(12, opt.name);
         utils.addOption(font_png.select, JSON.stringify(opt), opt.name );
       }
     }
     font_png.select.addEventListener("change", function(){
       font_png.selectFont(this);
     });
+    font_png.sizeId.addEventListener("change", font_png.update);
+    font_png.colorId.addEventListener("change", font_png.update);
+    font_png.update();
     selectors.init();
-    panel_tools.init();
   },
   getFilename: function(){
-    let fname = `${font_png.name}-${font_png.weight}-${font_png.size}`;
+    let fname = `${font_png.font.name}-${font_png.font.weight}-${font_png.size}`;
     fname = fname.replaceAll(" ","-").replaceAll('"','').replaceAll("'","");
     return fname;
+  },
+  render: function(){
+    const cssFont = `${font_png.font.weight} ${font_png.size}px "${font_png.font.family}"`;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.font = cssFont;
+    const metrics = ctx.measureText(font_png.charset);
+    const ascent = metrics.actualBoundingBoxAscent;
+    const descent = metrics.actualBoundingBoxDescent;
+    const textHeight = ascent + descent;
+    canvas.width = Math.ceil(metrics.width + font_png.padding * 2);
+    canvas.height = font_png.size; //Math.ceil(textHeight + padding * 2);
+    
+    if (font_png.backgroundColor) {
+      ctx.fillStyle = font_png.backgroundColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    
+    ctx.fillStyle = font_png.color;
+    ctx.textBaseline = 'alphabetic';
+
+    ctx.fillText(font_png.charset, font_png.padding, font_png.padding + ascent);
+    return canvas.toDataURL("image/png", 1.0);
   },
   renderPng: function(){
     const text = ' !\"#\$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\`abcdefghijklmnopqrstuvwxyz{|}~?';
@@ -210,27 +256,19 @@ const font_png = {
     ctx.fillText(text, font_png.padding, baselineY);
     return canvas.toDataURL("image/png", 1.0);
   },
-
-
-  getMonoCharWidth: function(fontSize, fontFamily = 'monospace') {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    ctx.font = `${fontSize} ${fontFamily}`;
-    return ctx.measureText('M').width; // 'M' is a good wide char
-  },
-
-  selectFont: function(sel){
-    const f = JSON.parse(sel.value);
+  update: function(){
     font_png.size = font_png.sizeId.value;
-    font_png.charWidth = font_png.getMonoCharWidth(font_png.size, f.name);
-    font_png.xoff = (font_png.charWidth).toFixed(1);
-    font_png.yoff = (font_png.size * 0.775).toFixed(1);
-    font_png.wsize = Math.ceil(font_png.charWidth * 96);
     font_png.color = font_png.colorId.value;
+  },
+  selectFont: function(sel){
+    font_png.font = JSON.parse(sel.value);
+    /*
+    const f = JSON.parse(sel.value);
     font_png.name = f.name;
     font_png.family = f.family;
     font_png.style = f.style;
     font_png.weight = f.weight;
+    */
   }
 }
 
@@ -352,12 +390,17 @@ async function exportMedia() {
   status.innerText = `Adding selection`;
   selectors.update();
 
-  let svg = await fetchEval(`refind/selection_big.svg`);
-  let blob = await svg2image(svg, 'png', selectors.bigSize, selectors.bigSize);
+  let blob;
+  //let svg = await fetchEval(`refind/selection_big.svg`);
+  //let blob = await svg2image(svg, 'png', selectors.bigSize, selectors.bigSize);
+  //let blob = await svg2image(selectors.iconData.big.data, 'png', selectors.iconData.big.size, selectors.iconData.big.size);
+  blob = await selectors.iconData.getBlob('big');
   zip.file(`${opts.id}/selection_big.png`, blob.split(',')[1], { base64: true });
   
-  svg = await fetchEval(`refind/selection_small.svg`);
-  blob = await svg2image(svg, 'png', selectors.smallSize, selectors.smallSize);
+  //svg = await fetchEval(`refind/selection_small.svg`);
+  //blob = await svg2image(svg, 'png', selectors.smallSize, selectors.smallSize);
+  //blob = await svg2image(selectors.iconData.small.data, 'png', selectors.iconData.small.size, selectors.iconData.small.size);
+  blob = await selectors.iconData.getBlob('small');
   zip.file(`${opts.id}/selection_small.png`, blob.split(',')[1], { base64: true });
 
   status.innerText = `Adding font`;

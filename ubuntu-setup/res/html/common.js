@@ -519,7 +519,7 @@ if (panelToggle) {
   });
 
   // Close panel when clicking outside on mobile
-  document.addEventListener('click', (e) => {
+  document.addEventListener('touch', (e) => {
     if (!controls.contains(e.target) && !panelToggle.contains(e.target)) {
       if (window.innerWidth <= 768) {
         controls.classList.add('collapsed');
