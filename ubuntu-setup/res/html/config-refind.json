@@ -1,0 +1,74 @@
+{
+    "hideui": {
+        "desc": "Hide user interface elements for personal preference or to increase security.",
+        "options": [
+            { "badges": "the OS badges (icons) in the menu" },
+            { "banner": "the rEFInd title banner (built-in or loaded via \"banner\")" },
+            { "label": "boot option text label in the menu" },
+            { "singleuser": "remove the submenu options to boot Mac OS X in single-user or verbose modes; affects ONLY MacOS X" },
+            { "safemode": "remove the submenu option to boot Mac OS X in \"safe mode\"" },
+            { "hwtest": "the submenu option to run Apple's hardware test" },
+            { "arrows": "scroll arrows on the OS selection tag line" },
+            { "hints": "brief command summary in the menu" },
+            { "editor": "the options editor (+, F2, or Insert on boot options menu)" },
+            { "all": "all of the above" }
+        ],
+        "type": "array",
+        "default": ["badges"]
+    },
+    "scanfor": {
+        "desc": "Specify which types of operating systems rEFInd should scan for. This option can be used to speed up the boot process by skipping certain OS types.",
+        "options": [
+            { "osx": "Scan for Mac OS X installations" },
+            { "linux": "Scan for Linux installations" },
+            { "windows": "Scan for Windows installations" },
+            { "manual": "Do not scan for any OS; only show manually specified entries" },
+            { "external": "Scan for OSes on external drives" },
+            { "internal": "Scan for OSes on internal drives" }
+        ],
+        "type": "array",
+        "default": ["osx", "linux", "windows"]
+    },
+    "dont_scan_volumes": {
+        "desc": "Specify volumes that rEFInd should not scan for operating systems. This can be used to exclude certain drives or partitions from the boot menu.",
+        "options": [
+            { "volume_name": "The name of the volume to exclude from scanning" }
+        ],
+        "type": "array",
+        "default": []
+    },
+    "dont_scan_dirs": {
+        "desc": "Specify directories that rEFInd should not scan for operating systems. This can be used to exclude certain directories from the boot menu.",
+        "options": [
+            { "directory_path": "The path of the directory to exclude from scanning" }
+        ],
+        "type": "array",
+        "default": []
+    },
+    "scan_delay": {
+        "desc": "Specify a delay (in seconds) before rEFInd scans for operating systems. This can be used to allow time for external drives to become ready.",
+        "type": "number",
+        "default": 0
+    },
+    "timeout": {
+        "desc": "Specify the timeout (in seconds) before rEFInd automatically boots the default OS. A value of 0 means no timeout.",
+        "type": "number",
+        "default": 20
+    },
+    "default_selection": {
+        "desc": "Specify the default boot option to select when the timeout expires. This can be an OS name, a volume label, or a specific boot entry.",
+        "type": "string",
+        "default": ""
+    },
+    "showtools": {
+        "desc": "Specify which tools to show in the rEFInd menu. This can be used to provide quick access to utilities.",
+        "options": [
+            { "shell": "rEFInd's built-in shell" },
+            { "memtest": "Memory testing utility" },
+            { "reboot": "Reboot the system" },
+            { "shutdown": "Shutdown the system" }
+        ],
+        "type": "array",
+        "default": ["shell", "memtest", "reboot", "shutdown"]
+    }
+}

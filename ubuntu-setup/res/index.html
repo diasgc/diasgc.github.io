@@ -27,6 +27,7 @@
     defFooter: '@def_footer',
     fontList: '@font_list',
     grubSet: '@grub_set',
+    ar: 1,
     vndList: [ "acer","apple","asus","beelink","corsair","dell","fujitsu","geekom","gigabyte","google","hp","intel","lenovo","lg","microsoft","minisforum","msi","razer","samsung","surface","toshiba","vaio","xiaomi" ],
     osList: [ "4MLinux","AlpineLinux","android","anonymous","antergos","archlinux","arcolinux","artix", "blissos", "cancel","centos","chakra","debian","deepin","devuan","driver","edit","efi","elementary","endeavouros","fedora","freebsd","gameros","gentoo","gnu-linux","gpart","haiku","help","kali","kaos","kbd","korora","kubuntu","lang","linuxmint","lubuntu","macosx","mageia","manjaro","mx-linux","neon","opensuse","parrot","peppermint","pop-os","puppy","q4os","recovery","red","regolith","restart","rocky","shutdown","siduction","slackware","solus","sparky","steamos","submenu","SystemRescueCD","type","tz","ubuntubudgie","ubuntumate","ubuntustudio","ubuntu","unset","void","windows","xubuntu","zorin" ],
     pngList: [ "select_c","select_e","select_w","terminal_box_c","terminal_box_e","terminal_box_ne","terminal_box_n","terminal_box_nw","terminal_box_se","terminal_box_s","terminal_box_sw","terminal_box_w" ],
@@ -172,6 +173,15 @@
         <label for="footer">Footer Text</label>
         <textarea id="footer" spellcheck="false"></textarea>
       </details>
+      <div class="flex-end">
+      <div class="flex-switch">
+        <span class="span-label">Adjust sizes to device pixel ratio</span>
+        <label class="material-switch">
+          <input type="checkbox" id="adjust-sizes" checked/>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
     </div>
     <div id="control-extra">
     <!--control-extra-->

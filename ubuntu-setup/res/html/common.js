@@ -451,8 +451,8 @@ const fonts = {
           fonts.select.value = JSON.stringify(fonts.defaultFont);
           fonts.select.addEventListener('change', renderSvg);
           intro.panel.style.display = 'none';
-          if (pngFonts){
-            pngFonts.init();
+          if (font_png){
+            font_png.init();
           }
       }).catch((err) => {
         fonts.setDefault("Error accessing local fonts:" + err);
@@ -504,6 +504,12 @@ opts.type = urlParams.get('t') || opts.type.replace('@type','wallpaper');
 const panelToggle = document.getElementById('panel-toggle');
 const controls = document.getElementById('controls');
 const preview = document.getElementById('preview');
+const adjustSize = document.getElementById('adjust-size');
+
+if (adjustSize)
+  adjustSize.addEventListener('change', (e) => {
+    opts.ar = e.value ? window.devicePixelRatio : 1;
+  });
 
 if (panelToggle) {
   // Toggle panel on button click

@@ -106,7 +106,7 @@ function evalSvgIcon(svg){
 async function exportMedia(){
   const zip = new JSZip();
   // add config grub
-  zip.file("theme.txt", fetchEval("html/config-grub.txt"));
+  zip.file("theme.txt", fetchEval("html/config-grub-theme.txt"));
   // add background
   zip.file('background.png', getWpBlob('png', opts.resX, opts.resY), { base64: true });
   // add os-icons

@@ -1,30 +1,98 @@
+opts.w_icon = 32;
 const osSizeInput = document.getElementById("os_size");
 
-const tools = {
-  sizeId: document.getElementById("tools-size"),
-  colorId: document.getElementById("tools-size"),
-  panelId: document.getElementById("tools-panel"),
+const panel_tools = {
+  sizeId:   document.getElementById("tools-size"),
+  colorId:  document.getElementById("tools-size"),
+  panelId:  document.getElementById("tools-panel"),
+  toggleId: document.getElementById("toggle-disabled-tools"),
   size: 48,
   color: "#111",
   update: function(){
-    tools.size = tools.sizeId.value;
-    tools.color = tools.colorId.value;
-    data.main.os_toolsize = tools.size * window.devicePixelRatio;
+    panel_tools.size = panel_tools.sizeId.value;
+    panel_tools.color = panel_tools.colorId.value;
+    data.main.os_toolsize = panel_tools.size * opts.ar;
+    document.documentElement.style.setProperty("--tools-size", panel_tools.sizeId.value * opts.ratio + "%");
   },
   init: function(){
-    tools.panelId
+    panel_tools.panelId
       .querySelectorAll('[id^="img_"]')
       .forEach(async img => {
         let name = img.id.replace("img_","");
         opts.iconList.push(img.id.replace("img_",""))
         menu.iconData[name] = await menu.import(`icons/refind/${name}.svg`);
       });
-    tools.sizeId.addEventListener("input", tools.update);
-    tools.colorId.addEventListener("input", tools.update);
+    panel_tools.sizeId.addEventListener("input", panel_tools.update);
+    panel_tools.colorId.addEventListener("input", panel_tools.update);
+    panel_tools.update();
+    panel_tools.setDraggable();
+  },
+  updateDisabledToolsVisibility: function(){
+    if (panel_tools.toggleId.checked) {
+      panel_tools.panelId.classList.remove("hide-disabled");
+    } else {
+      panel_tools.panelId.classList.add("hide-disabled");
+    }
+  },
+
+  setDraggable: function(){
+    let dragged = null;
+    panel_tools.panelId.querySelectorAll(".tools-square").forEach((square) => {
+      const img = square.querySelector("img");
+      square.addEventListener("dblclick", function () {
+        this.classList.toggle("disabled-tool");
+        panel_tools.updateDisabledToolsVisibility();
+      });
+      square.addEventListener("dragstart", function (e) {
+        dragged = this;
+        e.dataTransfer.effectAllowed = "move";
+        // Optional: visual feedback
+        setTimeout(() => this.classList.add("dragging"), 0);
+      });
+      square.addEventListener("dragend", function () {
+        dragged = null;
+        this.classList.remove("dragging");
+      });
+      square.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+      });
+      square.addEventListener("drop", function (e) {
+        e.preventDefault();
+        if (dragged && dragged !== this) {
+          // Insert before or after depending on mouse position
+          const rect = this.getBoundingClientRect();
+          const offset = e.clientX - rect.left;
+          if (offset < rect.width / 2) {
+            panel_tools.panelId.insertBefore(dragged, this);
+          } else {
+            panel_tools.panelId.insertBefore(dragged, this.nextSibling);
+          }
+        }
+      });
+    });
+    
+    /*
+    const toggle = document.getElementById("toggle-disabled-tools");
+    function updateDisabledToolsVisibility() {
+      if (toggle.checked) {
+        panel_tools.panelId.classList.remove("hide-disabled");
+      } else {
+        panel_tools.panelId.classList.add("hide-disabled");
+      }
+    }
+    */
+
+   // Hide/show disabled tools logic
+    if (panel_tools.toggleId) {
+      panel_tools.toggleId.addEventListener("change", panel_tools.updateDisabledToolsVisibility);
+      // Initial state
+      panel_tools.updateDisabledToolsVisibility();
+    }
   }
 }
 
-const selections = {
+const selectors = {
   dotColorId: document.getElementById("selection_dotcolor"),
   opacityId: document.getElementById("selection_opacity"),
   ids: ["selection_big", "selection_small"],
@@ -34,23 +102,39 @@ const selections = {
   color: "#111",
   dotColor: "#111",
   update: function(){
-    selections.bigSize = data.main.os_iconsize + 16;
-    selections.smallSize = data.main.os_iconsize + 16;
-    selections.color = data.main.os_color;
-    selections.dotColor = this.dotColorId.value;
-    selections.opacity = this.opacityId.value;
+    selectors.bigSize = data.main.os_iconsize + 16;
+    selectors.smallSize = data.main.os_iconsize + 16;
+    selectors.color = data.main.os_color;
+    selectors.dotColor = this.dotColorId.value;
+    selectors.opacity = this.opacityId.value;
   },
   init: function(){
-    selections.dotColorId.addEventListener("input", function(){
-      selections.dotColor = this.value;
+    selectors.dotColorId.addEventListener("input", function(){
+      selectors.dotColor = this.value;
     });
-    selections.opacityId.addEventListener("input", function(){
-      selections.opacity = this.value;
+    selectors.opacityId.addEventListener("input", function(){
+      selectors.opacity = this.value;
     });
   }
 }
 
-const pngFonts = {
+const panel_os = {
+  id: document.getElementById('os-panel'),
+  iconData: {},
+  sizeId: document.getElementById("os_size"),
+  init: function(){
+    this.sizeId.addEventListener("input", panel_os.update);
+    panel_os.update();
+  },
+  update: function(){
+    data.main.os_color = data.read('os_color');
+    data.main.os_iconsize = this.sizeId.value * opts.ar;
+    data.main.os_iconsize_w = data.main.os_iconsize;
+    document.documentElement.style.setProperty("--os-size", data.main.os_iconsize / opts.ui_resize + "px");
+  }
+}
+
+const font_png = {
   select: document.getElementById("png_fontfamily"),
   sizeId: document.getElementById("png_fontsize"),
   colorId: document.getElementById("png_fontcolor"),
@@ -67,22 +151,22 @@ const pngFonts = {
   padding: 0,
   backgroundColor: null,
   init: function(){
-    pngFonts.select.innerHTML = "";
+    font_png.select.innerHTML = "";
     for(const font of fonts.select.options){
       let opt = JSON.parse(font.value);
       if (opt.name.toLowerCase().includes("mono")){
-        opt.monoWidth12 = pngFonts.getMonoCharWidth(12, opt.name);
-        utils.addOption(pngFonts.select, JSON.stringify(opt), opt.name );
+        opt.monoWidth12 = font_png.getMonoCharWidth(12, opt.name);
+        utils.addOption(font_png.select, JSON.stringify(opt), opt.name );
       }
     }
-    pngFonts.select.addEventListener("change", function(){
-      pngFonts.selectFont(this);
+    font_png.select.addEventListener("change", function(){
+      font_png.selectFont(this);
     });
-    selections.init();
-    tools.init();
+    selectors.init();
+    panel_tools.init();
   },
   getFilename: function(){
-    let fname = `${pngFonts.name}-${pngFonts.weight}-${pngFonts.size}`;
+    let fname = `${font_png.name}-${font_png.weight}-${font_png.size}`;
     fname = fname.replaceAll(" ","-").replaceAll('"','').replaceAll("'","");
     return fname;
   },
@@ -90,7 +174,7 @@ const pngFonts = {
     const text = ' !\"#\$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\`abcdefghijklmnopqrstuvwxyz{|}~?';
     
     //const cssFont = `${pngFonts.style} ${pngFonts.weight} ${pngFonts.size}px "${pngFonts.name}"`;
-    const cssFont = `${pngFonts.weight} ${pngFonts.size}px "${pngFonts.family}"`;
+    const cssFont = `${font_png.weight} ${font_png.size}px "${font_png.family}"`;
     const measureCanvas = document.createElement('canvas');
     const measureCtx = measureCanvas.getContext('2d');
     measureCtx.font = cssFont;
@@ -105,25 +189,25 @@ const pngFonts = {
 
     const textWidth = metrics.width;
     const textHeight = ascent + descent;
-    const canvasWidth = Math.ceil(textWidth + pngFonts.padding * 2);
-    const canvasHeight = pngFonts.size; //Math.ceil(textHeight + padding * 2);
+    const canvasWidth = Math.ceil(textWidth + font_png.padding * 2);
+    const canvasHeight = font_png.size; //Math.ceil(textHeight + padding * 2);
 
     const canvas = document.createElement('canvas');
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     const ctx = canvas.getContext('2d');
 
-    if (pngFonts.backgroundColor) {
-      ctx.fillStyle = pngFonts.backgroundColor;
+    if (font_png.backgroundColor) {
+      ctx.fillStyle = font_png.backgroundColor;
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     }
 
     ctx.font = cssFont;
-    ctx.fillStyle = pngFonts.color;
+    ctx.fillStyle = font_png.color;
     ctx.textBaseline = 'alphabetic';
 
-    const baselineY = pngFonts.padding + ascent;
-    ctx.fillText(text, pngFonts.padding, baselineY);
+    const baselineY = font_png.padding + ascent;
+    ctx.fillText(text, font_png.padding, baselineY);
     return canvas.toDataURL("image/png", 1.0);
   },
 
@@ -137,19 +221,20 @@ const pngFonts = {
 
   selectFont: function(sel){
     const f = JSON.parse(sel.value);
-    pngFonts.size = pngFonts.sizeId.value;
-    pngFonts.charWidth = pngFonts.getMonoCharWidth(pngFonts.size, f.name);
-    pngFonts.xoff = (pngFonts.charWidth).toFixed(1);
-    pngFonts.yoff = (pngFonts.size * 0.775).toFixed(1);
-    pngFonts.wsize = Math.ceil(pngFonts.charWidth * 96);
-    pngFonts.color = pngFonts.colorId.value;
-    pngFonts.name = f.name;
-    pngFonts.family = f.family;
-    pngFonts.style = f.style;
-    pngFonts.weight = f.weight;
+    font_png.size = font_png.sizeId.value;
+    font_png.charWidth = font_png.getMonoCharWidth(font_png.size, f.name);
+    font_png.xoff = (font_png.charWidth).toFixed(1);
+    font_png.yoff = (font_png.size * 0.775).toFixed(1);
+    font_png.wsize = Math.ceil(font_png.charWidth * 96);
+    font_png.color = font_png.colorId.value;
+    font_png.name = f.name;
+    font_png.family = f.family;
+    font_png.style = f.style;
+    font_png.weight = f.weight;
   }
 }
 
+/*
 function setOsSize(){
   document.documentElement.style.setProperty("--os-size", data.main.os_iconsize / opts.ui_resize + "px");
   //document.documentElement.style.setProperty("--os-size", data.main.os_iconsize / opts.ui_resize + "px");
@@ -161,8 +246,7 @@ if (osSizeInput) {
   osSizeInput.addEventListener("input", setOsSize);
   setOsSize();
 }
-
-opts.w_icon = 32;
+*/
 
 const menu = {
   id: document.getElementById('os-panel'),
@@ -180,7 +264,8 @@ const menu = {
         opts.iconList.push(name);
         menu.iconData[name] = await this.import(`icons/${opts.grubSet}/${name}.svg`);
       });
-    tools.init();
+    panel_os.init();
+    panel_tools.init();
   }
 }
 
@@ -191,10 +276,8 @@ function renderSvg(){
 }
 
 function updateIcons(){
-  data.main.os_color = data.read('os_color');
-  data.main.os_iconsize = osSizeInput.value * window.devicePixelRatio;
-  data.main.os_iconsize_w = data.main.os_iconsize;
-  tools.update();
+  panel_os.update();
+  panel_tools.update();
   opts.iconList.forEach(icon => {
     const svg = genSvgIcon(icon);
     document.getElementById(`img_${icon}`).src = encodeSvg(svg);
@@ -222,52 +305,6 @@ const os_trans = {
   "windows": "win",
 }
 
-/*
-async function renderCharsetBlob(fontName, fontSize, color = '#111111', fontWeight = 'normal',
-  fontStyle = 'normal', bgColor = null, padding = 0) {
- 
-  const text = ' !\"#\$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_\`abcdefghijklmnopqrstuvwxyz{|}~?';
-  // Ensure font is actually loaded (avoids silent fallback-font metrics)
-  const cssFont = `${fontStyle} ${fontWeight} ${fontSize}px "${fontName}"`;
- 
-  // Measure first with a throwaway canvas
-  const measureCanvas = document.createElement('canvas');
-  const measureCtx = measureCanvas.getContext('2d');
-  measureCtx.font = cssFont;
-  const metrics = measureCtx.measureText(text);
-
-  const textWidth = metrics.width;
-  const ascent = metrics.actualBoundingBoxAscent;
-  const descent = metrics.actualBoundingBoxDescent;
-
-  if (!ascent && ascent !== 0) {
-    throw new Error('actualBoundingBoxAscent/Descent unsupported in this environment.');
-  }
-
-  const textHeight = ascent + descent;
-  const canvasWidth = Math.ceil(textWidth + padding * 2);
-  const canvasHeight = fontSize; //Math.ceil(textHeight + padding * 2);
-
-  const canvas = document.createElement('canvas');
-  canvas.width = canvasWidth;
-  canvas.height = canvasHeight;
-  const ctx = canvas.getContext('2d');
-
-  if (bgColor) {
-    ctx.fillStyle = bgColor;
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-  }
-
-  ctx.font = cssFont;
-  ctx.fillStyle = color;
-  ctx.textBaseline = 'alphabetic';
-
-  const baselineY = padding + ascent;
-  ctx.fillText(text, padding, baselineY);
-  return canvas.toDataURL("image/png", 1.0);
-}
-*/
-
 function replaceFill(svg, color) {
   return svg.replaceAll(/fill="#[0-9a-fA-F]+"/gi, `fill="${color}"`);
 }
@@ -277,19 +314,19 @@ async function exportMedia() {
   const zip = new JSZip();
   
   let toolList = [];
-  tools.panelId.querySelectorAll('div:not(.disabled-tool)').forEach(div => {
+  panel_tools.panelId.querySelectorAll('div:not(.disabled-tool)').forEach(div => {
     let img = div.querySelector('img');
     if (img) {
       toolList.push(img.id.replaceAll("img_func_","").replaceAll("img_tool_",""));
     }
   });
   opts.showtools = toolList.length > 0 ? "showtools " + toolList.join(",") : "";
-  opts.png_fontname = pngFonts.getFilename();
+  opts.png_fontname = font_png.getFilename();
 
 
   // add config grub
   status.innerText = "Generating theme.conf...";
-  zip.file(`${opts.id}/theme.conf`, fetchEval("html/config-refind.txt"));
+  zip.file(`${opts.id}/theme.conf`, fetchEval("html/config-refind-theme.txt"));
   
   // add background
   status.innerText = "Adding background";
@@ -313,18 +350,18 @@ async function exportMedia() {
   }
 
   status.innerText = `Adding selection`;
-  selections.update();
+  selectors.update();
 
   let svg = await fetchEval(`refind/selection_big.svg`);
-  let blob = await svg2image(svg, 'png', selections.bigSize, selections.bigSize);
+  let blob = await svg2image(svg, 'png', selectors.bigSize, selectors.bigSize);
   zip.file(`${opts.id}/selection_big.png`, blob.split(',')[1], { base64: true });
   
   svg = await fetchEval(`refind/selection_small.svg`);
-  blob = await svg2image(svg, 'png', selections.smallSize, selections.smallSize);
+  blob = await svg2image(svg, 'png', selectors.smallSize, selectors.smallSize);
   zip.file(`${opts.id}/selection_small.png`, blob.split(',')[1], { base64: true });
 
   status.innerText = `Adding font`;
-  blob = pngFonts.renderPng();
+  blob = font_png.renderPng();
   zip.file(`${opts.id}/${opts.png_fontname}.png`, blob.split(',')[1], { base64: true });
   
   // generate zip
@@ -341,8 +378,6 @@ function initComponents() {
 
   checkTripleStateCheckbox();
   
-  menu.loadData();
-  
   const confTimeout = document.getElementById('conf_timeout');
   if (confTimeout){
     confTimeout.addEventListener('change', function() {
@@ -350,74 +385,8 @@ function initComponents() {
       document.getElementById('div-screensaver').style.display = this.value > 0 ? 'inline-block' : 'none';
     });
   }
-  // tools-size sync
-  const toolsSizeInput = document.getElementById("tools-size");
-  if (toolsSizeInput) {
-    document.documentElement.style.setProperty("--tools-size",toolsSizeInput.value * opts.ratio + "%");
-    toolsSizeInput.addEventListener("input", function () {
-      document.documentElement.style.setProperty("--tools-size",this.value * opts.ratio + "%");
-    });
-  }
-  // os_size sync
-  const osSizeInput = document.getElementById("os_size");
-  if (osSizeInput) {
-    document.documentElement.style.setProperty("--os-size", osSizeInput.value * opts.ratio + "%");
-    osSizeInput.addEventListener("input", function () {
-      document.documentElement.style.setProperty("--os-size", this.value * opts.ratio + "%" );
-    });
-  }
 
-  let dragged = null;
-  //const toolsPanel = document.getElementById("tools-panel");
-  if (tools.panelId) {
-    tools.panelId.querySelectorAll(".tools-square").forEach((square) => {
-      const img = square.querySelector("img");
-      square.addEventListener("dblclick", function () {
-        this.classList.toggle("disabled-tool");
-        updateDisabledToolsVisibility();
-      });
-      square.addEventListener("dragstart", function (e) {
-        dragged = this;
-        e.dataTransfer.effectAllowed = "move";
-        // Optional: visual feedback
-        setTimeout(() => this.classList.add("dragging"), 0);
-      });
-      square.addEventListener("dragend", function () {
-        dragged = null;
-        this.classList.remove("dragging");
-      });
-      square.addEventListener("dragover", function (e) {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = "move";
-      });
-      square.addEventListener("drop", function (e) {
-        e.preventDefault();
-        if (dragged && dragged !== this) {
-          // Insert before or after depending on mouse position
-          const rect = this.getBoundingClientRect();
-          const offset = e.clientX - rect.left;
-          if (offset < rect.width / 2) {
-            tools.panelId.insertBefore(dragged, this);
-          } else {
-            tools.panelId.insertBefore(dragged, this.nextSibling);
-          }
-        }
-      });
-    });
-  }
-
-  // Hide/show disabled tools logic
-  const toggle = document.getElementById("toggle-disabled-tools");
-  function updateDisabledToolsVisibility() {
-    if (toggle.checked) {
-      tools.panelId.classList.remove("hide-disabled");
-    } else {
-      tools.panelId.classList.add("hide-disabled");
-    }
-  }
-  if (toggle) {
-    toggle.addEventListener("change", updateDisabledToolsVisibility);
-    // Initial state
-    updateDisabledToolsVisibility();
-  }
+  opts.ui_resize = 1;
+  // loadData also inits panel_os and panel_tools
+  menu.loadData();
 }
