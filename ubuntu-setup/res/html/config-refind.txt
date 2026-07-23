@@ -54,7 +54,7 @@ banner_scale fillscreen
 # produce display irregularities.
 # The default is rEFInd's built-in font, Luxi Mono Regular 12 point.
 #
-font themes/${opts.id}/dejavu-mans-mono-bold-12.png
+font themes/${opts.id}/${opts.png_fontname}.png
 
 # Set the screen's video resolution. Pass this option one of the following:
 #  * two integer values, corresponding to the X and Y resolutions

@@ -283,7 +283,9 @@ async function exportMedia() {
       toolList.push(img.id.replaceAll("img_func_","").replaceAll("img_tool_",""));
     }
   });
-  opts.showtools = toolList.size > 0 ? "showtools " + toolList.join(",") : "";
+  opts.showtools = toolList.length > 0 ? "showtools " + toolList.join(",") : "";
+  opts.png_fontname = pngFonts.getFilename();
+
 
   // add config grub
   status.innerText = "Generating theme.conf...";
@@ -322,12 +324,8 @@ async function exportMedia() {
   zip.file(`${opts.id}/selection_small.png`, blob.split(',')[1], { base64: true });
 
   status.innerText = `Adding font`;
-  //let fname = `${pngFonts.name}-${pngFonts.weight}-${pngFonts.size}`;
-  //fname = fname.replaceAll(" ","-").replaceAll('"','').replaceAll("'","");
-  //blob = await renderCharsetBlob(pngFonts.name, pngFonts.size, pngFonts.color, pngFonts.weight);
-  const fname = pngFonts.getFilename();
   blob = pngFonts.renderPng();
-  zip.file(`${opts.id}/${fname}.png`, blob.split(',')[1], { base64: true });
+  zip.file(`${opts.id}/${opts.png_fontname}.png`, blob.split(',')[1], { base64: true });
   
   // generate zip
   status.innerText = "Generating zip...";
